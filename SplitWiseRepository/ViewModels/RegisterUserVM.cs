@@ -1,11 +1,8 @@
 using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Http;
-using SplitWiseRepository.Attributes;
-using SplitWiseRepository.Models;
 
 namespace SplitWiseRepository.ViewModels;
 
-public class RegisterVM
+public class RegisterUserVM
 {
     [Required(ErrorMessage = "First name is required")]
     [StringLength(30, ErrorMessage = "First name cannot exceed 30 characters")]

@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using SplitWiseRepository.ViewModels;
+using SplitWiseService.Helpers;
 
 namespace SplitWiseWeb.Controllers;
 
@@ -30,7 +31,7 @@ public class AuthController : Controller
     {
         if (!ModelState.IsValid)
         {
-            return View(loginVM);
+            return View();
         }
 
         // Redirect to dashboard
@@ -40,17 +41,16 @@ public class AuthController : Controller
     // GET Register
     public IActionResult Register()
     {
-        string path1 = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
-        return View(new RegisterVM());
+        return View();
     }
 
     // GET Register
     [HttpPost]
-    public IActionResult Register(RegisterVM registerVM)
+    public IActionResult Register(RegisterUserVM registerUserVM)
     {
         if (!ModelState.IsValid)
         {
-            return View(registerVM);
+            return View(registerUserVM);
         }
 
         // Add User

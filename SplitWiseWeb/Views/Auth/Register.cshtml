@@ -1,5 +1,5 @@
 @using SplitWiseRepository.ViewModels
-@model RegisterVM
+@model RegisterUserVM
 @{
     ViewData["Title"] = "Login";
     Layout = "_LoginLayout";
@@ -13,23 +13,23 @@
         <form asp-action="Register" asp-controller="Auth">
             <!-- First Name -->
             <div class="input-group mt-4 rounded-2 shadow-sm">
-                <input asp-for=@Model.Email class="form-control border-secondary-subtle border-end-0"
+                <input asp-for=@Model.FirstName class="form-control border-secondary-subtle border-end-0"
                     id="inputFirstName" placeholder="First Name*">
                 <span class="input-group-text bg-white border-secondary-subtle border-start-0" id="basic-addon1">
                     <img src="~/images/icons/customer-dark.svg" alt="" class="0">
                 </span>
             </div>
-            <span class="text-danger" asp-validation-for="@Model.Email"></span>
+            <span class="text-danger" asp-validation-for="@Model.FirstName"></span>
 
             <!-- Last Name -->
             <div class="input-group mt-4 rounded-2 shadow-sm">
-                <input asp-for=@Model.Email class="form-control border-secondary-subtle border-end-0" id="inputLastName"
+                <input asp-for=@Model.LastName class="form-control border-secondary-subtle border-end-0" id="inputLastName"
                     placeholder="Last Name*">
                 <span class="input-group-text bg-white border-secondary-subtle border-start-0" id="basic-addon1">
                     <img src="~/images/icons/customer-dark.svg" alt="" class="0">
                 </span>
             </div>
-            <span class="text-danger" asp-validation-for="@Model.Email"></span>
+            <span class="text-danger" asp-validation-for="@Model.LastName"></span>
 
             <!-- Email -->
             <div class="input-group mt-4 rounded-2 shadow-sm">
