@@ -1,4 +1,23 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿// Reinitialize the jquery validation
+function reinitializeValidation() {
+    $("form").each(function () {
+        $.validator.unobtrusive.parse($(this));
+    });
+}
 
-// Write your JavaScript code.
+// Call this function after any AJAX request that adds forms dynamically
+$(document).ajaxComplete(function () {
+    reinitializeValidation();
+});
+
+// Apply validation on input change globally
+$(document).on("keyup change", "form input:not([type=checkbox]):not([type=radio]), form select, form textarea", function () {
+    $(this).valid();
+});
+
+// Prevent submission if validation fails
+$(document).on("submit", "form", function (e) {
+    if (!$(this).valid()) {
+        e.preventDefault();
+    }
+});

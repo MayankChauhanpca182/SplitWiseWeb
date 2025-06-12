@@ -12,7 +12,7 @@ using SplitWiseRepository.Models;
 namespace SplitWiseRepository.Migrations
 {
     [DbContext(typeof(SplitWiseDbContext))]
-    [Migration("20250612053522_InitialMigration")]
+    [Migration("20250612120811_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -78,7 +78,6 @@ namespace SplitWiseRepository.Migrations
                         .HasColumnType("nvarchar(1000)");
 
                     b.Property<string>("ProfileImagePath")
-                        .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 

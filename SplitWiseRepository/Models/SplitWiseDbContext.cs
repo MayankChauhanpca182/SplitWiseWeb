@@ -13,5 +13,4 @@ public class SplitWiseDbContext : DbContext
     }
 
     public virtual DbSet<User> Users { get; set; }
-
 }

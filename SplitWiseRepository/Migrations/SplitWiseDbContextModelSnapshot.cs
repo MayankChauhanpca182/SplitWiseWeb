@@ -75,7 +75,6 @@ namespace SplitWiseRepository.Migrations
                         .HasColumnType("nvarchar(1000)");
 
                     b.Property<string>("ProfileImagePath")
-                        .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 

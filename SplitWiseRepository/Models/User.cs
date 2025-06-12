@@ -7,19 +7,19 @@ public class User : AuditFields
     public int Id { get; set; }
 
     [MaxLength(50)]
-    public String FirstName { get; set; }
+    public string FirstName { get; set; }
 
     [MaxLength(50)]
-    public String LastName { get; set; }
+    public string LastName { get; set; }
 
     [MaxLength(250)]
-    public String EmailAddress { get; set; }
+    public string EmailAddress { get; set; }
 
     [MaxLength(1000)]
-    public String PasswordHash { get; set; }
+    public string PasswordHash { get; set; }
 
     [MaxLength(1000)]
-    public String ProfileImagePath { get; set; }
+    public string? ProfileImagePath { get; set; }
 
     public bool IsEmailConfirmed { get; set; } = false;
     public bool IsActive { get; set; } = true;

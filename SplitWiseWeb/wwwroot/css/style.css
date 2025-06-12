@@ -1,0 +1,32 @@
+/* Login page */
+#loginFormOuter {
+    width: 400px;
+    margin-top: 250px;
+}
+
+#registerFormOuter{
+    width: 600px;
+}
+
+input[type="checkbox"]:checked {
+    border-color: black;
+    background-color: black !important;
+    box-shadow: none;
+}
+
+.form-control:focus,
+input[type="checkbox"],
+button {
+    box-shadow: none !important;
+}
+
+
+@media (max-width: 768px) {
+    #loginFormOuter {
+        width: 300px;
+        margin-top: 250px;
+    }
+    #registerFormOuter{
+        width: 300px;
+    }
+}

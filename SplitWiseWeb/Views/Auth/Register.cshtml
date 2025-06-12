@@ -1,0 +1,78 @@
+@using SplitWiseRepository.ViewModels
+@model RegisterVM
+@{
+    ViewData["Title"] = "Login";
+    Layout = "_LoginLayout";
+}
+
+<div class="d-flex flex-column align-items-center vh-100">
+    <div class="p-4 p-md-5 rounded-4 bg-white shadow my-auto" id="registerFormOuter">
+        <h2 class="mb-4 text-center">SplitWiseWeb</h2>
+
+        <!-- Login -->
+        <form asp-action="Register" asp-controller="Auth">
+            <!-- First Name -->
+            <div class="input-group mt-4 rounded-2 shadow-sm">
+                <input asp-for=@Model.Email class="form-control border-secondary-subtle border-end-0"
+                    id="inputFirstName" placeholder="First Name*">
+                <span class="input-group-text bg-white border-secondary-subtle border-start-0" id="basic-addon1">
+                    <img src="~/images/icons/customer-dark.svg" alt="" class="0">
+                </span>
+            </div>
+            <span class="text-danger" asp-validation-for="@Model.Email"></span>
+
+            <!-- Last Name -->
+            <div class="input-group mt-4 rounded-2 shadow-sm">
+                <input asp-for=@Model.Email class="form-control border-secondary-subtle border-end-0" id="inputLastName"
+                    placeholder="Last Name*">
+                <span class="input-group-text bg-white border-secondary-subtle border-start-0" id="basic-addon1">
+                    <img src="~/images/icons/customer-dark.svg" alt="" class="0">
+                </span>
+            </div>
+            <span class="text-danger" asp-validation-for="@Model.Email"></span>
+
+            <!-- Email -->
+            <div class="input-group mt-4 rounded-2 shadow-sm">
+                <input asp-for=@Model.Email class="form-control border-secondary-subtle border-end-0" id="inputEmail"
+                    placeholder="Email*" autocomplete="username">
+                <span class="input-group-text bg-white border-secondary-subtle border-start-0" id="basic-addon1">
+                    <img src="~/images/icons/customer-dark.svg" alt="" class="0">
+                </span>
+            </div>
+            <span class="text-danger" asp-validation-for="@Model.Email"></span>
+
+            <!-- Password -->
+            <div class="input-group mt-4 rounded-2 shadow-sm">
+                <input asp-for="@Model.Password" type="password" id="inputPassword"
+                    class="form-control border-secondary-subtle border-end-0" placeholder="Password*">
+                <span class="input-group-text bg-white border-secondary-subtle border-start-0">
+                    <img src="~/images/icons/eye-closed.png" alt="" id="eyeButton" class="0" width="15px"
+                        onclick="togglePasswordVisibility(this)">
+                    <i class="bi bi-eye-slash-fill"></i>
+                </span>
+            </div>
+            <span class="text-danger" asp-validation-for="@Model.Password"></span>
+
+            <!-- Confirm Password -->
+            <div class="input-group mt-4 rounded-2 shadow-sm">
+                <input asp-for="@Model.ConfirmPassword" type="password" id="inputConfirmPassword"
+                    class="form-control border-secondary-subtle border-end-0" placeholder="Confirm Password*">
+                <span class="input-group-text bg-white border-secondary-subtle border-start-0">
+                    <img src="~/images/icons/eye-closed.png" alt="" id="eyeButton" class="0" width="15px"
+                        onclick="togglePasswordVisibility(this)">
+                    <i class="bi bi-eye-slash-fill"></i>
+                </span>
+            </div>
+            <span class="text-danger" asp-validation-for="@Model.ConfirmPassword"></span>
+
+            <div class="d-flex flex-column justify-content-center align-items-center gap-3 mt-3">
+                <button type="submit" class="btn btn-dark w-25 shadow">Submit</button>
+                <a asp-action="Login" asp-controller="Auth" class="text-primary link-underline-light">Back to Login</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="/js/auth.js"></script>
+}

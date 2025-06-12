@@ -1,0 +1,61 @@
+@using SplitWiseRepository.ViewModels
+@model LoginVM
+@{
+    ViewData["Title"] = "Login";
+    Layout = "_LoginLayout";
+}
+
+<div class="d-flex flex-column align-items-center vh-100">
+    <div class="p-4 p-md-5 rounded-4 bg-white shadow" id="loginFormOuter">
+        <h2 class="mb-4 text-center">SplitWiseWeb</h2>
+
+        <!-- Login -->
+        <form asp-action="Login" asp-controller="Auth">
+            <!-- Email -->
+            <div class="input-group mt-4 rounded-2 shadow-sm">
+                <input asp-for=@Model.Email class="form-control border-secondary-subtle border-end-0" id="inputEmail"
+                    placeholder="Email*" autocomplete="username">
+                <span class="input-group-text bg-white border-secondary-subtle border-start-0" id="basic-addon1">
+                    <img src="~/images/icons/customer-dark.svg" alt="" class="0">
+                </span>
+            </div>
+            <span class="text-danger" asp-validation-for="@Model.Email"></span>
+
+            <!-- Password -->
+            <div class="input-group mt-4 rounded-2 shadow-sm">
+                <input asp-for="@Model.Password" type="password" id="inputPassword"
+                    class="form-control  border-secondary-subtle border-end-0" placeholder="Password*"
+                    autocomplete="current-password">
+                <span class="input-group-text bg-white border-secondary-subtle border-start-0">
+                    <img src="~/images/icons/eye-closed.png" alt="" id="eyeButton" class="0" width="15px"
+                        onclick="togglePasswordVisibility(this)">
+                    <i class="bi bi-eye-slash-fill"></i>
+                </span>
+            </div>
+            <span class="text-danger" asp-validation-for="@Model.Password"></span>
+
+            <!-- Remember me -->
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="mb-3 form-check mt-3">
+                    <input asp-for="@Model.IsRememberMe" type="checkbox" class="form-check-input border-dark">
+                    <label asp-for="@Model.IsRememberMe" class="form-check-label">Remember me</label>
+                </div>
+
+                <a asp-action="ForgotPassword" asp-controller="Auth" class="text-primary link-underline-light">Forgot Password</a>
+            </div>
+
+            <div class="d-flex flex-column justify-content-center align-items-center gap-3">
+                <button type="submit" class="btn btn-dark w-25 shadow">Login</button>
+                <span>
+                    New user? register
+                    <a asp-action="Register" asp-controller="Auth" class="text-primary link-underline-light">
+                        here</a>
+                </span>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="/js/auth.js"></script>
+}

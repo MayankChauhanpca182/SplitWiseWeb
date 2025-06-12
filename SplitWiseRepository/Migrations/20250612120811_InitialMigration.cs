@@ -21,7 +21,7 @@ namespace SplitWiseRepository.Migrations
                     LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     EmailAddress = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
                     PasswordHash = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
-                    ProfileImagePath = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    ProfileImagePath = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
                     IsEmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     CurrencyId = table.Column<int>(type: "int", nullable: false),
