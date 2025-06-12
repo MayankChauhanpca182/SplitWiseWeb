@@ -1,17 +1,19 @@
 ﻿using System.Diagnostics;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SplitWiseRepository.ViewModels;
-using SplitWiseService.Helpers;
+using SplitWiseService.Services.Interface;
 
 namespace SplitWiseWeb.Controllers;
 
+[Authorize]
 public class AuthController : Controller
 {
-    private readonly ILogger<AuthController> _logger;
-
-    public AuthController(ILogger<AuthController> logger)
+    private readonly IAuthService _authService;
+    public AuthController(IAuthService authService)
     {
-        _logger = logger;
+        _authService = authService;
     }
 
     public IActionResult Index()
@@ -19,7 +21,9 @@ public class AuthController : Controller
         return View();
     }
 
+    #region Login
     // GET Login
+    [AllowAnonymous]
     public IActionResult Login()
     {
         return View();
@@ -27,6 +31,7 @@ public class AuthController : Controller
 
     // POST Login
     [HttpPost]
+    [AllowAnonymous]
     public IActionResult Login(LoginVM loginVM)
     {
         if (!ModelState.IsValid)
@@ -37,16 +42,20 @@ public class AuthController : Controller
         // Redirect to dashboard
         return View(loginVM);
     }
+    #endregion
 
+    #region Register
     // GET Register
+    [AllowAnonymous]
     public IActionResult Register()
     {
         return View();
     }
 
     // GET Register
+    [AllowAnonymous]
     [HttpPost]
-    public IActionResult Register(RegisterUserVM registerUserVM)
+    public async Task<IActionResult> Register(RegisterUserVM registerUserVM)
     {
         if (!ModelState.IsValid)
         {
@@ -54,24 +63,45 @@ public class AuthController : Controller
         }
 
         // Add User
+        await _authService.RegisterUser(registerUserVM);
 
         return RedirectToAction("Login");
     }
+    #endregion
 
+    #region User Verification
+    // GET UserVerification
+    [AllowAnonymous]
+    public IActionResult UserVerification(string token)
+    {
+        return RedirectToAction("Login");
+    }
+    #endregion
+
+    #region Forgot Password
     // GET ForgotPassword
+    [AllowAnonymous]
     public IActionResult ForgotPassword()
     {
         return View();
     }
+    #endregion
 
-    public IActionResult Privacy()
+    #region Logout
+    // GET Logout
+    public IActionResult Logout()
     {
-        return View();
+        return RedirectToAction("Login");
     }
+    #endregion
 
+    #region Error
+    [AllowAnonymous]
+    [Route("/Auth/Error/{code}")]
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
+    public IActionResult Error(int code)
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
+    #endregion
 }

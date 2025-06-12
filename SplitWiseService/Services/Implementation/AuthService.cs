@@ -1,3 +1,5 @@
+using System;
+using Org.BouncyCastle.Tls;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.Repositories.Interface;
 using SplitWiseRepository.ViewModels;
@@ -9,9 +11,12 @@ namespace SplitWiseService.Services.Implementation;
 public class AuthService : IAuthService
 {
     private readonly IGenericRepository<User> _userRepository;
-    public AuthService(IGenericRepository<User> userRepository)
+    private readonly IEmailService _emailService;
+
+    public AuthService(IGenericRepository<User> userRepository, IEmailService emailService)
     {
         _userRepository = userRepository;
+        _emailService = emailService;
     }
 
     public async Task<ResponseVM> RegisterUser(RegisterUserVM registerUserVM)
@@ -30,7 +35,7 @@ public class AuthService : IAuthService
         await _userRepository.Add(user);
 
         // Send Email
-        
+        await _emailService.UserVarificationEmail(registerUserVM.FirstName, registerUserVM.Email);
 
         return new();
     }

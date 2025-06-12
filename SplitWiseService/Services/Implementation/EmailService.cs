@@ -2,6 +2,7 @@ using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
+using SplitWiseService.Helpers;
 using SplitWiseService.Services.Interface;
 
 namespace SplitWiseService.Services.Implementation;
@@ -9,10 +10,14 @@ namespace SplitWiseService.Services.Implementation;
 public class EmailService : IEmailService
 {
     private readonly IConfiguration _configuration;
+    private readonly AesHelper _aesHelper;
+    private readonly UrlBuilder _urlBuilder;
 
-    public EmailService(IConfiguration configuration)
+    public EmailService(IConfiguration configuration, AesHelper aesHelper, UrlBuilder urlBuilder)
     {
         _configuration = configuration;
+        _aesHelper = aesHelper;
+        _urlBuilder = urlBuilder;
     }
 
     public async Task Send(string toEmail, string subject, string body)
@@ -37,6 +42,18 @@ public class EmailService : IEmailService
         // Disconnect SMTP Server
         await smtp.DisconnectAsync(true);
 
+        return;
+    }
+
+    public async Task UserVarificationEmail(string firstName, string email)
+    {
+        string token = _aesHelper.Encrypt(email);
+        string filePath = Path.Combine(Directory.GetCurrentDirectory(), "Templates", "EmailTemplates", "UserVarification.html");
+
+        string verificationLink = await _urlBuilder.Create("UserVerification", "Auth", token);
+
+        string emailBody = File.ReadAllText(filePath).Replace("{name}", firstName).Replace("{link}", verificationLink);
+        await Send(email, "User Verification", emailBody);
         return;
     }
 
