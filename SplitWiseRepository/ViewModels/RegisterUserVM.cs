@@ -14,6 +14,7 @@ public class RegisterUserVM
     [RegularExpression(@"^[A-Za-z\s]+$", ErrorMessage = "Last name must contain only letters.")]
     public string LastName { get; set; } = null!;
 
+    [StringLength(250)]
     [Required(ErrorMessage = "Email is required")]
     [EmailAddress(ErrorMessage = "Enter a valid email address")]
     [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",

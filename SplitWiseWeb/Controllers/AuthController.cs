@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SplitWiseRepository.ViewModels;
+using SplitWiseService.Helpers;
+using SplitWiseService.Services.Implementation;
 using SplitWiseService.Services.Interface;
 
 namespace SplitWiseWeb.Controllers;
@@ -11,6 +13,7 @@ namespace SplitWiseWeb.Controllers;
 public class AuthController : Controller
 {
     private readonly IAuthService _authService;
+
     public AuthController(IAuthService authService)
     {
         _authService = authService;
@@ -26,21 +29,56 @@ public class AuthController : Controller
     [AllowAnonymous]
     public IActionResult Login()
     {
-        return View();
+        string? jwtToken = Request.Cookies["JwtToken"];
+        string? rememberMeToken = Request.Cookies["RememberMeToken"];
+        if (string.IsNullOrEmpty(rememberMeToken) || string.IsNullOrEmpty(jwtToken))
+        {
+            return View();
+        }
+
+        // Redirect to dashboard
+        return RedirectToAction("Index", "Dashboard");
     }
 
     // POST Login
     [HttpPost]
     [AllowAnonymous]
-    public IActionResult Login(LoginVM loginVM)
+    public async Task<IActionResult> Login(LoginVM loginVM)
     {
         if (!ModelState.IsValid)
         {
             return View();
         }
 
+        ResponseVM response = await _authService.ValidateUser(loginVM.Email, loginVM.Password);
+        if (!response.Success)
+        {
+            TempData["errorMessage"] = response.Message;
+            return View(loginVM);
+        }
+        else
+        {
+            TempData["successMessage"] = response.Message;
+        }
+
+        // Set Cookies 
+        CookieOptions options = new CookieOptions
+        {
+            Expires = loginVM.IsRememberMe ? DateTime.Now.AddHours(24) : DateTime.Now.AddHours(1),
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.Strict
+        };
+
+        Response.Cookies.Append("JwtToken", response.Token, options);
+        Response.Cookies.Append("UserName", response.Name, options);
+        if (loginVM.IsRememberMe)
+        {
+            Response.Cookies.Append("RememberMeToken", response.Token, options);
+        }
+
         // Redirect to dashboard
-        return View(loginVM);
+        return RedirectToAction("Index", "Dashboard");
     }
     #endregion
 
@@ -63,7 +101,15 @@ public class AuthController : Controller
         }
 
         // Add User
-        await _authService.RegisterUser(registerUserVM);
+        ResponseVM response = await _authService.RegisterUser(registerUserVM);
+        if (response.Success)
+        {
+            TempData["successMessage"] = response.Message;
+        }
+        else
+        {
+            TempData["errorMessage"] = response.Message;
+        }
 
         return RedirectToAction("Login");
     }
@@ -72,8 +118,23 @@ public class AuthController : Controller
     #region User Verification
     // GET UserVerification
     [AllowAnonymous]
-    public IActionResult UserVerification(string token)
+    public async Task<IActionResult> UserVerification(string token)
     {
+        if (string.IsNullOrEmpty(token))
+        {
+            TempData["errorMessage"] = "Invalid Token";
+            return RedirectToAction("Login");
+        }
+
+        ResponseVM response = await _authService.UserVarification(token);
+        if (response.Success)
+        {
+            TempData["successMessage"] = response.Message;
+        }
+        else
+        {
+            TempData["errorMessage"] = response.Message;
+        }
         return RedirectToAction("Login");
     }
     #endregion
@@ -91,6 +152,12 @@ public class AuthController : Controller
     // GET Logout
     public IActionResult Logout()
     {
+        // Clear Session And Cookies
+        HttpContext.Session.Clear();
+        Response.Cookies.Delete("JwtToken");
+        Response.Cookies.Delete("RememberMeToken");
+        Response.Cookies.Delete("UserName");
+
         return RedirectToAction("Login");
     }
     #endregion

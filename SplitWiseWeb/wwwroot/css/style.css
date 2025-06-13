@@ -1,16 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+:root {
+    --clr-primary: #169271;
+    --clr-primary-dark: #096d54;
+    --clr-mint: #dffaf3;
+    --clr-light-grey: #b7b7b7;
+    --clr-grey: #b0b0b0;
+    --clr-dark-gray: #4a4a4a;
+}
+
+/* Button */
+.btn-primary {
+    --bs-btn-bg: var(--clr-primary) !important;
+    --bs-btn-border-color: var(--clr-primary) !important;
+    --bs-btn-hover-bg: var(--clr-primary-dark) !important;
+    --bs-btn-hover-border-color: var(--clr-primary-dark) !important;
+    --bs-btn-focus-shadow-rgb: 49, 132, 253;
+    --bs-btn-active-bg: var(--clr-primary-dark) !important;
+    --bs-btn-active-border-color: var(--clr-primary-dark) !important;
+}
+
+.text-primary{
+    color: var(--clr-primary) !important;
+}
+
+
+.bg-primary{
+    background-color: var(--clr-primary) !important;
+}
+
+.bg-secondary{
+    background-color: var(--clr-grey) !important;
+}
+
+.bg-secondary-subtle{
+    background-color: var(--clr-light-grey) !important;
+}
+
+
+/* Global */
+body{
+    font-family: "Roboto", sans-serif;
+    background-color: var(--clr-light-grey) !important;
+}
+
+a:hover{
+    text-shadow: 1px 1px 15px #8f8f8f;
+}
+
+
 /* Login page */
 #loginFormOuter {
     width: 400px;
     margin-top: 25vh;
 }
 
-#registerFormOuter{
+#registerFormOuter {
     width: 600px;
 }
 
 input[type="checkbox"]:checked {
-    border-color: black;
-    background-color: black !important;
+    border-color: var(--clr-primary) !important;
+    background-color: var(--clr-primary) !important;
     box-shadow: none;
 }
 
@@ -26,7 +77,8 @@ button {
         width: 300px;
         margin-top: 250px;
     }
-    #registerFormOuter{
+
+    #registerFormOuter {
         width: 300px;
     }
 }

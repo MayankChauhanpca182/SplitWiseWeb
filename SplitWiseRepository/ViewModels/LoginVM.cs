@@ -4,6 +4,7 @@ namespace SplitWiseRepository.ViewModels;
 
 public class LoginVM
 {
+    [StringLength(250)]
     [Required(ErrorMessage = "Email is required")]
     [EmailAddress(ErrorMessage = "Enter a valid email address")]
     [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",

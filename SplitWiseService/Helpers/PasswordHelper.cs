@@ -2,7 +2,7 @@ using BCrypt.Net;
 
 namespace SplitWiseService.Helpers;
 
-public class PasswordHelper
+public static class PasswordHelper
 {
     public static string Hash(string plainPassword)
     {

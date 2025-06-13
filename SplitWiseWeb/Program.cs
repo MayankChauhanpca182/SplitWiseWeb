@@ -21,9 +21,9 @@ builder.Services.AddDbContext<SplitWiseDbContext>(o => o.UseSqlServer(builder.Co
 
 // Ripositories
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 
 // Helpers
-builder.Services.AddScoped<PasswordHelper>();
 builder.Services.AddScoped<AesHelper>();
 builder.Services.AddSingleton<UrlBuilder>();
 
