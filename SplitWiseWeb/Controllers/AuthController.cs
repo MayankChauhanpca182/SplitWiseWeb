@@ -6,7 +6,6 @@ using SplitWiseService.Services.Interface;
 
 namespace SplitWiseWeb.Controllers;
 
-[Authorize]
 public class AuthController : Controller
 {
     private readonly IAuthService _authService;
@@ -18,7 +17,6 @@ public class AuthController : Controller
 
     #region Login
     // GET Login
-    [AllowAnonymous]
     public IActionResult Login()
     {
         string? jwtToken = Request.Cookies["JwtToken"];
@@ -34,12 +32,11 @@ public class AuthController : Controller
 
     // POST Login
     [HttpPost]
-    [AllowAnonymous]
     public async Task<IActionResult> Login(LoginVM loginVM)
     {
         if (!ModelState.IsValid)
         {
-            return View();
+            return View(loginVM);
         }
 
         ResponseVM response = await _authService.ValidateUser(loginVM.Email, loginVM.Password);
@@ -77,14 +74,12 @@ public class AuthController : Controller
 
     #region Register
     // GET Register
-    [AllowAnonymous]
     public IActionResult Register()
     {
         return View();
     }
 
-    // GET Register
-    [AllowAnonymous]
+    // POST Register
     [HttpPost]
     public async Task<IActionResult> Register(RegisterUserVM registerUserVM)
     {
@@ -110,7 +105,6 @@ public class AuthController : Controller
 
     #region User Verification
     // GET UserVerification
-    [AllowAnonymous]
     public async Task<IActionResult> UserVerification(string token)
     {
         if (string.IsNullOrEmpty(token))
@@ -134,8 +128,37 @@ public class AuthController : Controller
 
     #region Forgot Password
     // GET ForgotPassword
-    [AllowAnonymous]
     public IActionResult ForgotPassword()
+    {
+        return View();
+    }
+
+    // POST ForgotPassword
+    [HttpPost]
+    public IActionResult ForgotPassword(LoginVM loginVM)
+    {
+        ModelState.Remove("Password");
+        if (!ModelState.IsValid)
+        {
+            return View(loginVM);
+        }
+
+        // Send email with reset password link
+        
+
+        return RedirectToAction("Login");
+    }
+    #endregion
+
+    #region Reset Password
+    // GET ResetPassword
+    public IActionResult ResetPassword(string token, string upTo)
+    {
+        return View();
+    }
+
+    // POST ResetPassword
+    public IActionResult ResetPassword(RegisterUserVM registerUserVM)
     {
         return View();
     }
@@ -156,7 +179,6 @@ public class AuthController : Controller
     #endregion
 
     #region Error
-    [AllowAnonymous]
     [Route("/Auth/Error/{code}")]
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error(int code)
@@ -164,7 +186,6 @@ public class AuthController : Controller
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 
-    [AllowAnonymous]
     public IActionResult HandleExceptionWithToaster(string message)
     {
         TempData["ToastError"] = message;

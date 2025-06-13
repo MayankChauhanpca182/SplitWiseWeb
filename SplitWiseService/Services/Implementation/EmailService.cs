@@ -54,7 +54,19 @@ public class EmailService : IEmailService
 
         // string emailBody = File.ReadAllText(filePath).Replace("{name}", firstName).Replace("{link}", verificationLink);
         string emailBody = string.Format(File.ReadAllText(filePath), firstName, verificationLink);
-        await Send(email, "User Verification", emailBody);
+        await Send(email, "User verification", emailBody);
+        return;
+    }
+
+    public async Task ResetPasswordEmail(string email)
+    {
+        string token = _aesHelper.Encrypt(email);
+        string upTo = _aesHelper.Encrypt(DateTime.Now.Ticks.ToString());
+        string filePath = Path.Combine(Directory.GetCurrentDirectory(), "Templates", "EmailTemplates", "ResetPassword.html");
+        string resetLink = await _urlBuilder.Create("ResetPassword", "Auth", token, upTo);
+
+        string emailBody = string.Format(File.ReadAllText(filePath), resetLink);
+        await Send(email, "Reset password", emailBody);
         return;
     }
 

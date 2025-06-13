@@ -16,13 +16,13 @@ public class UrlBuilder
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task<string> Create(string action, string controller, string? token = null)
+    public async Task<string> Create(string action, string controller, string? token = null, string? upTo = null)
     {
         HttpContext httpContext = _httpContextAccessor.HttpContext;
         ActionContext actionContext = new ActionContext(httpContext, httpContext.GetRouteData(), new Microsoft.AspNetCore.Mvc.Abstractions.ActionDescriptor());
         IUrlHelper urlHelper = _urlHelperFactory.GetUrlHelper(actionContext);
 
-        string verificationLink = urlHelper.Action(action, controller, new { token }, httpContext.Request.Scheme)!;
+        string verificationLink = urlHelper.Action(action, controller, new { token, upTo }, httpContext.Request.Scheme)!;
         return verificationLink;
     }
 

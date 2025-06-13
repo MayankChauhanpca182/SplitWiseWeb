@@ -120,7 +120,7 @@ public class AuthService : IAuthService
     {
         User? user = await _userRepository.Get(u => u.EmailAddress.ToLower() == email.ToLower() && u.DeactivatedAt == null);
         ResponseVM response = new ResponseVM();
-        
+
         if (user == null)
         {
             response.Success = false;
@@ -146,4 +146,24 @@ public class AuthService : IAuthService
         return response;
     }
 
+    public async Task<ResponseVM> ForgotPassword(string email)
+    {
+        User? user = await _userRepository.Get(u => u.EmailAddress.ToLower() == email.ToLower() && u.DeactivatedAt == null);
+        ResponseVM response = new ResponseVM();
+
+        if (user == null)
+        {
+            response.Success = false;
+            response.Message = NotificationMessages.UserNotFound;
+        }
+        else
+        {
+            // Send email
+            await _emailService.ResetPasswordEmail(email);
+            response.Success = true;
+            // response.Message = NotificationMessages.;
+        }
+
+        return response;
+    }
 }
