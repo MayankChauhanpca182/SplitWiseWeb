@@ -7,14 +7,19 @@
 
 <div class="d-flex flex-column align-items-center vh-100">
     <div class="p-4 p-md-5 rounded-4 bg-white shadow" id="loginFormOuter">
-        <h2 class="mb-4 text-center text-primary">SplitWiseWeb</h2>
+        <div class="d-flex justify-content-center">
+            <div class="d-flex align-items-center gap-1">
+                <img src="/images/SplitWiseWeb.png" alt="" width="50px" height="50px">
+                <h2 class="m-0 text-center text-primary">SplitWiseWeb</h2>
+            </div>
+        </div>
 
         <!-- Login -->
         <form asp-action="Login" asp-controller="Auth">
             <!-- Email -->
             <div class="input-group mt-4 rounded-2 shadow-sm">
                 <input asp-for=@Model.Email class="form-control border-secondary-subtle border-end-0" id="inputEmail"
-                    placeholder="Email*" autocomplete="username">
+                    placeholder="Email" autocomplete="username">
                 <span class="input-group-text bg-white border-secondary-subtle border-start-0" id="basic-addon1">
                     <img src="~/images/icons/customer-dark.svg" alt="" class="0">
                 </span>
@@ -24,7 +29,7 @@
             <!-- Password -->
             <div class="input-group mt-4 rounded-2 shadow-sm">
                 <input asp-for="@Model.Password" type="password" id="inputPassword"
-                    class="form-control  border-secondary-subtle border-end-0" placeholder="Password*"
+                    class="form-control  border-secondary-subtle border-end-0" placeholder="Password"
                     autocomplete="current-password">
                 <span class="input-group-text bg-white border-secondary-subtle border-start-0">
                     <img src="~/images/icons/eye-closed.png" alt="" id="eyeButton" class="0" width="15px"
@@ -41,13 +46,14 @@
                     <label asp-for="@Model.IsRememberMe" class="form-check-label">Remember me</label>
                 </div>
 
-                <a asp-action="ForgotPassword" asp-controller="Auth" class="text-primary link-underline-light">Forgot Password</a>
+                <a asp-action="ForgotPassword" asp-controller="Auth" class="text-primary link-underline-light">Forgot
+                    password</a>
             </div>
 
             <div class="d-flex flex-column justify-content-center align-items-center gap-3">
-                <button type="submit" class="btn btn-primary w-25 shadow">Login</button>
+                <button type="submit" class="btn btn-primary w-auto shadow">Login</button>
                 <span>
-                    New user? register
+                    New user? Register
                     <a asp-action="Register" asp-controller="Auth" class="text-primary link-underline-light">
                         here</a>
                 </span>

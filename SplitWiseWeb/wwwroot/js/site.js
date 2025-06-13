@@ -21,3 +21,22 @@ $(document).on("submit", "form", function (e) {
         e.preventDefault();
     }
 });
+
+// Loading Spinner
+$("#loader").show();
+
+$(document).ready(function () {
+  $("#loader").hide();
+
+  $(document).ajaxStop(function () {
+    $("#loader").hide();
+  });
+
+  $(document).on("submit", "form", function (e) {
+    $("#loader").show();
+  });
+
+  $(window).on("load", function () {
+    $("#loader").hide();
+  });
+});

@@ -1,38 +1,39 @@
 using System.ComponentModel.DataAnnotations;
+using SplitWiseRepository.Constants;
 
 namespace SplitWiseRepository.ViewModels;
 
 public class RegisterUserVM
 {
-    [Required(ErrorMessage = "First name is required")]
-    [StringLength(30, ErrorMessage = "First name cannot exceed 30 characters")]
-    [RegularExpression(@"^[A-Za-z\s]+$", ErrorMessage = "First name must contain only letters.")]
+    [Required(ErrorMessage = ValidationMessages.FirstNameRequired)]
+    [StringLength(50, ErrorMessage = ValidationMessages.FirstNameLength)]
+    [RegularExpression(ValidationRegex.NameRegex, ErrorMessage = ValidationMessages.ValidFirstName)]
     public string FirstName { get; set; } = null!;
 
-    [Required(ErrorMessage = "Last name is required")]
-    [StringLength(30, ErrorMessage = "Last name cannot exceed 30 characters")]
-    [RegularExpression(@"^[A-Za-z\s]+$", ErrorMessage = "Last name must contain only letters.")]
+    [Required(ErrorMessage = ValidationMessages.LastNameRequired)]
+    [StringLength(50, ErrorMessage = ValidationMessages.LastNameLength)]
+    [RegularExpression(ValidationRegex.NameRegex, ErrorMessage = ValidationMessages.ValidLastName)]
     public string LastName { get; set; } = null!;
 
     [StringLength(250)]
-    [Required(ErrorMessage = "Email is required")]
-    [EmailAddress(ErrorMessage = "Enter a valid email address")]
-    [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
-        ErrorMessage = "Enter a valid email address")]
+    [Required(ErrorMessage = ValidationMessages.EmailRequired)]
+    [EmailAddress(ErrorMessage = ValidationMessages.ValidEmail)]
+    [RegularExpression(ValidationRegex.EmailRegex,
+        ErrorMessage = ValidationMessages.ValidEmail)]
     public string Email { get; set; } = null!;
 
-    [Required(ErrorMessage = "Password is required")]
+    [Required(ErrorMessage = ValidationMessages.PasswordRequired)]
     [DataType(DataType.Password)]
-    [MinLength(8, ErrorMessage = "Password must be at least 8 characters long.")]
-    [RegularExpression("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]+$",
-        ErrorMessage = "Password must contain at least one letter, one number, and one special character.")]
+    [MinLength(8, ErrorMessage = ValidationMessages.PasswordLength)]
+    [RegularExpression(ValidationRegex.PasswordRegex,
+        ErrorMessage = ValidationMessages.ValidPassword)]
     public string Password { get; set; } = null!;
 
-    [Required(ErrorMessage = "Confirm Password is required")]
+    [Required(ErrorMessage = ValidationMessages.ConfirmPasswordRequired)]
     [DataType(DataType.Password)]
-    [Compare("Password", ErrorMessage = "Password and Confirmation Password must match.")]
-    [MinLength(8, ErrorMessage = "Password must be at least 8 characters long.")]
-    [RegularExpression("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]+$",
-        ErrorMessage = "Password must contain at least one letter, one number, and one special character.")]
+    [Compare("Password", ErrorMessage = ValidationMessages.MatchPassword)]
+    [MinLength(8, ErrorMessage = ValidationMessages.ConfirmPasswordLength)]
+    [RegularExpression(ValidationRegex.PasswordRegex,
+        ErrorMessage = ValidationMessages.ValidConfirmPassword)]
     public string ConfirmPassword { get; set; } = null!;
 }

@@ -1,6 +1,3 @@
-using System;
-using Microsoft.Extensions.DependencyModel.Resolution;
-using Org.BouncyCastle.Tls;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.Repositories.Interface;
 using SplitWiseRepository.ViewModels;
@@ -29,7 +26,6 @@ public class AuthService : IAuthService
 
     public async Task<ResponseVM> RegisterUser(RegisterUserVM registerUserVM)
     {
-
         try
         {
             // Begin transaction
@@ -41,7 +37,7 @@ public class AuthService : IAuthService
             if (existingUser != null)
             {
                 response.Success = false;
-                response.Message = NotificationMessages.Exist.Replace("{0}", $"Account with email {registerUserVM.Email}");
+                response.Message = NotificationMessages.EmailExists.Replace("{0}", registerUserVM.Email);
                 return response;
             }
 
@@ -52,7 +48,9 @@ public class AuthService : IAuthService
                 LastName = registerUserVM.LastName,
                 EmailAddress = registerUserVM.Email,
                 PasswordHash = PasswordHelper.Hash(registerUserVM.Password),
-                CurrencyId = 1
+                CurrencyId = 1,
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now
             };
 
             // Add User
@@ -76,7 +74,7 @@ public class AuthService : IAuthService
         }
     }
 
-    public async Task<ResponseVM> UserVarification(string token)
+    public async Task<ResponseVM> UserVerification(string token)
     {
         try
         {
@@ -89,19 +87,21 @@ public class AuthService : IAuthService
             if (user == null)
             {
                 response.Success = false;
-                response.Message = "Invalid Token.";
+                response.Message = NotificationMessages.Invalid.Replace("{0}", "Token");
             }
             else if (user.IsEmailConfirmed)
             {
                 response.Success = true;
-                response.Message = "Email is already verified.";
+                response.Message = NotificationMessages.EmailNotConfirmed;
             }
             else
             {
                 user.IsEmailConfirmed = true;
+                user.UpdatedAt = DateTime.Now;
                 await _userRepository.Update(user);
+
                 response.Success = true;
-                response.Message = "Email verified successfully.";
+                response.Message = NotificationMessages.EmailVerificationSuccess;
             }
 
             // Commit transaction
@@ -118,29 +118,29 @@ public class AuthService : IAuthService
 
     public async Task<ResponseVM> ValidateUser(string email, string password)
     {
-        User? user = await _userRepository.Get(u => u.EmailAddress == email && u.DeactivatedAt == null);
-        ResponseVM response = new();
+        User? user = await _userRepository.Get(u => u.EmailAddress.ToLower() == email.ToLower() && u.DeactivatedAt == null);
+        ResponseVM response = new ResponseVM();
+        
         if (user == null)
         {
             response.Success = false;
-            response.Message = "User not found.";
+            response.Message = NotificationMessages.UserNotFound;
         }
         else if (!user.IsEmailConfirmed)
         {
             response.Success = false;
-            response.Message = "Email is not verified.";
+            response.Message = NotificationMessages.EmailNotVerified;
         }
         else if (PasswordHelper.Verify(password, user.PasswordHash))
         {
             response.Success = true;
-            response.Message = $"Hello {user.FirstName}";
             response.Token = _jwtService.GenerateToken(user);
-            response.Name = user.FirstName;
+            response.Name = $"{user.FirstName} {user.LastName}";
         }
         else
         {
             response.Success = false;
-            response.Message = "Invalid credentials.";
+            response.Message = NotificationMessages.LoginFailed;
         }
 
         return response;

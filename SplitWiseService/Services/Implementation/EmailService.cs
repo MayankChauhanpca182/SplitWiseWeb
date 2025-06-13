@@ -52,7 +52,8 @@ public class EmailService : IEmailService
 
         string verificationLink = await _urlBuilder.Create("UserVerification", "Auth", token);
 
-        string emailBody = File.ReadAllText(filePath).Replace("{name}", firstName).Replace("{link}", verificationLink);
+        // string emailBody = File.ReadAllText(filePath).Replace("{name}", firstName).Replace("{link}", verificationLink);
+        string emailBody = string.Format(File.ReadAllText(filePath), firstName, verificationLink);
         await Send(email, "User Verification", emailBody);
         return;
     }

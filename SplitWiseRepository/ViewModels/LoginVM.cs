@@ -1,19 +1,19 @@
 using System.ComponentModel.DataAnnotations;
+using SplitWiseRepository.Constants;
 
 namespace SplitWiseRepository.ViewModels;
 
 public class LoginVM
 {
     [StringLength(250)]
-    [Required(ErrorMessage = "Email is required")]
-    [EmailAddress(ErrorMessage = "Enter a valid email address")]
-    [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
-        ErrorMessage = "Enter a valid email address")]
+    [Required(ErrorMessage = ValidationMessages.EmailRequired)]
+    [EmailAddress(ErrorMessage = ValidationMessages.ValidEmail)]
+    [RegularExpression(ValidationRegex.EmailRegex, ErrorMessage = ValidationMessages.ValidEmail)]
     public string Email { get; set; } = null!;
 
-    [Required(ErrorMessage = "Password is required")]
+    [Required(ErrorMessage = ValidationMessages.PasswordRequired)]
     [DataType(DataType.Password)]
-    [MinLength(8, ErrorMessage = "Password must be at least 8 characters long.")]
+    [MinLength(8, ErrorMessage = ValidationMessages.PasswordLength)]
     public string Password { get; set; } = null!;
 
     public bool IsRememberMe { get; set; }

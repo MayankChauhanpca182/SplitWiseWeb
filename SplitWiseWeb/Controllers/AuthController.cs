@@ -1,10 +1,7 @@
 ﻿using System.Diagnostics;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SplitWiseRepository.ViewModels;
-using SplitWiseService.Helpers;
-using SplitWiseService.Services.Implementation;
 using SplitWiseService.Services.Interface;
 
 namespace SplitWiseWeb.Controllers;
@@ -19,11 +16,6 @@ public class AuthController : Controller
         _authService = authService;
     }
 
-    public IActionResult Index()
-    {
-        return View();
-    }
-
     #region Login
     // GET Login
     [AllowAnonymous]
@@ -31,7 +23,7 @@ public class AuthController : Controller
     {
         string? jwtToken = Request.Cookies["JwtToken"];
         string? rememberMeToken = Request.Cookies["RememberMeToken"];
-        if (string.IsNullOrEmpty(rememberMeToken) || string.IsNullOrEmpty(jwtToken))
+        if (string.IsNullOrEmpty(rememberMeToken) && string.IsNullOrEmpty(jwtToken))
         {
             return View();
         }
@@ -72,6 +64,7 @@ public class AuthController : Controller
 
         Response.Cookies.Append("JwtToken", response.Token, options);
         Response.Cookies.Append("UserName", response.Name, options);
+        
         if (loginVM.IsRememberMe)
         {
             Response.Cookies.Append("RememberMeToken", response.Token, options);
@@ -126,7 +119,7 @@ public class AuthController : Controller
             return RedirectToAction("Login");
         }
 
-        ResponseVM response = await _authService.UserVarification(token);
+        ResponseVM response = await _authService.UserVerification(token);
         if (response.Success)
         {
             TempData["successMessage"] = response.Message;
@@ -169,6 +162,21 @@ public class AuthController : Controller
     public IActionResult Error(int code)
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+    }
+
+    [AllowAnonymous]
+    public IActionResult HandleExceptionWithToaster(string message)
+    {
+        TempData["ToastError"] = message;
+
+        string referer = Request.Headers["Referer"].ToString();
+
+        if (string.IsNullOrEmpty(referer))
+        {
+            referer = Url.Action("Login", "Auth") ?? "/";
+        }
+
+        return Redirect(referer);
     }
     #endregion
 }

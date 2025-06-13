@@ -10,7 +10,6 @@ public class UrlBuilder
     private readonly IUrlHelperFactory _urlHelperFactory;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-
     public UrlBuilder(IUrlHelperFactory urlHelperFactory, IHttpContextAccessor httpContextAccessor)
     {
         _urlHelperFactory = urlHelperFactory;

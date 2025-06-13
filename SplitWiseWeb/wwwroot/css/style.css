@@ -4,7 +4,7 @@
     --clr-primary: #169271;
     --clr-primary-dark: #096d54;
     --clr-mint: #dffaf3;
-    --clr-light-grey: #b7b7b7;
+    --clr-light-grey: #e1e1e1;
     --clr-grey: #b0b0b0;
     --clr-dark-gray: #4a4a4a;
 }
@@ -20,31 +20,40 @@
     --bs-btn-active-border-color: var(--clr-primary-dark) !important;
 }
 
-.text-primary{
+.text-primary {
     color: var(--clr-primary) !important;
 }
 
 
-.bg-primary{
+.bg-primary {
     background-color: var(--clr-primary) !important;
 }
 
-.bg-secondary{
+.bg-primary-subtle {
+    background-color: var(--clr-mint) !important;
+}
+
+.bg-secondary {
     background-color: var(--clr-grey) !important;
 }
 
-.bg-secondary-subtle{
+.bg-secondary-subtle {
     background-color: var(--clr-light-grey) !important;
 }
 
 
 /* Global */
-body{
+body {
     font-family: "Roboto", sans-serif;
-    background-color: var(--clr-light-grey) !important;
+    background-color: var(--clr-light-grey);
 }
 
-a:hover{
+#loginLayoutBody {
+    background-image: url("/images/4077186_17580.jpg");
+    background-repeat: no-repeat;
+}
+
+a:hover {
     text-shadow: 1px 1px 15px #8f8f8f;
 }
 
@@ -72,7 +81,7 @@ button {
 }
 
 
-@media (max-width: 768px) {
+@media (max-width: 576px) {
     #loginFormOuter {
         width: 300px;
         margin-top: 250px;
@@ -82,3 +91,13 @@ button {
         width: 300px;
     }
 }
+
+
+/* Navbar */
+.navbar-toggler{
+    left: 0;
+    position: relative;
+}
+
+
+/* Dashboard */

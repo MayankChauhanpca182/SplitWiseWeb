@@ -9,6 +9,7 @@ using SplitWiseRepository.Repositories.Interface;
 using SplitWiseService.Helpers;
 using SplitWiseService.Services.Implementation;
 using SplitWiseService.Services.Interface;
+using SplitWiseWeb.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -104,6 +105,9 @@ app.UseSession();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Global exception handler
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.MapControllerRoute(
     name: "default",

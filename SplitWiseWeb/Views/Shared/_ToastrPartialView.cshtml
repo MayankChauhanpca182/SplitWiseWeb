@@ -4,13 +4,12 @@
 <script>
   toastr.options = {
     'closeButton': true,
-    'debug': false,
     'newestOnTop': false,
     'progressBar': true,
     'positionClass': 'toast-top-right',
     'preventDuplicates': false,
-    'showDuration': '1000',
-    'hideDuration': '1000',
+    'showDuration': '1500',
+    'hideDuration': '1500',
     'timeOut': '3000',
     'extendedTimeOut': '1000',
     'showEasing': 'swing',
@@ -33,13 +32,13 @@
 
 <script>
   $(document).ready(function () {
-    // 1. Show toaster if TempData contains error (normal request)
+    // Show toaster if TempData contains error (normal request)
     let error = '@TempData["ToastError"]';
     if (error && error.trim() !== "") {
       toastr.error(error);
     }
 
-    // 2. Global AJAX error catcher
+    // Global AJAX error catcher
     $(document).ajaxComplete(function (event, xhr, settings) {
       if (xhr.getResponseHeader("X-Error") === "true") {
         const response = xhr.responseJSON;
