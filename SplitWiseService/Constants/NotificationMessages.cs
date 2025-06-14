@@ -55,4 +55,8 @@ public static class NotificationMessages
 
     // Password reset success
     public const string PasswordResetSuccess = "Your password has been reset successfully.";
+
+    // Email subjects
+    public const string UserVerificationSubject = "Almost There! Verify Your Email to Activate Your Account";
+    public const string PasswordResetSubject = "Trouble Logging In? Reset Your Password";
 }

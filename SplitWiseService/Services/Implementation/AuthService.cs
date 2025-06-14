@@ -158,11 +158,12 @@ public class AuthService : IAuthService
         }
         else
         {
-            // // Generate a guid token nad store in Db
-            // string token = Guid.NewGuid().ToString();
+            // Generate a guid token 
+            string token = Guid.NewGuid().ToString();
+            // store in DB
 
-            // // Send email
-            // await _emailService.ResetPasswordEmail(email, token);
+            // Send email
+            await _emailService.ResetPasswordEmail(user.FirstName, email, token);
             response.Success = true;
             response.Message = NotificationMessages.EmailSentSuccessfully;
         }

@@ -156,15 +156,15 @@ public class AuthController : Controller
         }
 
         // Send email with reset password link
-        // ResponseVM response = await _authService.ForgotPassword(loginVM.Email);
-        // if (response.Success)
-        // {
-        //     TempData["successMessage"] = response.Message;
-        // }
-        // else
-        // {
-        //     TempData["errorMessage"] = response.Message;
-        // }
+        ResponseVM response = await _authService.ForgotPassword(loginVM.Email);
+        if (response.Success)
+        {
+            TempData["successMessage"] = response.Message;
+        }
+        else
+        {
+            TempData["errorMessage"] = response.Message;
+        }
 
         return RedirectToAction("Login");
     }

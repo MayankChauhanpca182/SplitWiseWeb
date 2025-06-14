@@ -2,6 +2,7 @@ using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
+using SplitWiseService.Constants;
 using SplitWiseService.Helpers;
 using SplitWiseService.Services.Interface;
 
@@ -35,6 +36,7 @@ public class EmailService : IEmailService
         // Configure SMTP Server
         using SmtpClient smtp = new SmtpClient();
         await smtp.ConnectAsync(emailConfigurations["SmtpServer"], int.Parse(emailConfigurations["Port"]), SecureSocketOptions.StartTls);
+        await smtp.AuthenticateAsync(emailConfigurations["SenderEmail"], emailConfigurations["Password"]);
 
         // Send Email
         await smtp.SendAsync(email);
@@ -48,24 +50,29 @@ public class EmailService : IEmailService
     public async Task UserVarificationEmail(string firstName, string email)
     {
         string token = _aesHelper.Encrypt(email);
-        string filePath = Path.Combine(Directory.GetCurrentDirectory(), "Templates", "EmailTemplates", "UserVarification.html");
-
+        string fileText = GetEmailTemplate("UserVarification.html");
         string verificationLink = await _urlBuilder.Create("UserVerification", "Auth", token);
 
-        // string emailBody = File.ReadAllText(filePath).Replace("{name}", firstName).Replace("{link}", verificationLink);
-        string emailBody = string.Format(File.ReadAllText(filePath), firstName, verificationLink);
-        await Send(email, "User verification", emailBody);
+        string emailBody = fileText.Replace("{name}", firstName).Replace("{link}", verificationLink);
+        await Send(email, NotificationMessages.UserVerificationSubject, emailBody);
         return;
     }
 
-    public async Task ResetPasswordEmail(string email, string token)
+    public async Task ResetPasswordEmail(string firstName, string email, string token)
     {
-        string filePath = Path.Combine(Directory.GetCurrentDirectory(), "Templates", "EmailTemplates", "ResetPassword.html");
+        string fileText = GetEmailTemplate("ResetPassword.html");
         string resetLink = await _urlBuilder.Create("ResetPassword", "Auth", token);
 
-        string emailBody = string.Format(File.ReadAllText(filePath), resetLink);
-        await Send(email, "Reset password", emailBody);
+        string emailBody = fileText.Replace("{name}", firstName).Replace("{link}", resetLink);
+        await Send(email, NotificationMessages.PasswordResetSubject, emailBody);
         return;
+    }
+
+    private string GetEmailTemplate(string fileName)
+    {
+        string layoutPath = Path.Combine(Directory.GetCurrentDirectory(), "Templates", "EmailTemplates", "EmailLayout.html");
+        string filePath = Path.Combine(Directory.GetCurrentDirectory(), "Templates", "EmailTemplates", fileName);
+        return File.ReadAllText(layoutPath).Replace("{content}", File.ReadAllText(filePath));
     }
 
 }
