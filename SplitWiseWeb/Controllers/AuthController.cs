@@ -69,8 +69,11 @@ public class AuthController : Controller
 
         Response.Cookies.Append("JwtToken", response.StringValue, options);
         Response.Cookies.Append("UserName", $"{user.FirstName} {user.LastName}", options);
-        Response.Cookies.Append("ProfileImageUrl", user.ProfileImagePath, options);
 
+        if (!string.IsNullOrEmpty(user.ProfileImagePath))
+        {
+            Response.Cookies.Append("ProfileImageUrl", user.ProfileImagePath, options);
+        }
         if (loginVM.IsRememberMe)
         {
             Response.Cookies.Append("RememberMeToken", response.StringValue, options);

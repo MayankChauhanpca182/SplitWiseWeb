@@ -5,36 +5,37 @@ public static class NotificationMessages
     // Register success
     public const string RegisterSuccess = "Welcome aboard! Just one more step—please verify your email to activate your account.";
 
-    // Login success
+    // Login
     public const string LoginSuccess = "You have successfully logged in.";
-
-    // Login fail
     public const string LoginFailed = "We couldn’t log you in. Please make sure your credentials are correct.";
 
     // CRUD success
-    public const string Created = "{0} added successfully!";
-    public const string Saved = "{0} saved successfully!";
-    public const string Updated = "{0} updated successfully!";
-    public const string Deleted = "{0} deleted successfully!";
+    public const string Created = "{0} has been added successfully.";
+    public const string Saved = "{0} has been saved successfully.";
+    public const string Updated = "{0} has been updated successfully.";
+    public const string Deleted = "{0} has been deleted successfully.";
 
     // CRUD fail
-    public const string Exist = "{0} already exists";
-    public const string SaveFailed = "Failed Adding {0}";
-    public const string UpdateFailed = "Failed Updating {0}";
-    public const string DeleteFailed = "Failed Deleting {0}";
+    public const string Exist = "{0} already exists.";
+    public const string SaveFailed = "Failed to add {0}." + TryAgain;
+    public const string UpdateFailed = "Failed to update {0}." + TryAgain;
+    public const string DeleteFailed = "Failed to delete {0}." + TryAgain;
 
-    // Email sending
-    public const string EmailSendingFailed = "Failed to send the email. Please try again.";
-    public const string EmailSentSuccessfully = "Email has been sent successfully!";
+    // Try again
+    public const string TryAgain = " Please try again later.";
 
-    // Invalid
-    public const string Invalid = "Invalid {0}";
+    // Email Notifications
+    public const string EmailSendingFailed = "Failed to send the email." + TryAgain;
+    public const string EmailSentSuccessfully = "Email sent successfully.";
+
+    // Validation
+    public const string Invalid = "Invalid {0}.";
 
     // Not found
-    public const string NotFound = "{0} not found";
+    public const string NotFound = "{0} not found.";
 
     // Unauthorize
-    public const string UnauthorizeUser = "You are unauthorize";
+    public const string UnauthorizeUser = "You are not authorized to perform this action.";
 
     // User not found
     public const string UserNotFound = "Oops! We couldn’t find a user with that information.";
@@ -45,14 +46,12 @@ public static class NotificationMessages
     public const string EmailVerificationSuccess = "Email has been verified successfully.";
     public const string EmailExists = "Looks like you've already signed up with {0}. Try logging in instead.";
 
-    // Internal server error
-    public const string InternalServerError = "Internal server error. Please try again later.";
-
-    // Unhandled exception
-    public const string UnhandledException = "An unhandled exception occurred.";
+    // System errors
+    public const string InternalServerError = "Something went wrong." + TryAgain;
+    public const string UnhandledException = "An unexpected error occurred.";
 
     // Link expired
-    public const string LinkExpired = "The link has been expired";
+    public const string LinkExpired = "The link has expired. Please request a new one.";
 
     // Password reset success
     public const string PasswordResetSuccess = "Your password has been reset successfully.";

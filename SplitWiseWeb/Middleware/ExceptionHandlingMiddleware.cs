@@ -2,20 +2,21 @@ using System.Net;
 using System.Net.Mail;
 using System.Text.Json;
 using SplitWiseService.Constants;
+using SplitWiseService.Services.Interface;
 
 namespace SplitWiseWeb.Middleware;
 
 public class ExceptionHandlingMiddleware
 {
     private readonly RequestDelegate _next;
-    private readonly ILogger<ExceptionHandlingMiddleware> _logger;
+    private readonly IServiceScopeFactory _scopeFactory;
 
-    public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
+    public ExceptionHandlingMiddleware(RequestDelegate next, IServiceScopeFactory serviceScopeFactory)
     {
         _next = next;
-        _logger = logger;
+        _scopeFactory = serviceScopeFactory;
     }
-    
+
     public async Task InvokeAsync(HttpContext context)
     {
         try
@@ -32,6 +33,8 @@ public class ExceptionHandlingMiddleware
     {
         HttpStatusCode code = 0;
         string message;
+
+        string exType = exception.GetType().Name;
  
         switch (exception)
         {
@@ -50,7 +53,9 @@ public class ExceptionHandlingMiddleware
         }
  
         // Log Exception
-        _logger.LogError(exception, NotificationMessages.UnhandledException);
+        await using AsyncServiceScope scope = _scopeFactory.CreateAsyncScope();
+        IExceptionLogService exceptionService = scope.ServiceProvider.GetRequiredService<IExceptionLogService>();
+        await exceptionService.LogException(exception, context);
 
         bool isAjaxRequest = context.Request.Headers["X-Requested-With"] == "XMLHttpRequest";
  
