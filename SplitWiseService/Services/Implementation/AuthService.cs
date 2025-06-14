@@ -1,3 +1,4 @@
+using Org.BouncyCastle.Tls;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.Repositories.Interface;
 using SplitWiseRepository.ViewModels;
@@ -134,8 +135,7 @@ public class AuthService : IAuthService
         else if (PasswordHelper.Verify(password, user.PasswordHash))
         {
             response.Success = true;
-            response.Token = _jwtService.GenerateToken(user);
-            response.Name = $"{user.FirstName} {user.LastName}";
+            response.StringValue = _jwtService.GenerateToken(user);
         }
         else
         {
@@ -158,12 +158,85 @@ public class AuthService : IAuthService
         }
         else
         {
-            // Send email
-            await _emailService.ResetPasswordEmail(email);
+            // // Generate a guid token nad store in Db
+            // string token = Guid.NewGuid().ToString();
+
+            // // Send email
+            // await _emailService.ResetPasswordEmail(email, token);
             response.Success = true;
-            // response.Message = NotificationMessages.;
+            response.Message = NotificationMessages.EmailSentSuccessfully;
         }
 
         return response;
+    }
+
+    public async Task<ResponseVM> ValidatePasswordResetToken(string token)
+    {
+        try
+        {
+            // Begin transaction
+            await _transaction.Begin();
+            ResponseVM response = new ResponseVM();
+
+            // Fetch password reset token token from DB and validate 
+            
+            // long difference = resetToken.Expiry.Subtract(DateTime.Now).Ticks;
+            // if (difference > 0)
+            // {
+            //     response.Success = true;
+            // }
+            // else
+            // {
+            //     response.Success = false;
+            //     response.Message = NotificationMessages.LinkExpired.Replace("{0}", "Link");
+            // }
+
+            // Commit transaction
+            await _transaction.Commit();
+            return response;
+        }
+        catch
+        {
+            // Rollback transaction
+            await _transaction.Rollback();
+            throw;
+        }
+    }
+
+    public async Task<ResponseVM> ResetPassword(RegisterUserVM registerUserVM)
+    {
+        try
+        {
+            // Begin transaction
+            await _transaction.Begin();
+
+            ResponseVM response = new ResponseVM();
+            User? user = await _userRepository.Get(u => u.EmailAddress.ToLower() == registerUserVM.Email.ToLower() && u.DeactivatedAt == null && u.IsEmailConfirmed);
+
+            if (user == null)
+            {
+                response.Success = false;
+                response.Message = NotificationMessages.UserNotFound;
+            }
+            else
+            {
+                // Update password
+                user.PasswordHash = PasswordHelper.Hash(registerUserVM.Password);
+                user.UpdatedAt = DateTime.Now;
+                await _userRepository.Update(user);
+
+                response.Success = true;
+                response.Message = NotificationMessages.PasswordResetSuccess;
+            }
+            // Commit transaction
+            await _transaction.Commit();
+            return response;
+        }
+        catch
+        {
+            // Rollback transaction
+            await _transaction.Rollback();
+            throw;
+        }
     }
 }

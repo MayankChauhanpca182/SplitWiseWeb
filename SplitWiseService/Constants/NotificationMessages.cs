@@ -25,7 +25,7 @@ public static class NotificationMessages
 
     // Email sending
     public const string EmailSendingFailed = "Failed to send the email. Please try again.";
-    public const string EmailSentSuccessfully = "Email sent successfully!";
+    public const string EmailSentSuccessfully = "Email has been sent successfully!";
 
     // Invalid
     public const string Invalid = "Invalid {0}";
@@ -50,4 +50,10 @@ public static class NotificationMessages
 
     // Unhandled exception
     public const string UnhandledException = "An unhandled exception occurred.";
+
+    // Link expired
+    public const string LinkExpired = "The link has been expired";
+
+    // Password reset success
+    public const string PasswordResetSuccess = "Your password has been reset successfully.";
 }

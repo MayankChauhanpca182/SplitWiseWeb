@@ -14,4 +14,9 @@ public class UserService : IUserService
         _userRepository = userRepository;
     }
 
+    public async Task<User?> GetByEmailAddress(string email)
+    {
+        return await _userRepository.Get(u => u.EmailAddress.ToLower() == email.ToLower());
+    }
+
 }

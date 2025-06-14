@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace SplitWiseWeb.Controllers;
 
-[Authorize]
+// [Authorize]
 public class DashboardController : Controller
 {
     public DashboardController()

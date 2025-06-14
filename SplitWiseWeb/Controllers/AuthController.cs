@@ -1,7 +1,10 @@
 ﻿using System.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SplitWiseRepository.Models;
 using SplitWiseRepository.ViewModels;
+using SplitWiseService.Constants;
 using SplitWiseService.Services.Interface;
 
 namespace SplitWiseWeb.Controllers;
@@ -9,10 +12,12 @@ namespace SplitWiseWeb.Controllers;
 public class AuthController : Controller
 {
     private readonly IAuthService _authService;
+    private readonly IUserService _userService;
 
-    public AuthController(IAuthService authService)
+    public AuthController(IAuthService authService, IUserService userService)
     {
         _authService = authService;
+        _userService = userService;
     }
 
     #region Login
@@ -59,12 +64,16 @@ public class AuthController : Controller
             SameSite = SameSiteMode.Strict
         };
 
-        Response.Cookies.Append("JwtToken", response.Token, options);
-        Response.Cookies.Append("UserName", response.Name, options);
-        
+        // Fetch user
+        User? user = await _userService.GetByEmailAddress(loginVM.Email);
+
+        Response.Cookies.Append("JwtToken", response.StringValue, options);
+        Response.Cookies.Append("UserName", $"{user.FirstName} {user.LastName}", options);
+        Response.Cookies.Append("ProfileImageUrl", user.ProfileImagePath, options);
+
         if (loginVM.IsRememberMe)
         {
-            Response.Cookies.Append("RememberMeToken", response.Token, options);
+            Response.Cookies.Append("RememberMeToken", response.StringValue, options);
         }
 
         // Redirect to dashboard
@@ -135,7 +144,7 @@ public class AuthController : Controller
 
     // POST ForgotPassword
     [HttpPost]
-    public IActionResult ForgotPassword(LoginVM loginVM)
+    public async Task<IActionResult> ForgotPassword(LoginVM loginVM)
     {
         ModelState.Remove("Password");
         if (!ModelState.IsValid)
@@ -144,7 +153,15 @@ public class AuthController : Controller
         }
 
         // Send email with reset password link
-        
+        // ResponseVM response = await _authService.ForgotPassword(loginVM.Email);
+        // if (response.Success)
+        // {
+        //     TempData["successMessage"] = response.Message;
+        // }
+        // else
+        // {
+        //     TempData["errorMessage"] = response.Message;
+        // }
 
         return RedirectToAction("Login");
     }
@@ -152,15 +169,43 @@ public class AuthController : Controller
 
     #region Reset Password
     // GET ResetPassword
-    public IActionResult ResetPassword(string token, string upTo)
+    public async Task<IActionResult> ResetPassword(string? token = null)
     {
-        return View();
+        if (string.IsNullOrEmpty(token))
+        {
+            TempData["errorMessage"] = NotificationMessages.Invalid.Replace("{0}", "Token");
+            return RedirectToAction("Login");
+        }
+
+        // Validate token using expiry (ValidatePasswordResetToken)
+        ResponseVM response = await _authService.ValidatePasswordResetToken(token);
+        return View(new RegisterUserVM() { Email = response.StringValue });
     }
 
     // POST ResetPassword
-    public IActionResult ResetPassword(RegisterUserVM registerUserVM)
+    [HttpPost]
+    public async Task<IActionResult> ResetPassword(RegisterUserVM registerUserVM)
     {
-        return View();
+        ModelState.Remove("FirstName");
+        ModelState.Remove("LastName");
+        if (!ModelState.IsValid)
+        {
+            return View(registerUserVM);
+        }
+
+        // Reset passsword
+        // ResponseVM response = await _authService.ResetPassword(registerUserVM);
+
+        // if (response.Success)
+        // {
+        //     TempData["successMessage"] = response.Message;
+        // }
+        // else
+        // {
+        //     TempData["errorMessage"] = response.Message;
+        // }
+
+        return RedirectToAction("Login");
     }
     #endregion
 

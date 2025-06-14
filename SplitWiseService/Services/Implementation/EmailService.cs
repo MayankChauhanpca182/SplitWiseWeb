@@ -58,12 +58,10 @@ public class EmailService : IEmailService
         return;
     }
 
-    public async Task ResetPasswordEmail(string email)
+    public async Task ResetPasswordEmail(string email, string token)
     {
-        string token = _aesHelper.Encrypt(email);
-        string upTo = _aesHelper.Encrypt(DateTime.Now.Ticks.ToString());
         string filePath = Path.Combine(Directory.GetCurrentDirectory(), "Templates", "EmailTemplates", "ResetPassword.html");
-        string resetLink = await _urlBuilder.Create("ResetPassword", "Auth", token, upTo);
+        string resetLink = await _urlBuilder.Create("ResetPassword", "Auth", token);
 
         string emailBody = string.Format(File.ReadAllText(filePath), resetLink);
         await Send(email, "Reset password", emailBody);
