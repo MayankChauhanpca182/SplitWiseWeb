@@ -40,3 +40,60 @@ $(document).ready(function () {
     $("#loader").hide();
   });
 });
+
+// Tool tips
+function initializeTooltips() {
+  $("[title]").each(function () {
+    // Destroy any existing tooltip to prevent duplicates
+    const existingTooltip = bootstrap.Tooltip.getInstance(this);
+    if (existingTooltip) {
+      existingTooltip.dispose();
+    }
+
+    new bootstrap.Tooltip(this, {
+      html: true,
+      placement: "top",
+      trigger: "hover",
+      delay: { show: 100, hide: 50 },
+      popperConfig: function (defaultBsPopperConfig) {
+        return {
+          ...defaultBsPopperConfig,
+          modifiers: [
+            {
+              name: 'offset',
+              options: {
+                offset: [1, 1]
+              }
+            },
+            {
+              name: 'flip',
+              options: {
+                fallbackPlacements: ['right', 'left', 'bottom']
+              }
+            }
+          ]
+        };
+      }
+    });
+  });
+}
+
+$(document).ready(function(){
+  initializeTooltips();
+});
+
+$(document).ajaxComplete(function(){
+  $(".tooltip").remove();
+  initializeTooltips();
+});
+
+//  Toggle Sidebar
+$(document).on("click", "#hamBurger", function () {
+  if ($("#navigation").css("display") == "none") {
+    $("#navigation").css("display", "block");
+    $("#right-section").css("width", "calc(100% - 230px)");
+  } else {
+    $("#navigation").css("display", "none");
+    $("#right-section").css("width", "100%");
+  }
+});

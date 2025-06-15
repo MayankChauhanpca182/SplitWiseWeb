@@ -24,7 +24,6 @@
     color: var(--clr-primary) !important;
 }
 
-
 .bg-primary {
     background-color: var(--clr-primary) !important;
 }
@@ -41,6 +40,19 @@
     background-color: var(--clr-light-grey) !important;
 }
 
+/* Tool Tip */
+.tooltip-inner {
+    background-color: #2e2e2e;
+    color: #ffffff;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 5px 10px;
+}
+
+.tooltip .tooltip-arrow {
+    display: none;
+}
 
 /* Global */
 body {
@@ -53,8 +65,8 @@ body {
     background-repeat: no-repeat;
 }
 
-a:hover {
-    /* text-shadow: 1px 1px 15px #8f8f8f; */
+a{
+    text-decoration:  none;
 }
 
 
@@ -92,12 +104,59 @@ button {
     }
 }
 
-
-/* Navbar */
-.navbar-toggler{
-    left: 0;
-    position: relative;
+/* Layout */
+header.header{
+    position: fixed !important;
+    width: 100%;
+    height: 70px;
+    z-index: 10;
 }
 
+div.content {
+    margin-top: 70px;
+    background-color: #f3f3f3;
+    min-height: calc(100vh - 70px);
+    height: 100%;
+}
 
-/* Dashboard */
+div.right-section {
+    width: calc(100% - 230px);
+}
+
+aside.navigation {
+    width: 230px;
+}
+
+aside.navigation>div {
+    position: fixed;
+    width: inherit;
+}
+
+aside.navigation a {
+    display: inline-block;
+    width: 100%;
+    padding: 8px;
+    color: var(--clr-dark-gray);
+    font-weight: 500;
+    border-left: 5px solid transparent;
+}
+
+a.active {
+    font-weight: 750 !important;
+    color: var(--clr-primary-dark) !important;
+    border-color: var(--clr-primary-dark) !important;
+}
+
+@media (max-width: 767px) {
+    aside.navigation {
+        width: 210px;
+        display: none;
+        position: fixed;
+        z-index: 20;
+        height: 100vh;
+    }
+
+    div.right-section {
+        width: 100% !important;
+    }
+}
