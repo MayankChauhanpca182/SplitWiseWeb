@@ -16,8 +16,9 @@ public class AuthService : IAuthService
     private readonly AesHelper _aesHelper;
     private readonly IJwtService _jwtService;
     private readonly IPasswordResetService _passwordResetService;
+    private readonly IUserService _userService;
 
-    public AuthService(IGenericRepository<User> userRepository, IEmailService emailService, AesHelper aesHelper, IJwtService jwtService, ITransactionRepository transaction, IGenericRepository<PasswordResetToken> passwordResetToken, IPasswordResetService passwordResetService)
+    public AuthService(IGenericRepository<User> userRepository, IEmailService emailService, AesHelper aesHelper, IJwtService jwtService, ITransactionRepository transaction, IGenericRepository<PasswordResetToken> passwordResetToken, IPasswordResetService passwordResetService, IUserService userService)
     {
         _userRepository = userRepository;
         _emailService = emailService;
@@ -26,6 +27,7 @@ public class AuthService : IAuthService
         _transaction = transaction;
         _passwordResetToken = passwordResetToken;
         _passwordResetService = passwordResetService;
+        _userService = userService;
     }
 
     public async Task<ResponseVM> RegisterUser(RegisterUserVM registerUserVM)
@@ -61,7 +63,7 @@ public class AuthService : IAuthService
             await _userRepository.Add(newUser);
 
             // Send Email
-            await _emailService.UserVarificationEmail(newUser.FirstName, newUser.EmailAddress);
+            _emailService.UserVarificationEmail(newUser.FirstName, newUser.EmailAddress);
 
             response.Success = true;
             response.Message = NotificationMessages.RegisterSuccess;
@@ -96,11 +98,12 @@ public class AuthService : IAuthService
             else if (user.IsEmailConfirmed)
             {
                 response.Success = true;
-                response.Message = NotificationMessages.EmailNotConfirmed;
+                response.Message = NotificationMessages.EmailAlreadyVerified;
             }
             else
             {
                 user.IsEmailConfirmed = true;
+                user.IsActive = true;
                 user.UpdatedAt = DateTime.Now;
                 await _userRepository.Update(user);
 
@@ -162,7 +165,12 @@ public class AuthService : IAuthService
             if (user == null)
             {
                 response.Success = false;
-                response.Message = NotificationMessages.UserNotFound;
+                response.Message = NotificationMessages.UserNotFoundByEmail;
+            }
+            else if (!user.IsEmailConfirmed)
+            {
+                response.Success = false;
+                response.Message = NotificationMessages.EmailNotVerified;
             }
             else
             {
@@ -170,12 +178,12 @@ public class AuthService : IAuthService
                 string token = Guid.NewGuid().ToString();
 
                 // store in DB
-                await _passwordResetService.Add(email, token);
+                await _passwordResetService.Add(user.Id, token);
 
                 // Send email
-                await _emailService.ResetPasswordEmail(user.FirstName, email, token);
+                _emailService.ResetPasswordEmail(user.FirstName, email, token);
                 response.Success = true;
-                response.Message = NotificationMessages.EmailSentSuccessfully;
+                response.Message = NotificationMessages.ResetPasswordEmailSuccess;
             }
             // Commit transaction
             await _transaction.Commit();
@@ -196,32 +204,33 @@ public class AuthService : IAuthService
             // Begin transaction
             await _transaction.Begin();
             ResponseVM response = new ResponseVM();
-            
+
             // Fetch reset token
             PasswordResetToken? resetToken = await _passwordResetService.Get(passwordReset.ResetToken);
             if (resetToken == null)
             {
                 response.Success = false;
-                response.Message = NotificationMessages.Invalid.Replace("{0}", "reset link");
+                response.Message = NotificationMessages.WrongResetPasswordLink;
                 return response;
             }
 
             // Fetch user
-            User? user = await _userRepository.Get(u => u.EmailAddress.ToLower() == resetToken.EmailAddress.ToLower() && u.DeactivatedAt == null && u.IsEmailConfirmed);
+            User? user = await _userRepository.Get(u => u.Id == resetToken.UserId && u.DeactivatedAt == null && u.IsEmailConfirmed);
             if (user == null)
             {
                 response.Success = false;
-                response.Message = NotificationMessages.UserNotFound;
+                response.Message = NotificationMessages.UserNotFoundByEmail;
             }
             else
             {
                 // Set reset token used
-                await _passwordResetService.SetUsed(resetToken.Token);
+                await _passwordResetService.SetConsumed(resetToken.Token);
 
                 // Update password
-                user.PasswordHash = PasswordHelper.Hash(passwordReset.Password);
-                user.UpdatedAt = DateTime.Now;
-                await _userRepository.Update(user);
+                await _userService.ChangePassword(user.Id, passwordReset.NewPassword);
+
+                // Send email notification
+                _emailService.ChangePasswordEmail(user.FirstName, user.EmailAddress);
 
                 response.Success = true;
                 response.Message = NotificationMessages.PasswordResetSuccess;

@@ -13,11 +13,16 @@ public static class ValidationMessages
     public const string PasswordLength = "Password must be at least 8 characters long";
     public const string ValidPassword = "Password must contain at least one letter, one number, and one special character";
 
+    // New password
+    public const string NewPasswordRequired = "Password is required";
+    public const string NewPasswordLength = "Password must be at least 8 characters long";
+    public const string ValidNewPassword = "Password must contain at least one letter, one number, and one special character";
+
     // Confirm password
     public const string ConfirmPasswordRequired = "Confirm password is required";
     public const string ConfirmPasswordLength = "Confirm password must be at least 8 characters long";
     public const string ValidConfirmPassword = "Confirm password must contain at least one letter, one number, and one special character";
-    public const string MatchPassword = "Password and Confirmation Password must match.";
+    public const string MatchPassword = "New password and confirmation Password must match.";
 
     // First name
     public const string FirstNameRequired = "First name is required";

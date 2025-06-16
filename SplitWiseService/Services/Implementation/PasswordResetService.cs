@@ -16,19 +16,30 @@ public class PasswordResetService : IPasswordResetService
         _passwordResetToken = passwordResetToken;
     }
 
-    public async Task<PasswordResetToken?> Get(string token)
+    public async Task<PasswordResetToken> Get(string token)
     {
-        return await _passwordResetToken.GetLast(predicate: prt => prt.Token == token && !prt.IsUsed);
+        return await _passwordResetToken.GetLast(predicate: prt => prt.Token == token);
     }
 
-    public async Task Add(string email, string token)
+    public async Task Add(int userId, string token)
     {
-        PasswordResetToken resetToken = new PasswordResetToken
+        PasswordResetToken existingToken = await _passwordResetToken.Get(predicate: prt => prt.UserId == userId && !prt.IsConsumed && prt.ConsumedAt == null);
+        if (existingToken != null)
         {
-            EmailAddress = email,
-            Token = token
-        };
-        await _passwordResetToken.Add(resetToken);
+            existingToken.Token = token;
+            existingToken.ExpireAt = DateTime.Now.AddHours(6);
+            await _passwordResetToken.Update(existingToken);
+        }
+        else
+        {
+            PasswordResetToken resetToken = new PasswordResetToken
+            {
+                UserId = userId,
+                Token = token,
+                ExpireAt = DateTime.Now.AddHours(6)
+            };
+            await _passwordResetToken.Add(resetToken);
+        }
         return;
     }
 
@@ -37,11 +48,16 @@ public class PasswordResetService : IPasswordResetService
         ResponseVM response = new ResponseVM();
 
         // Fetch password reset token token from DB and validate 
-        PasswordResetToken? resetToken = await Get(token);
+        PasswordResetToken resetToken = await Get(token);
         if (resetToken == null)
         {
             response.Success = false;
-            response.Message = NotificationMessages.Invalid.Replace("{0}", "reset link");
+            response.Message = NotificationMessages.WrongResetPasswordLink;
+        }
+        else if (resetToken.IsConsumed)
+        {
+            response.Success = false;
+            response.Message = NotificationMessages.ConsumedResetPasswordLink;
         }
         else
         {
@@ -52,17 +68,18 @@ public class PasswordResetService : IPasswordResetService
             else
             {
                 response.Success = false;
-                response.Message = NotificationMessages.LinkExpired;
+                response.Message = NotificationMessages.ExpiredResetPasswordLink;
             }
         }
         return response;
     }
 
-    public async Task SetUsed(string token)
+    public async Task SetConsumed(string token)
     {
         // Fetch password reset token token from DB
-        PasswordResetToken? resetToken = await Get(token);
-        resetToken.IsUsed = true;
+        PasswordResetToken resetToken = await Get(token);
+        resetToken.IsConsumed = true;
+        resetToken.ConsumedAt = DateTime.Now;
         await _passwordResetToken.Update(resetToken);
         return;
     }

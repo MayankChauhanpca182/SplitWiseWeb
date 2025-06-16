@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SplitWiseRepository.Models;
 
@@ -11,9 +12,11 @@ using SplitWiseRepository.Models;
 namespace SplitWiseRepository.Migrations
 {
     [DbContext(typeof(SplitWiseDbContext))]
-    partial class SplitWiseDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250616074138_Added_Required_Constrain_For_Non_Nullable_String_Fields")]
+    partial class Added_Required_Constrain_For_Non_Nullable_String_Fields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -77,13 +80,15 @@ namespace SplitWiseRepository.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("ConsumedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("EmailAddress")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
 
                     b.Property<DateTime>("ExpireAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsConsumed")
+                    b.Property<bool>("IsUsed")
                         .HasColumnType("bit");
 
                     b.Property<string>("Token")
@@ -91,12 +96,7 @@ namespace SplitWiseRepository.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("PasswordResetTokens");
                 });
@@ -173,17 +173,6 @@ namespace SplitWiseRepository.Migrations
                     b.HasOne("SplitWiseRepository.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("SplitWiseRepository.Models.PasswordResetToken", b =>
-                {
-                    b.HasOne("SplitWiseRepository.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
 
                     b.Navigation("User");
                 });

@@ -29,6 +29,12 @@ public static class NotificationMessages
     public const string EmailSendingFailed = "Failed to send the email." + TryAgain;
     public const string EmailSentSuccessfully = "Email sent successfully.";
 
+    // Reset password email
+    public const string ResetPasswordEmailSuccess = "Reset Password Link has been sent successfully.";
+    public const string WrongResetPasswordLink = "It seems like Reset Password link has been either tempered or wrong.";
+    public const string ConsumedResetPasswordLink = "Reset Password link has been consumed already.";
+    public const string ExpiredResetPasswordLink = "Reset Password link has been expired. Kindly, reset passowrd again.";
+
     // Validation
     public const string Invalid = "Invalid {0}.";
 
@@ -40,10 +46,11 @@ public static class NotificationMessages
 
     // User not found
     public const string UserNotFound = "Oops! We couldn’t find a user with that information.";
+    public const string UserNotFoundByEmail = "Oops! We couldn’t find a user with entered Email.";
 
     // Email verification
     public const string EmailNotVerified = "Oops! Your email isn’t verified yet. We’ve sent you a link to verify it.";
-    public const string EmailNotConfirmed = "Email is already verified.";
+    public const string EmailAlreadyVerified = "Verification link has been expired.";
     public const string EmailVerificationSuccess = "Email has been verified successfully.";
     public const string EmailExists = "Looks like you've already signed up with {0}. Try logging in instead.";
 
@@ -52,12 +59,15 @@ public static class NotificationMessages
     public const string UnhandledException = "An unexpected error occurred.";
 
     // Link expired
-    public const string LinkExpired = "The link has expired. Please request a new one.";
+    public const string LinkExpired = "The link has been expired. Please request a new one.";
 
     // Password reset success
+    public const string IncorrectPassword = "The password you entered is incorrect.";
+    public const string PasswordChangeSuccess = "Your password has been changed successfully.";
     public const string PasswordResetSuccess = "Your password has been reset successfully.";
 
     // Email subjects
     public const string UserVerificationSubject = "Almost There! Verify Your Email to Activate Your Account";
     public const string PasswordResetSubject = "Trouble Logging In? Reset Your Password";
+    public const string PasswordChangedNotification = "Your password has been changed successfully.";
 }

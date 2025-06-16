@@ -1,7 +1,9 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.Repositories.Interface;
 using SplitWiseRepository.ViewModels;
+using SplitWiseService.Helpers;
 using SplitWiseService.Services.Interface;
 
 namespace SplitWiseService.Services.Implementation;
@@ -24,19 +26,25 @@ public class UserService : IUserService
         return await _userRepository.Get(u => u.EmailAddress.ToLower() == email.ToLower());
     }
 
-    #region Get Logged In User
-    public async Task<int?> LoggedInUserId()
+    public async Task<User?> GetById(int userId)
     {
-        string idStr = _jwtService.GetClaimValue(_httpContextAccessor.HttpContext?.Request.Cookies["JwtToken"]!, "id")!;
-        if (!string.IsNullOrEmpty(idStr) && int.TryParse(idStr, out int userId))
-        {
-            return userId;
-        }
-        else
-        {
-            return (int?)null;
-        }
-        
+        return await _userRepository.Get(u => u.Id == userId && u.IsActive);
+    }
+
+    public async Task ChangePassword(int userId, string newPassword)
+    {
+        User user = await _userRepository.Get(u => u.Id == userId);
+        user.PasswordHash = PasswordHelper.Hash(newPassword);
+        user.UpdatedAt = DateTime.Now;
+        await _userRepository.Update(user);
+        return;
+    }
+
+    #region Get Logged In User
+    public async Task<int> LoggedInUserId()
+    {
+        Claim userIdClaim = _httpContextAccessor.HttpContext.User?.FindFirst("id");
+        return int.Parse(userIdClaim?.Value);
     }
     #endregion
 

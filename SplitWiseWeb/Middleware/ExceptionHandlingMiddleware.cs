@@ -45,6 +45,10 @@ public class ExceptionHandlingMiddleware
                 code = HttpStatusCode.BadRequest;
                 message = NotificationMessages.EmailSendingFailed;
                 break;
+            case FormatException:
+                code = HttpStatusCode.BadRequest;
+                message = NotificationMessages.Invalid.Replace("{0}", "token");
+                break;
             default:
                 code = HttpStatusCode.InternalServerError;
                 message = NotificationMessages.InternalServerError;

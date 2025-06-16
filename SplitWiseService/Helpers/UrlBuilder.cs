@@ -16,7 +16,7 @@ public class UrlBuilder
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task<string> Create(string action, string controller, string? token = null, string? upTo = null)
+    public string Create(string action, string controller, string? token = null, string? upTo = null)
     {
         HttpContext httpContext = _httpContextAccessor.HttpContext;
         ActionContext actionContext = new ActionContext(httpContext, httpContext.GetRouteData(), new Microsoft.AspNetCore.Mvc.Abstractions.ActionDescriptor());

@@ -35,10 +35,14 @@ public class ExceptionLogService : IExceptionLogService
         return;
     }
 
-    private int GetUserId(HttpContext context)
+    private int? GetUserId(HttpContext context)
     {
-        Claim? userIdClaim = context.User?.FindFirst("id");
-        return int.Parse(userIdClaim.Value);
+        Claim userIdClaim = context.User?.FindFirst("id");
+        if (int.TryParse(userIdClaim?.Value, out var userId))
+        {
+            return userId;
+        }
+        return null;
     }
 
     private int? GetGroupId(HttpContext context)

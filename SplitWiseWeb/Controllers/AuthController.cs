@@ -86,6 +86,7 @@ public class AuthController : Controller
 
     #region Register
     // GET Register
+    [Route("register")]
     public IActionResult Register()
     {
         return View();
@@ -93,6 +94,7 @@ public class AuthController : Controller
 
     // POST Register
     [HttpPost]
+    [Route("register")]
     public async Task<IActionResult> Register(RegisterUserVM registerUserVM)
     {
         if (!ModelState.IsValid)
@@ -117,6 +119,7 @@ public class AuthController : Controller
 
     #region User Verification
     // GET UserVerification
+    [Route("userverification")]
     public async Task<IActionResult> UserVerification(string token)
     {
         if (string.IsNullOrEmpty(token))
@@ -140,12 +143,14 @@ public class AuthController : Controller
 
     #region Forgot Password
     // GET ForgotPassword
+    [Route("forgotpassword")]
     public async Task<IActionResult> ForgotPassword()
     {
         return View();
     }
 
     // POST ForgotPassword
+    [Route("forgotpassword")]
     [HttpPost]
     public async Task<IActionResult> ForgotPassword(LoginVM loginVM)
     {
@@ -160,18 +165,19 @@ public class AuthController : Controller
         if (response.Success)
         {
             TempData["successMessage"] = response.Message;
+            return RedirectToAction("Login");
         }
         else
         {
             TempData["errorMessage"] = response.Message;
+            return View(loginVM);
         }
-
-        return RedirectToAction("Login");
     }
     #endregion
 
     #region Reset Password
     // GET ResetPassword
+    [Route("resetpassword")]
     public async Task<IActionResult> ResetPassword(string? token = null)
     {
         if (string.IsNullOrEmpty(token))
@@ -192,8 +198,10 @@ public class AuthController : Controller
 
     // POST ResetPassword
     [HttpPost]
+    [Route("resetpassword")]
     public async Task<IActionResult> ResetPassword(PasswordResetVM passwordReset)
     {
+        ModelState.Remove("Password");
         if (!ModelState.IsValid)
         {
             return View(passwordReset);
@@ -216,6 +224,7 @@ public class AuthController : Controller
 
     #region Logout
     // GET Logout
+    [Route("logout")]
     public IActionResult Logout()
     {
         // Clear Session And Cookies
