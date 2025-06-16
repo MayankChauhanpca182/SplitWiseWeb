@@ -212,7 +212,6 @@ public class AuthController : Controller
         {
             TempData["errorMessage"] = response.Message;
         }
-
         return RedirectToAction("Login");
     }
     #endregion

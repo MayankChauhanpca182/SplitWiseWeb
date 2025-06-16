@@ -21,6 +21,11 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         return await _dbSet.FirstOrDefaultAsync(predicate);
     }
 
+    public async Task<T?> GetLast(Expression<Func<T, bool>>? predicate = null)
+    {
+        return await _dbSet.FirstOrDefaultAsync(predicate);
+    }
+
     public async Task<List<T>> List(Expression<Func<T, bool>>? predicate = null)
     {
         return await _dbSet.Where(predicate).ToListAsync();
