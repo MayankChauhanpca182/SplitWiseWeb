@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.ViewModels;
 using SplitWiseService.Constants;
@@ -142,7 +143,7 @@ public class AuthController : Controller
 
     #region Forgot Password
     // GET ForgotPassword
-    public IActionResult ForgotPassword()
+    public async Task<IActionResult> ForgotPassword()
     {
         return View();
     }
