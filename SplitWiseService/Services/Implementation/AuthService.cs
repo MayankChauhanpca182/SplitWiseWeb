@@ -1,4 +1,3 @@
-using Org.BouncyCastle.Tls;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.Repositories.Interface;
 using SplitWiseRepository.ViewModels;
@@ -11,18 +10,22 @@ namespace SplitWiseService.Services.Implementation;
 public class AuthService : IAuthService
 {
     private readonly IGenericRepository<User> _userRepository;
+    private readonly IGenericRepository<PasswordResetToken> _passwordResetToken;
     private readonly ITransactionRepository _transaction;
     private readonly IEmailService _emailService;
     private readonly AesHelper _aesHelper;
     private readonly IJwtService _jwtService;
+    private readonly IPasswordResetService _passwordResetService;
 
-    public AuthService(IGenericRepository<User> userRepository, IEmailService emailService, AesHelper aesHelper, IJwtService jwtService, ITransactionRepository transaction)
+    public AuthService(IGenericRepository<User> userRepository, IEmailService emailService, AesHelper aesHelper, IJwtService jwtService, ITransactionRepository transaction, IGenericRepository<PasswordResetToken> passwordResetToken, IPasswordResetService passwordResetService)
     {
         _userRepository = userRepository;
         _emailService = emailService;
         _aesHelper = aesHelper;
         _jwtService = jwtService;
         _transaction = transaction;
+        _passwordResetToken = passwordResetToken;
+        _passwordResetService = passwordResetService;
     }
 
     public async Task<ResponseVM> RegisterUser(RegisterUserVM registerUserVM)
@@ -148,50 +151,32 @@ public class AuthService : IAuthService
 
     public async Task<ResponseVM> ForgotPassword(string email)
     {
-        User? user = await _userRepository.Get(u => u.EmailAddress.ToLower() == email.ToLower() && u.DeactivatedAt == null);
-        ResponseVM response = new ResponseVM();
-
-        if (user == null)
-        {
-            response.Success = false;
-            response.Message = NotificationMessages.UserNotFound;
-        }
-        else
-        {
-            // Generate a guid token 
-            string token = Guid.NewGuid().ToString();
-            // store in DB
-
-            // Send email
-            await _emailService.ResetPasswordEmail(user.FirstName, email, token);
-            response.Success = true;
-            response.Message = NotificationMessages.EmailSentSuccessfully;
-        }
-
-        return response;
-    }
-
-    public async Task<ResponseVM> ValidatePasswordResetToken(string token)
-    {
         try
         {
             // Begin transaction
             await _transaction.Begin();
             ResponseVM response = new ResponseVM();
 
-            // Fetch password reset token token from DB and validate 
-            
-            // long difference = resetToken.Expiry.Subtract(DateTime.Now).Ticks;
-            // if (difference > 0)
-            // {
-            //     response.Success = true;
-            // }
-            // else
-            // {
-            //     response.Success = false;
-            //     response.Message = NotificationMessages.LinkExpired.Replace("{0}", "Link");
-            // }
+            // Fetch user
+            User? user = await _userRepository.Get(u => u.EmailAddress.ToLower() == email.ToLower() && u.DeactivatedAt == null);
+            if (user == null)
+            {
+                response.Success = false;
+                response.Message = NotificationMessages.UserNotFound;
+            }
+            else
+            {
+                // Generate a guid token 
+                string token = Guid.NewGuid().ToString();
 
+                // store in DB
+                await _passwordResetService.Add(email, token);
+
+                // Send email
+                await _emailService.ResetPasswordEmail(user.FirstName, email, token);
+                response.Success = true;
+                response.Message = NotificationMessages.EmailSentSuccessfully;
+            }
             // Commit transaction
             await _transaction.Commit();
             return response;
@@ -204,16 +189,25 @@ public class AuthService : IAuthService
         }
     }
 
-    public async Task<ResponseVM> ResetPassword(RegisterUserVM registerUserVM)
+    public async Task<ResponseVM> ResetPassword(PasswordResetVM passwordReset)
     {
         try
         {
             // Begin transaction
             await _transaction.Begin();
-
             ResponseVM response = new ResponseVM();
-            User? user = await _userRepository.Get(u => u.EmailAddress.ToLower() == registerUserVM.Email.ToLower() && u.DeactivatedAt == null && u.IsEmailConfirmed);
+            
+            // Fetch reset token
+            PasswordResetToken? resetToken = await _passwordResetService.Get(passwordReset.ResetToken);
+            if (resetToken == null)
+            {
+                response.Success = false;
+                response.Message = NotificationMessages.Invalid.Replace("{0}", "reset link");
+                return response;
+            }
 
+            // Fetch user
+            User? user = await _userRepository.Get(u => u.EmailAddress.ToLower() == resetToken.EmailAddress.ToLower() && u.DeactivatedAt == null && u.IsEmailConfirmed);
             if (user == null)
             {
                 response.Success = false;
@@ -221,8 +215,11 @@ public class AuthService : IAuthService
             }
             else
             {
+                // Set reset token used
+                await _passwordResetService.SetUsed(resetToken.Token);
+
                 // Update password
-                user.PasswordHash = PasswordHelper.Hash(registerUserVM.Password);
+                user.PasswordHash = PasswordHelper.Hash(passwordReset.Password);
                 user.UpdatedAt = DateTime.Now;
                 await _userRepository.Update(user);
 

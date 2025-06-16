@@ -36,7 +36,7 @@
         </div>
     </div>
 
-    @* <header>
+    <header>
         <nav class="navbar navbar-expand-lg navbar-toggleable-lg navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
                 <a asp-controller="Dashboard" asp-action="Index" class="navbar-brand d-flex justify-content-center">
@@ -78,9 +78,9 @@
         <main role="main">
             @RenderBody()
         </main>
-    </div> *@
+    </div>
 
-    <div class="d-flex flex-column h-100">
+    @* <div class="d-flex flex-column h-100">
         <!-- Header -->
         <header class="header d-flex justify-content-between align-items-center bg-white ps-1 pe-3">
             <div class="d-flex align-items-center gap-1">
@@ -134,7 +134,7 @@
                 @RenderBody()
             </div>
         </div>
-    </div>
+    </div> *@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

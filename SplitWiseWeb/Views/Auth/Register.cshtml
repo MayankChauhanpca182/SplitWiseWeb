@@ -19,7 +19,7 @@
             <!-- First Name -->
             <div class="input-group mt-4 rounded-2 shadow-sm">
                 <input asp-for=@Model.FirstName class="form-control border-secondary-subtle border-end-0"
-                    id="inputFirstName" placeholder="First Name*">
+                    id="inputFirstName" placeholder="First Name">
                 <span class="input-group-text bg-white border-secondary-subtle border-start-0" id="basic-addon1">
                     <img src="~/images/icons/customer-dark.svg" alt="" class="0">
                 </span>
@@ -29,7 +29,7 @@
             <!-- Last Name -->
             <div class="input-group mt-4 rounded-2 shadow-sm">
                 <input asp-for=@Model.LastName class="form-control border-secondary-subtle border-end-0" id="inputLastName"
-                    placeholder="Last Name*">
+                    placeholder="Last Name">
                 <span class="input-group-text bg-white border-secondary-subtle border-start-0" id="basic-addon1">
                     <img src="~/images/icons/customer-dark.svg" alt="" class="0">
                 </span>
@@ -39,7 +39,7 @@
             <!-- Email -->
             <div class="input-group mt-4 rounded-2 shadow-sm">
                 <input asp-for=@Model.Email class="form-control border-secondary-subtle border-end-0" id="inputEmail"
-                    placeholder="Email*" autocomplete="username">
+                    placeholder="Email" autocomplete="username">
                 <span class="input-group-text bg-white border-secondary-subtle border-start-0" id="basic-addon1">
                     <img src="~/images/icons/customer-dark.svg" alt="" class="0">
                 </span>
@@ -49,11 +49,10 @@
             <!-- Password -->
             <div class="input-group mt-4 rounded-2 shadow-sm">
                 <input asp-for="@Model.Password" type="password" id="inputPassword"
-                    class="form-control border-secondary-subtle border-end-0" placeholder="Password*">
+                    class="form-control border-secondary-subtle border-end-0" placeholder="Password">
                 <span class="input-group-text bg-white border-secondary-subtle border-start-0">
                     <img src="~/images/icons/eye-closed.png" alt="" id="eyeButton" class="0" width="15px"
                         onclick="togglePasswordVisibility(this)">
-                    <i class="bi bi-eye-slash-fill"></i>
                 </span>
             </div>
             <span class="text-danger" asp-validation-for="@Model.Password"></span>
@@ -61,11 +60,10 @@
             <!-- Confirm Password -->
             <div class="input-group mt-4 rounded-2 shadow-sm">
                 <input asp-for="@Model.ConfirmPassword" type="password" id="inputConfirmPassword"
-                    class="form-control border-secondary-subtle border-end-0" placeholder="Confirm Password*">
+                    class="form-control border-secondary-subtle border-end-0" placeholder="Confirm Password">
                 <span class="input-group-text bg-white border-secondary-subtle border-start-0">
                     <img src="~/images/icons/eye-closed.png" alt="" id="eyeButton" class="0" width="15px"
                         onclick="togglePasswordVisibility(this)">
-                    <i class="bi bi-eye-slash-fill"></i>
                 </span>
             </div>
             <span class="text-danger" asp-validation-for="@Model.ConfirmPassword"></span>

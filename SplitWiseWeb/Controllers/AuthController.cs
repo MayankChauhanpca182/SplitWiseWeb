@@ -13,11 +13,13 @@ public class AuthController : Controller
 {
     private readonly IAuthService _authService;
     private readonly IUserService _userService;
+    private readonly IPasswordResetService _passwordResetService;
 
-    public AuthController(IAuthService authService, IUserService userService)
+    public AuthController(IAuthService authService, IUserService userService, IPasswordResetService passwordResetService)
     {
         _authService = authService;
         _userService = userService;
+        _passwordResetService = passwordResetService;
     }
 
     #region Login
@@ -180,33 +182,36 @@ public class AuthController : Controller
             return RedirectToAction("Login");
         }
 
-        // Validate token using expiry (ValidatePasswordResetToken)
-        ResponseVM response = await _authService.ValidatePasswordResetToken(token);
-        return View(new RegisterUserVM() { Email = response.StringValue });
+        // Validate token using expiry
+        ResponseVM response = await _passwordResetService.Validate(token);
+        if (!response.Success)
+        {
+            TempData["errorMessage"] = response.Message;
+            return RedirectToAction("Login");
+        }
+        return View(new PasswordResetVM() { ResetToken = token });
     }
 
     // POST ResetPassword
     [HttpPost]
-    public async Task<IActionResult> ResetPassword(RegisterUserVM registerUserVM)
+    public async Task<IActionResult> ResetPassword(PasswordResetVM passwordReset)
     {
-        ModelState.Remove("FirstName");
-        ModelState.Remove("LastName");
         if (!ModelState.IsValid)
         {
-            return View(registerUserVM);
+            return View(passwordReset);
         }
 
         // Reset passsword
-        // ResponseVM response = await _authService.ResetPassword(registerUserVM);
+        ResponseVM response = await _authService.ResetPassword(passwordReset);
 
-        // if (response.Success)
-        // {
-        //     TempData["successMessage"] = response.Message;
-        // }
-        // else
-        // {
-        //     TempData["errorMessage"] = response.Message;
-        // }
+        if (response.Success)
+        {
+            TempData["successMessage"] = response.Message;
+        }
+        else
+        {
+            TempData["errorMessage"] = response.Message;
+        }
 
         return RedirectToAction("Login");
     }
