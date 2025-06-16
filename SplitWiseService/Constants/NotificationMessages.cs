@@ -25,6 +25,7 @@ public static class NotificationMessages
     public const string TryAgain = " Please try again later.";
 
     // Email Notifications
+    public const string InvalidEmailAddress = "Email address you entered is not valid. Enter a valid email address.";
     public const string EmailSendingFailed = "Failed to send the email." + TryAgain;
     public const string EmailSentSuccessfully = "Email sent successfully.";
 
