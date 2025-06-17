@@ -1,6 +1,8 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SmartBreadcrumbs.Attributes;
+using SmartBreadcrumbs.Nodes;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.ViewModels;
 using SplitWiseService.Services.Interface;
@@ -8,6 +10,7 @@ using SplitWiseService.Services.Interface;
 namespace SplitWiseWeb.Controllers;
 
 [Authorize]
+[DefaultBreadcrumb("Home")]
 public class DashboardController : Controller
 {
     private readonly IDashboardService _dashboardService;
@@ -27,17 +30,18 @@ public class DashboardController : Controller
         ViewData["ActiveLink"] = "Dashboard";
         return View();
     }
+    #endregion
 
+    #region Change Password
     // GET ChangePassword
+    [Breadcrumb("Change Password", FromAction = "Index")]
     [Route("changePassword")]
     public IActionResult ChangePassword()
     {
         ViewData["ActiveLink"] = "Change Password";
         return View();
     }
-    #endregion
 
-    #region Change Password
     // POST ChangePassword
     [HttpPost]
     [Route("changePassword")]
@@ -62,6 +66,7 @@ public class DashboardController : Controller
 
     #region Profile
     // GET Profile
+    [Breadcrumb("Profile", FromAction = "Index")]
     [Route("profile")]
     public async Task<IActionResult> Profile()
     {
@@ -106,5 +111,4 @@ public class DashboardController : Controller
         return RedirectToAction("Profile");
     }
     #endregion
-
 }

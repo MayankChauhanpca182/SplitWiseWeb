@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Org.BouncyCastle.Asn1.X509.Qualified;
+using SmartBreadcrumbs.Extensions;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.Repositories.Implementation;
 using SplitWiseRepository.Repositories.Interface;
@@ -16,6 +18,17 @@ var builder = WebApplication.CreateBuilder(args);
 // Configure Context Accessor
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<IUrlHelperFactory, UrlHelperFactory>();
+
+// Breadcrumbs
+builder.Services.AddBreadcrumbs(typeof(Program).Assembly, options =>
+{
+	options.TagName = "nav";
+	options.TagClasses = "";
+	options.OlClasses = "breadcrumb";
+	options.LiClasses = "breadcrumb-item";
+	options.ActiveLiClasses = "breadcrumb-item active";
+	options.SeparatorElement = "<li class=\"separator\">/</li>";
+});
 
 // Configure Database Connection
 builder.Services.AddDbContext<SplitWiseDbContext>(o => o.UseSqlServer(builder.Configuration.GetConnectionString("SplitWiseDB")));
@@ -63,13 +76,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 }
                 return Task.CompletedTask;
             },
-            OnChallenge = context =>
-            {
-                // Redirect to login page when unauthorized instead of returning 401
-                context.HandleResponse();
-                context.Response.Redirect("/Auth/Logout");
-                return Task.CompletedTask;
-            }
         };
 
         options.TokenValidationParameters = new TokenValidationParameters

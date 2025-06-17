@@ -11,7 +11,7 @@
     <title>@ViewData["Title"] - SplitMate</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/loader.css" asp-append-version="true" />
@@ -50,8 +50,7 @@
                 </a>
             </div>
             <div class="dropdown">
-                <button class="btn dropdown-toggle d-flex align-items-center gap-2 border-0 p-0" type="button"
-                    data-bs-toggle="dropdown" aria-expanded="false" title="Profile">
+                <button class="btn dropdown-toggle d-flex align-items-center gap-2 border-0 p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     <img src="@(ProfileImagePath ?? "/images/Default_pfp.png")" alt="" class="rounded-circle"
                         width="30px" height="30px">
                     <span class="d-none d-sm-block">@(userName)</span>
@@ -104,11 +103,12 @@
             </aside>
             <!-- Sidebar end -->
             <div class="right-section px-2 px-md-4 py-2" id="right-section">
+                <breadcrumb></breadcrumb> 
                 @RenderBody()
             </div>
         </div>
         <footer class="footer d-flex justify-content-center align-items-center bg-white position-fixed bottom-0 w-100">
-            Footer
+            <span class="fw-semibold">&copy; 2025 SplitMate. All rights reserved.</span>
         </footer>
     </div>
 

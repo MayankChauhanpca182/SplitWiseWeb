@@ -78,6 +78,19 @@ a {
     text-decoration: none;
 }
 
+/* Breadcrumbs */
+.breadcrumb-item a{
+    color: var(--clr-dark-gray) !important;
+}
+
+.breadcrumb-item.active{
+    color: var(--clr-primary-dark);
+}
+
+.separator{
+    margin: 0 3px;
+}
+
 
 /* Login page */
 #loginFormOuter {
