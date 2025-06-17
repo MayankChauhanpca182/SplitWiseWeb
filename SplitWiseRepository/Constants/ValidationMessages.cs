@@ -42,5 +42,6 @@ public static class ValidationMessages
 
     // Birthdate
     public const string BirthdateRequired = "Birthdate is required";
+    public const string NoFutureBirthdate = "The birthdate must not be set in the future";
 
 }

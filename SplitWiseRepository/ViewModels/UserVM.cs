@@ -32,8 +32,9 @@ public class UserVM
     public string Address { get; set; }
 
     [Required(ErrorMessage = ValidationMessages.BirthdateRequired)]
+    [DataType(DataType.Date)]
+    [NoFutureDate(ErrorMessage = ValidationMessages.NoFutureBirthdate)]
     public DateTime? Birthdate { get; set; }
 
-    public DateOnly MaxDate { get; set; } = DateOnly.FromDateTime(DateTime.Now);
     public List<Currency> Currencies { get; set; } = new List<Currency>();
 }

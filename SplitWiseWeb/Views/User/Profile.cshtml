@@ -46,7 +46,7 @@
 
         <!-- Birthdate -->
         <div class="input-group mt-4 rounded-2 shadow-sm">
-            <input asp-for=@Model.Birthdate type="date" class="form-control rounded-2 border-secondary-subtle" max="@Model.MaxDate.ToString("yyyy-MM-dd")">
+            <input asp-for=@Model.Birthdate type="date" class="form-control rounded-2 border-secondary-subtle">
         </div>
         <span class="text-danger" asp-validation-for="@Model.Birthdate"></span>
 
@@ -73,12 +73,12 @@
         $(document).ready(function () {
             $('#ProfileImage').on('change', function () {
                 const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-                const file = this.files[0]; // Get the selected file
+                const file = this.files[0];
 
                 if (file) {
                     if (!validTypes.includes(file.type)) {
                         toastr.error("Only following image types are allowed: jpeg, jpg, png.");
-                        $(this).val(""); 
+                        $(this).val("");
                         $('#previewImage').attr('src', '@(Model.ProfileImagePath ?? "/images/Default_pfp.png")');
                         return;
                     }

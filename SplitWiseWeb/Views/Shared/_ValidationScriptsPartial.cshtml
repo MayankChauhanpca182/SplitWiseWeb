@@ -1,2 +1,21 @@
 ﻿<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
 <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+<script>
+    // Restrict future date
+    $.validator.addMethod("nofuturedate", function (value, element, params) {
+        if (!value) return true; 
+        var selectedDate = new Date(value);
+        var maxDate = new Date(params);
+        maxDate.setHours(0, 0, 0, 0);
+        selectedDate.setHours(0, 0, 0, 0);
+        return selectedDate <= maxDate;
+    }, function (params, element) {
+        return $(element).data('val-nofuturedate');
+    });
+
+    $.validator.unobtrusive.adapters.add("nofuturedate", ["maxdate"], function (options) {
+        options.rules["nofuturedate"] = options.params.maxdate;
+        options.messages["nofuturedate"] = options.message;
+    });
+</script>
