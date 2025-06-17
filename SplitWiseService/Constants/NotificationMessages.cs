@@ -31,9 +31,9 @@ public static class NotificationMessages
 
     // Reset password email
     public const string ResetPasswordEmailSuccess = "Reset Password Link has been sent successfully.";
-    public const string WrongResetPasswordLink = "It seems like Reset Password link has been either tempered or wrong.";
+    public const string WrongResetPasswordLink = "It seems like Reset Password link has been either tampered or wrong.";
     public const string ConsumedResetPasswordLink = "Reset Password link has been consumed already.";
-    public const string ExpiredResetPasswordLink = "Reset Password link has been expired. Kindly, reset passowrd again.";
+    public const string ExpiredResetPasswordLink = "Reset Password link has been expired. Kindly, reset password again.";
 
     // Validation
     public const string Invalid = "Invalid {0}.";
@@ -70,4 +70,7 @@ public static class NotificationMessages
     public const string UserVerificationSubject = "Almost There! Verify Your Email to Activate Your Account";
     public const string PasswordResetSubject = "Trouble Logging In? Reset Your Password";
     public const string PasswordChangedNotification = "Your password has been changed successfully.";
+
+    // Profile update
+    public const string ProfileUpdateSuccess = "Your profile has been updated successfully.";
 }

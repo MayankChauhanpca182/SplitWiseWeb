@@ -15,4 +15,5 @@ public class SplitWiseDbContext : DbContext
     public virtual DbSet<User> Users { get; set; }
     public virtual DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
     public virtual DbSet<ExceptionLog> ExceptionLogs { get; set; }
+    public virtual DbSet<Currency> Currencies { get; set; }
 }

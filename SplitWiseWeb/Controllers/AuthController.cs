@@ -72,7 +72,7 @@ public class AuthController : Controller
 
         if (!string.IsNullOrEmpty(user.ProfileImagePath))
         {
-            Response.Cookies.Append("ProfileImageUrl", user.ProfileImagePath, options);
+            Response.Cookies.Append("ProfileImagePath", user.ProfileImagePath, options);
         }
         if (loginVM.IsRememberMe)
         {
@@ -119,7 +119,7 @@ public class AuthController : Controller
 
     #region User Verification
     // GET UserVerification
-    [Route("userverification")]
+    [Route("userVerification")]
     public async Task<IActionResult> UserVerification(string token)
     {
         if (string.IsNullOrEmpty(token))
@@ -143,14 +143,14 @@ public class AuthController : Controller
 
     #region Forgot Password
     // GET ForgotPassword
-    [Route("forgotpassword")]
+    [Route("forgotPassword")]
     public async Task<IActionResult> ForgotPassword()
     {
         return View();
     }
 
     // POST ForgotPassword
-    [Route("forgotpassword")]
+    [Route("forgotPassword")]
     [HttpPost]
     public async Task<IActionResult> ForgotPassword(LoginVM loginVM)
     {
@@ -177,7 +177,7 @@ public class AuthController : Controller
 
     #region Reset Password
     // GET ResetPassword
-    [Route("resetpassword")]
+    [Route("resetPassword")]
     public async Task<IActionResult> ResetPassword(string? token = null)
     {
         if (string.IsNullOrEmpty(token))
@@ -198,7 +198,7 @@ public class AuthController : Controller
 
     // POST ResetPassword
     [HttpPost]
-    [Route("resetpassword")]
+    [Route("resetPassword")]
     public async Task<IActionResult> ResetPassword(PasswordResetVM passwordReset)
     {
         ModelState.Remove("Password");
@@ -232,6 +232,7 @@ public class AuthController : Controller
         Response.Cookies.Delete("JwtToken");
         Response.Cookies.Delete("RememberMeToken");
         Response.Cookies.Delete("UserName");
+        Response.Cookies.Delete("ProfileImagePath");
 
         return RedirectToAction("Login");
     }

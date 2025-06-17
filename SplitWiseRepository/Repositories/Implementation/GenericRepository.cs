@@ -28,7 +28,11 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
 
     public async Task<List<T>> List(Expression<Func<T, bool>>? predicate = null)
     {
-        return await _dbSet.Where(predicate).ToListAsync();
+        if (predicate != null)
+        {
+            return await _dbSet.Where(predicate).ToListAsync();
+        }
+        return _dbSet.ToList();
     }
 
     public async Task<T> Add(T entity)

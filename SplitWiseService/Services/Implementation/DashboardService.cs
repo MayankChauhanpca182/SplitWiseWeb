@@ -1,3 +1,5 @@
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.Repositories.Interface;
 using SplitWiseRepository.ViewModels;
@@ -10,16 +12,19 @@ namespace SplitWiseService.Services.Implementation;
 public class DashboardService : IDashboardService
 {
     private readonly IGenericRepository<User> _userRepository;
+    private readonly IGenericRepository<Currency> _currencyRepository;
     private readonly ITransactionRepository _transaction;
     private readonly IUserService _userService;
     private readonly IEmailService _emailService;
 
-    public DashboardService(IGenericRepository<User> userRepository, IUserService userService, IEmailService emailService, ITransactionRepository transaction)
+    public DashboardService(IGenericRepository<User> userRepository, IUserService userService, IEmailService emailService, ITransactionRepository transaction, IGenericRepository<Currency> currencyRepository)
     {
         _userRepository = userRepository;
         _userService = userService;
         _emailService = emailService;
         _transaction = transaction;
+        _currencyRepository = currencyRepository;
+
     }
 
     public async Task<ResponseVM> ChangePassword(PasswordResetVM passwordReset)
@@ -68,4 +73,61 @@ public class DashboardService : IDashboardService
         }
     }
 
+    public async Task<ProfileVM> GetProfile()
+    {
+        int userId = await _userService.LoggedInUserId();
+
+        User user = await _userService.GetById(userId);
+        return new ProfileVM
+        {
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            ProfileImagePath = user.ProfileImagePath,
+            CurrencyId = user.CurrencyId,
+            Address = user.Address,
+            Birthdate = user.Birthdate,
+            Currencies = await _currencyRepository.List()
+        };
+    }
+
+    public async Task<ResponseVM> UpdateProfile(ProfileVM profile)
+    {
+        try
+        {
+            // Begin transaction
+            await _transaction.Begin();
+            ResponseVM response = new ResponseVM();
+
+            // Current user id
+            int userId = await _userService.LoggedInUserId();
+            User user = await _userService.GetById(userId);
+
+            user.FirstName = profile.FirstName;
+            user.LastName = profile.LastName;
+            user.Address = profile.Address;
+            user.Birthdate = profile.Birthdate;
+            user.CurrencyId = profile.CurrencyId;
+
+            // Image upload
+            if (profile.ProfileImage != null)
+            {
+                ImageHelper.DeleteImage(user.ProfileImagePath);
+                user.ProfileImagePath = ImageHelper.UploadImage(profile.ProfileImage);
+            }
+
+            await _userRepository.Update(user);
+            response.Success = true;
+            response.Message = NotificationMessages.ProfileUpdateSuccess;
+
+            // Commit transaction
+            await _transaction.Commit();
+            return response;
+        }
+        catch
+        {
+            // Rollback transaction
+            await _transaction.Rollback();
+            throw;
+        }
+    }
 }

@@ -1,0 +1,95 @@
+@using SplitWiseRepository.ViewModels
+@model ProfileVM
+@{
+    ViewData["Title"] = "Profile";
+}
+
+<div class="p-2">
+    <form asp-action="Profile" asp-controller="Dashboard" class="d-flex flex-column" style="max-width: 500px;"
+        enctype="multipart/form-data">
+        <!-- Image -->
+        <input asp-for="@Model.ProfileImage" hidden>
+
+        <label for="ProfileImage" class="cursor-pointer" title="Click to select an image" style="width: 100px;">
+            <img src=@(Model.ProfileImagePath ?? "/images/Default_pfp.png") alt="" id="previewImage"
+                class="rounded-circle border border-dark-subtle object-fit-cover" width="100px" height="100px">
+        </label>
+
+        <!-- First Name -->
+        <div class="input-group mt-4 rounded-2 shadow-sm">
+            <input asp-for=@Model.FirstName class="form-control border-secondary-subtle border-end-0"
+                id="inputFirstName" placeholder="First Name">
+            <span class="input-group-text bg-white border-secondary-subtle border-start-0" id="basic-addon1">
+                <img src="~/images/icons/customer-dark.svg" alt="" class="0">
+            </span>
+        </div>
+        <span class="text-danger" asp-validation-for="@Model.FirstName"></span>
+
+        <!-- Last Name -->
+        <div class="input-group mt-4 rounded-2 shadow-sm">
+            <input asp-for=@Model.LastName class="form-control border-secondary-subtle border-end-0" id="inputLastName"
+                placeholder="Last Name">
+            <span class="input-group-text bg-white border-secondary-subtle border-start-0" id="basic-addon1">
+                <img src="~/images/icons/customer-dark.svg" alt="" class="0">
+            </span>
+        </div>
+        <span class="text-danger" asp-validation-for="@Model.LastName"></span>
+
+        <!-- Address -->
+        <div class="input-group mt-4 rounded-2 shadow-sm">
+            <textarea asp-for=@Model.Address class="form-control border-secondary-subtle" placeholder="Address"
+                rows="3"></textarea>
+        </div>
+
+        <!-- Birthdate -->
+        <div class="input-group mt-4 rounded-2 shadow-sm">
+            <input asp-for=@Model.Birthdate type="date" class="form-control rounded-2 border-secondary-subtle"
+                min="1970-01-01" max="2015-12-31">
+        </div>
+        <span class="text-danger" asp-validation-for="@Model.Birthdate"></span>
+
+        <!-- Currency -->
+        <div class="input-group mt-4 rounded-2 shadow-sm">
+            <select asp-for="@Model.CurrencyId" class="form-select rounded-2 border-secondary-subtle">
+                @foreach (Currency currency in Model.Currencies)
+                {
+                    <option value="@currency.Id">@currency.Name</option>
+                }
+            </select>
+        </div>
+        <span class="text-danger" asp-validation-for="@Model.CurrencyId"></span>
+
+        <div class="d-flex align-items-center gap-3 mt-4">
+            <button type="submit" class="btn btn-primary w-auto shadow">Update</button>
+            <a asp-action="Index" asp-controller="Dashboard" class="btn btn-secondary w-auto shadow">Cancel</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#ProfileImage').on('change', function () {
+                const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+                const file = this.files[0]; // Get the selected file
+
+                if (file) {
+                    if (!validTypes.includes(file.type)) {
+                        toastr.error("Only following image types are allowed: jpeg, png, webp.");
+                        $(this).val(""); 
+                        $('#previewImage').attr('src', '@(Model.ProfileImagePath ?? "/images/Default_pfp.png")');
+                        return;
+                    }
+                    else {
+                        // Show preview
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            $('#previewImage').attr('src', e.target.result);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                }
+            });
+        });
+    </script>
+}

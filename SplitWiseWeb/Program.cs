@@ -62,6 +62,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     context.Token = token;
                 }
                 return Task.CompletedTask;
+            },
+            OnChallenge = context =>
+            {
+                // Redirect to login page when unauthorized instead of returning 401
+                context.HandleResponse();
+                context.Response.Redirect("/Auth/Logout");
+                return Task.CompletedTask;
             }
         };
 

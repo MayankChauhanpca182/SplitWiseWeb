@@ -14,9 +14,9 @@ public static class ValidationMessages
     public const string ValidPassword = "Password must contain at least one letter, one number, and one special character";
 
     // New password
-    public const string NewPasswordRequired = "Password is required";
-    public const string NewPasswordLength = "Password must be at least 8 characters long";
-    public const string ValidNewPassword = "Password must contain at least one letter, one number, and one special character";
+    public const string NewPasswordRequired = "New password is required";
+    public const string NewPasswordLength = "New password must be at least 8 characters long";
+    public const string ValidNewPassword = "New password must contain at least one letter, one number, and one special character";
 
     // Confirm password
     public const string ConfirmPasswordRequired = "Confirm password is required";
@@ -33,4 +33,11 @@ public static class ValidationMessages
     public const string LastNameRequired = "Last name is required";
     public const string LastNameLength = "Last name can not exceed 50 characters";
     public const string ValidLastName = "Last name must contain only letters";
+
+    // Currency
+    public const string CurrencyRequired = "Currency is required";
+
+    // Birthdate
+    public const string BirthdateRequired = "Birthdate is required";
+
 }

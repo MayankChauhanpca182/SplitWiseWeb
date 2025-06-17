@@ -55,6 +55,7 @@ public class AuthService : IAuthService
                 EmailAddress = registerUserVM.Email,
                 PasswordHash = PasswordHelper.Hash(registerUserVM.Password),
                 CurrencyId = 1,
+                ProfileImagePath = ImageHelper.GetRandomImage(),
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now
             };
