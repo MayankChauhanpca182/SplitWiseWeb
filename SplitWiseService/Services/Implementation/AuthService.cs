@@ -10,75 +10,20 @@ namespace SplitWiseService.Services.Implementation;
 public class AuthService : IAuthService
 {
     private readonly IGenericRepository<User> _userRepository;
-    private readonly IGenericRepository<PasswordResetToken> _passwordResetToken;
     private readonly ITransactionRepository _transaction;
     private readonly IEmailService _emailService;
     private readonly AesHelper _aesHelper;
     private readonly IJwtService _jwtService;
     private readonly IPasswordResetService _passwordResetService;
-    private readonly IUserService _userService;
 
-    public AuthService(IGenericRepository<User> userRepository, IEmailService emailService, AesHelper aesHelper, IJwtService jwtService, ITransactionRepository transaction, IGenericRepository<PasswordResetToken> passwordResetToken, IPasswordResetService passwordResetService, IUserService userService)
+    public AuthService(IGenericRepository<User> userRepository, IEmailService emailService, AesHelper aesHelper, IJwtService jwtService, ITransactionRepository transaction, IPasswordResetService passwordResetService)
     {
         _userRepository = userRepository;
         _emailService = emailService;
         _aesHelper = aesHelper;
         _jwtService = jwtService;
         _transaction = transaction;
-        _passwordResetToken = passwordResetToken;
         _passwordResetService = passwordResetService;
-        _userService = userService;
-    }
-
-    public async Task<ResponseVM> RegisterUser(RegisterUserVM registerUserVM)
-    {
-        try
-        {
-            // Begin transaction
-            await _transaction.Begin();
-            ResponseVM response = new();
-
-            // Check existing user
-            User? existingUser = await _userRepository.Get(u => u.EmailAddress == registerUserVM.Email);
-            if (existingUser != null)
-            {
-                response.Success = false;
-                response.Message = NotificationMessages.EmailExists.Replace("{0}", registerUserVM.Email);
-                return response;
-            }
-
-            //  Create User Instance
-            User newUser = new()
-            {
-                FirstName = registerUserVM.FirstName,
-                LastName = registerUserVM.LastName,
-                EmailAddress = registerUserVM.Email,
-                PasswordHash = PasswordHelper.Hash(registerUserVM.Password),
-                CurrencyId = 1,
-                ProfileImagePath = ImageHelper.GetRandomImage(),
-                CreatedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now
-            };
-
-            // Add User
-            await _userRepository.Add(newUser);
-
-            // Send Email
-            _emailService.UserVarificationEmail(newUser.FirstName, newUser.EmailAddress);
-
-            response.Success = true;
-            response.Message = NotificationMessages.RegisterSuccess;
-
-            // Commit transaction
-            await _transaction.Commit();
-            return response;
-        }
-        catch
-        {
-            // Rollbak transaction
-            await _transaction.Rollback();
-            throw;
-        }
     }
 
     public async Task<ResponseVM> UserVerification(string token)
@@ -198,53 +143,4 @@ public class AuthService : IAuthService
         }
     }
 
-    public async Task<ResponseVM> ResetPassword(PasswordResetVM passwordReset)
-    {
-        try
-        {
-            // Begin transaction
-            await _transaction.Begin();
-            ResponseVM response = new ResponseVM();
-
-            // Fetch reset token
-            PasswordResetToken? resetToken = await _passwordResetService.Get(passwordReset.ResetToken);
-            if (resetToken == null)
-            {
-                response.Success = false;
-                response.Message = NotificationMessages.WrongResetPasswordLink;
-                return response;
-            }
-
-            // Fetch user
-            User? user = await _userRepository.Get(u => u.Id == resetToken.UserId && u.DeactivatedAt == null && u.IsEmailConfirmed);
-            if (user == null)
-            {
-                response.Success = false;
-                response.Message = NotificationMessages.UserNotFoundByEmail;
-            }
-            else
-            {
-                // Set reset token used
-                await _passwordResetService.SetConsumed(resetToken.Token);
-
-                // Update password
-                await _userService.ChangePassword(user.Id, passwordReset.NewPassword);
-
-                // Send email notification
-                _emailService.ChangePasswordEmail(user.FirstName, user.EmailAddress);
-
-                response.Success = true;
-                response.Message = NotificationMessages.PasswordResetSuccess;
-            }
-            // Commit transaction
-            await _transaction.Commit();
-            return response;
-        }
-        catch
-        {
-            // Rollback transaction
-            await _transaction.Rollback();
-            throw;
-        }
-    }
 }

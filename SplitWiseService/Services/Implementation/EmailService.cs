@@ -65,13 +65,13 @@ public class EmailService : IEmailService
     public async void ResetPasswordEmail(string firstName, string email, string token)
     {
         string fileText = GetEmailTemplate(EmailTemplates.ResetPassword);
-        string resetLink = _urlBuilder.Create("ResetPassword", "Auth", token);
+        string resetLink = _urlBuilder.Create("ResetPassword", "User", token);
 
         string emailBody = fileText.Replace("{name}", firstName).Replace("{link}", resetLink);
         await Send(email, NotificationMessages.PasswordResetSubject, emailBody);
     }
 
-    public async void ChangePasswordEmail(string firstName, string email)
+    public async void PasswordChangedEmail(string firstName, string email)
     {
         string fileText = GetEmailTemplate(EmailTemplates.PasswordChangedNotification);
 

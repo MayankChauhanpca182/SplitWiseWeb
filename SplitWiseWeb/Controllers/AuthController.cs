@@ -11,13 +11,11 @@ public class AuthController : Controller
 {
     private readonly IAuthService _authService;
     private readonly IUserService _userService;
-    private readonly IPasswordResetService _passwordResetService;
 
-    public AuthController(IAuthService authService, IUserService userService, IPasswordResetService passwordResetService)
+    public AuthController(IAuthService authService, IUserService userService)
     {
         _authService = authService;
         _userService = userService;
-        _passwordResetService = passwordResetService;
     }
 
     #region Login
@@ -84,39 +82,6 @@ public class AuthController : Controller
     }
     #endregion
 
-    #region Register
-    // GET Register
-    [Route("register")]
-    public IActionResult Register()
-    {
-        return View();
-    }
-
-    // POST Register
-    [HttpPost]
-    [Route("register")]
-    public async Task<IActionResult> Register(RegisterUserVM registerUserVM)
-    {
-        if (!ModelState.IsValid)
-        {
-            return View(registerUserVM);
-        }
-
-        // Add User
-        ResponseVM response = await _authService.RegisterUser(registerUserVM);
-        if (response.Success)
-        {
-            TempData["successMessage"] = response.Message;
-        }
-        else
-        {
-            TempData["errorMessage"] = response.Message;
-        }
-
-        return RedirectToAction("Login");
-    }
-    #endregion
-
     #region User Verification
     // GET UserVerification
     [Route("userVerification")]
@@ -172,53 +137,6 @@ public class AuthController : Controller
             TempData["errorMessage"] = response.Message;
             return View(loginVM);
         }
-    }
-    #endregion
-
-    #region Reset Password
-    // GET ResetPassword
-    [Route("resetPassword")]
-    public async Task<IActionResult> ResetPassword(string? token = null)
-    {
-        if (string.IsNullOrEmpty(token))
-        {
-            TempData["errorMessage"] = NotificationMessages.Invalid.Replace("{0}", "Token");
-            return RedirectToAction("Login");
-        }
-
-        // Validate token using expiry
-        ResponseVM response = await _passwordResetService.Validate(token);
-        if (!response.Success)
-        {
-            TempData["errorMessage"] = response.Message;
-            return RedirectToAction("Login");
-        }
-        return View(new PasswordResetVM() { ResetToken = token });
-    }
-
-    // POST ResetPassword
-    [HttpPost]
-    [Route("resetPassword")]
-    public async Task<IActionResult> ResetPassword(PasswordResetVM passwordReset)
-    {
-        ModelState.Remove("Password");
-        if (!ModelState.IsValid)
-        {
-            return View(passwordReset);
-        }
-
-        // Reset passsword
-        ResponseVM response = await _authService.ResetPassword(passwordReset);
-
-        if (response.Success)
-        {
-            TempData["successMessage"] = response.Message;
-        }
-        else
-        {
-            TempData["errorMessage"] = response.Message;
-        }
-        return RedirectToAction("Login");
     }
     #endregion
 

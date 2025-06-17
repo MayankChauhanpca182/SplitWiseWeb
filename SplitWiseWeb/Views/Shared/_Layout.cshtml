@@ -9,6 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - SplitMate</title>
+    <link rel="icon" type="image/x-icon" href="/images/splitmate/icononly_transparent_nobuffer.png" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
@@ -42,29 +43,29 @@
         <header class="header d-flex justify-content-between align-items-center bg-white ps-1 pe-3">
             <div class="d-flex align-items-center gap-2">
                 <button type="button" class="btn p-0 ms-2 border-0" id="hamBurger">
-                    <i class="bi bi-list fs-3" title="Toggle Sidebar"></i>
+                    <i class="bi bi-list fs-3 text-white" title="Toggle Sidebar"></i>
                 </button>
                 <a asp-controller="Dashboard" asp-action="Index" class="navbar-brand d-flex justify-content-center"
                     title="Dashboard">
-                    <img src="/images/fulllogo_transparent_nobuffer.png" alt="" width="60px">
+                    <img src="/images/splitmate/fulllogo_transparent_nobuffer.png" alt="" width="60px">
                 </a>
             </div>
             <div class="dropdown">
-                <button class="btn dropdown-toggle d-flex align-items-center gap-2 border-0 p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <button class="btn dropdown-toggle d-flex align-items-center gap-2 text-white border-0 p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     <img src="@(ProfileImagePath ?? "/images/Default_pfp.png")" alt="" class="rounded-circle"
                         width="30px" height="30px">
                     <span class="d-none d-sm-block">@(userName)</span>
                 </button>
                 <ul class="dropdown-menu">
                     <li>
-                        <a asp-action="Profile" asp-controller="Dashboard"
+                        <a asp-action="Profile" asp-controller="User"
                             class="dropdown-item d-flex align-items-center gap-2 @((ViewData["ActiveLink"] as string) == "Profile" ? "active" : "")">
                             <i class="bi bi-person-circle fs-5"></i>
                             Profile
                         </a>
                     </li>
                     <li>
-                        <a asp-action="ChangePassword" asp-controller="Dashboard"
+                        <a asp-action="ChangePassword" asp-controller="User"
                             class="dropdown-item d-flex align-items-center gap-2 @((ViewData["ActiveLink"] as string) == "Change Password" ? "active" : "")">
                             <i class="bi bi-arrow-clockwise fs-5 fw-semibold"></i>
                             Change Password
@@ -82,20 +83,20 @@
         </header>
         <div class="content d-flex w-100 h-100">
             <!-- Navigation -->
-            <aside class="navigation bg-secondary-subtle" id="navigation">
+            <aside class="navigation text-white bg-secondary-subtle" id="navigation">
                 <div>
                     <a asp-action="Index" asp-controller="Dashboard"
-                        class="d-flex align-items-center gap-1 @((ViewData["ActiveLink"] as string) == "Dashboard" ? "active" : "")">
+                        class="d-flex align-items-center gap-3 @((ViewData["ActiveLink"] as string) == "Dashboard" ? "active" : "")">
                         <i class="fa-solid fa-window-maximize"></i>
                         Dashboard
                     </a>
                     <a asp-action="Index" asp-controller="Dashboard"
-                        class="d-flex align-items-center gap-1 @((ViewData["ActiveLink"] as string) == "Groups" ? "active" : "")">
+                        class="d-flex align-items-center gap-3 @((ViewData["ActiveLink"] as string) == "Groups" ? "active" : "")">
                         <i class="bi bi-people-fill"></i>
                         Groups
                     </a>
-                    <a asp-action="Index" asp-controller="Dashboard"
-                        class="d-flex align-items-center gap-1 @((ViewData["ActiveLink"] as string) == "Friends" ? "active" : "")">
+                    <a asp-action="Index" asp-controller="Friend"
+                        class="d-flex align-items-center gap-3 @((ViewData["ActiveLink"] as string) == "Friends" ? "active" : "")">
                         <i class="bi bi-person-fill"></i>
                         Friends
                     </a>
@@ -107,8 +108,8 @@
                 @RenderBody()
             </div>
         </div>
-        <footer class="footer d-flex justify-content-center align-items-center bg-white position-fixed bottom-0 w-100">
-            <span class="fw-semibold">&copy; 2025 SplitMate. All rights reserved.</span>
+        <footer class="footer d-flex justify-content-center text-white align-items-center bg-white position-fixed bottom-0 w-100">
+            <span>&copy; 2025 SplitMate. All rights reserved.</span>
         </footer>
     </div>
 

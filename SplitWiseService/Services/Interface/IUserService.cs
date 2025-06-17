@@ -1,13 +1,22 @@
 using SplitWiseRepository.Models;
+using SplitWiseRepository.ViewModels;
 
 namespace SplitWiseService.Services.Interface;
 
 public interface IUserService
 {
-    public Task<User?> GetByEmailAddress(string email);
-    public Task<User?> GetById(int userId);
-    public Task ChangePassword(int userId, string newPassword);
+    // Get user
+    public Task<User> GetByEmailAddress(string email);
+    public Task<User> GetById(int userId);
 
-    // Get current user id
-    public Task<int> LoggedInUserId();
+    // Register
+    public Task<ResponseVM> RegisterUser(RegisterUserVM registerUserVM);
+
+    // Profile
+    public Task<UserVM> GetProfile();
+    public Task<ResponseVM> Update(UserVM profile);
+
+    // Get logged in user 
+    public int LoggedInUserId();
+    public Task<User> LoggedInUser();
 }

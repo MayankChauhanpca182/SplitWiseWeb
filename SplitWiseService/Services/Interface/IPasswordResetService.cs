@@ -9,4 +9,6 @@ public interface IPasswordResetService
     public Task Add(int userId, string token);
     public Task<ResponseVM> Validate(string token);
     public Task SetConsumed(string token);
+    public Task<ResponseVM> ResetPassword(PasswordResetVM passwordReset);
+    public Task<ResponseVM> ChangePassword(PasswordResetVM passwordReset);
 }

@@ -6,7 +6,7 @@ using SplitWiseRepository.Models;
 
 namespace SplitWiseRepository.ViewModels;
 
-public class ProfileVM
+public class UserVM
 {
     public string EmailAddress { get; set; }
     

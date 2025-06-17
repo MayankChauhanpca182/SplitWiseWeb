@@ -17,7 +17,7 @@ public static class NotificationMessages
 
     // CRUD fail
     public const string Exist = "{0} already exists.";
-    public const string SaveFailed = "Failed to add {0}." + TryAgain;
+    public const string SaveFailed = "Failed to save {0}." + TryAgain;
     public const string UpdateFailed = "Failed to update {0}." + TryAgain;
     public const string DeleteFailed = "Failed to delete {0}." + TryAgain;
 
@@ -71,6 +71,4 @@ public static class NotificationMessages
     public const string PasswordResetSubject = "Trouble Logging In? Reset Your Password";
     public const string PasswordChangedNotification = "Your password has been changed successfully.";
 
-    // Profile update
-    public const string ProfileUpdateSuccess = "Your profile has been updated successfully.";
 }

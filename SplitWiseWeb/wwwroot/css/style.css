@@ -7,22 +7,42 @@
     --clr-light-grey: #e1e1e1;
     --clr-grey: #b0b0b0;
     --clr-dark-gray: #4a4a4a;
+
+    --clr-teal : #1caf9a;
+    --clr-teal-dark : #1a9e8a;
+    --clr-blue-gray: #364150;
+    --clr-dark-cyan-green: #2a5b61;
+    --clr-bittersweet-shimmer : #cb5a5e;
 }
 
 /* Button */
 .btn-primary {
-    --bs-btn-bg: var(--clr-primary) !important;
+    --bs-btn-bg: var(--clr-teal) !important;
+    --bs-btn-border-color: var(--clr-teal) !important;
+    --bs-btn-hover-bg: var(--clr-teal-dark) !important;
+    --bs-btn-hover-border-color: var(--clr-teal-dark) !important;
+    --bs-btn-focus-shadow-rgb: 49, 132, 253;
+    --bs-btn-active-bg: var(--clr-teal-dark) !important;
+    --bs-btn-active-border-color: var(--clr-teal-dark) !important;
+    font-weight: 500;
+}
+
+.btn-secondary{
+    --bs-btn-color: var(--clr-primary) !important;
+    --bs-btn-bg: v#ffffff !important;
     --bs-btn-border-color: var(--clr-primary) !important;
-    --bs-btn-hover-bg: var(--clr-primary-dark) !important;
+    --bs-btn-hover-color: var(--clr-primary-dark) !important;
+    --bs-btn-hover-bg: var(--clr-light-grey) !important;
     --bs-btn-hover-border-color: var(--clr-primary-dark) !important;
     --bs-btn-focus-shadow-rgb: 49, 132, 253;
-    --bs-btn-active-bg: var(--clr-primary-dark) !important;
+    --bs-btn-active-color: var(--clr-primary-dark) !important;
+    --bs-btn-active-bg: var(--clr-light-grey) !important;
     --bs-btn-active-border-color: var(--clr-primary-dark) !important;
     font-weight: 500;
 }
 
 .text-primary {
-    color: var(--clr-primary) !important;
+    color: var(--clr-primary-dark) !important;
 }
 
 .bg-primary {
@@ -66,11 +86,12 @@ textarea {
 /* Global */
 body {
     font-family: "Roboto", sans-serif;
-    background-color: var(--clr-light-grey);
+    background-color: var(--clr-grey) !important;
 }
 
 #loginLayoutBody {
     background-image: url("/images/4077186_17580.jpg");
+    background-size: cover;
     background-repeat: no-repeat;
 }
 
@@ -79,6 +100,14 @@ a {
 }
 
 /* Breadcrumbs */
+.breadcrumb{
+    padding: 5px 10px;
+    margin: 5px 0px;
+    width: fit-content;
+    border-radius: 10px;
+    background-color: var(--clr-light-grey);
+}
+
 .breadcrumb-item a{
     color: var(--clr-dark-gray) !important;
 }
@@ -129,6 +158,7 @@ button {
 
 /* Layout */
 header.header {
+    background-color: var(--clr-blue-gray) !important;
     position: fixed !important;
     width: 100%;
     height: 70px;
@@ -150,7 +180,6 @@ header.header {
 
 .dropdown-item.active {
     background-color: unset;
-    font-weight: 750 !important;
     color: var(--clr-primary-dark) !important;
     border-color: var(--clr-primary-dark) !important;
 }
@@ -159,16 +188,17 @@ div.content {
     margin-top: 70px;
     margin-bottom: 50px;
     background-color: #f3f3f3;
-    min-height: calc(100vh - 70px - 50px);
-    height: 100%;
 }
 
 div.right-section {
-    width: calc(100% - 230px);
+    height: calc(100vh - 70px - 50px);
+    overflow-y: auto;
+    width: calc(100% - 200px);
 }
 
 aside.navigation {
-    width: 230px;
+    background-color: var(--clr-blue-gray) !important;
+    width: 200px;
 }
 
 aside.navigation>div {
@@ -180,22 +210,24 @@ aside.navigation a {
     display: inline-block;
     width: 100%;
     padding: 8px;
-    color: var(--clr-dark-gray);
-    font-weight: 500;
+    color: #fff;
+    font-weight: 400;
     border-left: 5px solid transparent;
 }
 
 aside.navigation a:hover {
+    color: var(--clr-dark-gray) !important;
     background-color: var(--clr-mint) !important;
 }
 
 aside.navigation a.active {
-    font-weight: 750 !important;
-    color: var(--clr-primary-dark) !important;
+    color: var(--clr-dark-gray);
+    background-color: var(--clr-mint) !important;
     border-color: var(--clr-primary-dark) !important;
 }
 
 footer.footer{
+    background-color: var(--clr-blue-gray) !important;
     height: 50px;
 }
 
@@ -211,4 +243,17 @@ footer.footer{
     div.right-section {
         width: 100% !important;
     }
+}
+
+/* Friends */
+#friendListOuter{
+
+}
+
+#friendList{
+
+}
+
+.friendItem{
+    max-width: 750px;
 }
