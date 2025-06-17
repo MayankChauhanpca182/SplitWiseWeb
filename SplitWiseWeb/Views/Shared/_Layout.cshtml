@@ -8,9 +8,10 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - SplitWiseWeb</title>
+    <title>@ViewData["Title"] - SplitMate</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"/>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/loader.css" asp-append-version="true" />
@@ -39,41 +40,40 @@
     <div class="d-flex flex-column h-100">
         <!-- Header -->
         <header class="header d-flex justify-content-between align-items-center bg-white ps-1 pe-3">
-            <div class="d-flex align-items-center gap-1">
+            <div class="d-flex align-items-center gap-2">
                 <button type="button" class="btn p-0 ms-2 border-0" id="hamBurger">
                     <i class="bi bi-list fs-3" title="Toggle Sidebar"></i>
                 </button>
-                <a asp-controller="Dashboard" asp-action="Index" class="navbar-brand d-flex justify-content-center">
-                    <div class="d-flex align-items-center gap-1">
-                        <span class="pb-1">
-                            <img src="/images/SplitWiseWeb.png" alt="" class="" width="30px" height="30px">
-                        </span>
-                        <h4 class="m-0 text-center text-primary d-none d-sm-block">SplitWiseWeb</h4>
-                    </div>
+                <a asp-controller="Dashboard" asp-action="Index" class="navbar-brand d-flex justify-content-center"
+                    title="Dashboard">
+                    <img src="/images/fulllogo_transparent_nobuffer.png" alt="" width="60px">
                 </a>
             </div>
             <div class="dropdown">
                 <button class="btn dropdown-toggle d-flex align-items-center gap-2 border-0 p-0" type="button"
-                    data-bs-toggle="dropdown" aria-expanded="false">
+                    data-bs-toggle="dropdown" aria-expanded="false" title="Profile">
                     <img src="@(ProfileImagePath ?? "/images/Default_pfp.png")" alt="" class="rounded-circle"
                         width="30px" height="30px">
                     <span class="d-none d-sm-block">@(userName)</span>
                 </button>
                 <ul class="dropdown-menu">
                     <li>
-                        <a asp-action="Profile" asp-controller="Dashboard" class="dropdown-item d-flex align-items-center gap-2 @((ViewData["ActiveLink"] as string) == "Profile" ? "active" : "")">
+                        <a asp-action="Profile" asp-controller="Dashboard"
+                            class="dropdown-item d-flex align-items-center gap-2 @((ViewData["ActiveLink"] as string) == "Profile" ? "active" : "")">
                             <i class="bi bi-person-circle fs-5"></i>
                             Profile
                         </a>
                     </li>
                     <li>
-                        <a asp-action="ChangePassword" asp-controller="Dashboard" class="dropdown-item d-flex align-items-center gap-2 @((ViewData["ActiveLink"] as string) == "Change Password" ? "active" : "")">
+                        <a asp-action="ChangePassword" asp-controller="Dashboard"
+                            class="dropdown-item d-flex align-items-center gap-2 @((ViewData["ActiveLink"] as string) == "Change Password" ? "active" : "")">
                             <i class="bi bi-arrow-clockwise fs-5 fw-semibold"></i>
                             Change Password
                         </a>
                     </li>
                     <li>
-                        <a asp-action="Logout" asp-controller="Auth" class="dropdown-item d-flex align-items-center gap-2">
+                        <a asp-action="Logout" asp-controller="Auth"
+                            class="dropdown-item d-flex align-items-center gap-2">
                             <i class="bi bi-box-arrow-left fs-5 fw-semibold"></i>
                             Logout
                         </a>
@@ -86,17 +86,17 @@
             <aside class="navigation bg-secondary-subtle" id="navigation">
                 <div>
                     <a asp-action="Index" asp-controller="Dashboard"
-                        class="d-flex gap-1 @((ViewData["ActiveLink"] as string) == "Dashboard" ? "active" : "")">
-                        <img src="/images/SplitWiseWeb.png" alt="" width="20px" height="20px">
+                        class="d-flex align-items-center gap-1 @((ViewData["ActiveLink"] as string) == "Dashboard" ? "active" : "")">
+                        <i class="fa-solid fa-window-maximize"></i>
                         Dashboard
                     </a>
                     <a asp-action="Index" asp-controller="Dashboard"
-                        class="d-flex gap-1 @((ViewData["ActiveLink"] as string) == "Groups" ? "active" : "")">
+                        class="d-flex align-items-center gap-1 @((ViewData["ActiveLink"] as string) == "Groups" ? "active" : "")">
                         <i class="bi bi-people-fill"></i>
                         Groups
                     </a>
                     <a asp-action="Index" asp-controller="Dashboard"
-                        class="d-flex gap-1 @((ViewData["ActiveLink"] as string) == "Friends" ? "active" : "")">
+                        class="d-flex align-items-center gap-1 @((ViewData["ActiveLink"] as string) == "Friends" ? "active" : "")">
                         <i class="bi bi-person-fill"></i>
                         Friends
                     </a>
@@ -107,6 +107,9 @@
                 @RenderBody()
             </div>
         </div>
+        <footer class="footer d-flex justify-content-center align-items-center bg-white position-fixed bottom-0 w-100">
+            Footer
+        </footer>
     </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

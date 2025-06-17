@@ -13,6 +13,9 @@ public static class ValidationMessages
     public const string PasswordLength = "Password must be at least 8 characters long";
     public const string ValidPassword = "Password must contain at least one letter, one number, and one special character";
 
+    // Current password
+    public const string CurrentPasswordRequired = "Current password is required";
+
     // New password
     public const string NewPasswordRequired = "New password is required";
     public const string NewPasswordLength = "New password must be at least 8 characters long";

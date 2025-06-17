@@ -19,6 +19,7 @@ public class DashboardController : Controller
         _userService = userService;
     }
 
+    #region Dashboard
     // GET Index
     [Route("dashboard")]
     public IActionResult Index()
@@ -34,7 +35,9 @@ public class DashboardController : Controller
         ViewData["ActiveLink"] = "Change Password";
         return View();
     }
+    #endregion
 
+    #region Change Password
     // POST ChangePassword
     [HttpPost]
     [Route("changePassword")]
@@ -55,8 +58,11 @@ public class DashboardController : Controller
         TempData["successMessage"] = response.Message;
         return RedirectToAction("Logout", "Auth");
     }
+    #endregion
 
+    #region Profile
     // GET Profile
+    [Route("profile")]
     public async Task<IActionResult> Profile()
     {
         ViewData["ActiveLink"] = "Profile";
@@ -65,6 +71,7 @@ public class DashboardController : Controller
 
     // POST Profile
     [HttpPost]
+    [Route("profile")]
     public async Task<IActionResult> Profile(ProfileVM profile)
     {
         if (!ModelState.IsValid)
@@ -98,5 +105,6 @@ public class DashboardController : Controller
 
         return RedirectToAction("Profile");
     }
+    #endregion
 
 }

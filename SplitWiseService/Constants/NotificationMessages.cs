@@ -62,7 +62,7 @@ public static class NotificationMessages
     public const string LinkExpired = "The link has been expired. Please request a new one.";
 
     // Password reset success
-    public const string IncorrectPassword = "The password you entered is incorrect.";
+    public const string IncorrectPassword = "The current password you entered is incorrect.";
     public const string PasswordChangeSuccess = "Your password has been changed successfully.";
     public const string PasswordResetSuccess = "Your password has been reset successfully.";
 

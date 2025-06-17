@@ -3,7 +3,7 @@
 :root {
     --clr-primary: #1cc29f;
     --clr-primary-dark: #099a7b;
-    --clr-mint: #dffaf3;
+    --clr-mint: #ace4d6;
     --clr-light-grey: #e1e1e1;
     --clr-grey: #b0b0b0;
     --clr-dark-gray: #4a4a4a;
@@ -18,6 +18,7 @@
     --bs-btn-focus-shadow-rgb: 49, 132, 253;
     --bs-btn-active-bg: var(--clr-primary-dark) !important;
     --bs-btn-active-border-color: var(--clr-primary-dark) !important;
+    font-weight: 500;
 }
 
 .text-primary {
@@ -40,11 +41,11 @@
     background-color: var(--clr-light-grey) !important;
 }
 
-.cursor-pointer{
+.cursor-pointer {
     cursor: pointer;
 }
 
-textarea{
+textarea {
     resize: none;
 }
 
@@ -73,15 +74,15 @@ body {
     background-repeat: no-repeat;
 }
 
-a{
-    text-decoration:  none;
+a {
+    text-decoration: none;
 }
 
 
 /* Login page */
 #loginFormOuter {
     width: 500px;
-    margin-top: 25vh;
+    margin: auto;
 }
 
 #registerFormOuter {
@@ -95,7 +96,8 @@ input[type="checkbox"]:checked {
 }
 
 .form-control:focus,
-input[type="checkbox"], select,
+input[type="checkbox"],
+select,
 button {
     box-shadow: none !important;
 }
@@ -113,23 +115,27 @@ button {
 }
 
 /* Layout */
-header.header{
+header.header {
     position: fixed !important;
     width: 100%;
     height: 70px;
     z-index: 10;
 }
 
-.dropdown-menu{
+.dropdown-menu {
     --bs-dropdown-link-active-bg: var(--clr-primary-dark);
 }
 
-.dropdown-item{
+.dropdown-item {
     padding: 5px 10px;
     border-left: 5px solid transparent;
 }
 
-.dropdown-item.active{
+.dropdown-item:hover {
+    background-color: var(--clr-mint) !important;
+}
+
+.dropdown-item.active {
     background-color: unset;
     font-weight: 750 !important;
     color: var(--clr-primary-dark) !important;
@@ -138,8 +144,9 @@ header.header{
 
 div.content {
     margin-top: 70px;
+    margin-bottom: 50px;
     background-color: #f3f3f3;
-    min-height: calc(100vh - 70px);
+    min-height: calc(100vh - 70px - 50px);
     height: 100%;
 }
 
@@ -165,10 +172,18 @@ aside.navigation a {
     border-left: 5px solid transparent;
 }
 
+aside.navigation a:hover {
+    background-color: var(--clr-mint) !important;
+}
+
 aside.navigation a.active {
     font-weight: 750 !important;
     color: var(--clr-primary-dark) !important;
     border-color: var(--clr-primary-dark) !important;
+}
+
+footer.footer{
+    height: 50px;
 }
 
 @media (max-width: 767px) {

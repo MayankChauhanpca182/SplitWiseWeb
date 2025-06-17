@@ -8,12 +8,15 @@
     <form asp-action="Profile" asp-controller="Dashboard" class="d-flex flex-column" style="max-width: 500px;"
         enctype="multipart/form-data">
         <!-- Image -->
-        <input asp-for="@Model.ProfileImage" hidden>
+        <input asp-for="@Model.ProfileImage" accept="image/png, image/jpg, image/jpeg" hidden>
 
         <label for="ProfileImage" class="cursor-pointer" title="Click to select an image" style="width: 100px;">
             <img src=@(Model.ProfileImagePath ?? "/images/Default_pfp.png") alt="" id="previewImage"
                 class="rounded-circle border border-dark-subtle object-fit-cover" width="100px" height="100px">
         </label>
+        <span class="text-danger" asp-validation-for="@Model.ProfileImage"></span>
+
+        <p class="mt-4 mb-0"><strong>Email:</strong> @Model.EmailAddress</p>
 
         <!-- First Name -->
         <div class="input-group mt-4 rounded-2 shadow-sm">
@@ -43,8 +46,7 @@
 
         <!-- Birthdate -->
         <div class="input-group mt-4 rounded-2 shadow-sm">
-            <input asp-for=@Model.Birthdate type="date" class="form-control rounded-2 border-secondary-subtle"
-                min="1970-01-01" max="2015-12-31">
+            <input asp-for=@Model.Birthdate type="date" class="form-control rounded-2 border-secondary-subtle" max="@Model.MaxDate.ToString("yyyy-MM-dd")">
         </div>
         <span class="text-danger" asp-validation-for="@Model.Birthdate"></span>
 
@@ -70,12 +72,12 @@
     <script>
         $(document).ready(function () {
             $('#ProfileImage').on('change', function () {
-                const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+                const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
                 const file = this.files[0]; // Get the selected file
 
                 if (file) {
                     if (!validTypes.includes(file.type)) {
-                        toastr.error("Only following image types are allowed: jpeg, png, webp.");
+                        toastr.error("Only following image types are allowed: jpeg, jpg, png.");
                         $(this).val(""); 
                         $('#previewImage').attr('src', '@(Model.ProfileImagePath ?? "/images/Default_pfp.png")');
                         return;

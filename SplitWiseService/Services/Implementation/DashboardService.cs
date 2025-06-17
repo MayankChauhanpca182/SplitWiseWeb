@@ -80,6 +80,7 @@ public class DashboardService : IDashboardService
         User user = await _userService.GetById(userId);
         return new ProfileVM
         {
+            EmailAddress = user.EmailAddress,
             FirstName = user.FirstName,
             LastName = user.LastName,
             ProfileImagePath = user.ProfileImagePath,

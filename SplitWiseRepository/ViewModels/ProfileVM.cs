@@ -8,6 +8,8 @@ namespace SplitWiseRepository.ViewModels;
 
 public class ProfileVM
 {
+    public string EmailAddress { get; set; }
+    
     [Required(ErrorMessage = ValidationMessages.FirstNameRequired)]
     [StringLength(50, ErrorMessage = ValidationMessages.FirstNameLength)]
     [RegularExpression(ValidationRegex.NameRegex, ErrorMessage = ValidationMessages.ValidFirstName)]
@@ -32,5 +34,6 @@ public class ProfileVM
     [Required(ErrorMessage = ValidationMessages.BirthdateRequired)]
     public DateTime? Birthdate { get; set; }
 
+    public DateOnly MaxDate { get; set; } = DateOnly.FromDateTime(DateTime.Now);
     public List<Currency> Currencies { get; set; } = new List<Currency>();
 }

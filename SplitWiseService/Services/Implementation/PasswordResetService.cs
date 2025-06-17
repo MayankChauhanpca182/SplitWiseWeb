@@ -18,7 +18,7 @@ public class PasswordResetService : IPasswordResetService
 
     public async Task<PasswordResetToken> Get(string token)
     {
-        return await _passwordResetToken.GetLast(predicate: prt => prt.Token == token);
+        return await _passwordResetToken.Get(predicate: prt => prt.Token == token);
     }
 
     public async Task Add(int userId, string token)

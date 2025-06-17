@@ -7,7 +7,7 @@ public class PasswordResetVM
 {
     public string ResetToken { get; set; }
 
-    [Required(ErrorMessage = ValidationMessages.PasswordRequired)]
+    [Required(ErrorMessage = ValidationMessages.CurrentPasswordRequired)]
     public string Password { get; set; } = null!;
 
     [Required(ErrorMessage = ValidationMessages.NewPasswordRequired)]
