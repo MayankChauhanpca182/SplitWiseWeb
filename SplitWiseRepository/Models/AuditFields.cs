@@ -3,7 +3,7 @@ namespace SplitWiseRepository.Models;
 public class AuditFields
 {
     public int CreatedById { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
     public int UpdatedById { get; set; }
     public DateTime UpdatedAt { get; set; }
     public int? DeletedById { get; set; }

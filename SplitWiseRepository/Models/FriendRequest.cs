@@ -3,7 +3,7 @@ using SplitWiseRepository.Constants;
 
 namespace SplitWiseRepository.Models;
 
-public class FriendRequests : AuditFields
+public class FriendRequest : AuditFields
 {
     public int Id { get; set; }
     public int RequesterId { get; set; }

@@ -18,5 +18,5 @@ public class SplitWiseDbContext : DbContext
     public virtual DbSet<Currency> Currencies { get; set; }
     public virtual DbSet<UserReferral> UserReferrals { get; set; }
     public virtual DbSet<Friend> Friends { get; set; }
-    public virtual DbSet<FriendRequests> FriendRequests { get; set; }
+    public virtual DbSet<FriendRequest> FriendRequests { get; set; }
 }

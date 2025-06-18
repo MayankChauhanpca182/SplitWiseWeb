@@ -14,7 +14,7 @@ public class UserReferral
     [Required]
     public string ReferredToEmailAddress { get; set; }
 
-    public DateTime ReferredAt { get; set; }
+    public DateTime ReferredAt { get; set; } = DateTime.Now;
     public bool IsAccountRegistered { get; set; } = false;
     public DateTime? RegisteredAt { get; set; }
 }

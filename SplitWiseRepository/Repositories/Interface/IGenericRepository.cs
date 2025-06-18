@@ -7,6 +7,7 @@ public interface IGenericRepository<T> where T : class
 {
     public Task<T> Get(Expression<Func<T, bool>> predicate = null);
     public Task<T> GetLast(Expression<Func<T, bool>> predicate = null);
+    public Task<bool> Any(Expression<Func<T, bool>> predicate = null);
     public Task<List<T>> List(Expression<Func<T, bool>> predicate = null);
     public Task<PaginatedItemsVM<T>> PaginatedList(
         Expression<Func<T, bool>> predicate = null,

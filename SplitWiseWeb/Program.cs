@@ -27,7 +27,7 @@ builder.Services.AddBreadcrumbs(typeof(Program).Assembly, options =>
 	options.OlClasses = "breadcrumb";
 	options.LiClasses = "breadcrumb-item";
 	options.ActiveLiClasses = "breadcrumb-item active";
-	options.SeparatorElement = "<li class=\"separator\">/</li>";
+	options.SeparatorElement = "<li class=\"separator\">></li>";
 });
 
 // Configure Database Connection
@@ -49,6 +49,7 @@ builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IExceptionLogService, ExceptionLogService>();
 builder.Services.AddScoped<IPasswordResetService, PasswordResetService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
+builder.Services.AddScoped<IFriendService, FriendService>();
 
 builder.Services.AddControllersWithViews();
 

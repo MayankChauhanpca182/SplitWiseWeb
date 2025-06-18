@@ -27,6 +27,11 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         return await _dbSet.FirstOrDefaultAsync(predicate);
     }
 
+    public async Task<bool> Any(Expression<Func<T, bool>> predicate = null)
+    {
+        return await _dbSet.AnyAsync(predicate);
+    }
+
     public async Task<List<T>> List(Expression<Func<T, bool>> predicate = null)
     {
         if (predicate != null)

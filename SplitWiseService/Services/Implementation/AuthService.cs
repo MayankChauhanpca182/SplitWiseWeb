@@ -128,7 +128,7 @@ public class AuthService : IAuthService
                 await _passwordResetService.Add(user.Id, token);
 
                 // Send email
-                _emailService.ResetPasswordEmail(user.FirstName, email, token);
+                await _emailService.ResetPasswordEmail(user.FirstName, email, token);
                 response.Success = true;
                 response.Message = NotificationMessages.ResetPasswordEmailSuccess;
             }

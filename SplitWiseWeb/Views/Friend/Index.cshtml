@@ -1,15 +1,16 @@
+@using SplitWiseService.Constants
 @{
     ViewData["Title"] = "Friends";
 }
 
 <h1>Friends</h1>
 <div class="d-flex gap-3 mb-3">
-    <button class="btn btn-primary" type="button">Add Friend</button>
+    <button class="btn btn-primary" type="button" onclick="fetchAddFriendModal()">Add Friend</button>
     <a href="#" class="btn btn-secondary" type="button">Friend Requests</a>
 </div>
 <div id="friendListOuter">
     <ul class="list-unstyled" id="friendList">
-        <li class="friendItem d-flex flex-wrap justify-content-between gap-2 p-2 rounded-3 bg-white">
+        @* <li class="friendItem d-flex flex-wrap justify-content-between gap-2 p-2 rounded-3 bg-white">
             <div class="d-flex align-items-center gap-3">
                 <div>
                     <img src="/images/Default_pfp.png" alt="" width="50px">
@@ -24,6 +25,95 @@
                 <button class="btn btn-primary" type="button">Settle up</button>
                 <span>₹100.00</span>
             </div>
-        </li>
+        </li> *@
     </ul>
 </div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="regularModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" id="regularModalContent">
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Get friend request modal
+        function fetchAddFriendModal() {
+            $("#normalModalContent").empty();
+            $.ajax({
+                url: "/Friend/AddFriendModal",
+                type: "GET",
+                success: function (response) {
+                    if (!response.statusCode) {
+                        $("#regularModalContent").html(response);
+                        $("#regularModal").modal("show");
+                    }
+                },
+                error: function () {
+                    $("#regularModal").modal("hide");
+                    toastr.error('@(NotificationMessages.CanNot.Replace("{0}", "add friend"))');
+                },
+            });
+        }
+
+        // Submit friend request form
+        $(document).on("submit", "#addFriendRequistForm", function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: $(this).attr("action"),
+                type: $(this).attr("method"),
+                data: $(this).serialize(),
+                success: function (response) {
+                    if (!response.statusCode) {
+                        if (response.success) {
+                            $("#regularModal").modal("hide");
+                            toastr.success(response.message);
+                        }
+                        else if (response.success == false) {
+                            toastr.error(response.message);
+                        }
+                        else {
+                            $("#regularModalContent").html(response);
+                        }
+                    }
+                },
+                error: function (xhr, status, error) {
+                    toastr.error('@NotificationMessages.InternalServerError');
+                }
+            });
+        });
+        
+        // Send referral form
+        $(document).on("submit", "#sendReferralForm", function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: $(this).attr("action"),
+                type: $(this).attr("method"),
+                data: $(this).serialize(),
+                success: function (response) {
+                    if (!response.statusCode) {
+                        if (response.success) {
+                            $("#regularModal").modal("hide");
+                            toastr.success(response.message);
+                        }
+                        else if (response.success == false) {
+                            toastr.error(response.message);
+                        }
+                        else {
+                            $("#regularModalContent").html(response);
+                        }
+                    }
+                },
+                error: function (xhr, status, error) {
+                    toastr.error('@NotificationMessages.InternalServerError');
+                }
+            });
+        });
+    </script>
+}

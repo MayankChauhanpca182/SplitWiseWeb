@@ -27,13 +27,14 @@ $("#loader").show();
 
 $(document).ready(function () {
   $("#loader").hide();
-
-  $(document).ajaxStop(function () {
-    $("#loader").hide();
-  });
-
+  
   $(document).on("submit", "form", function (e) {
     $("#loader").show();
+  });
+
+  $(document).ajaxStop(function () {
+    console.log("H")
+    $("#loader").hide();
   });
 
   $(window).on("load", function () {

@@ -135,7 +135,7 @@ public class PasswordResetService : IPasswordResetService
                 await SetPassword(user.Id, passwordReset.NewPassword);
 
                 // Send email notification
-                _emailService.PasswordChangedEmail(user.FirstName, user.EmailAddress);
+                await _emailService.PasswordChangedEmail(user.FirstName, user.EmailAddress);
 
                 response.Success = true;
                 response.Message = NotificationMessages.PasswordResetSuccess;
@@ -175,7 +175,7 @@ public class PasswordResetService : IPasswordResetService
                 await SetPassword(userId, passwordReset.NewPassword);
 
                 // Send email notification
-                _emailService.PasswordChangedEmail(user.FirstName, user.EmailAddress);
+                await _emailService.PasswordChangedEmail(user.FirstName, user.EmailAddress);
 
                 response.Success = true;
                 response.Message = NotificationMessages.PasswordChangeSuccess;

@@ -70,5 +70,18 @@ public static class NotificationMessages
     public const string UserVerificationSubject = "Almost There! Verify Your Email to Activate Your Account";
     public const string PasswordResetSubject = "Trouble Logging In? Reset Your Password";
     public const string PasswordChangedNotification = "Your password has been changed successfully.";
+    public const string NewFriendRequest = "You’ve Received a New Friend Request.";
+    public const string ReferralRequest = "You have been invited to SplitMate.";
+
+    // Ajax errors
+    public const string CanNot = "Can not {0} at this time." + TryAgain;
+
+    // Friend request
+    public const string NoAccountFound = "No account was found with {0} email address. Would you like to refere to {0}.";
+    public const string FriendRequestToSelf = "You cannot send a friend request to yourself.";
+    public const string FriendRequestSuccess = "Friend request has been sent successfully.";
+    public const string ReferralSuccess = "Referral email has been sent successfully.";
+    public const string AlreadyReferred = "You have already reaferred {0}.";
+    public const string AlreadyReferredBySomeone = "{0} has been already referred by someone, once {0} will create account he/she will get your friend.";
 
 }

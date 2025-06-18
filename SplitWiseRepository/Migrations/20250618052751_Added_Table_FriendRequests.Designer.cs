@@ -12,7 +12,7 @@ using SplitWiseRepository.Models;
 namespace SplitWiseRepository.Migrations
 {
     [DbContext(typeof(SplitWiseDbContext))]
-    [Migration("20250618044814_Added_Table_FriendRequests")]
+    [Migration("20250618052751_Added_Table_FriendRequests")]
     partial class Added_Table_FriendRequests
     {
         /// <inheritdoc />
@@ -131,7 +131,7 @@ namespace SplitWiseRepository.Migrations
                     b.ToTable("Friends");
                 });
 
-            modelBuilder.Entity("SplitWiseRepository.Models.FriendRequests", b =>
+            modelBuilder.Entity("SplitWiseRepository.Models.FriendRequest", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -347,7 +347,7 @@ namespace SplitWiseRepository.Migrations
                     b.Navigation("Friend2UserNavigation");
                 });
 
-            modelBuilder.Entity("SplitWiseRepository.Models.FriendRequests", b =>
+            modelBuilder.Entity("SplitWiseRepository.Models.FriendRequest", b =>
                 {
                     b.HasOne("SplitWiseRepository.Models.User", "ReceiverUserNavigation")
                         .WithMany()

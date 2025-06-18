@@ -1,0 +1,19 @@
+@using SplitWiseRepository.ViewModels
+@model FriendRequestVM
+
+<div class="modal-header">
+    <h1 class="modal-title fs-5" id="addFriendModalLabel">Refer to friend</h1>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<form asp-action="SendReferral" asp-controller="Friend" id="sendReferralForm">
+    <div class="modal-body">
+        <p>@Model.Message</p>
+        <!-- Email -->
+        <input asp-for="@Model.Email" hidden>
+        <input asp-for="@Model.Message" hidden>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Refer</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+    </div>
+</form>
