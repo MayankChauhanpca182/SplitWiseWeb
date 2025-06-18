@@ -33,7 +33,6 @@ $(document).ready(function () {
   });
 
   $(document).ajaxStop(function () {
-    console.log("H")
     $("#loader").hide();
   });
 

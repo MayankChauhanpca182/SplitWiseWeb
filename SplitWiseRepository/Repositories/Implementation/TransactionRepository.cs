@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore.Storage;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.Repositories.Interface;
+using SplitWiseRepository.ViewModels;
 
 namespace SplitWiseRepository.Repositories.Implementation;
 

@@ -29,6 +29,14 @@ public class FriendController : Controller
         return View();
     }
 
+    // POST FriendList
+    [HttpPost]
+    public async Task<IActionResult> FriendList(FilterVM filter)
+    {
+        FriendListVM friendList = await _freiendService.FriendList(filter);
+        return PartialView("_FriendListPartialView", friendList);
+    }
+
     // GET AddFriendModal
     public IActionResult AddFriendModal()
     {
@@ -88,9 +96,26 @@ public class FriendController : Controller
 
     // POST FriendList
     [HttpPost]
-    public async Task<IActionResult> FriendList(FilterVM filter)
+    public async Task<IActionResult> FriendRequestList(FilterVM filter)
     {
         FriendRequestListVM friendRequestList = await _freiendService.FriendRequestList(filter);
         return PartialView("_FriendRequestListPartialView", friendRequestList);
     }
+
+    // POST AcceptRequest
+    [HttpPost]
+    public async Task<IActionResult> AcceptRequest(int id)
+    {
+        ResponseVM response = await _freiendService.AcceptRequest(id);
+        return Json(response);
+    }
+
+    // POST RejectRequest
+    [HttpPost]
+    public async Task<IActionResult> RejectRequest(int id)
+    {
+        ResponseVM response = await _freiendService.RejectRequest(id);
+        return Json(response);
+    }
+
 }

@@ -9,9 +9,7 @@
         placeholder="Search" oninput="getFriendRequestList(1)">
 </div>
 
-<div id="friendListOuter" class="bg-white">
-    @* @await Html.PartialAsync("_FriendRequestListPartialView", new FriendRequestListVM()) *@
-</div>
+<div id="friendRequestListOuter" class="bg-white"></div>
 
 @section Scripts {
     @* Friend request list *@
@@ -27,13 +25,13 @@
             let filter = {
                 PageNumber: currentPage,
                 PageSize: $("#friendRequestPageSize").val(),
-                SearchQuery: $("#friendRequestSearch").val(),
+                SearchString: $("#friendRequestSearch").val(),
                 SortColumn: sortColumn,
                 SortOrder: sortOrder,
             };
 
             $.ajax({
-                url: "/Friend/FriendList",
+                url: "/Friend/FriendRequestList",
                 type: "POST",
                 data: { filter },
                 success: function (response) {
@@ -42,7 +40,7 @@
                             toastr.error(response.message);
                         }
                         else {
-                            $("#friendListOuter").html(response);
+                            $("#friendRequestListOuter").html(response);
                         }
                     }
                 },
@@ -58,6 +56,54 @@
             sortOrder = $(this).data("order");
             getFriendRequestList(1);
         });
+    </script>
 
+    @* Accept / Reject friend request *@
+    <script>
+        // Accept request
+        function acceptRequest(id) {
+            $.ajax({
+                url: "/Friend/AcceptRequest",
+                type: "POST",
+                data: { id },
+                success: function (response) {
+                    if (!response.statusCode) {
+                        if (response.success == true) {
+                            toastr.success(response.message);
+                            getFriendRequestList(1);
+                        }
+                        else {
+                            toastr.error(response.message);
+                        }
+                    }
+                },
+                error: function () {
+                    toastr.error('@NotificationMessages.InternalServerError');
+                }
+            });
+        }
+        
+        // Reject request
+        function rejectRequest(id) {
+            $.ajax({
+                url: "/Friend/RejectRequest",
+                type: "POST",
+                data: { id },
+                success: function (response) {
+                    if (!response.statusCode) {
+                        if (response.success == true) {
+                            toastr.success(response.message);
+                            getFriendRequestList(1);
+                        }
+                        else {
+                            toastr.error(response.message);
+                        }
+                    }
+                },
+                error: function () {
+                    toastr.error('@NotificationMessages.InternalServerError');
+                }
+            });
+        }
     </script>
 }

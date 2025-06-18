@@ -8,4 +8,6 @@ public interface IEmailService
     public Task PasswordChangedEmail(string firstName, string email);
     public Task FriendRequestEmail(string recieverName, string senderName, string email);
     public Task ReferralEmail(string senderName, string email);
+    public Task FriendRequestAcceptedEmail(string recieverName, string senderName, string email);
+    public Task FriendRequestRejectedEmail(string recieverName, string senderName, string email);
 }

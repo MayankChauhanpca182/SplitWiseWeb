@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using MailKit.Search;
+using Microsoft.EntityFrameworkCore;
 using SplitWiseRepository.Constants;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.Repositories.Interface;
@@ -15,16 +16,18 @@ public class FriendService : IFriendService
     private readonly IGenericRepository<FriendRequest> _friendRequestRepository;
     private readonly ITransactionRepository _transaction;
     private readonly IGenericRepository<UserReferral> _userReferralRepository;
+    private readonly IGenericRepository<Friend> _friendRepository;
     private readonly IUserService _userService;
     private readonly IEmailService _emailService;
 
-    public FriendService(IUserService userService, IEmailService emailService, IGenericRepository<FriendRequest> friendRequestRepository, ITransactionRepository transaction, IGenericRepository<UserReferral> userReferralRepository)
+    public FriendService(IUserService userService, IEmailService emailService, IGenericRepository<FriendRequest> friendRequestRepository, ITransactionRepository transaction, IGenericRepository<UserReferral> userReferralRepository, IGenericRepository<Friend> friendRepository)
     {
         _userService = userService;
         _emailService = emailService;
         _friendRequestRepository = friendRequestRepository;
         _transaction = transaction;
         _userReferralRepository = userReferralRepository;
+        _friendRepository = friendRepository;
     }
 
     private async Task AddFriendRequest(int requesterId, int? receiverId = null, int? referralId = null)
@@ -140,7 +143,7 @@ public class FriendService : IFriendService
     {
         int userId = _userService.LoggedInUserId();
 
-        filter.SearchQuery = string.IsNullOrEmpty(filter.SearchQuery) ? "" : filter.SearchQuery.Replace(" ", "").ToLower();
+        filter.SearchString = string.IsNullOrEmpty(filter.SearchString) ? "" : filter.SearchString.Replace(" ", "").ToLower();
 
         Func<IQueryable<FriendRequest>, IOrderedQueryable<FriendRequest>> orderBy = q => q.OrderBy(fr => fr.Id);
         if (!string.IsNullOrEmpty(filter.SortColumn))
@@ -156,11 +159,11 @@ public class FriendService : IFriendService
         }
 
         PaginatedItemsVM<FriendRequest> paginatedItems = await _friendRequestRepository.PaginatedList(
-            predicate: fr => fr.ReceiverId == userId && fr.Status == FeriendRequestStatus.Requested && (string.IsNullOrEmpty(filter.SearchQuery) ||fr.ReceiverUserNavigation.FirstName.ToLower().Contains(filter.SearchQuery) || fr.ReceiverUserNavigation.LastName.ToLower().Contains(filter.SearchQuery)),
+            predicate: fr => fr.ReceiverId == userId && fr.Status == FeriendRequestStatus.Requested && (string.IsNullOrEmpty(filter.SearchString) || fr.ReceiverUserNavigation.FirstName.ToLower().Contains(filter.SearchString) || fr.ReceiverUserNavigation.LastName.ToLower().Contains(filter.SearchString) || fr.ReceiverUserNavigation.EmailAddress.ToLower().Contains(filter.SearchString)),
             orderBy: orderBy,
             includes: new List<Expression<Func<FriendRequest, object>>>
             {
-                fr => fr.ReceiverUserNavigation
+                fr => fr.RequesterUserNavigation
             },
             pageSize: filter.PageSize,
             pageNumber: filter.PageNumber
@@ -168,16 +171,155 @@ public class FriendService : IFriendService
 
         FriendRequestListVM friendRequests = new FriendRequestListVM();
 
-        friendRequests.friendRequestList = paginatedItems.Items.Select(fr => new FriendRequestVM
+        friendRequests.FriendRequestList = paginatedItems.Items.Select(fr => new FriendRequestVM
         {
-            Id = fr.ReceiverUserNavigation.Id,
-            Name = $"{fr.ReceiverUserNavigation.FirstName} {fr.ReceiverUserNavigation.LastName}",
-            Email = fr.ReceiverUserNavigation.EmailAddress,
-            ProfileImagePath = fr.ReceiverUserNavigation.ProfileImagePath
+            Id = fr.Id,
+            Name = $"{fr.RequesterUserNavigation.FirstName} {fr.RequesterUserNavigation.LastName}",
+            Email = fr.RequesterUserNavigation.EmailAddress,
+            ProfileImagePath = fr.RequesterUserNavigation.ProfileImagePath
         }).ToList();
 
         friendRequests.Page.SetPagination(paginatedItems.totalRecords, filter.PageSize, filter.PageNumber);
 
         return friendRequests;
+    }
+
+    public async Task<ResponseVM> AcceptRequest(int requestId)
+    {
+        try
+        {
+            // Begin transaction
+            await _transaction.Begin();
+
+            int userId = _userService.LoggedInUserId();
+            ResponseVM response = new ResponseVM();
+
+            FriendRequest friendRequest = await _friendRequestRepository.Get(fr => fr.Id == requestId);
+            if (friendRequest == null)
+            {
+                response.Success = false;
+                response.Message = NotificationMessages.NotFound.Replace("{0}", "friend request");
+                return response;
+            }
+            else
+            {
+                friendRequest.Status = FeriendRequestStatus.Accepted;
+                friendRequest.UpdatedAt = DateTime.Now;
+                friendRequest.UpdatedById = userId;
+                await _friendRequestRepository.Update(friendRequest);
+
+                // Add into friends table
+                Friend friend = new Friend
+                {
+                    Friend1 = friendRequest.RequesterId,
+                    Friend2 = (int)friendRequest.ReceiverId,
+                    CreatedById = userId,
+                    UpdatedAt = DateTime.Now,
+                    UpdatedById = userId
+                };
+                await _friendRepository.Add(friend);
+
+                User requesterUser = await _userService.GetById(friendRequest.RequesterId);
+                User receiverUser = await _userService.GetById((int)friendRequest.ReceiverId);
+
+                // Send email
+                await _emailService.FriendRequestAcceptedEmail(requesterUser.FirstName, $"{receiverUser.FirstName} {receiverUser.LastName}", requesterUser.EmailAddress);
+
+                response.Success = true;
+                response.Message = NotificationMessages.FriendRequestAccepted.Replace("{0}", $"{requesterUser.FirstName} {requesterUser.LastName}");
+            }
+
+            // Commit transaction
+            await _transaction.Commit();
+            return response;
+        }
+        catch
+        {
+            // Rollback transaction
+            await _transaction.Rollback();
+            throw;
+        }
+    }
+
+    public async Task<ResponseVM> RejectRequest(int requestId)
+    {
+        try
+        {
+            // Begin transaction
+            await _transaction.Begin();
+
+            int userId = _userService.LoggedInUserId();
+            ResponseVM response = new ResponseVM();
+
+            FriendRequest friendRequest = await _friendRequestRepository.Get(fr => fr.Id == requestId);
+            if (friendRequest == null)
+            {
+                response.Success = false;
+                response.Message = NotificationMessages.NotFound.Replace("{0}", "friend request");
+                return response;
+            }
+            else
+            {
+                friendRequest.Status = FeriendRequestStatus.Rejected;
+                friendRequest.UpdatedAt = DateTime.Now;
+                friendRequest.UpdatedById = userId;
+                await _friendRequestRepository.Update(friendRequest);
+
+                User requesterUser = await _userService.GetById(friendRequest.RequesterId);
+                User receiverUser = await _userService.GetById((int)friendRequest.ReceiverId);
+
+                // Send email
+                await _emailService.FriendRequestRejectedEmail(requesterUser.FirstName, $"{receiverUser.FirstName} {receiverUser.LastName}", requesterUser.EmailAddress);
+
+                response.Success = true;
+                response.Message = NotificationMessages.FriendRequestRejected.Replace("{0}", $"{requesterUser.FirstName} {requesterUser.LastName}");
+            }
+
+            // Commit transaction
+            await _transaction.Commit();
+            return response;
+        }
+        catch
+        {
+            // Rollback transaction
+            await _transaction.Rollback();
+            throw;
+        }
+    }
+
+    public async Task<FriendListVM> FriendList(FilterVM filter)
+    {
+        int userId = _userService.LoggedInUserId();
+        filter.SearchString = string.IsNullOrEmpty(filter.SearchString) ? "" : filter.SearchString.Replace(" ", "").ToLower();
+
+        // List<Func<IQueryable<Friend>, IQueryable<Friend>>> query = new List<Func<IQueryable<Friend>, IQueryable<Friend>>>
+        // {
+        //     q => q.Select(f => f.Friend1UserNavigation).ToList()
+        // };
+
+        PaginatedItemsVM<Friend> paginatedItems = await _friendRepository.PaginatedList(
+            predicate: f => (f.Friend1 == userId || f.Friend2 == userId) && f.DeletedAt == null && (string.IsNullOrEmpty(filter.SearchString) || f.Friend1UserNavigation.FirstName.ToLower().Contains(filter.SearchString) || f.Friend1UserNavigation.LastName.ToLower().Contains(filter.SearchString) || f.Friend1UserNavigation.EmailAddress.ToLower().Contains(filter.SearchString) || f.Friend2UserNavigation.FirstName.ToLower().Contains(filter.SearchString) || f.Friend1UserNavigation.LastName.ToLower().Contains(filter.SearchString) || f.Friend1UserNavigation.EmailAddress.ToLower().Contains(filter.SearchString)),
+            // orderBy: orderBy,
+            includes: new List<Expression<Func<Friend, object>>>
+            {
+                fr => fr.Friend1UserNavigation,
+                fr => fr.Friend2UserNavigation
+            },
+            pageSize: filter.PageSize,
+            pageNumber: filter.PageNumber
+        );
+
+        FriendListVM friendList = new FriendListVM();
+        friendList.FriendList = paginatedItems.Items.Select(f => new FriendVM
+        {
+            UserId = f.Friend1 == userId ? f.Friend1UserNavigation.Id : f.Friend2UserNavigation.Id,
+            Name = f.Friend1 == userId ? f.Friend1UserNavigation.FirstName + " " + f.Friend1UserNavigation.LastName : f.Friend2UserNavigation.FirstName + " " + f.Friend2UserNavigation.LastName,
+            EmailAddress = f.Friend1 == userId ? f.Friend1UserNavigation.EmailAddress : f.Friend2UserNavigation.EmailAddress,
+            ProfileImagePath = f.Friend1 == userId ? f.Friend1UserNavigation.ProfileImagePath : f.Friend2UserNavigation.ProfileImagePath,
+        }).ToList();
+
+        friendList.Page.SetPagination(paginatedItems.totalRecords, filter.PageSize, filter.PageNumber);
+
+        return friendList;
     }
 }

@@ -1,5 +1,5 @@
 @using SplitWiseRepository.ViewModels
-@model FriendRequestListVM
+@model FriendListVM
 
 <div class="table-responsive bg-white px-2">
     <table class="table userList text-nowrap">
@@ -23,20 +23,20 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (FriendRequestVM request in Model.FriendRequestList)
+            @foreach (FriendVM friend in Model.FriendList)
             {
                 <tr>
                     <td>
-                        <img src="@(request.ProfileImagePath ?? "/images/Default_pfp.png")"
+                        <img src="@(friend.ProfileImagePath ?? "/images/Default_pfp.png")"
                             class="object-fit-cover rounded-circle" width="40px">
-                        <span class="ms-2">@request.Name</span>
+                        <span class="ms-2">@friend.Name</span>
                     </td>
-                    <td><span class="my-auto">@request.Email</span></td>
+                    <td><span class="my-auto">@friend.EmailAddress</span></td>
                     <td class="text-center">
-                        <button class="btn p-0" title="Accept" onclick="acceptRequest(@request.Id)">
+                        <button class="btn p-0" title="Accept" onclick="acceptRequest(@friend.UserId)">
                             <i class="bi bi-check-lg text-success fs-6"></i>
                         </button>
-                        <button class="btn" title="Reject" onclick="rejectRequest(@request.Id)">
+                        <button class="btn" title="Reject" onclick="rejectRequest(@friend.UserId)">
                             <i class="bi bi-trash text-danger fs-6"></i>
                         </button>
                     </td>
@@ -55,7 +55,7 @@ else
     <div class="pagination d-flex flex-column flex-sm-row justify-content-end align-items-sm-center mt-3 px-1 pb-3">
         <div class="d-flex align-items-center">
             <span class="mx-1">Items Per page: </span>
-            <select class="form-select w-auto mx-1" id="friendRequestPageSize" onchange="getFriendRequestList(1)"
+            <select class="form-select w-auto mx-1" id="friendPageSize" onchange="getfriendList(1)"
                 aria-label="Default select example" title="Page sige">
                 <option value="5" selected="@(Model.Page.PageSize == 5 ? true : false)">5</option>
                 <option value="10" selected="@(Model.Page.PageSize == 10 ? true : false)">10</option>
@@ -67,11 +67,11 @@ else
         </span>
         <div>
             <button class="btn p-1 @(Model.Page.CurrentPage > 1 ? " " : "disabled")"
-                onclick="getFriendRequestList(@Model.Page.CurrentPage-1)" title="Prev page">
+                onclick="getfriendList(@Model.Page.CurrentPage-1)" title="Prev page">
                 <i class="bi bi-chevron-left p-1"></i>
             </button>
             <button class="btn p-1 @(Model.Page.CurrentPage < Model.Page.TotalPages ? " " : "disabled")"
-                onclick="getFriendRequestList(@Model.Page.CurrentPage+1)" title="Next page">
+                onclick="getfriendList(@Model.Page.CurrentPage+1)" title="Next page">
                 <i class="bi bi-chevron-right p-1"></i>
             </button>
         </div>

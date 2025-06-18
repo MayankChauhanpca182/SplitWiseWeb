@@ -59,7 +59,7 @@ public class EmailService : IEmailService
         string verificationLink = _urlBuilder.Create("UserVerification", "Auth", token);
 
         string emailBody = fileText.Replace("{name}", firstName).Replace("{link}", verificationLink);
-        await Send(email, NotificationMessages.UserVerificationSubject, emailBody);
+        await Send(email, EmailSubjects.UserVerificationSubject, emailBody);
         return;
     }
 
@@ -69,7 +69,7 @@ public class EmailService : IEmailService
         string resetLink = _urlBuilder.Create("ResetPassword", "User", token);
 
         string emailBody = fileText.Replace("{name}", firstName).Replace("{link}", resetLink);
-        await Send(email, NotificationMessages.PasswordResetSubject, emailBody);
+        await Send(email, EmailSubjects.PasswordResetSubject, emailBody);
         return;
     }
 
@@ -78,7 +78,7 @@ public class EmailService : IEmailService
         string fileText = GetEmailTemplate(EmailTemplates.PasswordChangedNotification);
 
         string emailBody = fileText.Replace("{name}", firstName);
-        await Send(email, NotificationMessages.PasswordChangedNotification, emailBody);
+        await Send(email, EmailSubjects.PasswordChangedNotification, emailBody);
         return;
     }
 
@@ -88,7 +88,7 @@ public class EmailService : IEmailService
         string loginLink = _urlBuilder.Create("Login", "Auth");
 
         string emailBody = fileText.Replace("{name}", recieverName).Replace("{senderName}", senderName).Replace("{link}", loginLink);
-        await Send(email, NotificationMessages.NewFriendRequest, emailBody);
+        await Send(email, EmailSubjects.NewFriendRequest, emailBody);
         return;
     }
 
@@ -98,7 +98,25 @@ public class EmailService : IEmailService
         string loginLink = _urlBuilder.Create("Register", "User");
 
         string emailBody = fileText.Replace("{name}", "").Replace("{senderName}", senderName).Replace("{link}", loginLink);
-        await Send(email, NotificationMessages.ReferralRequest, emailBody);
+        await Send(email, EmailSubjects.ReferralRequest, emailBody);
+        return;
+    }
+
+    public async Task FriendRequestAcceptedEmail(string recieverName, string senderName, string email)
+    {
+        string fileText = GetEmailTemplate(EmailTemplates.FriendRequestAccepted);
+
+        string emailBody = fileText.Replace("{name}", recieverName).Replace("{senderName}", senderName);
+        await Send(email, EmailSubjects.FriendRequestAccepted, emailBody);
+        return;
+    }
+
+    public async Task FriendRequestRejectedEmail(string recieverName, string senderName, string email)
+    {
+        string fileText = GetEmailTemplate(EmailTemplates.FriendRequestRejected);
+
+        string emailBody = fileText.Replace("{name}", recieverName).Replace("{senderName}", senderName);
+        await Send(email, EmailSubjects.FriendRequestRejected, emailBody);
         return;
     }
 
