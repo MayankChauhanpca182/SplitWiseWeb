@@ -11,6 +11,6 @@ public class Friend : AuditFields
     [ForeignKey("Friend1")]
     public virtual User Friend1UserNavigation { get; set; }
 
-     [ForeignKey("Friend2")]
+    [ForeignKey("Friend2")]
     public virtual User Friend2UserNavigation { get; set; }
 }

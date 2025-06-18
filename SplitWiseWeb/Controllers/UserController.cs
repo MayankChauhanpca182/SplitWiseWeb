@@ -164,7 +164,7 @@ public class UserController : Controller
 
             CookieOptions options = new CookieOptions
             {
-                Expires = DateTime.Now.AddHours(5),
+                Expires = DateTime.Now.AddHours(24),
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.Strict

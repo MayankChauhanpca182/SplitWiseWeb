@@ -33,7 +33,7 @@ public static class ImageHelper
             Directory.CreateDirectory(uploadsFolder);
         }
 
-        string fileName = $"{DateTime.Now.Ticks}_{Path.GetExtension(imageFile.FileName).ToLower()}";
+        string fileName = $"{DateTime.Now.Ticks}{Path.GetExtension(imageFile.FileName).ToLower()}";
         string filePath = Path.Combine(uploadsFolder, fileName);
 
         // Compress the image

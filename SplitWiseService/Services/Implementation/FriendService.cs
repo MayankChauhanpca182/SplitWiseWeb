@@ -143,7 +143,7 @@ public class FriendService : IFriendService
     {
         int userId = _userService.LoggedInUserId();
 
-        filter.SearchString = string.IsNullOrEmpty(filter.SearchString) ? "" : filter.SearchString.Replace(" ", "").ToLower();
+        filter.SearchString = string.IsNullOrEmpty(filter.SearchString) ? "" : filter.SearchString.Replace(@"\s+", "").ToLower();
 
         Func<IQueryable<FriendRequest>, IOrderedQueryable<FriendRequest>> orderBy = q => q.OrderBy(fr => fr.Id);
         if (!string.IsNullOrEmpty(filter.SortColumn))
@@ -153,13 +153,21 @@ public class FriendService : IFriendService
                 case "name":
                     orderBy = filter.SortOrder == "asc" ? q => q.OrderBy(fr => fr.ReceiverUserNavigation.FirstName) : q => q.OrderByDescending(fr => fr.ReceiverUserNavigation.FirstName);
                     break;
+                case "email":
+                    orderBy = filter.SortOrder == "asc" ? q => q.OrderBy(fr => fr.ReceiverUserNavigation.EmailAddress) : q => q.OrderByDescending(fr => fr.ReceiverUserNavigation.EmailAddress);
+                    break;
                 default:
                     break;
             }
         }
 
         PaginatedItemsVM<FriendRequest> paginatedItems = await _friendRequestRepository.PaginatedList(
-            predicate: fr => fr.ReceiverId == userId && fr.Status == FeriendRequestStatus.Requested && (string.IsNullOrEmpty(filter.SearchString) || fr.ReceiverUserNavigation.FirstName.ToLower().Contains(filter.SearchString) || fr.ReceiverUserNavigation.LastName.ToLower().Contains(filter.SearchString) || fr.ReceiverUserNavigation.EmailAddress.ToLower().Contains(filter.SearchString)),
+            predicate: fr => fr.ReceiverId == userId
+            && fr.Status == FeriendRequestStatus.Requested
+            && (string.IsNullOrEmpty(filter.SearchString)
+                || fr.ReceiverUserNavigation.FirstName.ToLower().Contains(filter.SearchString)
+                || fr.ReceiverUserNavigation.LastName.ToLower().Contains(filter.SearchString)
+                || fr.ReceiverUserNavigation.EmailAddress.ToLower().Contains(filter.SearchString)),
             orderBy: orderBy,
             includes: new List<Expression<Func<FriendRequest, object>>>
             {
@@ -290,16 +298,40 @@ public class FriendService : IFriendService
     public async Task<FriendListVM> FriendList(FilterVM filter)
     {
         int userId = _userService.LoggedInUserId();
-        filter.SearchString = string.IsNullOrEmpty(filter.SearchString) ? "" : filter.SearchString.Replace(" ", "").ToLower();
+        filter.SearchString = string.IsNullOrEmpty(filter.SearchString) ? "" : filter.SearchString.Replace(@"\s+", "").ToLower();
 
-        // List<Func<IQueryable<Friend>, IQueryable<Friend>>> query = new List<Func<IQueryable<Friend>, IQueryable<Friend>>>
-        // {
-        //     q => q.Select(f => f.Friend1UserNavigation).ToList()
-        // };
+        Func<IQueryable<Friend>, IOrderedQueryable<Friend>> orderBy = q => q.OrderBy(f => f.Id);
+        if (!string.IsNullOrEmpty(filter.SortColumn))
+        {
+            switch (filter.SortColumn.ToLower())
+            {
+                case "name":
+                    orderBy = filter.SortOrder == "asc"
+                        ? q => q.OrderBy(f => f.Friend1 == userId ? f.Friend2UserNavigation.FirstName : f.Friend1UserNavigation.FirstName)
+                        : q => q.OrderByDescending(f => f.Friend1 == userId ? f.Friend2UserNavigation.FirstName : f.Friend1UserNavigation.FirstName);
+                    break;
+                case "email":
+                    orderBy = filter.SortOrder == "asc"
+                        ? q => q.OrderBy(f => f.Friend1 == userId ? f.Friend2UserNavigation.EmailAddress : f.Friend1UserNavigation.EmailAddress)
+                        : q => q.OrderByDescending(f => f.Friend1 == userId ? f.Friend2UserNavigation.EmailAddress : f.Friend1UserNavigation.EmailAddress);
+                    break;
+                default:
+                    break;
+            }
+        }
 
         PaginatedItemsVM<Friend> paginatedItems = await _friendRepository.PaginatedList(
-            predicate: f => (f.Friend1 == userId || f.Friend2 == userId) && f.DeletedAt == null && (string.IsNullOrEmpty(filter.SearchString) || f.Friend1UserNavigation.FirstName.ToLower().Contains(filter.SearchString) || f.Friend1UserNavigation.LastName.ToLower().Contains(filter.SearchString) || f.Friend1UserNavigation.EmailAddress.ToLower().Contains(filter.SearchString) || f.Friend2UserNavigation.FirstName.ToLower().Contains(filter.SearchString) || f.Friend1UserNavigation.LastName.ToLower().Contains(filter.SearchString) || f.Friend1UserNavigation.EmailAddress.ToLower().Contains(filter.SearchString)),
-            // orderBy: orderBy,
+            predicate: f => (f.Friend1 == userId || f.Friend2 == userId)
+                && f.DeletedAt == null
+                && (string.IsNullOrEmpty(filter.SearchString)
+                    || (f.Friend1 == userId
+                        ? (f.Friend2UserNavigation.FirstName.ToLower().Contains(filter.SearchString)
+                            || f.Friend2UserNavigation.LastName.ToLower().Contains(filter.SearchString)
+                            || f.Friend2UserNavigation.EmailAddress.ToLower().Contains(filter.SearchString))
+                        : (f.Friend1UserNavigation.FirstName.ToLower().Contains(filter.SearchString)
+                            || f.Friend1UserNavigation.LastName.ToLower().Contains(filter.SearchString)
+                            || f.Friend1UserNavigation.EmailAddress.ToLower().Contains(filter.SearchString)))),
+            orderBy: orderBy,
             includes: new List<Expression<Func<Friend, object>>>
             {
                 fr => fr.Friend1UserNavigation,
@@ -312,10 +344,10 @@ public class FriendService : IFriendService
         FriendListVM friendList = new FriendListVM();
         friendList.FriendList = paginatedItems.Items.Select(f => new FriendVM
         {
-            UserId = f.Friend1 == userId ? f.Friend1UserNavigation.Id : f.Friend2UserNavigation.Id,
-            Name = f.Friend1 == userId ? f.Friend1UserNavigation.FirstName + " " + f.Friend1UserNavigation.LastName : f.Friend2UserNavigation.FirstName + " " + f.Friend2UserNavigation.LastName,
-            EmailAddress = f.Friend1 == userId ? f.Friend1UserNavigation.EmailAddress : f.Friend2UserNavigation.EmailAddress,
-            ProfileImagePath = f.Friend1 == userId ? f.Friend1UserNavigation.ProfileImagePath : f.Friend2UserNavigation.ProfileImagePath,
+            UserId = f.Friend2 == userId ? f.Friend1UserNavigation.Id : f.Friend2UserNavigation.Id,
+            Name = f.Friend2 == userId ? f.Friend1UserNavigation.FirstName + " " + f.Friend1UserNavigation.LastName : f.Friend2UserNavigation.FirstName + " " + f.Friend2UserNavigation.LastName,
+            EmailAddress = f.Friend2 == userId ? f.Friend1UserNavigation.EmailAddress : f.Friend2UserNavigation.EmailAddress,
+            ProfileImagePath = f.Friend2 == userId ? f.Friend1UserNavigation.ProfileImagePath : f.Friend2UserNavigation.ProfileImagePath,
         }).ToList();
 
         friendList.Page.SetPagination(paginatedItems.totalRecords, filter.PageSize, filter.PageNumber);

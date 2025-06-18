@@ -4,13 +4,16 @@
 }
 
 <h1>Friends</h1>
-<div class="d-flex gap-3 mb-3">
-    <div class="my-3">
-        <input type="text" class="searchBox form-control border-secondary-subtle" id="friendSearch" placeholder="Search" oninput="getFriendList(1)">
+<div class="d-flex justify-content-between gap-3 mb-3">
+    <div>
+        <input type="text" class="searchBox form-control border-secondary-subtle" id="friendSearch" placeholder="Search"
+            oninput="getFriendList(1)">
     </div>
-
-    <button class="btn btn-primary" type="button" onclick="fetchAddFriendModal()">Add Friend</button>
-    <a asp-action="FriendRequests" asp-controller="Friend" class="btn btn-secondary" type="button">Friend Requests</a>
+    <div class="d-flex gap-2">
+        <button class="btn btn-primary" type="button" onclick="fetchAddFriendModal()">Add Friend</button>
+        <a asp-action="FriendRequests" asp-controller="Friend" class="btn btn-secondary" type="button">Friend
+            Requests</a>
+    </div>
 </div>
 <div id="friendListOuter" class="bg-white"></div>
 
@@ -151,5 +154,12 @@
             sortOrder = $(this).data("order");
             getFriendList(1);
         });
+    </script>
+
+    @* Remove friend *@
+    <script>
+        function removeFriend() {
+            
+        }
     </script>
 }

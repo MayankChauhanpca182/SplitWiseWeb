@@ -32,11 +32,11 @@ $(document).ready(function () {
     $("#loader").show();
   });
 
-  $(document).ajaxStop(function () {
-    $("#loader").hide();
+  $(document).ajaxStart(function () {
+    $("#loader").show();
   });
 
-  $(window).on("load", function () {
+  $(document).ajaxStop(function () {
     $("#loader").hide();
   });
 });
@@ -91,7 +91,7 @@ $(document).ajaxComplete(function () {
 $(document).on("click", "#hamBurger", function () {
   if ($("#navigation").css("display") == "none") {
     $("#navigation").css("display", "block");
-    $("#right-section").css("width", "calc(100% - 230px)");
+    $("#right-section").css("width", "calc(100% - 200px)");
   } else {
     $("#navigation").css("display", "none");
     $("#right-section").css("width", "100%");

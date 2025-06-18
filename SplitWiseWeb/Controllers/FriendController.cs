@@ -23,6 +23,7 @@ public class FriendController : Controller
     }
 
     // GET Index
+    [Route("friends")]
     public IActionResult Index()
     {
         ViewData["ActiveLink"] = "Friends";
@@ -89,8 +90,10 @@ public class FriendController : Controller
 
     // GET FriendRequests
     [Breadcrumb("Friend Requests", FromAction = "Index")]
+    [Route("friendRequests")]
     public IActionResult FriendRequests()
     {
+        ViewData["ActiveLink"] = "Friends";
         return View();
     }
 
