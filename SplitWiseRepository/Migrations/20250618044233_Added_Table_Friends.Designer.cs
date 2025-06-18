@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SplitWiseRepository.Models;
 
@@ -11,9 +12,11 @@ using SplitWiseRepository.Models;
 namespace SplitWiseRepository.Migrations
 {
     [DbContext(typeof(SplitWiseDbContext))]
-    partial class SplitWiseDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250618044233_Added_Table_Friends")]
+    partial class Added_Table_Friends
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -126,55 +129,6 @@ namespace SplitWiseRepository.Migrations
                     b.HasIndex("Friend2");
 
                     b.ToTable("Friends");
-                });
-
-            modelBuilder.Entity("SplitWiseRepository.Models.FriendRequests", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("CreatedById")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("DeletedById")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ReceiverId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ReferralId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RequesterId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("UpdatedById")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ReceiverId");
-
-                    b.HasIndex("ReferralId");
-
-                    b.HasIndex("RequesterId");
-
-                    b.ToTable("FriendRequests");
                 });
 
             modelBuilder.Entity("SplitWiseRepository.Models.PasswordResetToken", b =>
@@ -342,29 +296,6 @@ namespace SplitWiseRepository.Migrations
                     b.Navigation("Friend1UserNavigation");
 
                     b.Navigation("Friend2UserNavigation");
-                });
-
-            modelBuilder.Entity("SplitWiseRepository.Models.FriendRequests", b =>
-                {
-                    b.HasOne("SplitWiseRepository.Models.User", "ReceiverUserNavigation")
-                        .WithMany()
-                        .HasForeignKey("ReceiverId");
-
-                    b.HasOne("SplitWiseRepository.Models.UserReferral", "UserReferral")
-                        .WithMany()
-                        .HasForeignKey("ReferralId");
-
-                    b.HasOne("SplitWiseRepository.Models.User", "RequesterUserNavigation")
-                        .WithMany()
-                        .HasForeignKey("RequesterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ReceiverUserNavigation");
-
-                    b.Navigation("RequesterUserNavigation");
-
-                    b.Navigation("UserReferral");
                 });
 
             modelBuilder.Entity("SplitWiseRepository.Models.PasswordResetToken", b =>
