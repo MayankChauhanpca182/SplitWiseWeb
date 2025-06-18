@@ -80,6 +80,7 @@ public class FriendController : Controller
     }
 
     // GET FriendRequests
+    [Breadcrumb("Friend Requests", FromAction = "Index")]
     public IActionResult FriendRequests()
     {
         return View();
@@ -87,8 +88,9 @@ public class FriendController : Controller
 
     // POST FriendList
     [HttpPost]
-    public IActionResult FriendList(FilterVM filter)
+    public async Task<IActionResult> FriendList(FilterVM filter)
     {
-        return PartialView("_FriendRequestListPartialView", new FriendRequestListVM());
+        FriendRequestListVM friendRequestList = await _freiendService.FriendRequestList(filter);
+        return PartialView("_FriendRequestListPartialView", friendRequestList);
     }
 }

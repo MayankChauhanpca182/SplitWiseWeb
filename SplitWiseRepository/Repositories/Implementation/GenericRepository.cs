@@ -44,6 +44,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     public async Task<PaginatedItemsVM<T>> PaginatedList(
         Expression<Func<T, bool>> predicate = null,
         Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
+        List<Expression<Func<T, object>>> includes = null,
         int? pageSize = null,
         int? pageNumber = null)
     {
@@ -63,8 +64,17 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
             query = orderBy(query);
         }
 
-        // 
-        if (pageSize != null && pageSize != null)
+        // Apply Includes (First-level navigation properties)
+        if (includes != null)
+        {
+            foreach (Expression<Func<T, object>> include in includes)
+            {
+                query = query.Include(include);
+            }
+        }
+
+        // Apply pagination
+        if (pageSize != null && pageNumber != null)
         {
             paginatedItems.totalRecords = await query.CountAsync();
             paginatedItems.Items = await query.Skip((int)((pageNumber - 1) * pageSize)).Take((int)pageSize).ToListAsync();

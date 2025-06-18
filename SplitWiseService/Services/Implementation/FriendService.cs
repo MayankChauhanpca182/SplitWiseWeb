@@ -1,8 +1,11 @@
+using System.Linq.Expressions;
+using MailKit.Search;
 using SplitWiseRepository.Constants;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.Repositories.Interface;
 using SplitWiseRepository.ViewModels;
 using SplitWiseService.Constants;
+using SplitWiseService.Helpers;
 using SplitWiseService.Services.Interface;
 
 namespace SplitWiseService.Services.Implementation;
@@ -131,5 +134,50 @@ public class FriendService : IFriendService
             await _transaction.Rollback();
             throw;
         }
+    }
+
+    public async Task<FriendRequestListVM> FriendRequestList(FilterVM filter)
+    {
+        int userId = _userService.LoggedInUserId();
+
+        filter.SearchQuery = string.IsNullOrEmpty(filter.SearchQuery) ? "" : filter.SearchQuery.Replace(" ", "").ToLower();
+
+        Func<IQueryable<FriendRequest>, IOrderedQueryable<FriendRequest>> orderBy = q => q.OrderBy(fr => fr.Id);
+        if (!string.IsNullOrEmpty(filter.SortColumn))
+        {
+            switch (filter.SortColumn)
+            {
+                case "name":
+                    orderBy = filter.SortOrder == "asc" ? q => q.OrderBy(fr => fr.ReceiverUserNavigation.FirstName) : q => q.OrderByDescending(fr => fr.ReceiverUserNavigation.FirstName);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        PaginatedItemsVM<FriendRequest> paginatedItems = await _friendRequestRepository.PaginatedList(
+            predicate: fr => fr.ReceiverId == userId && fr.Status == FeriendRequestStatus.Requested && (string.IsNullOrEmpty(filter.SearchQuery) ||fr.ReceiverUserNavigation.FirstName.ToLower().Contains(filter.SearchQuery) || fr.ReceiverUserNavigation.LastName.ToLower().Contains(filter.SearchQuery)),
+            orderBy: orderBy,
+            includes: new List<Expression<Func<FriendRequest, object>>>
+            {
+                fr => fr.ReceiverUserNavigation
+            },
+            pageSize: filter.PageSize,
+            pageNumber: filter.PageNumber
+        );
+
+        FriendRequestListVM friendRequests = new FriendRequestListVM();
+
+        friendRequests.friendRequestList = paginatedItems.Items.Select(fr => new FriendRequestVM
+        {
+            Id = fr.ReceiverUserNavigation.Id,
+            Name = $"{fr.ReceiverUserNavigation.FirstName} {fr.ReceiverUserNavigation.LastName}",
+            Email = fr.ReceiverUserNavigation.EmailAddress,
+            ProfileImagePath = fr.ReceiverUserNavigation.ProfileImagePath
+        }).ToList();
+
+        friendRequests.Page.SetPagination(paginatedItems.totalRecords, filter.PageSize, filter.PageNumber);
+
+        return friendRequests;
     }
 }

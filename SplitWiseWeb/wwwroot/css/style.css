@@ -255,3 +255,11 @@ footer.footer{
 .friendItem{
     max-width: 750px;
 }
+
+.searchBox{
+    max-width: 300px;
+}
+
+.sortBtn[data-order="desc"] {
+    margin-left: -10px;
+}

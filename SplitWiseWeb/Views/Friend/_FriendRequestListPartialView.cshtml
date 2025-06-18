@@ -5,58 +5,49 @@
     <table class="table userList text-nowrap">
         <thead class="position-sticky top-0 z-1">
             <tr>
-                <th scope="col" class="col-1">
+                <th scope="col" class="col-4">
                     <span class="text-clr-grey">Name</span>
                     <button class="btn p-0 sortBtn" data-column="name" data-order="asc" title="Asc">
-                        <img src="/images/icons/arrow-up.svg" alt="">
+                        <i class="bi bi-arrow-up"></i>
                     </button>
                     <button class="btn p-0 sortBtn" data-column="name" data-order="desc" title="Desc">
-                        <img src="/images/icons/arrow-down.svg" alt="">
+                        <i class="bi bi-arrow-down"></i>
                     </button>
                 </th>
-                <th scope="col" class="col-2">
+                <th scope="col" class="col-4">
                     <span class="text-clr-grey">Email</span>
                 </th>
-                <th scope="col" class="col-1">
-                    <span class="text-clr-grey">Phone Number</span>
-                </th>
-                <th scope="col" class="col-1">
-                    <span class="text-clr-grey">Date</span>
-                    <button class="btn p-0 sortBtn" data-column="date" data-order="asc" title="Asc">
-                        <img src="/images/icons/arrow-up.svg" alt="">
-                    </button>
-                    <button class="btn p-0 sortBtn" data-column="date" data-order="desc" title="Desc">
-                        <img src="/images/icons/arrow-down.svg" alt="">
-                    </button>
-                </th>
-                <th scope="col" class="col-1">
-                    <span class="text-clr-grey">Total Order</span>
-                    <button class="btn p-0 sortBtn" data-column="totalorder" data-order="asc" title="Asc">
-                        <img src="/images/icons/arrow-up.svg" alt="">
-                    </button>
-                    <button class="btn p-0 sortBtn" data-column="totalorder" data-order="desc" title="Desc">
-                        <img src="/images/icons/arrow-down.svg" alt="">
-                    </button>
+                <th scope="col" class="col-4 text-center">
+                    <span class="text-clr-grey">Action</span>
                 </th>
             </tr>
         </thead>
         <tbody>
-            @* @foreach (CustomerViewModel customer in Model.Customers)
+            @foreach (FriendRequestVM request in Model.friendRequestList)
             {
-                <tr class="@(User.IsInRole("Admin") ? "customerRow cursor-pointer table-hover" : "")" data-id="@customer.CustomerId">
-                    <td>@customer.Name</td>
-                    <td>@customer.Email</td>
-                    <td>@customer.Phone</td>
-                    <td>@customer.Date</td>
-                    <td class="">@customer.TotalOrders</td>
+                <tr>
+                    <td>
+                        <img src="@(request.ProfileImagePath ?? "/images/Default_pfp.png")"
+                            class="object-fit-cover rounded-circle" width="40px">
+                        <span class="ms-2">@request.Name</span>
+                    </td>
+                    <td>@request.Email</td>
+                    <td class="text-center">
+                        <button class="btn p-0">
+                            <i class="bi bi-check-lg text-success fs-6"></i>
+                        </button>
+                        <button class="btn">
+                            <i class="bi bi-trash text-danger fs-6"></i>
+                        </button>
+                    </td>
                 </tr>
-            } *@
+            }
         </tbody>
     </table>
 </div>
 @if (!(Model.Page.TotalRecord > 0))
 {
-    <p class="p-4 text-center">No Friend Requests</p>
+    <p class="p-4 text-center">No friend requests found</p>
 }
 else
 {
@@ -64,24 +55,24 @@ else
     <div class="pagination d-flex flex-column flex-sm-row justify-content-end align-items-sm-center mt-3 px-1 pb-3">
         <div class="d-flex align-items-center">
             <span class="mx-1">Items Per page: </span>
-            <select class="form-select w-auto mx-1" id="customerPageSize" onchange="customerPaginationList(1)"
+            <select class="form-select w-auto mx-1" id="friendRequestPageSize" onchange="getFriendRequestList(1)"
                 aria-label="Default select example" title="Page sige">
                 <option value="5" selected="@(Model.Page.PageSize == 5 ? true : false)">5</option>
                 <option value="10" selected="@(Model.Page.PageSize == 10 ? true : false)">10</option>
                 <option value="15" selected="@(Model.Page.PageSize == 15 ? true : false)">15</option>
             </select>
         </div>
-        <span class="mx-1" id="customerPaginationText">
+        <span class="mx-1">
             Showing @Model.Page.FromRec - @Model.Page.ToRec of @Model.Page.TotalRecord
         </span>
         <div>
-            <button class="btn p-1 @(Model.Page.CurrentPage > 1 ? " " : "disabled")" id="customerPrevPageBtn"
-                onclick="customerPaginationList(@Model.Page.CurrentPage-1)" title="Prev page">
-                <img src="/images/icons/chevron-left.svg" alt="" id="prevPage" class="border rounded p-2" width="35px">
+            <button class="btn p-1 @(Model.Page.CurrentPage > 1 ? " " : "disabled")"
+                onclick="getFriendRequestList(@Model.Page.CurrentPage-1)" title="Prev page">
+                <i class="bi bi-chevron-left p-1"></i>
             </button>
             <button class="btn p-1 @(Model.Page.CurrentPage < Model.Page.TotalPages ? " " : "disabled")"
-                id="customerNextPageBtn" onclick="customerPaginationList(@Model.Page.CurrentPage+1)" title="Next page">
-                <img src="/images/icons/chevron-right.svg" alt="" id="nextPage" class="border rounded p-2" width="35px">
+                onclick="getFriendRequestList(@Model.Page.CurrentPage+1)" title="Next page">
+                <i class="bi bi-chevron-right p-1"></i>
             </button>
         </div>
     </div>

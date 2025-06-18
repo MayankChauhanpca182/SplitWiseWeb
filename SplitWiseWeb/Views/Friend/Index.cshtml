@@ -6,11 +6,11 @@
 <h1>Friends</h1>
 <div class="d-flex gap-3 mb-3">
     <button class="btn btn-primary" type="button" onclick="fetchAddFriendModal()">Add Friend</button>
-    <a href="#" class="btn btn-secondary" type="button">Friend Requests</a>
+    <a asp-action="FriendRequests" asp-controller="Friend" class="btn btn-secondary" type="button">Friend Requests</a>
 </div>
 <div id="friendListOuter">
-    <ul class="list-unstyled" id="friendList">
-        @* <li class="friendItem d-flex flex-wrap justify-content-between gap-2 p-2 rounded-3 bg-white">
+    @* <ul class="list-unstyled" id="friendList">
+        <li class="friendItem d-flex flex-wrap justify-content-between gap-2 p-2 rounded-3 bg-white">
             <div class="d-flex align-items-center gap-3">
                 <div>
                     <img src="/images/Default_pfp.png" alt="" width="50px">
@@ -25,21 +25,26 @@
                 <button class="btn btn-primary" type="button">Settle up</button>
                 <span>₹100.00</span>
             </div>
-        </li> *@
-    </ul>
+        </li>
+    </ul> *@
 </div>
 
 
 <!-- Modal -->
 <div class="modal fade" id="regularModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" id="regularModalContent">
+        <div class="modal-content" id="regularModalContent"></div>
+    </div>
+</div>
 
-        </div>
+<div class="modal fade" id="largeModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content" id="largeModalContent"></div>
     </div>
 </div>
 
 @section Scripts {
+    @* Send friend request *@
     <script>
         // Get friend request modal
         function fetchAddFriendModal() {

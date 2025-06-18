@@ -1,0 +1,63 @@
+@using SplitWiseRepository.ViewModels
+@using SplitWiseService.Constants
+@{
+    ViewData["Title"] = "Friend Requests";
+}
+
+<div class="my-3">
+    <input type="text" class="searchBox form-control border-secondary-subtle" id="friendRequestSearch"
+        placeholder="Search" oninput="getFriendRequestList(1)">
+</div>
+
+<div id="friendListOuter" class="bg-white">
+    @* @await Html.PartialAsync("_FriendRequestListPartialView", new FriendRequestListVM()) *@
+</div>
+
+@section Scripts {
+    @* Friend request list *@
+    <script>
+        let sortColumn = "";
+        let sortOrder = "";
+
+        $(document).ready(function () {
+            getFriendRequestList(1);
+        });
+
+        function getFriendRequestList(currentPage) {
+            let filter = {
+                PageNumber: currentPage,
+                PageSize: $("#friendRequestPageSize").val(),
+                SearchQuery: $("#friendRequestSearch").val(),
+                SortColumn: sortColumn,
+                SortOrder: sortOrder,
+            };
+
+            $.ajax({
+                url: "/Friend/FriendList",
+                type: "POST",
+                data: { filter },
+                success: function (response) {
+                    if (!response.statusCode) {
+                        if (response.success == false) {
+                            toastr.error(response.message);
+                        }
+                        else {
+                            $("#friendListOuter").html(response);
+                        }
+                    }
+                },
+                error: function () {
+                    toastr.error('@NotificationMessages.InternalServerError');
+                }
+            });
+        }
+
+        // Handle sorting
+        $(document).on("click", ".sortBtn", function () {
+            sortColumn = $(this).data("column");
+            sortOrder = $(this).data("order");
+            getFriendRequestList(1);
+        });
+
+    </script>
+}
