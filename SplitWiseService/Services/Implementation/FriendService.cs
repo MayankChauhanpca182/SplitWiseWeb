@@ -407,8 +407,7 @@ public class FriendService : IFriendService
             UserId = f.Friend2 == userId ? f.Friend1UserNavigation.Id : f.Friend2UserNavigation.Id,
             Name = f.Friend2 == userId ? f.Friend1UserNavigation.FirstName + " " + f.Friend1UserNavigation.LastName : f.Friend2UserNavigation.FirstName + " " + f.Friend2UserNavigation.LastName,
             EmailAddress = f.Friend2 == userId ? f.Friend1UserNavigation.EmailAddress : f.Friend2UserNavigation.EmailAddress,
-            ProfileImagePath = f.Friend2 == userId ? f.Friend1UserNavigation.ProfileImagePath : f.Friend2UserNavigation.ProfileImagePath,
-            IsDeleted = f.DeletedAt == null ? false : true
+            ProfileImagePath = f.Friend2 == userId ? f.Friend1UserNavigation.ProfileImagePath : f.Friend2UserNavigation.ProfileImagePath
         }).ToList();
 
         paginatedList.Page.SetPagination(paginatedItems.totalRecords, filter.PageSize, filter.PageNumber);
