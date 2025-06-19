@@ -10,6 +10,7 @@ public static class EmailTemplates
     public const string Referral = "Referral.html";
     public const string FriendRequestAccepted = "FriendRequestAccepted.html";
     public const string FriendRequestRejected = "FriendRequestRejected.html";
+    public const string FriendRemoved = "FriendRemoved.html";
 }
 
 public static class EmailSubjects
@@ -22,5 +23,6 @@ public static class EmailSubjects
     public const string ReferralRequest = "You have been invited to SplitMate.";
     public const string FriendRequestAccepted = "Your Friend Request Has Been Accepted.";
     public const string FriendRequestRejected = "Your Friend Request Was Declined.";
+    public const string FriendRemoved = "You have been removed from a friend list.";
 }
 

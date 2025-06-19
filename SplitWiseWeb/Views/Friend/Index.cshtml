@@ -159,7 +159,7 @@
     @* Remove friend *@
     <script>
         function removeFriend(friendId) {
-            @* $.ajax({
+            $.ajax({
                 url: "/Friend/RemoveFriend",
                 type: "POST",
                 data: { friendId },
@@ -177,7 +177,7 @@
                 error: function () {
                     toastr.error('@NotificationMessages.InternalServerError');
                 }
-            }); *@
+            });
         }
     </script>
 }

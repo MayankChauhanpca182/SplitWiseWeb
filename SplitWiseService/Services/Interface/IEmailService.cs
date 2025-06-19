@@ -10,4 +10,5 @@ public interface IEmailService
     public Task ReferralEmail(string senderName, string email);
     public Task FriendRequestAcceptedEmail(string recieverName, string senderName, string email);
     public Task FriendRequestRejectedEmail(string recieverName, string senderName, string email);
+    public Task FriendRemovedEmail(string recieverName, string senderName, string email);
 }

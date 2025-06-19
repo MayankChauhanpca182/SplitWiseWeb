@@ -388,17 +388,21 @@ public class FriendService : IFriendService
             // Begin transaction
             await _transaction.Begin();
 
-            int userId = _userService.LoggedInUserId();
+            User currentUser = await _userService.LoggedInUser();
+
             ResponseVM response = new ResponseVM();
 
             Friend friend = await _friendRepository.Get(f => f.Id == friendId);
 
             friend.DeletedAt = DateTime.Now;
-            friend.DeletedById = userId;
+            friend.DeletedById = currentUser.Id;
             await _friendRepository.Update(friend);
 
-            int friendUserId = friend.Friend1 == userId ? friend.Friend2 : friend.Friend1;
+            int friendUserId = friend.Friend1 == currentUser.Id ? friend.Friend2 : friend.Friend1;
             User friendUser = await _userService.GetById(friendUserId);
+
+            // Send email
+            await _emailService.FriendRemovedEmail(friendUser.FirstName, $"{currentUser.FirstName} {currentUser.LastName}", friendUser.EmailAddress);
 
             response.Success = true;
             response.Message = NotificationMessages.FriendRemoved.Replace("{0}", friendUser.FirstName);
