@@ -13,4 +13,8 @@ public class Friend : AuditFields
 
     [ForeignKey("Friend2")]
     public virtual User Friend2UserNavigation { get; set; }
+    public int? FriendRequestId { get; set; }
+
+    [ForeignKey("FriendRequestId")]
+    public virtual FriendRequest FriendRequest { get; set; }
 }

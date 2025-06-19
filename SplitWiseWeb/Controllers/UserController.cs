@@ -1,3 +1,4 @@
+using System.Reflection.Metadata.Ecma335;
 using Microsoft.AspNetCore.Mvc;
 using SmartBreadcrumbs.Attributes;
 using SplitWiseRepository.Models;
@@ -105,8 +106,7 @@ public class UserController : Controller
     [Route("changePassword")]
     public IActionResult ChangePassword()
     {
-        ViewData["ActiveLink"] = "Change Password";
-        return View();
+        return PartialView("ChangePassword");
     }
 
     // POST ChangePassword
@@ -120,14 +120,15 @@ public class UserController : Controller
         }
 
         ResponseVM response = await _passwordResetService.ChangePassword(passwordReset);
-        if (!response.Success)
-        {
-            TempData["errorMessage"] = response.Message;
-            return View(passwordReset);
-        }
+        return Json(response);
+        // if (!response.Success)
+        // {
+        //     TempData["errorMessage"] = response.Message;
+        //     return View(passwordReset);
+        // }
 
-        TempData["successMessage"] = response.Message;
-        return RedirectToAction("Logout", "Auth");
+        // TempData["successMessage"] = response.Message;
+        // return RedirectToAction("Logout", "Auth");
     }
     #endregion
 
@@ -137,8 +138,7 @@ public class UserController : Controller
     [Route("profile")]
     public async Task<IActionResult> Profile()
     {
-        ViewData["ActiveLink"] = "Profile";
-        return View(await _userService.GetProfile());
+        return PartialView("Profile", await _userService.GetProfile());
     }
 
     // POST Profile
@@ -148,34 +148,46 @@ public class UserController : Controller
     {
         if (!ModelState.IsValid)
         {
-            return View("Profile", await _userService.GetProfile());
+            // return View("Profile", await _userService.GetProfile());
+            return PartialView("Profile", await _userService.GetProfile());
         }
 
         ResponseVM response = await _userService.Update(newUser);
-        if (!response.Success)
+        User user = await _userService.LoggedInUser();
+        CookieOptions options = new CookieOptions
         {
-            TempData["errorMessage"] = response.Message;
-            return View("Profile", await _userService.GetProfile());
-        }
-        else
-        {
-            int userId = _userService.LoggedInUserId();
-            User user = await _userService.GetById(userId);
+            Expires = DateTime.Now.AddHours(24),
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.Strict
+        };
+        Response.Cookies.Append("UserName", $"{user.FirstName} {user.LastName}", options);
+        Response.Cookies.Append("ProfileImagePath", user.ProfileImagePath, options);
+        return Json(response);
 
-            CookieOptions options = new CookieOptions
-            {
-                Expires = DateTime.Now.AddHours(24),
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict
-            };
-            Response.Cookies.Append("UserName", $"{user.FirstName} {user.LastName}", options);
-            Response.Cookies.Append("ProfileImagePath", user.ProfileImagePath, options);
+        // if (!response.Success)
+        // {
+        //     TempData["errorMessage"] = response.Message;
+        //     return View("Profile", await _userService.GetProfile());
+        // }
+        // else
+        // {
+        //     User user = await _userService.LoggedInUser();
 
-            TempData["successMessage"] = response.Message;
-        }
+        //     CookieOptions options = new CookieOptions
+        //     {
+        //         Expires = DateTime.Now.AddHours(24),
+        //         HttpOnly = true,
+        //         Secure = true,
+        //         SameSite = SameSiteMode.Strict
+        //     };
+        //     Response.Cookies.Append("UserName", $"{user.FirstName} {user.LastName}", options);
+        //     Response.Cookies.Append("ProfileImagePath", user.ProfileImagePath, options);
 
-        return RedirectToAction("Profile");
+        //     TempData["successMessage"] = response.Message;
+        // }
+
+        // return RedirectToAction("Profile");
     }
     #endregion
 

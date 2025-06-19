@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SmartBreadcrumbs.Attributes;
-using SplitWiseRepository.Models;
-using SplitWiseRepository.ViewModels;
 using SplitWiseService.Services.Interface;
 
 namespace SplitWiseWeb.Controllers;
@@ -20,13 +18,19 @@ public class DashboardController : Controller
 
     #region Dashboard
     // GET Index
-    [Route("dashboard")]
+    [Route("home")]
     public IActionResult Index()
     {
         ViewData["ActiveLink"] = "Dashboard";
         return View();
     }
+
+    [Route("dashboard")]
+    public IActionResult Dashboard()
+    {
+        return PartialView("Dashboard");
+    }
     #endregion
 
-    
+
 }

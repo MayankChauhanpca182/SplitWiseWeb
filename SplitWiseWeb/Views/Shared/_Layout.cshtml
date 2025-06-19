@@ -59,22 +59,22 @@
                 </button>
                 <ul class="dropdown-menu">
                     <li>
-                        <a asp-action="Profile" asp-controller="User"
-                            class="dropdown-item d-flex align-items-center gap-2 @((ViewData["ActiveLink"] as string) == "Profile" ? "active" : "")">
+                        <button onclick="getPage('profile', 'profileNav')" id="profileNav"
+                            class="navItems dropdown-item d-flex align-items-center gap-2">
                             <i class="bi bi-person-circle fs-5"></i>
                             Profile
-                        </a>
+                        </button>
                     </li>
                     <li>
-                        <a asp-action="ChangePassword" asp-controller="User"
-                            class="dropdown-item d-flex align-items-center gap-2 @((ViewData["ActiveLink"] as string) == "Change Password" ? "active" : "")">
+                        <button onclick="getPage('changePassword', 'changePasswordNav')" id="changePasswordNav"
+                            class="navItems dropdown-item d-flex align-items-center gap-2">
                             <i class="bi bi-arrow-clockwise fs-5 fw-semibold"></i>
                             Change Password
-                        </a>
+                        </button>
                     </li>
                     <li>
                         <a asp-action="Logout" asp-controller="Auth"
-                            class="dropdown-item d-flex align-items-center gap-2">
+                            class="navItems dropdown-item d-flex align-items-center gap-2">
                             <i class="bi bi-box-arrow-left fs-5 fw-semibold"></i>
                             Logout
                         </a>
@@ -86,13 +86,13 @@
             <!-- Navigation -->
             <aside class="navigation text-white bg-secondary-subtle" id="navigation">
                 <div>
-                    <a asp-action="Index" asp-controller="Dashboard"
-                        class="d-flex align-items-center gap-3 @((ViewData["ActiveLink"] as string) == "Dashboard" ? "active" : "")">
+                    <a href="#" onclick="getPage('dashboard', 'dashboardPageNav')" id="dashboardPageNav"
+                        class="navItems d-flex align-items-center gap-3 @((ViewData["ActiveLink"] as string) == "Dashboard" ? "active" : "")">
                         <i class="fa-solid fa-window-maximize"></i>
                         Dashboard
                     </a>
-                    <a asp-action="Index" asp-controller="Dashboard"
-                        class="d-flex align-items-center gap-3 @((ViewData["ActiveLink"] as string) == "Groups" ? "active" : "")">
+                    <a href="#" onclick="" id="groupsPageNav"
+                        class="navItems d-flex align-items-center gap-3 @((ViewData["ActiveLink"] as string) == "Groups" ? "active" : "")">
                         <i class="bi bi-diagram-3-fill"></i>
                         Groups
                     </a>
@@ -109,13 +109,13 @@
                             <div id="contacts-flush-collapseOne" class="accordion-collapse collapse "
                                 data-bs-parent="#contactsAccordion">
                                 <div class="accordion-body bg-blue-grey text-white p-0">
-                                    <a asp-action="Index" asp-controller="Friend"
-                                        class="d-flex align-items-center gap-2 ps-4 @((ViewData["ActiveLink"] as string) == "Friends" ? "active" : "")">
+                                    <a href="#" onclick="getPage('friends', 'friendsPageNav')" id="friendsPageNav"
+                                        class="navItems d-flex align-items-center gap-2 ps-4">
                                         <i class="bi bi-person-fill"></i>
                                         Friends
                                     </a>
-                                    <a asp-action="FriendRequests" asp-controller="Friend"
-                                        class="d-flex align-items-center gap-2 ps-4 @((ViewData["ActiveLink"] as string) == "Requests" ? "active" : "")">
+                                    <a href="#" onclick="getPage('friendRequests', 'friendRequestsPageNav')" id="friendRequestsPageNav"
+                                        class="navItems d-flex align-items-center gap-2 ps-4">
                                         <i class="bi bi-person-plus-fill"></i>
                                         Requests
                                     </a>
@@ -127,8 +127,9 @@
             </aside>
             <!-- Sidebar end -->
             <div class="right-section px-2 px-md-3" id="right-section">
-                <breadcrumb></breadcrumb>
-                @RenderBody()
+                <div id="partialVewContainer">
+                    @RenderBody()
+                </div>
             </div>
         </div>
         <footer

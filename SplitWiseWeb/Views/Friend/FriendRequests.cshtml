@@ -7,104 +7,110 @@
 <h3 class="bg-white mb-3 px-2 py-3 text-dark-emphasis shadow">Friend Requests</h3>
 <div class="my-3">
     <input type="text" class="searchBox form-control border-secondary-subtle rounded-0" id="friendRequestSearch"
-        placeholder="Search" oninput="getFriendRequestList(1)">
+        placeholder="Search">
 </div>
 
 <div id="friendRequestListOuter" class="bg-white"></div>
 
-@section Scripts {
-    @* Friend request list *@
-    <script>
-        let sortColumn = "";
-        let sortOrder = "";
+@* Friend request list *@
+<script>
+    sortColumn = "";
+    sortOrder = "";
 
-        $(document).ready(function () {
-            getFriendRequestList(1);
+    $(document).ready(function () {
+        getFriendRequestList(1);
+    });
+
+    $("#friendRequestSearch").on("input", function () {
+        if (searchTimeout === null) {
+            searchTimeout = setTimeout(function () {
+                getFriendList(1);
+            }, 500);
+        }
+    });
+
+    function getFriendRequestList(currentPage) {
+        let filter = {
+            PageNumber: currentPage,
+            PageSize: $("#friendRequestPageSize").val(),
+            SearchString: $("#friendRequestSearch").val(),
+            SortColumn: sortColumn,
+            SortOrder: sortOrder,
+        };
+
+        $.ajax({
+            url: "/Friend/FriendRequestList",
+            type: "POST",
+            data: { filter },
+            success: function (response) {
+                if (!response.statusCode) {
+                    if (response.success == false) {
+                        toastr.error(response.message);
+                    }
+                    else {
+                        $("#friendRequestListOuter").html(response);
+                    }
+                }
+            },
+            error: function () {
+                toastr.error('@NotificationMessages.InternalServerError');
+            }
         });
+    }
 
-        function getFriendRequestList(currentPage) {
-            let filter = {
-                PageNumber: currentPage,
-                PageSize: $("#friendRequestPageSize").val(),
-                SearchString: $("#friendRequestSearch").val(),
-                SortColumn: sortColumn,
-                SortOrder: sortOrder,
-            };
+    // Handle sorting
+    $(document).on("click", ".sortBtn", function () {
+        sortColumn = $(this).data("column");
+        sortOrder = $(this).data("order");
+        getFriendRequestList(1);
+    });
+</script>
 
-            $.ajax({
-                url: "/Friend/FriendRequestList",
-                type: "POST",
-                data: { filter },
-                success: function (response) {
-                    if (!response.statusCode) {
-                        if (response.success == false) {
-                            toastr.error(response.message);
-                        }
-                        else {
-                            $("#friendRequestListOuter").html(response);
-                        }
+@* Accept / Reject friend request *@
+<script>
+    // Accept request
+    function acceptRequest(id) {
+        $.ajax({
+            url: "/Friend/AcceptRequest",
+            type: "POST",
+            data: { id },
+            success: function (response) {
+                if (!response.statusCode) {
+                    if (response.success == true) {
+                        toastr.success(response.message);
+                        getFriendRequestList(1);
                     }
-                },
-                error: function () {
-                    toastr.error('@NotificationMessages.InternalServerError');
+                    else {
+                        toastr.error(response.message);
+                    }
                 }
-            });
-        }
-
-        // Handle sorting
-        $(document).on("click", ".sortBtn", function () {
-            sortColumn = $(this).data("column");
-            sortOrder = $(this).data("order");
-            getFriendRequestList(1);
+            },
+            error: function () {
+                toastr.error('@NotificationMessages.InternalServerError');
+            }
         });
-    </script>
+    }
 
-    @* Accept / Reject friend request *@
-    <script>
-        // Accept request
-        function acceptRequest(id) {
-            $.ajax({
-                url: "/Friend/AcceptRequest",
-                type: "POST",
-                data: { id },
-                success: function (response) {
-                    if (!response.statusCode) {
-                        if (response.success == true) {
-                            toastr.success(response.message);
-                            getFriendRequestList(1);
-                        }
-                        else {
-                            toastr.error(response.message);
-                        }
+    // Reject request
+    function rejectRequest(id) {
+        $.ajax({
+            url: "/Friend/RejectRequest",
+            type: "POST",
+            data: { id },
+            success: function (response) {
+                if (!response.statusCode) {
+                    if (response.success == true) {
+                        toastr.success(response.message);
+                        getFriendRequestList(1);
                     }
-                },
-                error: function () {
-                    toastr.error('@NotificationMessages.InternalServerError');
-                }
-            });
-        }
-        
-        // Reject request
-        function rejectRequest(id) {
-            $.ajax({
-                url: "/Friend/RejectRequest",
-                type: "POST",
-                data: { id },
-                success: function (response) {
-                    if (!response.statusCode) {
-                        if (response.success == true) {
-                            toastr.success(response.message);
-                            getFriendRequestList(1);
-                        }
-                        else {
-                            toastr.error(response.message);
-                        }
+                    else {
+                        toastr.error(response.message);
                     }
-                },
-                error: function () {
-                    toastr.error('@NotificationMessages.InternalServerError');
                 }
-            });
-        }
-    </script>
-}
+            },
+            error: function () {
+                toastr.error('@NotificationMessages.InternalServerError');
+            }
+        });
+    }
+</script>

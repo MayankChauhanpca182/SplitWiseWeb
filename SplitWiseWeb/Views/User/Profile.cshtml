@@ -4,9 +4,10 @@
     ViewData["Title"] = "Profile";
 }
 
+<breadcrumb></breadcrumb>
 <div class="py-3">
-    <form asp-action="Update" asp-controller="User" class="d-flex flex-column" style="max-width: 500px;"
-        enctype="multipart/form-data">
+    <form asp-action="Update" asp-controller="User" id="profileForm" class="d-flex flex-column"
+        style="max-width: 500px;" enctype="multipart/form-data">
         <!-- Image -->
         <input asp-for="@Model.ProfileImage" accept="image/png, image/jpg, image/jpeg" hidden>
 
@@ -68,30 +69,28 @@
     </form>
 </div>
 
-@section Scripts {
-    <script>
-        $(document).ready(function () {
-            $('#ProfileImage').on('change', function () {
-                const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-                const file = this.files[0];
+<script>
+    $(document).ready(function () {
+        $('#ProfileImage').on('change', function () {
+            const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+            const file = this.files[0];
 
-                if (file) {
-                    if (!validTypes.includes(file.type)) {
-                        toastr.error("Only following image types are allowed: jpeg, jpg, png.");
-                        $(this).val("");
-                        $('#previewImage').attr('src', '@(Model.ProfileImagePath ?? "/images/Default_pfp.png")');
-                        return;
-                    }
-                    else {
-                        // Show preview
-                        const reader = new FileReader();
-                        reader.onload = function (e) {
-                            $('#previewImage').attr('src', e.target.result);
-                        };
-                        reader.readAsDataURL(file);
-                    }
+            if (file) {
+                if (!validTypes.includes(file.type)) {
+                    toastr.error("Only following image types are allowed: jpeg, jpg, png.");
+                    $(this).val("");
+                    $('#previewImage').attr('src', '@(Model.ProfileImagePath ?? "/images/Default_pfp.png")');
+                    return;
                 }
-            });
+                else {
+                    // Show preview
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        $('#previewImage').attr('src', e.target.result);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
         });
-    </script>
-}
+    });
+</script>

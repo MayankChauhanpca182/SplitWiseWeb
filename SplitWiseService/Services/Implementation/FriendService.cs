@@ -33,17 +33,28 @@ public class FriendService : IFriendService
     private async Task AddFriendRequest(int requesterId, int? receiverId = null, int? referralId = null)
     {
         User currentUser = await _userService.LoggedInUser();
-        FriendRequest newFriendRequest = new FriendRequest
+        FriendRequest existingFriendRequest = await _friendRequestRepository.Get(fr => fr.RequesterId == requesterId && fr.ReceiverId == receiverId && fr.Status != FeriendRequestStatus.Requested);
+        if (existingFriendRequest != null)
         {
-            RequesterId = requesterId,
-            ReceiverId = receiverId,
-            ReferralId = referralId,
-            Status = FeriendRequestStatus.Requested,
-            CreatedById = currentUser.Id,
-            UpdatedAt = DateTime.Now,
-            UpdatedById = currentUser.Id
-        };
-        await _friendRequestRepository.Add(newFriendRequest);
+            // Update exisiting one
+            existingFriendRequest.Status = FeriendRequestStatus.Requested;
+            await _friendRequestRepository.Update(existingFriendRequest);
+        }
+        else
+        {
+            // Add new friend request
+            FriendRequest newFriendRequest = new FriendRequest
+            {
+                RequesterId = requesterId,
+                ReceiverId = receiverId,
+                ReferralId = referralId,
+                Status = FeriendRequestStatus.Requested,
+                CreatedById = currentUser.Id,
+                UpdatedAt = DateTime.Now,
+                UpdatedById = currentUser.Id
+            };
+            await _friendRequestRepository.Add(newFriendRequest);
+        }
     }
 
     public async Task<ResponseVM> CheckExisitngFrindship(string email)
@@ -279,6 +290,7 @@ public class FriendService : IFriendService
                     {
                         Friend1 = friendRequest.RequesterId,
                         Friend2 = (int)friendRequest.ReceiverId,
+                        FriendRequestId = friendRequest.Id,
                         CreatedById = userId,
                         UpdatedAt = DateTime.Now,
                         UpdatedById = userId
@@ -382,6 +394,7 @@ public class FriendService : IFriendService
         PaginatedItemsVM<Friend> paginatedItems = await _friendRepository.PaginatedList(
             predicate: f => (f.Friend1 == userId || f.Friend2 == userId)
                 && (filter.IsDeleted ? f.DeletedAt != null : f.DeletedAt == null)
+                && f.FriendRequest.Status != FeriendRequestStatus.Requested
                 && (string.IsNullOrEmpty(filter.SearchString)
                     || (f.Friend1 == userId
                         ? (f.Friend2UserNavigation.FirstName.ToLower().Contains(filter.SearchString)
@@ -394,7 +407,8 @@ public class FriendService : IFriendService
             includes: new List<Expression<Func<Friend, object>>>
             {
                 fr => fr.Friend1UserNavigation,
-                fr => fr.Friend2UserNavigation
+                fr => fr.Friend2UserNavigation,
+                fr => fr.FriendRequest
             },
             pageSize: filter.PageSize,
             pageNumber: filter.PageNumber

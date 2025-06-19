@@ -21,8 +21,7 @@ public class FriendController : Controller
     [Route("friends")]
     public IActionResult Index()
     {
-        ViewData["ActiveLink"] = "Friends";
-        return View();
+        return PartialView("Index");
     }
 
     // POST FriendList
@@ -92,8 +91,7 @@ public class FriendController : Controller
     [Route("friendRequests")]
     public IActionResult FriendRequests()
     {
-        ViewData["ActiveLink"] = "Requests";
-        return View();
+        return PartialView("FriendRequests");
     }
 
     // POST FriendRequestList
