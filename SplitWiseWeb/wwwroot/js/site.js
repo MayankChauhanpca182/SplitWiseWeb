@@ -11,9 +11,13 @@ $(document).ajaxComplete(function () {
 });
 
 // Apply validation on input change globally
-$(document).on("keyup change", "form input:not([type=checkbox]):not([type=radio]), form select, form textarea", function () {
-  $(this).valid();
-});
+$(document).on(
+  "keyup change",
+  "form input:not([type=checkbox]):not([type=radio]), form select, form textarea",
+  function () {
+    $(this).valid();
+  }
+);
 
 // Prevent submission if validation fails
 $(document).on("submit", "form", function (e) {
@@ -27,12 +31,12 @@ $("#loader").show();
 
 $(document).ready(function () {
   $("#loader").hide();
-  
+
   $(document).on("submit", "form", function (e) {
     $("#loader").show();
   });
 
-  $(document).on("click", "a", function(){
+  $(document).on("click", "a", function () {
     $("#loader").show();
   });
 
@@ -64,20 +68,20 @@ function initializeTooltips() {
           ...defaultBsPopperConfig,
           modifiers: [
             {
-              name: 'offset',
+              name: "offset",
               options: {
-                offset: [1, 1]
-              }
+                offset: [1, 1],
+              },
             },
             {
-              name: 'flip',
+              name: "flip",
               options: {
-                fallbackPlacements: ['right', 'left', 'bottom']
-              }
-            }
-          ]
+                fallbackPlacements: ["right", "left", "bottom"],
+              },
+            },
+          ],
         };
-      }
+      },
     });
   });
 }
@@ -100,4 +104,75 @@ $(document).on("click", "#hamBurger", function () {
     $("#navigation").css("display", "none");
     $("#right-section").css("width", "100%");
   }
+});
+
+// Get friend request modal
+function fetchAddFriendModal() {
+  $("#normalModalContent").empty();
+  $.ajax({
+    url: "/Friend/AddFriendModal",
+    type: "GET",
+    success: function (response) {
+      if (!response.statusCode) {
+        $("#regularModalContent").html(response);
+        $("#regularModal").modal("show");
+      }
+    },
+    error: function () {
+      $("#regularModal").modal("hide");
+      toastr.error('@(NotificationMessages.CanNot.Replace("{0}", "add friend"))');
+    },
+  });
+}
+
+// Submit friend request form
+$(document).on("submit", "#addFriendRequestForm", function (e) {
+  e.preventDefault();
+
+  $.ajax({
+    url: $(this).attr("action"),
+    type: $(this).attr("method"),
+    data: $(this).serialize(),
+    success: function (response) {
+      if (!response.statusCode) {
+        if (response.success) {
+          $("#regularModal").modal("hide");
+          toastr.success(response.message);
+        } else if (response.success == false) {
+          toastr.error(response.message);
+        } else {
+          $("#regularModalContent").html(response);
+        }
+      }
+    },
+    error: function (xhr, status, error) {
+      toastr.error("@NotificationMessages.InternalServerError");
+    },
+  });
+});
+
+// Submit referral form
+$(document).on("submit", "#sendReferralForm", function (e) {
+  e.preventDefault();
+
+  $.ajax({
+    url: $(this).attr("action"),
+    type: $(this).attr("method"),
+    data: $(this).serialize(),
+    success: function (response) {
+      if (!response.statusCode) {
+        if (response.success) {
+          $("#regularModal").modal("hide");
+          toastr.success(response.message);
+        } else if (response.success == false) {
+          toastr.error(response.message);
+        } else {
+          $("#regularModalContent").html(response);
+        }
+      }
+    },
+    error: function (xhr, status, error) {
+      toastr.error("@NotificationMessages.InternalServerError");
+    },
+  });
 });

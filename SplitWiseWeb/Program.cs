@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using OfficeOpenXml;
 using Org.BouncyCastle.Asn1.X509.Qualified;
 using SmartBreadcrumbs.Extensions;
 using SplitWiseRepository.Models;
@@ -94,6 +95,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
+
+ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

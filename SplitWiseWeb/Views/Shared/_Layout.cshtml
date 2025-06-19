@@ -50,36 +50,40 @@
                     <img src="/images/splitmate/fulllogo_transparent_nobuffer.png" alt="" width="60px">
                 </a>
             </div>
-            <div class="dropdown">
-                <button class="btn dropdown-toggle d-flex align-items-center gap-2 text-white border-0 p-0"
-                    type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src="@(ProfileImagePath ?? "/images/Default_pfp.png")" alt="" class="rounded-circle"
-                        width="30px" height="30px">
-                    <span class="d-none d-sm-block">@(userName)</span>
-                </button>
-                <ul class="dropdown-menu">
-                    <li>
-                        <button onclick="getPage('profile', 'profileNav')" id="profileNav"
-                            class="navItems dropdown-item d-flex align-items-center gap-2">
-                            <i class="bi bi-person-circle fs-5"></i>
-                            Profile
-                        </button>
-                    </li>
-                    <li>
-                        <button onclick="getPage('changePassword', 'changePasswordNav')" id="changePasswordNav"
-                            class="navItems dropdown-item d-flex align-items-center gap-2">
-                            <i class="bi bi-arrow-clockwise fs-5 fw-semibold"></i>
-                            Change Password
-                        </button>
-                    </li>
-                    <li>
-                        <a asp-action="Logout" asp-controller="Auth"
-                            class="navItems dropdown-item d-flex align-items-center gap-2">
-                            <i class="bi bi-box-arrow-left fs-5 fw-semibold"></i>
-                            Logout
-                        </a>
-                    </li>
-                </ul>
+            <div class="d-flex gap-3">
+                <button class="btn btn-prim d-none d-sm-block" type="button" onclick="fetchAddFriendModal()">Add Friend</button>
+
+                <div class="dropdown">
+                    <button class="btn dropdown-toggle d-flex align-items-center gap-2 text-white border-0 p-0"
+                        type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="@(ProfileImagePath ?? "/images/Default_pfp.png")" alt="" class="rounded-circle"
+                            width="30px" height="30px">
+                        <span class="d-none d-sm-block">@(userName)</span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <button onclick="getPage('profile', 'profileNav')" id="profileNav"
+                                class="navItems dropdown-item d-flex align-items-center gap-2">
+                                <i class="bi bi-person-circle fs-5"></i>
+                                Profile
+                            </button>
+                        </li>
+                        <li>
+                            <button onclick="getPage('changePassword', 'changePasswordNav')" id="changePasswordNav"
+                                class="navItems dropdown-item d-flex align-items-center gap-2">
+                                <i class="bi bi-arrow-clockwise fs-5 fw-semibold"></i>
+                                Change Password
+                            </button>
+                        </li>
+                        <li>
+                            <a asp-action="Logout" asp-controller="Auth"
+                                class="navItems dropdown-item d-flex align-items-center gap-2">
+                                <i class="bi bi-box-arrow-left fs-5 fw-semibold"></i>
+                                Logout
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </header>
         <div class="content d-flex w-100 h-100">
@@ -114,7 +118,8 @@
                                         <i class="bi bi-person-fill"></i>
                                         Friends
                                     </a>
-                                    <a href="#" onclick="getPage('friendRequests', 'friendRequestsPageNav')" id="friendRequestsPageNav"
+                                    <a href="#" onclick="getPage('friendRequests', 'friendRequestsPageNav')"
+                                        id="friendRequestsPageNav"
                                         class="navItems d-flex align-items-center gap-2 ps-4">
                                         <i class="bi bi-person-plus-fill"></i>
                                         Requests
@@ -127,9 +132,9 @@
             </aside>
             <!-- Sidebar end -->
             <div class="right-section px-2 px-md-3" id="right-section">
-                <div id="partialVewContainer">
-                    @RenderBody()
-                </div>
+                @* <div id="partialVewContainer"> *@
+                @RenderBody()
+                @* </div> *@
             </div>
         </div>
         <footer
@@ -137,6 +142,9 @@
             <span>&copy; 2025 SplitMate. All rights reserved.</span>
         </footer>
     </div>
+
+    
+    @await Html.PartialAsync("_ModalPartialView")
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

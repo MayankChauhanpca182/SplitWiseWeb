@@ -14,4 +14,5 @@ public interface IFriendService
     public Task<PaginatedListVM<FriendVM>> FriendList(FilterVM filter);
     public Task<ResponseVM> RemoveFriend(int friendId);
     public Task UpdateReferrals(User newUser);
+    public Task<byte[]> ExportFriends(FilterVM filter);
 }

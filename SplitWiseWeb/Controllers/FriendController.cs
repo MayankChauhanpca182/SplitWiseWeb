@@ -1,7 +1,9 @@
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SmartBreadcrumbs.Attributes;
 using SplitWiseRepository.ViewModels;
+using SplitWiseService.Constants;
 using SplitWiseService.Services.Interface;
 
 namespace SplitWiseWeb.Controllers;
@@ -126,4 +128,14 @@ public class FriendController : Controller
         return Json(response);
     }
 
+    // POST ExportFriends
+    public async Task<IActionResult> ExportFriends(FilterVM filter)
+    {
+        byte[] fileData = await _friendService.ExportFriends(filter);
+        if (fileData == null)
+        {
+            return Json(new ResponseVM { Success = false, Message = NotificationMessages.CanNotExportEmptyList.Replace("{0}", "friend")});
+        }
+        return File(fileData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Friends.xlsx");
+    }
 }

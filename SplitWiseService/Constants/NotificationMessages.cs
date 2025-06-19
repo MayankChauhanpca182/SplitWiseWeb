@@ -69,7 +69,7 @@ public static class NotificationMessages
     // Ajax errors
     public const string CanNot = "Can not {0} at this time." + TryAgain;
 
-    // Friend request
+    // Friend
     public const string NoAccountFound = "No account was found with {0}. Would you like to refere.";
     public const string FriendRequestToSelf = "You cannot send a friend request to yourself.";
     public const string YouAlreadyRequested = "You have already sent friend request to {0}.";
@@ -82,5 +82,7 @@ public static class NotificationMessages
     public const string FriendRequestAccepted = "Friend request from {0} has been accepted successfully.";
     public const string FriendRequestRejected = "Friend request from {0} has been rejected successfully.";
     public const string FriendRemoved = "{0} has been removed from your friend list successfully.";
-    
+
+    // Export
+    public const string CanNotExportEmptyList = "The {0} list is empty, so there is nothing to export.";
 }

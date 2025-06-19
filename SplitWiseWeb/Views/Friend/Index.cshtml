@@ -18,103 +18,15 @@
         </div>
     </div>
     <div class="d-flex gap-2">
-        <button class="btn btn-secondary" type="button" onclick="fetchAddFriendModal()">Export</button>
+        <button class="btn btn-secondary" type="button" onclick="exportFriends()">Export</button>
         <button class="btn btn-primary" type="button" onclick="fetchAddFriendModal()">Add Friend</button>
     </div>
 </div>
 <div id="friendListOuter" class="bg-white"></div>
 
 
-<!-- Modal -->
-<div class="modal fade" id="regularModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" id="regularModalContent"></div>
-    </div>
-</div>
-
-<div class="modal fade" id="largeModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content" id="largeModalContent"></div>
-    </div>
-</div>
-
 @* Send friend request *@
 <script>
-    // Get friend request modal
-    function fetchAddFriendModal() {
-        $("#normalModalContent").empty();
-        $.ajax({
-            url: "/Friend/AddFriendModal",
-            type: "GET",
-            success: function (response) {
-                if (!response.statusCode) {
-                    $("#regularModalContent").html(response);
-                    $("#regularModal").modal("show");
-                }
-            },
-            error: function () {
-                $("#regularModal").modal("hide");
-                toastr.error('@(NotificationMessages.CanNot.Replace("{0}", "add friend"))');
-            },
-        });
-    }
-
-    // Submit friend request form
-    $(document).on("submit", "#addFriendRequistForm", function (e) {
-        e.preventDefault();
-
-        $.ajax({
-            url: $(this).attr("action"),
-            type: $(this).attr("method"),
-            data: $(this).serialize(),
-            success: function (response) {
-                if (!response.statusCode) {
-                    if (response.success) {
-                        $("#regularModal").modal("hide");
-                        toastr.success(response.message);
-                    }
-                    else if (response.success == false) {
-                        toastr.error(response.message);
-                    }
-                    else {
-                        $("#regularModalContent").html(response);
-                    }
-                }
-            },
-            error: function (xhr, status, error) {
-                toastr.error('@NotificationMessages.InternalServerError');
-            }
-        });
-    });
-
-    // Submit referral form
-    $(document).on("submit", "#sendReferralForm", function (e) {
-        e.preventDefault();
-
-        $.ajax({
-            url: $(this).attr("action"),
-            type: $(this).attr("method"),
-            data: $(this).serialize(),
-            success: function (response) {
-                if (!response.statusCode) {
-                    if (response.success) {
-                        $("#regularModal").modal("hide");
-                        toastr.success(response.message);
-                    }
-                    else if (response.success == false) {
-                        toastr.error(response.message);
-                    }
-                    else {
-                        $("#regularModalContent").html(response);
-                    }
-                }
-            },
-            error: function (xhr, status, error) {
-                toastr.error('@NotificationMessages.InternalServerError');
-            }
-        });
-    });
-
     // Send friend request
     function sendRequest(email) {
         $.ajax({
@@ -196,6 +108,50 @@
         sortOrder = $(this).data("order");
         getFriendList(1);
     });
+
+    // Export friends
+    function exportFriends() {
+        let filter = {
+            SearchString: $("#friendSearch").val(),
+            IsDeleted: $("#deletedFriendsChk").prop("checked")
+        };
+
+        $.ajax({
+            url: '/Friend/ExportFriends',
+            type: "POST",
+            data: { filter },
+            xhrFields: {
+                responseType: 'blob'
+            },
+            success: function (data, status, xhr) {
+                if (data.success === false) {
+                    console.log(data)
+                    toastr.error(data.message);
+                } else {
+                    let filename = `Friends_${new Date().getTime()}.xlsx`;
+
+                    let disposition = xhr.getResponseHeader('Content-Disposition');
+                    if (disposition && disposition.indexOf('attachment') !== -1) {
+                        let matches = /filename="([^"]+)"/.exec(disposition);
+                        if (matches !== null && matches[1]) filename = matches[1];
+                    }
+
+                    let blob = new Blob([data], { type: xhr.getResponseHeader('Content-Type') });
+                    let link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = filename;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    toastr.success("Data has been exported successfully.");
+                }
+            },
+            error: function () {
+                toastr.error("Export Failed");
+            }
+        });
+    }
 </script>
 
 @* Remove friend *@

@@ -5,14 +5,15 @@
 
 @* <breadcrumb></breadcrumb>
 <h1>Dashboard</h1> *@
+<div id="partialViewContainer"></div>
 
 @section Scripts {
     @* Global variables *@
-    <Script>
+    <script>
         let sortColumn = "";
         let sortOrder = "";
         let searchTimeout;
-    </Script>
+    </script>
 
     @* Fetch pages through ajax *@
     <script>
@@ -28,7 +29,8 @@
                         else {
                             $(".navItems").removeClass("active");
                             $(`.navItems#${navId}`).addClass("active");
-                            $("#partialVewContainer").html(response);
+                            $("#partialViewContainer").html(response);
+                            @* history.pushState({}, '', `/${endpoint}`); *@
                         }
                     }
                 },
@@ -41,43 +43,43 @@
 
     @* Fetch Dashboard *@
     <script>
-        $(document).ready(function () {
+        @* $(document).ready(function () {
             getPage('dashboard', 'dashboardPageNav');
-        });
+        }); *@
     </script>
 
     @* Profile *@
     <script>
-        // Update profile
-        $(document).on("submit", "#profileForm", function (e) {
-            e.preventDefault();
+            // Update profile
+            $(document).on("submit", "#profileForm", function (e) {
+                e.preventDefault();
 
-            let formData = new FormData(this);
+                let formData = new FormData(this);
 
-            $.ajax({
-                url: $(this).attr("action"),
-                type: $(this).attr("method"),
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function (response) {
-                    if (!response.statusCode) {
-                        if (response.success) {
-                            toastr.success(response.message);
+                $.ajax({
+                    url: $(this).attr("action"),
+                    type: $(this).attr("method"),
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        if (!response.statusCode) {
+                            if (response.success) {
+                                toastr.success(response.message);
+                            }
+                            else if (response.success == false) {
+                                toastr.error(response.message);
+                            }
+                            else {
+                                $("#partialVewContainer").html(response);
+                            }
                         }
-                        else if (response.success == false) {
-                            toastr.error(response.message);
-                        }
-                        else {
-                            $("#partialVewContainer").html(response);
-                        }
+                    },
+                    error: function (xhr, status, error) {
+                        toastr.error('@NotificationMessages.InternalServerError');
                     }
-                },
-                error: function (xhr, status, error) {
-                    toastr.error('@NotificationMessages.InternalServerError');
-                }
+                });
             });
-        });
     </script>
 
     @* Change Password *@

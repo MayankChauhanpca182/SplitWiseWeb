@@ -73,11 +73,17 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
             }
         }
 
+        // Set total records
+        paginatedItems.totalRecords = await query.CountAsync();
+
         // Apply pagination
         if (pageSize != null && pageNumber != null)
         {
-            paginatedItems.totalRecords = await query.CountAsync();
             paginatedItems.Items = await query.Skip((int)((pageNumber - 1) * pageSize)).Take((int)pageSize).ToListAsync();
+        }
+        else
+        {
+            paginatedItems.Items = await query.ToListAsync();
         }
 
         return paginatedItems;

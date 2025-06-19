@@ -3,6 +3,7 @@ using System.Net.Mail;
 using System.Text.Json;
 using MailKit.Net.Smtp;
 using SplitWiseService.Constants;
+using SplitWiseService.Exceptions;
 using SplitWiseService.Services.Interface;
 
 namespace SplitWiseWeb.Middleware;
@@ -37,6 +38,10 @@ public class ExceptionHandlingMiddleware
 
         switch (exception)
         {
+            case NotFoundException:
+                code = HttpStatusCode.NotFound;
+                message = exception.Message;
+                break;
             case SmtpCommandException:
                 code = HttpStatusCode.NotFound;
                 message = NotificationMessages.InvalidEmailAddress;

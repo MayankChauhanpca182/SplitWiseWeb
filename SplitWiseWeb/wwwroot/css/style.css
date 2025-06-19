@@ -16,7 +16,7 @@
 }
 
 /* Button */
-.btn-primary {
+.btn-primary, .btn-prim {
     --bs-btn-bg: var(--clr-teal) !important;
     --bs-btn-border-color: var(--clr-teal) !important;
     --bs-btn-hover-bg: var(--clr-teal-dark) !important;
@@ -107,6 +107,10 @@ body {
 
 a {
     text-decoration: none;
+}
+
+.table-responsive {
+    max-height: 48vh;
 }
 
 /* Breadcrumbs */

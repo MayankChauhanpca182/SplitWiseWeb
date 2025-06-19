@@ -26,6 +26,7 @@ public class DashboardController : Controller
     }
 
     [Route("dashboard")]
+    [Breadcrumb("Dashboard")]
     public IActionResult Dashboard()
     {
         return PartialView("Dashboard");

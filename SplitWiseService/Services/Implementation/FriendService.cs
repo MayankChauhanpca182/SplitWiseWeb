@@ -6,6 +6,7 @@ using SplitWiseRepository.Models;
 using SplitWiseRepository.Repositories.Interface;
 using SplitWiseRepository.ViewModels;
 using SplitWiseService.Constants;
+using SplitWiseService.Exceptions;
 using SplitWiseService.Helpers;
 using SplitWiseService.Services.Interface;
 
@@ -69,11 +70,14 @@ public class FriendService : IFriendService
             return response;
         }
         User requestedUser = await _userService.GetByEmailAddress(email);
-        bool isAlreadyFriend = await _friendRepository.Any(f => f.DeletedAt == null && ((f.Friend1 == currentUser.Id && f.Friend2 == requestedUser.Id) || (f.Friend2 == currentUser.Id && f.Friend1 == requestedUser.Id)));
-        if (isAlreadyFriend)
+        if (requestedUser != null)
         {
-            response.Success = false;
-            response.Message = NotificationMessages.AlreadyFriend.Replace("{0}", $"{requestedUser.FirstName} {requestedUser.LastName}");
+            bool isAlreadyFriend = await _friendRepository.Any(f => f.DeletedAt == null && ((f.Friend1 == currentUser.Id && f.Friend2 == requestedUser.Id) || (f.Friend2 == currentUser.Id && f.Friend1 == requestedUser.Id)));
+            if (isAlreadyFriend)
+            {
+                response.Success = false;
+                response.Message = NotificationMessages.AlreadyFriend.Replace("{0}", $"{requestedUser.FirstName} {requestedUser.LastName}");
+            }
         }
         else
         {
@@ -490,5 +494,15 @@ public class FriendService : IFriendService
         friendRequest.ReceiverId = newUserId;
         await _friendRequestRepository.Update(friendRequest);
         return;
+    }
+
+    public async Task<byte[]> ExportFriends(FilterVM filter)
+    {
+        PaginatedListVM<FriendVM> paginatedList = await FriendList(filter);
+        if (!paginatedList.List.Any())
+        {
+            return null;
+        }
+        return ExcelExportHelper.ExportToExcel(paginatedList.List, "Friends");
     }
 }
