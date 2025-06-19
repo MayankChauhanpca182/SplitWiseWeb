@@ -36,6 +36,10 @@ $(document).ready(function () {
     $("#loader").show();
   });
 
+  $(document).ajaxStart(function () {
+    $("#loader").show();
+  });
+
   $(document).ajaxStop(function () {
     $("#loader").hide();
   });

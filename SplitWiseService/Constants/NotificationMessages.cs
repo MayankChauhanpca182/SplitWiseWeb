@@ -72,6 +72,8 @@ public static class NotificationMessages
     // Friend request
     public const string NoAccountFound = "No account was found with {0}. Would you like to refere.";
     public const string FriendRequestToSelf = "You cannot send a friend request to yourself.";
+    public const string YouAlreadyRequested = "You have already sent friend request to {0}.";
+    public const string FriendRequestExist = "{0} has already sent a friend request to you with email ({1}).";
     public const string AlreadyFriend = "You are already friend of {0}.";
     public const string FriendRequestSuccess = "Friend request has been sent successfully.";
     public const string ReferralSuccess = "Referral email has been sent successfully.";

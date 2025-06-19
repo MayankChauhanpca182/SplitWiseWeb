@@ -1,12 +1,12 @@
 @using SplitWiseRepository.ViewModels
-@model FriendListVM
+@model PaginatedListVM<FriendVM>
 
 <div class="table-responsive bg-white px-2">
     <table class="table userList text-nowrap">
         <thead class="position-sticky top-0 z-1">
             <tr>
                 <th scope="col" class="col-4">
-                    <span class="text-clr-grey">Name</span>
+                    <span class="text-clr-grey text-dark-emphasis">Name</span>
                     <button class="btn p-0 sortBtn" data-column="name" data-order="asc" title="Asc">
                         <i class="bi bi-arrow-up"></i>
                     </button>
@@ -15,7 +15,7 @@
                     </button>
                 </th>
                 <th scope="col" class="col-4">
-                    <span class="text-clr-grey">Email</span>
+                    <span class="text-clr-grey text-dark-emphasis">Email</span>
                     <a class="btn p-0 sortBtn" data-column="email" data-order="asc" title="Asc">
                         <i class="bi bi-arrow-up"></i>
                     </a>
@@ -24,12 +24,12 @@
                     </a>
                 </th>
                 <th scope="col" class="col-4 text-center">
-                    <span class="text-clr-grey">Action</span>
+                    <span class="text-clr-grey text-dark-emphasis">Actions</span>
                 </th>
             </tr>
         </thead>
         <tbody>
-            @foreach (FriendVM friend in Model.FriendList)
+            @foreach (FriendVM friend in Model.List)
             {
                 <tr>
                     <td>
@@ -39,9 +39,19 @@
                     </td>
                     <td><span class="my-auto">@friend.EmailAddress</span></td>
                     <td class="text-center">
-                        <a href="#" class="btn border-0" title="Remove" onclick="removeFriend(@friend.FriendId)">
-                            <i class="bi bi-trash text-danger fs-6"></i>
-                        </a>
+                        @if (Model.IsDeletedData)
+                        {
+                            <a href="#" class="btn border-0" title="Send Friend Request"
+                                onclick="sendRequest('@friend.EmailAddress')">
+                                <i class="bi bi-send-fill text-primary"></i>
+                            </a>
+                        }
+                        else
+                        {
+                            <a href="#" class="btn border-0" title="Remove Friend" onclick="removeFriend(@friend.FriendId)">
+                                <i class="bi bi-person-x-fill text-danger"></i>
+                            </a>
+                        }
                     </td>
                 </tr>
             }
@@ -50,7 +60,14 @@
 </div>
 @if (!(Model.Page.TotalRecord > 0))
 {
-    <p class="p-4 text-center">No friends found</p>
+    @if (Model.IsDeletedData)
+    {
+        <p class="p-4 text-center">There are no removed friends found</p>
+    }
+    else
+    {
+        <p class="p-4 text-center">No friends found</p>
+    }
 }
 else
 {

@@ -3,16 +3,22 @@
     ViewData["Title"] = "Friends";
 }
 
-<h2 class="bg-white mb-3 px-2 py-3 shadow">Friends</h2>
+<h3 class="bg-white mb-3 px-2 py-3 text-dark-emphasis shadow">Friends</h3>
 <div class="d-flex justify-content-between gap-3 mb-3">
-    <div>
-        <input type="text" class="searchBox form-control border-secondary-subtle rounded-0" id="friendSearch" placeholder="Search"
-            oninput="getFriendList(1)">
+    <div class="d-flex align-items-center gap-4">
+        <input type="text" class="searchBox form-control border-secondary-subtle rounded-0" id="friendSearch"
+            placeholder="Search">
+        <div class="form-check">
+            <input class="form-check-input border border-secondary-subtle" type="checkbox" value=""
+                id="deletedFriendsChk" onchange="getFriendList(1)">
+            <label class="form-check-label text-nowrap" for="deletedFriendsChk">
+                Show removed friends
+            </label>
+        </div>
     </div>
     <div class="d-flex gap-2">
+        <button class="btn btn-secondary" type="button" onclick="fetchAddFriendModal()">Export</button>
         <button class="btn btn-primary" type="button" onclick="fetchAddFriendModal()">Add Friend</button>
-        <a asp-action="FriendRequests" asp-controller="Friend" class="btn btn-secondary" type="button">Friend
-            Requests</a>
     </div>
 </div>
 <div id="friendListOuter" class="bg-white"></div>
@@ -81,7 +87,7 @@
             });
         });
 
-        // Send referral form
+        // Submit referral form
         $(document).on("submit", "#sendReferralForm", function (e) {
             e.preventDefault();
 
@@ -108,12 +114,41 @@
                 }
             });
         });
+
+        // Send friend request
+        function sendRequest(email) {
+            $.ajax({
+                url: "/Friend/SendFriendRequestAjax",
+                type: "POST",
+                data: { email },
+                success: function (response) {
+                    if (!response.statusCode) {
+                        if (response.success == false) {
+                            toastr.error(response.message);
+                        }
+                        else {
+                            toastr.success(response.message);
+                            getFriendList(1);
+                        }
+                    }
+                },
+                error: function () {
+                    toastr.error('@NotificationMessages.InternalServerError');
+                }
+            });
+        }
     </script>
 
     @* Friend List *@
     <script>
         let sortColumn = "";
         let sortOrder = "";
+
+        $("#friendSearch").on("input", function(){
+            setTimeout(function(){
+                getFriendList(1);
+            }, 300);
+        });
 
         $(document).ready(function () {
             getFriendList(1);
@@ -126,6 +161,7 @@
                 SearchString: $("#friendSearch").val(),
                 SortColumn: sortColumn,
                 SortOrder: sortOrder,
+                IsDeleted: $("#deletedFriendsChk").prop("checked")
             };
 
             $.ajax({

@@ -51,7 +51,8 @@
                 </a>
             </div>
             <div class="dropdown">
-                <button class="btn dropdown-toggle d-flex align-items-center gap-2 text-white border-0 p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <button class="btn dropdown-toggle d-flex align-items-center gap-2 text-white border-0 p-0"
+                    type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     <img src="@(ProfileImagePath ?? "/images/Default_pfp.png")" alt="" class="rounded-circle"
                         width="30px" height="30px">
                     <span class="d-none d-sm-block">@(userName)</span>
@@ -92,23 +93,46 @@
                     </a>
                     <a asp-action="Index" asp-controller="Dashboard"
                         class="d-flex align-items-center gap-3 @((ViewData["ActiveLink"] as string) == "Groups" ? "active" : "")">
-                        <i class="bi bi-people-fill"></i>
+                        <i class="bi bi-diagram-3-fill"></i>
                         Groups
                     </a>
-                    <a asp-action="Index" asp-controller="Friend"
-                        class="d-flex align-items-center gap-3 @((ViewData["ActiveLink"] as string) == "Friends" ? "active" : "")">
-                        <i class="bi bi-person-fill"></i>
-                        Friends
-                    </a>
+                    <div class="accordion accordion-flush" id="contactsAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button d-flex gap-3 bg-blue-grey text-white collapsed"
+                                    type="button" data-bs-toggle="collapse" data-bs-target="#contacts-flush-collapseOne"
+                                    aria-expanded="false" aria-controls="contacts-flush-collapseOne">
+                                    <i class="bi bi-person-lines-fill"></i>
+                                    Contacts
+                                </button>
+                            </h2>
+                            <div id="contacts-flush-collapseOne" class="accordion-collapse collapse "
+                                data-bs-parent="#contactsAccordion">
+                                <div class="accordion-body bg-blue-grey text-white p-0">
+                                    <a asp-action="Index" asp-controller="Friend"
+                                        class="d-flex align-items-center gap-2 ps-4 @((ViewData["ActiveLink"] as string) == "Friends" ? "active" : "")">
+                                        <i class="bi bi-person-fill"></i>
+                                        Friends
+                                    </a>
+                                    <a asp-action="FriendRequests" asp-controller="Friend"
+                                        class="d-flex align-items-center gap-2 ps-4 @((ViewData["ActiveLink"] as string) == "Requests" ? "active" : "")">
+                                        <i class="bi bi-person-plus-fill"></i>
+                                        Requests
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </aside>
             <!-- Sidebar end -->
-            <div class="right-section px-2 px-md-4 py-2" id="right-section">
-                <breadcrumb></breadcrumb> 
+            <div class="right-section px-2 px-md-3" id="right-section">
+                <breadcrumb></breadcrumb>
                 @RenderBody()
             </div>
         </div>
-        <footer class="footer d-flex justify-content-center text-white align-items-center bg-white position-fixed bottom-0 w-100">
+        <footer
+            class="footer d-flex justify-content-center text-white align-items-center bg-white position-fixed bottom-0 w-100">
             <span>&copy; 2025 SplitMate. All rights reserved.</span>
         </footer>
     </div>

@@ -1,11 +1,7 @@
-using System.Threading.Tasks;
-using Azure.Core.Pipeline;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SmartBreadcrumbs.Attributes;
-using SplitWiseRepository.Models;
 using SplitWiseRepository.ViewModels;
-using SplitWiseService.Constants;
 using SplitWiseService.Services.Interface;
 
 namespace SplitWiseWeb.Controllers;
@@ -13,13 +9,11 @@ namespace SplitWiseWeb.Controllers;
 [Authorize]
 public class FriendController : Controller
 {
-    private readonly IFriendService _freiendService;
-    private readonly IUserService _userService;
+    private readonly IFriendService _friendService;
 
-    public FriendController(IFriendService freiendService, IUserService userService)
+    public FriendController(IFriendService friendService)
     {
-        _freiendService = freiendService;
-        _userService = userService;
+        _friendService = friendService;
     }
 
     // GET Index
@@ -35,8 +29,8 @@ public class FriendController : Controller
     [HttpPost]
     public async Task<IActionResult> FriendList(FilterVM filter)
     {
-        FriendListVM friendList = await _freiendService.FriendList(filter);
-        return PartialView("_FriendListPartialView", friendList);
+        PaginatedListVM<FriendVM> paginatedList = await _friendService.FriendList(filter);
+        return PartialView("_FriendListPartialView", paginatedList);
     }
 
     // GET AddFriendModal
@@ -54,15 +48,14 @@ public class FriendController : Controller
             return PartialView("_AddFriendModalPartialView", friendRequest);
         }
 
-        ResponseVM response = await _freiendService.CheckExisitngFrindship(friendRequest.Email);
-
+        ResponseVM response = await _friendService.CheckExisitngFrindship(friendRequest.Email);
         if (!response.Success)
         {
             return Json(response);
         }
 
-        response = await _freiendService.SendRequest(friendRequest);
-        if (response.Success)
+        response = await _friendService.SendRequest(friendRequest.Email);
+        if (!response.ShowNextAction)
         {
             return Json(response);
         }
@@ -71,6 +64,14 @@ public class FriendController : Controller
             friendRequest.Message = response.Message;
             return PartialView("_FriendReferralModalParialView", friendRequest);
         }
+    }
+
+    // POST SendFriendRequestAjax
+    [HttpPost]
+    public async Task<IActionResult> SendFriendRequestAjax(string email)
+    {
+        ResponseVM response = await _friendService.SendRequest(email);
+        return Json(response);
     }
 
     // POST SendReferral
@@ -82,7 +83,7 @@ public class FriendController : Controller
             return PartialView("_FriendReferralModalParialView", friendRequest);
         }
 
-        ResponseVM response = await _freiendService.SendReferral(friendRequest);
+        ResponseVM response = await _friendService.SendReferral(friendRequest);
         return Json(response);
     }
 
@@ -91,23 +92,23 @@ public class FriendController : Controller
     [Route("friendRequests")]
     public IActionResult FriendRequests()
     {
-        ViewData["ActiveLink"] = "Friends";
+        ViewData["ActiveLink"] = "Requests";
         return View();
     }
 
-    // POST FriendList
+    // POST FriendRequestList
     [HttpPost]
     public async Task<IActionResult> FriendRequestList(FilterVM filter)
     {
-        FriendRequestListVM friendRequestList = await _freiendService.FriendRequestList(filter);
-        return PartialView("_FriendRequestListPartialView", friendRequestList);
+        PaginatedListVM<FriendRequestVM> paginatedList = await _friendService.FriendRequestList(filter);
+        return PartialView("_FriendRequestListPartialView", paginatedList);
     }
 
     // POST AcceptRequest
     [HttpPost]
     public async Task<IActionResult> AcceptRequest(int id)
     {
-        ResponseVM response = await _freiendService.AcceptRequest(id);
+        ResponseVM response = await _friendService.AcceptRequest(id);
         return Json(response);
     }
 
@@ -115,7 +116,7 @@ public class FriendController : Controller
     [HttpPost]
     public async Task<IActionResult> RejectRequest(int id)
     {
-        ResponseVM response = await _freiendService.RejectRequest(id);
+        ResponseVM response = await _friendService.RejectRequest(id);
         return Json(response);
     }
 
@@ -123,7 +124,7 @@ public class FriendController : Controller
     [HttpPost]
     public async Task<IActionResult> RemoveFriend(int friendId)
     {
-        ResponseVM response = await _freiendService.RemoveFriend(friendId);
+        ResponseVM response = await _friendService.RemoveFriend(friendId);
         return Json(response);
     }
 

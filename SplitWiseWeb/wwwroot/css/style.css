@@ -43,10 +43,6 @@
     border-radius: 0;
 }
 
-.btn-check:checked+.btn, .btn.active, .btn.show, .btn:first-child:active, :not(.btn-check)+.btn:active {
-    /* border-color: transparent; */
-}
-
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
     box-shadow: none;
 }
@@ -69,6 +65,10 @@
 
 .bg-secondary-subtle {
     background-color: var(--clr-light-grey) !important;
+}
+
+.bg-blue-grey{
+    background-color: var(--clr-blue-gray) !important;
 }
 
 .cursor-pointer {
@@ -219,7 +219,6 @@ aside.navigation a {
     padding: 8px;
     color: #fff;
     font-weight: 400;
-    border-left: 5px solid transparent;
 }
 
 aside.navigation a:hover {
@@ -230,7 +229,14 @@ aside.navigation a:hover {
 aside.navigation a.active {
     color: var(--clr-dark-gray);
     background-color: var(--clr-mint) !important;
-    border-color: var(--clr-primary-dark) !important;
+}
+
+#contactsAccordion .accordion-button{
+    padding: 8px;
+}
+
+#contactsAccordion .accordion-button::after{
+    filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(1%) hue-rotate(4deg) brightness(103%) contrast(101%);;
 }
 
 footer.footer{

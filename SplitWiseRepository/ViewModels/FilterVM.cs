@@ -7,4 +7,5 @@ public class FilterVM
     public string SearchString { get; set; } = "";
     public string SortColumn { get; set; } = "";
     public string SortOrder { get; set; } = "asc";
+    public bool IsDeleted { get; set; } = false;
 }
