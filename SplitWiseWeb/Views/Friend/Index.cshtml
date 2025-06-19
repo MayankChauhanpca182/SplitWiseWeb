@@ -3,10 +3,10 @@
     ViewData["Title"] = "Friends";
 }
 
-<h1>Friends</h1>
+<h2 class="bg-white mb-3 px-2 py-3 shadow">Friends</h2>
 <div class="d-flex justify-content-between gap-3 mb-3">
     <div>
-        <input type="text" class="searchBox form-control border-secondary-subtle" id="friendSearch" placeholder="Search"
+        <input type="text" class="searchBox form-control border-secondary-subtle rounded-0" id="friendSearch" placeholder="Search"
             oninput="getFriendList(1)">
     </div>
     <div class="d-flex gap-2">
@@ -19,13 +19,13 @@
 
 
 <!-- Modal -->
-<div class="modal fade" id="regularModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="regularModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content" id="regularModalContent"></div>
     </div>
 </div>
 
-<div class="modal fade" id="largeModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="largeModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content" id="largeModalContent"></div>
     </div>
@@ -158,8 +158,26 @@
 
     @* Remove friend *@
     <script>
-        function removeFriend() {
-            
+        function removeFriend(friendId) {
+            @* $.ajax({
+                url: "/Friend/RemoveFriend",
+                type: "POST",
+                data: { friendId },
+                success: function (response) {
+                    if (!response.statusCode) {
+                        if (response.success == true) {
+                            toastr.success(response.message);
+                            getFriendList(1);
+                        }
+                        else {
+                            toastr.error(response.message);
+                        }
+                    }
+                },
+                error: function () {
+                    toastr.error('@NotificationMessages.InternalServerError');
+                }
+            }); *@
         }
     </script>
 }

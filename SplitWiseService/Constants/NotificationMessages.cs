@@ -70,13 +70,15 @@ public static class NotificationMessages
     public const string CanNot = "Can not {0} at this time." + TryAgain;
 
     // Friend request
-    public const string NoAccountFound = "No account was found with {0} email address. Would you like to refere to {0}.";
+    public const string NoAccountFound = "No account was found with {0}. Would you like to refere.";
     public const string FriendRequestToSelf = "You cannot send a friend request to yourself.";
+    public const string AlreadyFriend = "You are already friend of {0}.";
     public const string FriendRequestSuccess = "Friend request has been sent successfully.";
     public const string ReferralSuccess = "Referral email has been sent successfully.";
     public const string AlreadyReferred = "You have already reaferred {0}.";
     public const string AlreadyReferredBySomeone = "{0} has been already referred by someone, once {0} will create account he/she will get your friend.";
     public const string FriendRequestAccepted = "Friend request from {0} has been accepted successfully.";
     public const string FriendRequestRejected = "Friend request from {0} has been rejected successfully.";
+    public const string FriendRemoved = "{0} has been removed from your friend list successfully.";
     
 }

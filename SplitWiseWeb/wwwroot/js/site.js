@@ -32,7 +32,7 @@ $(document).ready(function () {
     $("#loader").show();
   });
 
-  $(document).ajaxStart(function () {
+  $(document).on("click", "a", function(){
     $("#loader").show();
   });
 

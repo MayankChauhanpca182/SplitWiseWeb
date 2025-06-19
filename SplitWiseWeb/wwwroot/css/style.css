@@ -25,6 +25,7 @@
     --bs-btn-active-bg: var(--clr-teal-dark) !important;
     --bs-btn-active-border-color: var(--clr-teal-dark) !important;
     font-weight: 500;
+    border-radius: 0;
 }
 
 .btn-secondary{
@@ -39,6 +40,15 @@
     --bs-btn-active-bg: var(--clr-light-grey) !important;
     --bs-btn-active-border-color: var(--clr-primary-dark) !important;
     font-weight: 500;
+    border-radius: 0;
+}
+
+.btn-check:checked+.btn, .btn.active, .btn.show, .btn:first-child:active, :not(.btn-check)+.btn:active {
+    /* border-color: transparent; */
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: none;
 }
 
 .text-primary {
@@ -101,9 +111,8 @@ a {
 
 /* Breadcrumbs */
 .breadcrumb{
-    padding: 5px 10px;
+    padding: 5px 0px;
     margin: 5px 0px;
-    background-color: var(--clr-light-grey);
 }
 
 .breadcrumb-item a{

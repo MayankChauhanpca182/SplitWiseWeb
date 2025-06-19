@@ -16,12 +16,12 @@
                 </th>
                 <th scope="col" class="col-4">
                     <span class="text-clr-grey">Email</span>
-                    <button class="btn p-0 sortBtn" data-column="email" data-order="asc" title="Asc">
+                    <a class="btn p-0 sortBtn" data-column="email" data-order="asc" title="Asc">
                         <i class="bi bi-arrow-up"></i>
-                    </button>
-                    <button class="btn p-0 sortBtn" data-column="email" data-order="desc" title="Desc">
+                    </a>
+                    <a class="btn p-0 sortBtn" data-column="email" data-order="desc" title="Desc">
                         <i class="bi bi-arrow-down"></i>
-                    </button>
+                    </a>
                 </th>
                 <th scope="col" class="col-4 text-center">
                     <span class="text-clr-grey">Action</span>
@@ -39,9 +39,9 @@
                     </td>
                     <td><span class="my-auto">@friend.EmailAddress</span></td>
                     <td class="text-center">
-                        <button class="btn" title="Reject" onclick="removeFriend(@friend.UserId)">
+                        <a href="#" class="btn border-0" title="Remove" onclick="removeFriend(@friend.FriendId)">
                             <i class="bi bi-trash text-danger fs-6"></i>
-                        </button>
+                        </a>
                     </td>
                 </tr>
             }
@@ -50,7 +50,7 @@
 </div>
 @if (!(Model.Page.TotalRecord > 0))
 {
-    <p class="p-4 text-center">No friend requests found</p>
+    <p class="p-4 text-center">No friends found</p>
 }
 else
 {

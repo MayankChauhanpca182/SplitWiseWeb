@@ -79,9 +79,6 @@ public class UserService : IUserService
             // Add User
             await _userRepository.Add(newUser);
 
-            // Update referrals
-            await UpdateReferrals(newUser);
-
             // Send Email
             await _emailService.UserVarificationEmail(newUser.FirstName, newUser.EmailAddress);
 
@@ -98,30 +95,6 @@ public class UserService : IUserService
             await _transaction.Rollback();
             throw;
         }
-    }
-
-    private async Task UpdateReferrals(User newUser)
-    {
-        List<UserReferral> referralList = await _userReferralRepository.List(ur => ur.ReferredToEmailAddress.ToLower() == newUser.EmailAddress.ToLower() && !ur.IsAccountRegistered);
-
-        foreach (UserReferral referral in referralList)
-        {
-            referral.IsAccountRegistered = true;
-            referral.RegisteredAt = DateTime.Now;
-            await _userReferralRepository.Update(referral);
-
-            // Add user id to friend request
-            await AddUserIdToFriendRequest(referral.Id, newUser.Id);
-        }
-        return;
-    }
-
-    private async Task AddUserIdToFriendRequest(int referralId, int newUserId)
-    {
-        FriendRequest friendRequest = await _friendRequestRepository.Get(fr => fr.ReferralId == referralId);
-        friendRequest.ReceiverId = newUserId;
-        await _friendRequestRepository.Update(friendRequest);
-        return;
     }
     #endregion
 

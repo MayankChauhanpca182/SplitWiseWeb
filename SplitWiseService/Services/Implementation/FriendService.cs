@@ -46,6 +46,31 @@ public class FriendService : IFriendService
         await _friendRequestRepository.Add(newFriendRequest);
     }
 
+    public async Task<ResponseVM> CheckExisitngFrindship(string email)
+    {
+        ResponseVM response = new ResponseVM();
+
+        User currentUser = await _userService.LoggedInUser();
+        if (email == currentUser.EmailAddress)
+        {
+            response.Success = false;
+            response.Message = NotificationMessages.FriendRequestToSelf;
+            return response;
+        }
+        User requestedUser = await _userService.GetByEmailAddress(email);
+        bool isAlreadyFriend = await _friendRepository.Any(f => f.DeletedAt == null && ((f.Friend1 == currentUser.Id && f.Friend2 == requestedUser.Id) || (f.Friend2 == currentUser.Id && f.Friend1 == requestedUser.Id)));
+        if (isAlreadyFriend)
+        {
+            response.Success = false;
+            response.Message = NotificationMessages.AlreadyFriend.Replace("{0}", $"{requestedUser.FirstName} {requestedUser.LastName}");
+        }
+        else
+        {
+            response.Success = true;
+        }
+        return response;
+    }
+
     public async Task<ResponseVM> SendRequest(FriendRequestVM requests)
     {
         try
@@ -344,6 +369,7 @@ public class FriendService : IFriendService
         FriendListVM friendList = new FriendListVM();
         friendList.FriendList = paginatedItems.Items.Select(f => new FriendVM
         {
+            FriendId = f.Id,
             UserId = f.Friend2 == userId ? f.Friend1UserNavigation.Id : f.Friend2UserNavigation.Id,
             Name = f.Friend2 == userId ? f.Friend1UserNavigation.FirstName + " " + f.Friend1UserNavigation.LastName : f.Friend2UserNavigation.FirstName + " " + f.Friend2UserNavigation.LastName,
             EmailAddress = f.Friend2 == userId ? f.Friend1UserNavigation.EmailAddress : f.Friend2UserNavigation.EmailAddress,
@@ -353,5 +379,63 @@ public class FriendService : IFriendService
         friendList.Page.SetPagination(paginatedItems.totalRecords, filter.PageSize, filter.PageNumber);
 
         return friendList;
+    }
+
+    public async Task<ResponseVM> RemoveFriend(int friendId)
+    {
+        try
+        {
+            // Begin transaction
+            await _transaction.Begin();
+
+            int userId = _userService.LoggedInUserId();
+            ResponseVM response = new ResponseVM();
+
+            Friend friend = await _friendRepository.Get(f => f.Id == friendId);
+
+            friend.DeletedAt = DateTime.Now;
+            friend.DeletedById = userId;
+            await _friendRepository.Update(friend);
+
+            int friendUserId = friend.Friend1 == userId ? friend.Friend2 : friend.Friend1;
+            User friendUser = await _userService.GetById(friendUserId);
+
+            response.Success = true;
+            response.Message = NotificationMessages.FriendRemoved.Replace("{0}", friendUser.FirstName);
+
+            // Commit transaction
+            await _transaction.Commit();
+            return response;
+        }
+        catch
+        {
+            // Rollback transaction
+            await _transaction.Rollback();
+            throw;
+        }
+    }
+
+    public async Task UpdateReferrals(User newUser)
+    {
+        List<UserReferral> referralList = await _userReferralRepository.List(ur => ur.ReferredToEmailAddress.ToLower() == newUser.EmailAddress.ToLower() && !ur.IsAccountRegistered);
+
+        foreach (UserReferral referral in referralList)
+        {
+            referral.IsAccountRegistered = true;
+            referral.RegisteredAt = DateTime.Now;
+            await _userReferralRepository.Update(referral);
+
+            // Add user id to friend request
+            await AddUserIdToFriendRequest(referral.Id, newUser.Id);
+        }
+        return;
+    }
+
+    private async Task AddUserIdToFriendRequest(int referralId, int newUserId)
+    {
+        FriendRequest friendRequest = await _friendRequestRepository.Get(fr => fr.ReferralId == referralId);
+        friendRequest.ReceiverId = newUserId;
+        await _friendRequestRepository.Update(friendRequest);
+        return;
     }
 }

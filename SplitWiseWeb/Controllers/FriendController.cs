@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Azure.Core.Pipeline;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SmartBreadcrumbs.Attributes;
@@ -9,8 +10,7 @@ using SplitWiseService.Services.Interface;
 
 namespace SplitWiseWeb.Controllers;
 
-// [Authorize]
-[Breadcrumb("Friends")]
+[Authorize]
 public class FriendController : Controller
 {
     private readonly IFriendService _freiendService;
@@ -23,6 +23,7 @@ public class FriendController : Controller
     }
 
     // GET Index
+    [Breadcrumb("Friends")]
     [Route("friends")]
     public IActionResult Index()
     {
@@ -53,13 +54,10 @@ public class FriendController : Controller
             return PartialView("_AddFriendModalPartialView", friendRequest);
         }
 
-        ResponseVM response = new ResponseVM();
+        ResponseVM response = await _freiendService.CheckExisitngFrindship(friendRequest.Email);
 
-        User currentUser = await _userService.LoggedInUser();
-        if (friendRequest.Email.ToLower() == currentUser.EmailAddress.ToLower())
+        if (!response.Success)
         {
-            response.Success = false;
-            response.Message = NotificationMessages.FriendRequestToSelf;
             return Json(response);
         }
 
@@ -89,7 +87,7 @@ public class FriendController : Controller
     }
 
     // GET FriendRequests
-    [Breadcrumb("Friend Requests", FromAction = "Index")]
+    [Breadcrumb("Friend Requests", FromController = typeof(DashboardController))]
     [Route("friendRequests")]
     public IActionResult FriendRequests()
     {
@@ -118,6 +116,14 @@ public class FriendController : Controller
     public async Task<IActionResult> RejectRequest(int id)
     {
         ResponseVM response = await _freiendService.RejectRequest(id);
+        return Json(response);
+    }
+
+    // POST RemoveFriend
+    [HttpPost]
+    public async Task<IActionResult> RemoveFriend(int friendId)
+    {
+        ResponseVM response = await _freiendService.RemoveFriend(friendId);
         return Json(response);
     }
 

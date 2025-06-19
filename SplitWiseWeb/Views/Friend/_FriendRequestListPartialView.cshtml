@@ -39,12 +39,12 @@
                     </td>
                     <td><span class="my-auto">@request.Email</span></td>
                     <td class="text-center">
-                        <button class="btn p-0" title="Accept" onclick="acceptRequest(@request.Id)">
+                        <a href="#" class="btn border-0" title="Accept" onclick="acceptRequest(@request.Id)">
                             <i class="bi bi-check-lg text-success fs-6"></i>
-                        </button>
-                        <button class="btn" title="Reject" onclick="rejectRequest(@request.Id)">
+                        </a>
+                        <a href="#" class="btn border-0" title="Reject" onclick="rejectRequest(@request.Id)">
                             <i class="bi bi-trash text-danger fs-6"></i>
-                        </button>
+                        </a>
                     </td>
                 </tr>
             }

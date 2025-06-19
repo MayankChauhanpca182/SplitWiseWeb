@@ -16,8 +16,9 @@ public class AuthService : IAuthService
     private readonly AesHelper _aesHelper;
     private readonly IJwtService _jwtService;
     private readonly IPasswordResetService _passwordResetService;
+    private readonly IFriendService _friendService;
 
-    public AuthService(IGenericRepository<User> userRepository, IEmailService emailService, AesHelper aesHelper, IJwtService jwtService, ITransactionRepository transaction, IPasswordResetService passwordResetService)
+    public AuthService(IGenericRepository<User> userRepository, IEmailService emailService, AesHelper aesHelper, IJwtService jwtService, ITransactionRepository transaction, IPasswordResetService passwordResetService, IFriendService friendService)
     {
         _userRepository = userRepository;
         _emailService = emailService;
@@ -25,6 +26,7 @@ public class AuthService : IAuthService
         _jwtService = jwtService;
         _transaction = transaction;
         _passwordResetService = passwordResetService;
+        _friendService = friendService;
     }
 
     public async Task<ResponseVM> UserVerification(string token)
@@ -54,6 +56,9 @@ public class AuthService : IAuthService
                 user.UpdatedAt = DateTime.Now;
                 await _userRepository.Update(user);
 
+                // Update referrals
+                await _friendService.UpdateReferrals(user);
+
                 response.Success = true;
                 response.Message = NotificationMessages.EmailVerificationSuccess;
             }
@@ -69,6 +74,8 @@ public class AuthService : IAuthService
             throw;
         }
     }
+
+    
 
     public async Task<ResponseVM> ValidateUser(string email, string password)
     {
