@@ -52,6 +52,7 @@ builder.Services.AddScoped<IPasswordResetService, PasswordResetService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddScoped<IFriendService, FriendService>();
 builder.Services.AddScoped<IGroupService, GroupService>();
+builder.Services.AddScoped<ICommonService, CommonService>();
 
 builder.Services.AddControllersWithViews();
 

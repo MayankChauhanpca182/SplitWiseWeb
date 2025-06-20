@@ -25,8 +25,10 @@ public static class ImageHelper
         return $"/defaultimages/{Path.GetFileName(selectedFile)}";
     }
 
-    public static string UploadImage(IFormFile imageFile)
+    public static string UploadImage(IFormFile imageFile, string existingImagePath = null)
     {
+        DeleteImage(existingImagePath);
+
         string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
         if (!Directory.Exists(uploadsFolder))
         {

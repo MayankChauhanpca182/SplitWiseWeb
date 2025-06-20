@@ -9,8 +9,8 @@ public class GroupMember : AuditFields
     public int UserId { get; set; }
 
     [ForeignKey("GroupId")]
-    public virtual Group Group { get; set; } = new Group();
+    public virtual Group Group { get; set; }
 
     [ForeignKey("UserId")]
-    public virtual User User { get; set; } = new User();
+    public virtual User User { get; set; }
 }

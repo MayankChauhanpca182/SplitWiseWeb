@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SplitWiseRepository.Models;
 
@@ -11,9 +12,11 @@ using SplitWiseRepository.Models;
 namespace SplitWiseRepository.Migrations
 {
     [DbContext(typeof(SplitWiseDbContext))]
-    partial class SplitWiseDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250620052042_Alter_Table_Change_Column_Name_ProfileImagePath_To_ImagePath")]
+    partial class Alter_Table_Change_Column_Name_ProfileImagePath_To_ImagePath
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,7 +40,7 @@ namespace SplitWiseRepository.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Currencies", (string)null);
+                    b.ToTable("Currencies");
                 });
 
             modelBuilder.Entity("SplitWiseRepository.Models.ExceptionLog", b =>
@@ -84,7 +87,7 @@ namespace SplitWiseRepository.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ExceptionLogs", (string)null);
+                    b.ToTable("ExceptionLogs");
                 });
 
             modelBuilder.Entity("SplitWiseRepository.Models.Friend", b =>
@@ -130,7 +133,7 @@ namespace SplitWiseRepository.Migrations
 
                     b.HasIndex("FriendRequestId");
 
-                    b.ToTable("Friends", (string)null);
+                    b.ToTable("Friends");
                 });
 
             modelBuilder.Entity("SplitWiseRepository.Models.FriendRequest", b =>
@@ -179,7 +182,7 @@ namespace SplitWiseRepository.Migrations
 
                     b.HasIndex("RequesterId");
 
-                    b.ToTable("FriendRequests", (string)null);
+                    b.ToTable("FriendRequests");
                 });
 
             modelBuilder.Entity("SplitWiseRepository.Models.Group", b =>
@@ -231,7 +234,7 @@ namespace SplitWiseRepository.Migrations
 
                     b.HasIndex("CurrencyId");
 
-                    b.ToTable("Groups", (string)null);
+                    b.ToTable("Groups");
                 });
 
             modelBuilder.Entity("SplitWiseRepository.Models.GroupMember", b =>
@@ -272,7 +275,7 @@ namespace SplitWiseRepository.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("GroupMembers", (string)null);
+                    b.ToTable("GroupMembers");
                 });
 
             modelBuilder.Entity("SplitWiseRepository.Models.PasswordResetToken", b =>
@@ -304,7 +307,7 @@ namespace SplitWiseRepository.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("PasswordResetTokens", (string)null);
+                    b.ToTable("PasswordResetTokens");
                 });
 
             modelBuilder.Entity("SplitWiseRepository.Models.User", b =>
@@ -378,7 +381,7 @@ namespace SplitWiseRepository.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("SplitWiseRepository.Models.UserReferral", b =>
@@ -411,7 +414,7 @@ namespace SplitWiseRepository.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserReferrals", (string)null);
+                    b.ToTable("UserReferrals");
                 });
 
             modelBuilder.Entity("SplitWiseRepository.Models.ExceptionLog", b =>

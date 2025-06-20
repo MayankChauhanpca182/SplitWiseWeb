@@ -6,7 +6,7 @@ using SplitWiseService.Services.Interface;
 namespace SplitWiseWeb.Controllers;
 
 [Authorize]
-[DefaultBreadcrumb("Home")]
+[DefaultBreadcrumb("SplitMate")]
 public class DashboardController : Controller
 {
     private readonly IDashboardService _dashboardService;
@@ -18,13 +18,19 @@ public class DashboardController : Controller
 
     #region Dashboard
     // GET Index
-    [Route("dashboard")]
+    [Route("home")]
     public IActionResult Index()
     {
         ViewData["ActiveLink"] = "Dashboard";
         return View();
     }
-    #endregion
 
+    [Route("dashboard")]
+    [Breadcrumb("Dashboard")]
+    public IActionResult Dashboard()
+    {
+        return PartialView("Dashboard");
+    }
+    #endregion
 
 }

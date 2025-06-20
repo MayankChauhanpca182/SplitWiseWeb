@@ -89,3 +89,94 @@ $(document).on("submit", "#changePasswordForm", function (e) {
         }
     });
 });
+
+// Get friend request modal
+function fetchAddFriendModal() {
+    $("#regularModalContent").empty();
+    $.ajax({
+        url: "/Friend/AddFriendModal",
+        type: "GET",
+        success: function (response) {
+            if (!response.statusCode) {
+                $("#regularModalContent").html(response);
+                $("#regularModal").modal("show");
+            }
+        },
+        error: function () {
+            $("#regularModal").modal("hide");
+            toastr.error('@(NotificationMessages.CanNot.Replace("{0}", "add friend"))');
+        },
+    });
+}
+
+// Submit friend request form
+$(document).on("submit", "#addFriendRequestForm", function (e) {
+    e.preventDefault();
+
+    $.ajax({
+        url: $(this).attr("action"),
+        type: $(this).attr("method"),
+        data: $(this).serialize(),
+        success: function (response) {
+            if (!response.statusCode) {
+                if (response.success) {
+                    $("#regularModal").modal("hide");
+                    toastr.success(response.message);
+                } else if (response.success == false) {
+                    toastr.error(response.message);
+                } else {
+                    $("#regularModalContent").html(response);
+                }
+            }
+        },
+        error: function (xhr, status, error) {
+            toastr.error("@NotificationMessages.InternalServerError");
+        },
+    });
+});
+
+// Submit referral form
+$(document).on("submit", "#sendReferralForm", function (e) {
+    e.preventDefault();
+
+    $.ajax({
+        url: $(this).attr("action"),
+        type: $(this).attr("method"),
+        data: $(this).serialize(),
+        success: function (response) {
+            if (!response.statusCode) {
+                if (response.success) {
+                    $("#regularModal").modal("hide");
+                    toastr.success(response.message);
+                } else if (response.success == false) {
+                    toastr.error(response.message);
+                } else {
+                    $("#regularModalContent").html(response);
+                }
+            }
+        },
+        error: function (xhr, status, error) {
+            toastr.error("@NotificationMessages.InternalServerError");
+        },
+    });
+});
+
+// Breadcrumb
+$(document).ready(function () {
+    $('body').on('click', '.breadcrumb a', function (e) {
+        e.preventDefault();
+        var url = $(this).attr('href');
+
+        $.ajax({
+            url: url,
+            type: 'GET',
+            success: function (data) {
+                $('#partialViewContainer').html(data);
+                // history.pushState(null, '', url);
+            },
+            error: function () {
+                alert("Internal server error.");
+            }
+        });
+    });
+});

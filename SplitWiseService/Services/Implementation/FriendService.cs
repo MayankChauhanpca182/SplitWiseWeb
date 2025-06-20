@@ -1,12 +1,9 @@
 using System.Linq.Expressions;
-using MailKit.Search;
-using Microsoft.EntityFrameworkCore;
 using SplitWiseRepository.Constants;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.Repositories.Interface;
 using SplitWiseRepository.ViewModels;
 using SplitWiseService.Constants;
-using SplitWiseService.Exceptions;
 using SplitWiseService.Helpers;
 using SplitWiseService.Services.Interface;
 

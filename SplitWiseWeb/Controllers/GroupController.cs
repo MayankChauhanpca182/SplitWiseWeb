@@ -1,12 +1,21 @@
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using SmartBreadcrumbs.Attributes;
+using SplitWiseRepository.ViewModels;
+using SplitWiseService.Services.Interface;
 
 namespace SplitWiseWeb.Controllers;
 
 public class GroupController : Controller
 {
-    public GroupController()
+    private readonly IGroupService _groupService;
+    private readonly ICommonService _commonService;
+
+    public GroupController(IGroupService groupService, ICommonService commonService)
     {
+        _groupService = groupService;
+        _commonService = commonService;
     }
 
     [Breadcrumb("Groups")]
@@ -16,4 +25,36 @@ public class GroupController : Controller
         return PartialView("Index");
     }
 
+    // GET AddGroup
+    [Breadcrumb("Create Group", FromAction = "Index")]
+    public async Task<IActionResult> AddGroup(int groupId = 0)
+    {
+        GroupVM group = new GroupVM();
+        if (groupId > 0)
+        {
+            group = await _groupService.GetGroup(groupId);
+        }
+        group.Currencies = await _commonService.CurrencyList();
+        return PartialView("AddGroup", group);
+    }
+
+    // POST SaveGroup
+    public async Task<IActionResult> SaveGroup(GroupVM newGroupVM)
+    {
+        if (!ModelState.IsValid)
+        {
+            newGroupVM.Currencies = await _commonService.CurrencyList();
+            return PartialView("AddGroup", newGroupVM);
+        }
+
+        ResponseVM response = await _groupService.SaveGroup(newGroupVM);
+        return Json(response);
+    }
+
+    // POST GroupList
+    public async Task<IActionResult> GroupList(FilterVM filter)
+    {
+        PaginatedListVM<GroupVM> paginatedList = await _groupService.GroupList(filter);
+        return PartialView("GroupList", paginatedList);
+    }
 }

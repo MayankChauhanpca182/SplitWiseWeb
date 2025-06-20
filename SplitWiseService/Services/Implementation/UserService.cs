@@ -101,7 +101,6 @@ public class UserService : IUserService
     #region Profile
     public async Task<UserVM> GetProfile()
     {
-
         User user = await LoggedInUser();
         return new UserVM
         {
@@ -136,8 +135,7 @@ public class UserService : IUserService
             // Image upload
             if (newUser.ProfileImage != null)
             {
-                ImageHelper.DeleteImage(originalUser.ProfileImagePath);
-                originalUser.ProfileImagePath = ImageHelper.UploadImage(newUser.ProfileImage);
+                originalUser.ProfileImagePath = ImageHelper.UploadImage(newUser.ProfileImage, originalUser.ProfileImagePath);
             }
 
             await _userRepository.Update(originalUser);

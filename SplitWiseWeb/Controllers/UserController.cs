@@ -148,7 +148,6 @@ public class UserController : Controller
     {
         if (!ModelState.IsValid)
         {
-            // return View("Profile", await _userService.GetProfile());
             return PartialView("Profile", await _userService.GetProfile());
         }
 
@@ -164,30 +163,6 @@ public class UserController : Controller
         Response.Cookies.Append("UserName", $"{user.FirstName} {user.LastName}", options);
         Response.Cookies.Append("ProfileImagePath", user.ProfileImagePath, options);
         return Json(response);
-
-        // if (!response.Success)
-        // {
-        //     TempData["errorMessage"] = response.Message;
-        //     return View("Profile", await _userService.GetProfile());
-        // }
-        // else
-        // {
-        //     User user = await _userService.LoggedInUser();
-
-        //     CookieOptions options = new CookieOptions
-        //     {
-        //         Expires = DateTime.Now.AddHours(24),
-        //         HttpOnly = true,
-        //         Secure = true,
-        //         SameSite = SameSiteMode.Strict
-        //     };
-        //     Response.Cookies.Append("UserName", $"{user.FirstName} {user.LastName}", options);
-        //     Response.Cookies.Append("ProfileImagePath", user.ProfileImagePath, options);
-
-        //     TempData["successMessage"] = response.Message;
-        // }
-
-        // return RedirectToAction("Profile");
     }
     #endregion
 

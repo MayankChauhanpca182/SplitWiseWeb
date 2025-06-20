@@ -19,8 +19,10 @@ public class Group : AuditFields
     public bool IsSimplifiedPayments { get; set; } = false;
 
     [MaxLength(1000)]
-    public string ProfileImagePath { get; set; }
+    public string ImagePath { get; set; }
 
     [ForeignKey("CurrencyId")]
-    public virtual Currency Currency { get; set; } = new Currency();
+    public virtual Currency Currency { get; set; }
+
+    public virtual ICollection<GroupMember> GroupMembers { get; set; }
 }

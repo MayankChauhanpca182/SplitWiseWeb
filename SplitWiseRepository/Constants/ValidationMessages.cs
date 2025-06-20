@@ -44,4 +44,9 @@ public static class ValidationMessages
     public const string BirthdateRequired = "Birthdate is required";
     public const string NoFutureBirthdate = "The birthdate must not be set in the future";
 
+
+    // Group
+    public const string GroupName = "Group name is required";
+    public const string GroupNameLength = "Group name can not exceed 50 characters";
+
 }

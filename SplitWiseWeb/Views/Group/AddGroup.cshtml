@@ -1,0 +1,80 @@
+@using SplitWiseRepository.ViewModels
+@model GroupVM
+
+<breadcrumb></breadcrumb>
+<div class="py-3">
+    <form asp-action="SaveGroup" asp-controller="Group" id="groupForm" class="d-flex flex-column"
+        style="max-width: 500px;" enctype="multipart/form-data">
+        <!-- Image -->
+        <input asp-for="@Model.Id" hidden>
+        <input asp-for="@Model.Image" accept="image/png, image/jpg, image/jpeg" hidden>
+
+        <label asp-for="@Model.Image" class="cursor-pointer" title="Click to select an image" style="width: 100px;">
+            <img src=@(Model.ImagePath ?? "/images/default_group_img.png") alt="" id="previewImage"
+                class="rounded-circle border border-dark-subtle object-fit-cover" width="100px" height="100px">
+        </label>
+        <span class="text-danger" asp-validation-for="@Model.Image"></span>
+
+        <!-- Name -->
+        <div class="input-group mt-4 rounded-0">
+            <input asp-for=@Model.Name class="form-control border-secondary-subtle"
+                placeholder="Group Name">
+        </div>
+        <span class="text-danger" asp-validation-for="@Model.Name"></span>
+
+        <!-- Norice board -->
+        <div class="input-group mt-4 rounded-0">
+            <textarea asp-for=@Model.NoticeBoard class="form-control border-secondary-subtle rounded-0" placeholder="Notice..." rows="3"></textarea>
+        </div>
+
+        <!-- Name -->
+        <div class="form-check mt-4">
+            <input asp-for="@Model.IsSimplifiedPayments" class="form-check-input border border-secondary-subtle" type="checkbox">
+            <label asp-for="@Model.IsSimplifiedPayments" class="form-check-label text-nowrap">
+                Use simplified payments 
+            </label>
+        </div>       
+
+        <!-- Currency -->
+        <div class="input-group mt-4 rounded-0">
+            <select asp-for="@Model.CurrencyId" class="form-select rounded-0 border-secondary-subtle">
+                @foreach (Currency currency in Model.Currencies)
+                {
+                    <option value="@currency.Id">@currency.Name</option>
+                }
+            </select>
+        </div>
+        <span class="text-danger" asp-validation-for="@Model.CurrencyId"></span>
+
+        <div class="d-flex align-items-center gap-3 mt-4">
+            <button type="submit" class="btn btn-primary w-auto shadow">Save</button>
+            <a href="#" onclick="getPage('groups', 'groupsPageNav')" class="btn btn-secondary w-auto shadow">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#Image').on('change', function () {
+            const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+            const file = this.files[0];
+
+            if (file) {
+                if (!validTypes.includes(file.type)) {
+                    toastr.error("Only following image types are allowed: jpeg, jpg, png.");
+                    $(this).val("");
+                    $('#previewImage').attr('src', '@(Model.ImagePath ?? "/images/default_group_img.png")');
+                    return;
+                }
+                else {
+                    // Show preview
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        $('#previewImage').attr('src', e.target.result);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+        });
+    });
+</script>

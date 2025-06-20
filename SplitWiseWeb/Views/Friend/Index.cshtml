@@ -51,7 +51,7 @@
     }
 </script>
 
-@* Friend List *@
+@* Friend list *@
 <script>
     sortColumn = "";
     sortOrder = "";
@@ -102,12 +102,12 @@
         });
     }
 
-    // Handle sorting
+    @* // Handle sorting
     $(document).on("click", ".sortBtn", function () {
         sortColumn = $(this).data("column");
         sortOrder = $(this).data("order");
         getFriendList(1);
-    });
+    }); *@
 
     // Export friends
     function exportFriends() {

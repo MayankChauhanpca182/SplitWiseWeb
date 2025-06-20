@@ -1,3 +1,117 @@
+@using SplitWiseService.Constants
 <breadcrumb></breadcrumb>
 <h3 class="bg-white mb-3 px-2 py-3 text-dark-emphasis shadow">Groups</h3>
+<div class="d-flex justify-content-between gap-3 mb-3">
+    <div class="d-flex align-items-center gap-4">
+        <input type="text" class="searchBox form-control border-secondary-subtle rounded-0" id="groupListSearch"
+            placeholder="Search">
+    </div>
+    <div class="d-flex gap-2">
+        <button class="btn btn-primary" type="button" onclick="fetchGroupPage()">Create new group</button>
+    </div>
+</div>
+<div id="groupListOuter" class="bg-white"></div>
 
+
+@* Create new group *@
+<script>
+    // Get create new group modal
+    function fetchGroupPage(groupId = 0) {
+        $("#regularModalContent").empty();
+        $.ajax({
+            url: "/Group/AddGroup",
+            type: "GET",
+            data: {groupId},
+            success: function (response) {
+                if (!response.statusCode) {
+                    $("#partialViewContainer").html(response);
+                }
+            },
+            error: function () {
+                toastr.error('@NotificationMessages.InternalServerError');
+            },
+        });
+    }
+
+    // Save group
+    $(document).on("submit", "#groupForm", function (e) {
+        e.preventDefault();
+
+        let formData = new FormData(this);
+
+        $.ajax({
+            url: $(this).attr("action"),
+            type: $(this).attr("method"),
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                if (!response.statusCode) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                    }
+                    else if (response.success == false) {
+                        toastr.error(response.message);
+                    }
+                    else {
+                        $("#partialViewContainer").html(response);
+                    }
+                }
+            },
+            error: function (xhr, status, error) {
+                toastr.error('@NotificationMessages.InternalServerError');
+            }
+        });
+    });
+</script>
+
+@* Group list *@
+<script>
+    sortColumn = "";
+    sortOrder = "";
+    searchTimeout;
+
+    $("#groupListSearch").on("input", function () {
+        if (searchTimeout === null) {
+            searchTimeout = setTimeout(function () {
+                getGroupList(1);
+            }, 500);
+        }
+    });
+
+    $(document).ready(function () {
+        getGroupList(1);
+    });
+
+    function getGroupList(currentPage) {
+        clearTimeout(searchTimeout);
+        searchTimeout = null;
+
+        let filter = {
+            PageNumber: currentPage,
+            PageSize: $("#groupListPageSize").val(),
+            SearchString: $("#groupListSearch").val(),
+            SortColumn: sortColumn,
+            SortOrder: sortOrder
+        };
+
+        $.ajax({
+            url: "/Group/GroupList",
+            type: "POST",
+            data: { filter },
+            success: function (response) {
+                if (!response.statusCode) {
+                    if (response.success == false) {
+                        toastr.error(response.message);
+                    }
+                    else {
+                        $("#groupListOuter").html(response);
+                    }
+                }
+            },
+            error: function () {
+                toastr.error('@NotificationMessages.InternalServerError');
+            }
+        });
+    }
+</script>

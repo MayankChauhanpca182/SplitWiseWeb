@@ -1,5 +1,5 @@
 @using SplitWiseRepository.ViewModels
-@model PaginatedListVM<FriendRequestVM>
+@model PaginatedListVM<GroupVM>
 
 <div class="table-responsive bg-white px-2">
     <table class="table text-nowrap">
@@ -15,13 +15,13 @@
                     </button>
                 </th>
                 <th scope="col" class="col-4">
-                    <span class="text-clr-grey text-dark-emphasis">Email</span>
-                    <button class="btn p-0 sortBtn" data-column="email" data-order="asc" title="Asc">
+                    <span class="text-clr-grey text-dark-emphasis">Expense</span>
+                    <a class="btn p-0 sortBtn" data-column="expense" data-order="asc" title="Asc">
                         <i class="bi bi-arrow-up"></i>
-                    </button>
-                    <button class="btn p-0 sortBtn" data-column="email" data-order="desc" title="Desc">
+                    </a>
+                    <a class="btn p-0 sortBtn" data-column="expense" data-order="desc" title="Desc">
                         <i class="bi bi-arrow-down"></i>
-                    </button>
+                    </a>
                 </th>
                 <th scope="col" class="col-4 text-center">
                     <span class="text-clr-grey text-dark-emphasis">Actions</span>
@@ -29,21 +29,18 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (FriendRequestVM request in Model.List)
+            @foreach (GroupVM group in Model.List)
             {
                 <tr>
                     <td>
-                        <img src="@(request.ProfileImagePath ?? "/images/Default_pfp.png")"
+                        <img src="@(group.ImagePath ?? "/images/default_group_img.png")"
                             class="object-fit-cover rounded-circle" width="40px">
-                        <span class="ms-2">@request.Name</span>
+                        <span class="ms-2">@group.Name</span>
                     </td>
-                    <td><span class="my-auto">@request.Email</span></td>
+                    <td>@group.Expense</td>
                     <td class="text-center">
-                        <a href="#" class="btn border-0" title="Accept" onclick="acceptRequest(@request.Id)">
-                            <i class="bi bi-check-lg text-success fs-6"></i>
-                        </a>
-                        <a href="#" class="btn border-0" title="Reject" onclick="rejectRequest(@request.Id)">
-                            <i class="bi bi-trash text-danger fs-6"></i>
+                        <a href="#" class="btn border-0" title="Edit group" onclick="fetchGroupPage(@group.Id)">
+                            <i class="bi bi-pencil-square"></i>
                         </a>
                     </td>
                 </tr>
@@ -53,7 +50,7 @@
 </div>
 @if (!(Model.Page.TotalRecord > 0))
 {
-    <p class="p-4 text-center">No friend requests found</p>
+    <p class="p-4 text-center">No groups found</p>
 }
 else
 {
@@ -61,7 +58,7 @@ else
     <div class="pagination d-flex flex-column flex-sm-row justify-content-end align-items-sm-center mt-3 px-1 pb-3">
         <div class="d-flex align-items-center">
             <span class="mx-1">Items Per page: </span>
-            <select class="form-select w-auto mx-1" id="friendRequestPageSize" onchange="getFriendRequestList(1)"
+            <select class="form-select w-auto mx-1" id="groupListPageSize" onchange="getGroupList(1)"
                 aria-label="Default select example" title="Page sige">
                 <option value="5" selected="@(Model.Page.PageSize == 5 ? true : false)">5</option>
                 <option value="10" selected="@(Model.Page.PageSize == 10 ? true : false)">10</option>
@@ -72,12 +69,12 @@ else
             Showing @Model.Page.FromRec - @Model.Page.ToRec of @Model.Page.TotalRecord
         </span>
         <div>
-            <button class="btn p-1 @(Model.Page.CurrentPage > 1 ? " " : "disabled")"
-                onclick="getFriendRequestList(@Model.Page.CurrentPage-1)" title="Prev page">
+            <button class="btn p-1 border @(Model.Page.CurrentPage > 1 ? " " : "disabled")"
+                onclick="getGroupList(@Model.Page.CurrentPage-1)" title="Prev page">
                 <i class="bi bi-chevron-left p-1"></i>
             </button>
-            <button class="btn p-1 @(Model.Page.CurrentPage < Model.Page.TotalPages ? " " : "disabled")"
-                onclick="getFriendRequestList(@Model.Page.CurrentPage+1)" title="Next page">
+            <button class="btn p-1 border @(Model.Page.CurrentPage < Model.Page.TotalPages ? " " : "disabled")"
+                onclick="getGroupList(@Model.Page.CurrentPage+1)" title="Next page">
                 <i class="bi bi-chevron-right p-1"></i>
             </button>
         </div>
