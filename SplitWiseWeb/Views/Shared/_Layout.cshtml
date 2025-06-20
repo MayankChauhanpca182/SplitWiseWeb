@@ -1,6 +1,6 @@
 ﻿@{
-    string? userName = Context.Request.Cookies["UserName"];
-    string? ProfileImagePath = Context.Request.Cookies["ProfileImagePath"];
+    string userName = Context.Request.Cookies["UserName"];
+    string ProfileImagePath = Context.Request.Cookies["ProfileImagePath"];
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -51,7 +51,8 @@
                 </a>
             </div>
             <div class="d-flex gap-3">
-                <button class="btn btn-prim d-none d-sm-block" type="button" onclick="fetchAddFriendModal()">Add Friend</button>
+                <button class="btn btn-prim d-none d-sm-block" type="button" onclick="fetchAddFriendModal()">Add
+                    Friend</button>
 
                 <div class="dropdown">
                     <button class="btn dropdown-toggle d-flex align-items-center gap-2 text-white border-0 p-0"
@@ -90,12 +91,12 @@
             <!-- Navigation -->
             <aside class="navigation text-white bg-secondary-subtle" id="navigation">
                 <div>
-                    <a href="#" onclick="getPage('dashboard', 'dashboardPageNav')" id="dashboardPageNav"
+                    <a asp-controller="Dashboard" asp-action="Index"
                         class="navItems d-flex align-items-center gap-3 @((ViewData["ActiveLink"] as string) == "Dashboard" ? "active" : "")">
                         <i class="fa-solid fa-window-maximize"></i>
                         Dashboard
                     </a>
-                    <a href="#" onclick="" id="groupsPageNav"
+                    <a href="#" onclick="getPage('groups', 'groupsPageNav')" id="groupsPageNav"
                         class="navItems d-flex align-items-center gap-3 @((ViewData["ActiveLink"] as string) == "Groups" ? "active" : "")">
                         <i class="bi bi-diagram-3-fill"></i>
                         Groups
@@ -132,9 +133,9 @@
             </aside>
             <!-- Sidebar end -->
             <div class="right-section px-2 px-md-3" id="right-section">
-                @* <div id="partialVewContainer"> *@
-                @RenderBody()
-                @* </div> *@
+                <div id="partialViewContainer">
+                    @RenderBody()
+                </div>
             </div>
         </div>
         <footer
@@ -143,13 +144,14 @@
         </footer>
     </div>
 
-    
+
     @await Html.PartialAsync("_ModalPartialView")
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/auth.js" asp-append-version="true"></script>
+    <script src="~/js/ajaxRequests.js" asp-append-version="true"></script>
     @await Html.PartialAsync("_ValidationScriptsPartial")
     @await Html.PartialAsync("_ToastrPartialView")
     @await RenderSectionAsync("Scripts", required: false)

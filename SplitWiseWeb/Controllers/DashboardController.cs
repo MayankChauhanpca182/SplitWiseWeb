@@ -18,18 +18,11 @@ public class DashboardController : Controller
 
     #region Dashboard
     // GET Index
-    [Route("home")]
+    [Route("dashboard")]
     public IActionResult Index()
     {
         ViewData["ActiveLink"] = "Dashboard";
         return View();
-    }
-
-    [Route("dashboard")]
-    [Breadcrumb("Dashboard")]
-    public IActionResult Dashboard()
-    {
-        return PartialView("Dashboard");
     }
     #endregion
 
