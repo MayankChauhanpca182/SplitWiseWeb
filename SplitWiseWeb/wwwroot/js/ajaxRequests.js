@@ -16,7 +16,8 @@ function getPage(endpoint, navId) {
                 else {
                     $(".navItems").removeClass("active");
                     $(`.navItems#${navId}`).addClass("active");
-                    $("#partialViewContainer").html(response);
+                    // $("#partialViewContainer").html(response);
+                    $("#right-section").html(response);
                 }
             }
         },
@@ -171,7 +172,8 @@ $(document).ready(function () {
             url: url,
             type: 'GET',
             success: function (data) {
-                $('#partialViewContainer').html(data);
+                // $('#partialViewContainer').html(data);
+                $('#right-section').html(data);
                 // history.pushState(null, '', url);
             },
             error: function () {

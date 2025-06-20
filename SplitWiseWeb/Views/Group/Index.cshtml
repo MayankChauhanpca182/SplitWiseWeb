@@ -10,7 +10,7 @@
         <button class="btn btn-primary" type="button" onclick="fetchAddGroupModal()">Create new group</button>
     </div>
 </div>
-<div id="groupListOuter" class="bg-white"></div>
+<div id="groupListOuter" class="listOuter bg-white"></div>
 
 
 @* Create new group *@
@@ -58,7 +58,7 @@
                         toastr.error(response.message);
                     }
                     else {
-                        $("#partialViewContainer").html(response);
+                        $("#regularModalContent").html(response);
                     }
                 }
             },

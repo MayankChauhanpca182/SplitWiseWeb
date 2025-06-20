@@ -109,9 +109,6 @@ a {
     text-decoration: none;
 }
 
-.table-responsive {
-    max-height: 48vh;
-}
 
 /* Breadcrumbs */
 .breadcrumb{
@@ -262,7 +259,10 @@ footer.footer{
     }
 }
 
-/* Friends */
+.table-responsive {
+    max-height: calc(100vh - 444px);
+}
+
 .searchBox{
     max-width: 300px;
 }
