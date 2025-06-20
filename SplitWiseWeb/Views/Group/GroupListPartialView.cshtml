@@ -1,4 +1,3 @@
-@using SplitWiseRepository.ViewModels
 @model PaginatedListVM<GroupVM>
 
 <div class="table-responsive bg-white px-2">
@@ -39,10 +38,13 @@
                     </td>
                     <td>@group.Expense</td>
                     <td class="text-center">
-                        <a href="#" class="btn border-0" title="Edit group" onclick="fetchAddGroupModal(@group.Id)">
+                        <a class="btn border-0" title="Group Dashboard" onclick="getPage('groupDetails/@group.Id', 'groupsPageNav')">
+                            <i class="fa-solid fa-window-maximize"></i>
+                        </a>
+                        <a class="btn border-0" title="Edit group" onclick="fetchAddGroupModal(@group.Id)">
                             <i class="bi bi-pencil-square"></i>
                         </a>
-                        <a href="#" class="btn border-0" title="Delete group" onclick="deleteGroup(@group.Id)">
+                        <a class="btn border-0" title="Delete group" onclick="deleteGroup(@group.Id)">
                             <i class="bi bi-trash text-danger"></i>
                         </a>
                     </td>

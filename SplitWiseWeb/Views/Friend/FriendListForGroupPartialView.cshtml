@@ -38,18 +38,9 @@
                     </td>
                     <td><span class="my-auto">@friend.EmailAddress</span></td>
                     <td class="text-center">
-                        @if (Model.IsDeletedData)
-                        {
-                            <a class="btn border-0" title="Send Friend Request" onclick="sendRequest('@friend.EmailAddress')">
-                                <i class="bi bi-send-fill text-primary"></i>
-                            </a>
-                        }
-                        else
-                        {
-                            <a class="btn border-0" title="Remove Friend" onclick="removeFriend(@friend.FriendId)">
-                                <i class="bi bi-person-x-fill text-danger"></i>
-                            </a>
-                        }
+                        <a class="btn border-0" title="Add to group" onclick="addToGroup('@friend.UserId')">
+                            <i class="bi bi-person-plus-fill text-success"></i>
+                        </a>
                     </td>
                 </tr>
             }
@@ -58,14 +49,7 @@
 </div>
 @if (!(Model.Page.TotalRecord > 0))
 {
-    @if (Model.IsDeletedData)
-    {
-        <p class="p-4 text-center">There are no removed friends found</p>
-    }
-    else
-    {
-        <p class="p-4 text-center">No friends found</p>
-    }
+    <p class="p-4 text-center">No friends found</p>
 }
 else
 {

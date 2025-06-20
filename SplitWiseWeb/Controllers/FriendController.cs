@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SmartBreadcrumbs.Attributes;
@@ -128,13 +129,22 @@ public class FriendController : Controller
     }
 
     // POST ExportFriends
+    [HttpPost]
     public async Task<IActionResult> ExportFriends(FilterVM filter)
     {
         byte[] fileData = await _friendService.ExportFriends(filter);
         if (fileData == null)
         {
-            return Json(new ResponseVM { Success = false, Message = NotificationMessages.CanNotExportEmptyList.Replace("{0}", "friend")});
+            return Json(new ResponseVM { Success = false, Message = NotificationMessages.CanNotExportEmptyList.Replace("{0}", "friend") });
         }
         return File(fileData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Friends.xlsx");
+    }
+
+    // POST FriengListForGroup
+    [HttpPost]
+    public async Task<IActionResult> FriengListForGroup(FilterVM filter, int groupId)
+    {
+        PaginatedListVM<FriendVM> paginatedList = await _friendService.FriendList(filter, groupId);
+        return PartialView("FriendListForGroupPartialView", paginatedList);
     }
 }

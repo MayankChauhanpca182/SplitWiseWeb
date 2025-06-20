@@ -8,6 +8,7 @@ namespace SplitWiseRepository.ViewModels;
 
 public class UserVM
 {
+    public int Id { get; set; } = 0;
     public string EmailAddress { get; set; }
     
     [Required(ErrorMessage = ValidationMessages.FirstNameRequired)]

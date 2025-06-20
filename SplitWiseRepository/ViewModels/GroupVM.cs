@@ -24,6 +24,8 @@ public class GroupVM
     public bool IsSimplifiedPayments { get; set; } = false;
 
     public decimal Expense { get; set; } = 0;
+    public bool IsSettled { get; set; }
 
     public List<Currency> Currencies { get; set; } = new List<Currency>();
+    public List<GroupMemberVM> Members { get; set; } = new List<GroupMemberVM>();
 }

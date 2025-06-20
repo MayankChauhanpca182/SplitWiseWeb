@@ -106,9 +106,3 @@ $(document).on("click", "#hamBurger", function () {
   }
 });
 
-// Handle sorting
-$(document).on("click", ".sortBtn", function () {
-  sortColumn = $(this).data("column");
-  sortOrder = $(this).data("order");
-  getFriendList(1);
-});

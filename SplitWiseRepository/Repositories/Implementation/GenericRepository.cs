@@ -45,6 +45,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         Expression<Func<T, bool>> predicate = null,
         Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
         List<Expression<Func<T, object>>> includes = null,
+        List<Func<IQueryable<T>, IQueryable<T>>> thenIncludes = null,
         int? pageSize = null,
         int? pageNumber = null)
     {
@@ -70,6 +71,15 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
             foreach (Expression<Func<T, object>> include in includes)
             {
                 query = query.Include(include);
+            }
+        }
+
+        // Apply ThenIncludes (Deeper navigation properties)
+        if (thenIncludes != null)
+        {
+            foreach (var thenInclude in thenIncludes)
+            {
+                query = thenInclude(query);
             }
         }
 

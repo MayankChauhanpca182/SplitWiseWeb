@@ -33,4 +33,6 @@ public class User : AuditFields
     [MaxLength(500)]
     public string Address { get; set; }
     public DateTime? Birthdate { get; set; }
+
+    public virtual ICollection<GroupMember> GroupMembers { get; set; }
 }

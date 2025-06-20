@@ -3,10 +3,67 @@ let sortColumn = "";
 let sortOrder = "";
 let searchTimeout;
 
+// Store in session storage
+function storeInSession(endPoint, navId) {
+    sessionStorage.setItem("endPoint", endPoint);
+    sessionStorage.setItem("navId", navId);
+}
+
+// Breadcrumb
+$(document).ready(function () {
+    $('body').on('click', '.breadcrumb a', function (e) {
+        e.preventDefault();
+        let endPoint = $(this).attr('href');
+        let navId;
+
+        switch (endPoint) {
+            case "/home":
+                endPoint = '/dashboard';
+                navId = "dashboardPageNav";
+                break;
+            case "/dashboard":
+                navId = "dashboardPageNav";
+                break;
+            case "/changePassword":
+                navId = "changePasswordNav";
+                break;
+            case "/profile":
+                navId = "profileNav";
+                break;
+            case "/friends":
+                navId = "friendsPageNav";
+                break;
+            case "/friendRequests":
+                navId = "friendRequestsPageNav";
+                break;
+            case "/groups":
+                navId = "groupsPageNav";
+                break;
+        }
+
+        $.ajax({
+            url: endPoint,
+            type: 'GET',
+            success: function (data) {
+                $('#right-section').html(data);
+                $(".navItems").removeClass("active");
+                $(`.navItems#${navId}`).addClass("active");
+
+                // Store into session storage
+                storeInSession(endPoint, navId);
+                // history.pushState(null, '', endPoint);
+            },
+            error: function () {
+                alert("Internal server error.");
+            }
+        });
+    });
+});
+
 // Fetch pages through ajax
-function getPage(endpoint, navId) {
+function getPage(endPoint, navId) {
     $.ajax({
-        url: `/${endpoint}`,
+        url: `/${endPoint}`,
         type: "GET",
         success: function (response) {
             if (!response.statusCode) {
@@ -16,13 +73,16 @@ function getPage(endpoint, navId) {
                 else {
                     $(".navItems").removeClass("active");
                     $(`.navItems#${navId}`).addClass("active");
-                    // $("#partialViewContainer").html(response);
                     $("#right-section").html(response);
+
+                    // Store into session storage
+                    storeInSession(endPoint, navId);
+                    // history.pushState(null, '', endPoint);
                 }
             }
         },
         error: function () {
-            toastr.error('@NotificationMessages.InternalServerError');
+            toastr.error("Internal server error.");
         }
     });
 }
@@ -53,7 +113,7 @@ $(document).on("submit", "#profileForm", function (e) {
             }
         },
         error: function (xhr, status, error) {
-            toastr.error('@NotificationMessages.InternalServerError');
+            toastr.error("Internal server error.");
         }
     });
 });
@@ -86,7 +146,7 @@ $(document).on("submit", "#changePasswordForm", function (e) {
             }
         },
         error: function (xhr, status, error) {
-            toastr.error('@NotificationMessages.InternalServerError');
+            toastr.error("Internal server error.");
         }
     });
 });
@@ -159,26 +219,5 @@ $(document).on("submit", "#sendReferralForm", function (e) {
         error: function (xhr, status, error) {
             toastr.error("@NotificationMessages.InternalServerError");
         },
-    });
-});
-
-// Breadcrumb
-$(document).ready(function () {
-    $('body').on('click', '.breadcrumb a', function (e) {
-        e.preventDefault();
-        var url = $(this).attr('href');
-
-        $.ajax({
-            url: url,
-            type: 'GET',
-            success: function (data) {
-                // $('#partialViewContainer').html(data);
-                $('#right-section').html(data);
-                // history.pushState(null, '', url);
-            },
-            error: function () {
-                alert("Internal server error.");
-            }
-        });
     });
 });

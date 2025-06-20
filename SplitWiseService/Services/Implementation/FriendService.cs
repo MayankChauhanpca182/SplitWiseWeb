@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using SplitWiseRepository.Constants;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.Repositories.Interface;
@@ -367,7 +368,7 @@ public class FriendService : IFriendService
         }
     }
 
-    public async Task<PaginatedListVM<FriendVM>> FriendList(FilterVM filter)
+    public async Task<PaginatedListVM<FriendVM>> FriendList(FilterVM filter, int groupId = 0)
     {
         int userId = _userService.LoggedInUserId();
         filter.SearchString = string.IsNullOrEmpty(filter.SearchString) ? "" : filter.SearchString.Replace(@"\s+", "").ToLower();
@@ -396,6 +397,11 @@ public class FriendService : IFriendService
             predicate: f => (f.Friend1 == userId || f.Friend2 == userId)
                 && (filter.IsDeleted ? f.DeletedAt != null : f.DeletedAt == null)
                 && f.FriendRequest.Status != FeriendRequestStatus.Requested
+                && (groupId != 0
+                    ? (f.Friend1 == userId
+                        ? f.Friend2UserNavigation.GroupMembers.All(gm => gm.GroupId != groupId)
+                        : f.Friend1UserNavigation.GroupMembers.All(gm => gm.GroupId != groupId))  
+                    : true)
                 && (string.IsNullOrEmpty(filter.SearchString)
                     || (f.Friend1 == userId
                         ? (f.Friend2UserNavigation.FirstName.ToLower().Contains(filter.SearchString)
@@ -410,6 +416,13 @@ public class FriendService : IFriendService
                 fr => fr.Friend1UserNavigation,
                 fr => fr.Friend2UserNavigation,
                 fr => fr.FriendRequest
+            },
+            thenIncludes: new List<Func<IQueryable<Friend>, IQueryable<Friend>>>
+            {
+                q => q.Include(f => f.Friend1UserNavigation)
+                .ThenInclude(u => u.GroupMembers),
+                q => q.Include(f => f.Friend2UserNavigation)
+                .ThenInclude(u => u.GroupMembers)
             },
             pageSize: filter.PageSize,
             pageNumber: filter.PageNumber
@@ -502,4 +515,5 @@ public class FriendService : IFriendService
         }
         return ExcelExportHelper.ExportToExcel(paginatedList.List, "Friends");
     }
+
 }

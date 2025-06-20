@@ -1,6 +1,7 @@
 
 
 using System.Linq.Expressions;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using SplitWiseRepository.Models;
@@ -27,7 +28,7 @@ public class GroupService : IGroupService
         _groupMemberRepository = groupMemberRepository;
     }
 
-    private async Task AddMember(int groupId, int userId)
+    private  async Task AddMember(int groupId, int userId)
     {
         int currentUserId = _userService.LoggedInUserId();
         GroupMember deletedGroupMember = await _groupMemberRepository.Get(gm => gm.GroupId == groupId && gm.UserId == userId && gm.DeletedAt != null);
@@ -214,6 +215,111 @@ public class GroupService : IGroupService
                 response.Success = true;
                 response.Message = NotificationMessages.Deleted.Replace("{0}", "Group");
             }
+
+            // Commit transaction
+            await _transaction.Commit();
+            return response;
+        }
+        catch
+        {
+            // Rollback transaction
+            await _transaction.Rollback();
+            throw;
+        }
+    }
+
+    public async Task<List<GroupMemberVM>> GetMembers(int groupId)
+    {
+        PaginatedItemsVM<GroupMember> paginatedItems = await _groupMemberRepository.PaginatedList(
+            predicate: gm => gm.GroupId == groupId && gm.DeletedAt == null,
+            includes: new List<Expression<Func<GroupMember, object>>>
+            {
+                fr => fr.User
+            });
+
+        return paginatedItems.Items.Select(gm => new GroupMemberVM
+        {
+            Id = gm.Id,
+            UserId = gm.UserId,
+            GroupId = groupId,
+            Name = $"{gm.User.FirstName} {gm.User.LastName}",
+            ProfileImagePath = gm.User.ProfileImagePath
+        }).ToList();
+    }
+
+    public async Task<ResponseVM> AddGroupMembers(int groupId, int userId)
+    {
+        try
+        {
+            // Begin transaction
+            await _transaction.Begin();
+            ResponseVM response = new ResponseVM();
+
+            Group group = await _groupRepository.Get(g => g.Id == groupId && g.DeletedAt == null);
+            if (group == null)
+            {
+                response.Success = false;
+                response.Message = NotificationMessages.NotFound.Replace("{0}", "group");
+                return response;
+            }
+
+            User user = await _userService.GetById(userId);
+            if (user == null)
+            {
+                response.Success = false;
+                response.Message = NotificationMessages.NotFound.Replace("{0}", "user");
+                return response;
+            }
+
+            await AddMember(groupId, userId);
+
+            // Send email
+
+            response.Success = true;
+            response.Message = NotificationMessages.MemberAddedToGroup.Replace("{0}", $"{user.FirstName} {user.LastName}").Replace("{0}", group.Name);
+
+            // Commit transaction
+            await _transaction.Commit();
+            return response;
+        }
+        catch
+        {
+            // Rollback transaction
+            await _transaction.Rollback();
+            throw;
+        }
+    }
+
+    public async Task<ResponseVM> RemoveGroupMembers(int groupMemberId)
+    {
+        try
+        {
+            // Begin transaction
+            await _transaction.Begin();
+            ResponseVM response = new ResponseVM();
+            int currentUserId = _userService.LoggedInUserId();
+
+            GroupMember groupMember = await _groupMemberRepository.Get(g => g.Id == groupMemberId && g.DeletedAt == null);
+            if (groupMember == null)
+            {
+                response.Success = false;
+                response.Message = NotificationMessages.NotFound.Replace("{0}", "member");
+                return response;
+            }
+
+            // Delete member
+            groupMember.DeletedAt = DateTime.Now;
+            groupMember.DeletedById = currentUserId;
+            await _groupMemberRepository.Update(groupMember);
+
+            User user = await _userService.GetById(groupMember.UserId);
+            if (user != null)
+            {
+                // Send mail to user
+            }
+
+            response.Success = true;
+            response.Message = NotificationMessages.MemberAddedToGroup.Replace("{0}", $"{user.FirstName} {user.LastName}");
 
             // Commit transaction
             await _transaction.Commit();

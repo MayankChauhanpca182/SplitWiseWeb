@@ -1,14 +1,9 @@
-@using SplitWiseRepository.ViewModels
 @model GroupVM
 
 <div class="modal-header">
     <h1 class="modal-title fs-5" id="addFriendModalLabel">@(Model.Id == 0 ? "Create new" : "Edit") group</h1>
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
-<form asp-action="SendFriendRequest" asp-controller="Friend" id="addFriendRequestForm">
-
-</form>
-
 <form asp-action="SaveGroup" asp-controller="Group" id="groupForm" class="d-flex flex-column" style="max-width: 500px;"
     enctype="multipart/form-data">
     <div class="modal-body">

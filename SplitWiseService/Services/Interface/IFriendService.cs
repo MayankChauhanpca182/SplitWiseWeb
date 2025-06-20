@@ -11,7 +11,7 @@ public interface IFriendService
     public Task<PaginatedListVM<FriendRequestVM>> FriendRequestList(FilterVM filter);
     public Task<ResponseVM> AcceptRequest(int requestId);
     public Task<ResponseVM> RejectRequest(int requestId);
-    public Task<PaginatedListVM<FriendVM>> FriendList(FilterVM filter);
+    public Task<PaginatedListVM<FriendVM>> FriendList(FilterVM filter, int groupId = 0);
     public Task<ResponseVM> RemoveFriend(int friendId);
     public Task UpdateReferrals(User newUser);
     public Task<byte[]> ExportFriends(FilterVM filter);

@@ -51,8 +51,7 @@
                 </a>
             </div>
             <div class="d-flex align-items-center gap-3">
-                <button class="btn btn-prim d-none d-sm-block" type="button" onclick="fetchAddFriendModal()">Add
-                    Friend</button>
+                <button class="btn btn-navbar d-none d-sm-block" type="button" onclick="fetchAddFriendModal()">Add Friend</button>
 
                 <div class="dropdown">
                     <button class="btn dropdown-toggle d-flex align-items-center gap-2 text-white border-0 p-0"
@@ -91,12 +90,12 @@
             <!-- Navigation -->
             <aside class="navigation text-white bg-secondary-subtle" id="navigation">
                 <div>
-                    <a href="#" onclick="getPage('dashboard', 'dashboardPageNav')" id="dashboardPageNav"
+                    <a onclick="getPage('dashboard', 'dashboardPageNav')" id="dashboardPageNav"
                         class="navItems d-flex align-items-center gap-3">
                         <i class="fa-solid fa-window-maximize"></i>
                         Dashboard
                     </a>
-                    <a href="#" onclick="getPage('groups', 'groupsPageNav')" id="groupsPageNav"
+                    <a onclick="getPage('groups', 'groupsPageNav')" id="groupsPageNav"
                         class="navItems d-flex align-items-center gap-3">
                         <i class="bi bi-diagram-3-fill"></i>
                         Groups
@@ -114,12 +113,12 @@
                             <div id="contacts-flush-collapseOne" class="accordion-collapse collapse "
                                 data-bs-parent="#contactsAccordion">
                                 <div class="accordion-body bg-blue-grey text-white p-0">
-                                    <a href="#" onclick="getPage('friends', 'friendsPageNav')" id="friendsPageNav"
+                                    <a onclick="getPage('friends', 'friendsPageNav')" id="friendsPageNav"
                                         class="navItems d-flex align-items-center gap-2 ps-4">
                                         <i class="bi bi-person-fill"></i>
                                         Friends
                                     </a>
-                                    <a href="#" onclick="getPage('friendRequests', 'friendRequestsPageNav')"
+                                    <a onclick="getPage('friendRequests', 'friendRequestsPageNav')"
                                         id="friendRequestsPageNav"
                                         class="navItems d-flex align-items-center gap-2 ps-4">
                                         <i class="bi bi-person-plus-fill"></i>
