@@ -24,5 +24,5 @@ public class Group : AuditFields
     [ForeignKey("CurrencyId")]
     public virtual Currency Currency { get; set; }
 
-    public virtual ICollection<GroupMember> GroupMembers { get; set; }
+    public ICollection<GroupMember> GroupMembers { get; set; }
 }

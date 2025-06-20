@@ -26,7 +26,7 @@ public class GroupController : Controller
     }
 
     // GET AddGroup
-    [Breadcrumb("Create Group", FromAction = "Index")]
+    // [Breadcrumb("Create Group", FromAction = "Index")]
     public async Task<IActionResult> AddGroup(int groupId = 0)
     {
         GroupVM group = new GroupVM();
@@ -35,7 +35,7 @@ public class GroupController : Controller
             group = await _groupService.GetGroup(groupId);
         }
         group.Currencies = await _commonService.CurrencyList();
-        return PartialView("AddGroup", group);
+        return PartialView("AddGroupModal", group);
     }
 
     // POST SaveGroup
@@ -55,6 +55,13 @@ public class GroupController : Controller
     public async Task<IActionResult> GroupList(FilterVM filter)
     {
         PaginatedListVM<GroupVM> paginatedList = await _groupService.GroupList(filter);
-        return PartialView("GroupList", paginatedList);
+        return PartialView("GroupListPartialView", paginatedList);
+    }
+
+    // POST DeleteGroup
+    public async Task<IActionResult> DeleteGroup(int groupId)
+    {
+        ResponseVM response = await _groupService.DeleteGroup(groupId);
+        return Json(response);
     }
 }

@@ -39,8 +39,11 @@
                     </td>
                     <td>@group.Expense</td>
                     <td class="text-center">
-                        <a href="#" class="btn border-0" title="Edit group" onclick="fetchGroupPage(@group.Id)">
+                        <a href="#" class="btn border-0" title="Edit group" onclick="fetchAddGroupModal(@group.Id)">
                             <i class="bi bi-pencil-square"></i>
+                        </a>
+                        <a href="#" class="btn border-0" title="Delete group" onclick="deleteGroup(@group.Id)">
+                            <i class="bi bi-trash text-danger"></i>
                         </a>
                     </td>
                 </tr>

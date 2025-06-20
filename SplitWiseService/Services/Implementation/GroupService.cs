@@ -1,6 +1,7 @@
 
 
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.Repositories.Interface;
@@ -116,11 +117,14 @@ public class GroupService : IGroupService
                     NoticeBoard = newGroupVm.NoticeBoard,
                     CurrencyId = newGroupVm.CurrencyId,
                     IsSimplifiedPayments = newGroupVm.IsSimplifiedPayments,
-                    ImagePath = ImageHelper.UploadImage(newGroupVm.Image),
                     CreatedById = currentUser.Id,
                     UpdatedAt = DateTime.Now,
                     UpdatedById = currentUser.Id
                 };
+                if (newGroupVm.ImagePath != null)
+                {
+                    newGroup.ImagePath = ImageHelper.UploadImage(newGroupVm.Image);
+                }
                 await _groupRepository.Add(newGroup);
                 await AddMember(newGroup.Id, currentUser.Id);
             }
@@ -159,7 +163,7 @@ public class GroupService : IGroupService
         }
 
         PaginatedItemsVM<Group> paginatedItems = await _groupRepository.PaginatedList(
-            predicate: g => g.GroupMembers.Any(gm => gm.UserId == currentUserId && gm.DeletedAt != null) && g.DeletedAt == null,
+            predicate: g => g.GroupMembers.Any(gm => gm.UserId == currentUserId && gm.DeletedAt == null) && g.DeletedAt == null,
             orderBy: orderBy,
             includes: new List<Expression<Func<Group, object>>>
             {
@@ -181,4 +185,45 @@ public class GroupService : IGroupService
         return paginatedList;
     }
 
+    public async Task<ResponseVM> DeleteGroup(int groupId)
+    {
+        try
+        {
+            // Begin transaction
+            await _transaction.Begin();
+            ResponseVM response = new ResponseVM();
+            int currentUserId = _userService.LoggedInUserId();
+
+            Group group = await _groupRepository.Get(g => g.Id == groupId && g.DeletedAt == null);
+            if (group == null)
+            {
+                response.Success = false;
+                response.Message = NotificationMessages.NotFound.Replace("{0}", "group");
+            }
+            else
+            {
+                // Check for settlement
+
+                // Delete group
+                group.DeletedAt = DateTime.Now;
+                group.DeletedById = currentUserId;
+                await _groupRepository.Update(group);
+
+                // Delete all group members
+
+                response.Success = true;
+                response.Message = NotificationMessages.Deleted.Replace("{0}", "Group");
+            }
+
+            // Commit transaction
+            await _transaction.Commit();
+            return response;
+        }
+        catch
+        {
+            // Rollback transaction
+            await _transaction.Rollback();
+            throw;
+        }
+    }
 }

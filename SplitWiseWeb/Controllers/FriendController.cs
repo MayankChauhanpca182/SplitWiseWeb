@@ -30,13 +30,13 @@ public class FriendController : Controller
     public async Task<IActionResult> FriendList(FilterVM filter)
     {
         PaginatedListVM<FriendVM> paginatedList = await _friendService.FriendList(filter);
-        return PartialView("_FriendListPartialView", paginatedList);
+        return PartialView("FriendListPartialView", paginatedList);
     }
 
     // GET AddFriendModal
     public IActionResult AddFriendModal()
     {
-        return PartialView("_AddFriendModalPartialView", new FriendRequestVM());
+        return PartialView("AddFriendModalPartialView", new FriendRequestVM());
     }
 
     // POST SendFriendRequest
@@ -45,7 +45,7 @@ public class FriendController : Controller
     {
         if (!ModelState.IsValid)
         {
-            return PartialView("_AddFriendModalPartialView", friendRequest);
+            return PartialView("AddFriendModalPartialView", friendRequest);
         }
 
         ResponseVM response = await _friendService.CheckExisitngFrindship(friendRequest.Email);
@@ -62,7 +62,7 @@ public class FriendController : Controller
         else
         {
             friendRequest.Message = response.Message;
-            return PartialView("_FriendReferralModalParialView", friendRequest);
+            return PartialView("FriendReferralModalParialView", friendRequest);
         }
     }
 
@@ -80,7 +80,7 @@ public class FriendController : Controller
     {
         if (!ModelState.IsValid)
         {
-            return PartialView("_FriendReferralModalParialView", friendRequest);
+            return PartialView("FriendReferralModalParialView", friendRequest);
         }
 
         ResponseVM response = await _friendService.SendReferral(friendRequest);
@@ -100,7 +100,7 @@ public class FriendController : Controller
     public async Task<IActionResult> FriendRequestList(FilterVM filter)
     {
         PaginatedListVM<FriendRequestVM> paginatedList = await _friendService.FriendRequestList(filter);
-        return PartialView("_FriendRequestListPartialView", paginatedList);
+        return PartialView("FriendRequestListPartialView", paginatedList);
     }
 
     // POST AcceptRequest
