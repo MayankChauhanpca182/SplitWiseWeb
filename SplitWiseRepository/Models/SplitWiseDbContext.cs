@@ -19,4 +19,6 @@ public class SplitWiseDbContext : DbContext
     public virtual DbSet<UserReferral> UserReferrals { get; set; }
     public virtual DbSet<Friend> Friends { get; set; }
     public virtual DbSet<FriendRequest> FriendRequests { get; set; }
+    public virtual DbSet<Group> Groups { get; set; }
+    public virtual DbSet<GroupMember> GroupMembers { get; set; }
 }
