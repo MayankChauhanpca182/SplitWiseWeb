@@ -13,55 +13,59 @@ function storeInSession(endPoint, navId) {
 $(document).ready(function () {
     $('body').on('click', '.breadcrumb a', function (e) {
         e.preventDefault();
-        let endPoint = $(this).attr('href');
+        let endPoint = $(this).attr('href').substring(1);
         let navId;
 
         switch (endPoint) {
-            case "/home":
-                endPoint = '/dashboard';
+            case "home":
+                endPoint = 'dashboard';
                 navId = "dashboardPageNav";
                 break;
-            case "/dashboard":
+            case "dashboard":
                 navId = "dashboardPageNav";
                 break;
-            case "/changePassword":
+            case "changePassword":
                 navId = "changePasswordNav";
                 break;
-            case "/profile":
+            case "profile":
                 navId = "profileNav";
                 break;
-            case "/friends":
+            case "friends":
                 navId = "friendsPageNav";
                 break;
-            case "/friendRequests":
+            case "friendRequests":
                 navId = "friendRequestsPageNav";
                 break;
-            case "/groups":
+            case "groups":
                 navId = "groupsPageNav";
                 break;
         }
 
-        $.ajax({
-            url: endPoint,
-            type: 'GET',
-            success: function (data) {
-                $('#right-section').html(data);
-                $(".navItems").removeClass("active");
-                $(`.navItems#${navId}`).addClass("active");
+        getPage(endPoint, navId);
 
-                // Store into session storage
-                storeInSession(endPoint, navId);
-                // history.pushState(null, '', endPoint);
-            },
-            error: function () {
-                alert("Internal server error.");
-            }
-        });
+        // $.ajax({
+        //     url: endPoint,
+        //     type: 'GET',
+        //     success: function (data) {
+        //         $('#right-section').html(data);
+        //         $(".navItems").removeClass("active");
+        //         $(`.navItems#${navId}`).addClass("active");
+
+        //         // Store into session storage
+        //         storeInSession(endPoint, navId);
+        //         // history.pushState(null, '', endPoint);
+        //     },
+        //     error: function () {
+        //         alert("Internal server error.");
+        //     }
+        // });
     });
 });
 
 // Fetch pages through ajax
 function getPage(endPoint, navId) {
+    console.log(endPoint, " ", navId)
+
     $.ajax({
         url: `/${endPoint}`,
         type: "GET",

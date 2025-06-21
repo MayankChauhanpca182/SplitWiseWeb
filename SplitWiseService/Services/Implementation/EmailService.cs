@@ -129,4 +129,21 @@ public class EmailService : IEmailService
         return;
     }
 
+    public async Task AddedToGroupEmail(string recieverName, string senderName, string groupName, string email)
+    {
+        string fileText = GetEmailTemplate(EmailTemplates.AddedToGroup);
+
+        string emailBody = fileText.Replace("{recieverName}", recieverName).Replace("{senderName}", senderName).Replace("{groupName}", groupName);
+        await Send(email, EmailSubjects.AddedToGroup, emailBody);
+        return;
+    }
+
+    public async Task RemovedFromGroupEmail(string recieverName, string senderName, string groupName, string email)
+    {
+        string fileText = GetEmailTemplate(EmailTemplates.RemovedFromGroup);
+
+        string emailBody = fileText.Replace("{recieverName}", recieverName).Replace("{senderName}", senderName).Replace("{groupName}", groupName);
+        await Send(email, EmailSubjects.RemovedFromGroup, emailBody);
+        return;
+    }
 }

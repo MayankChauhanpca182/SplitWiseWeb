@@ -1,9 +1,4 @@
-
-
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.Repositories.Interface;
 using SplitWiseRepository.ViewModels;
@@ -19,16 +14,18 @@ public class GroupService : IGroupService
     private readonly IGenericRepository<GroupMember> _groupMemberRepository;
     private readonly ITransactionRepository _transaction;
     private readonly IUserService _userService;
+    private readonly IEmailService _emailService;
 
-    public GroupService(IGenericRepository<Group> groupRepository, ITransactionRepository transaction, IUserService userService, IGenericRepository<GroupMember> groupMemberRepository)
+    public GroupService(IGenericRepository<Group> groupRepository, ITransactionRepository transaction, IUserService userService, IGenericRepository<GroupMember> groupMemberRepository, IEmailService emailService)
     {
         _groupRepository = groupRepository;
         _transaction = transaction;
         _userService = userService;
         _groupMemberRepository = groupMemberRepository;
+        _emailService = emailService;
     }
 
-    private  async Task AddMember(int groupId, int userId)
+    private async Task AddMember(int groupId, int userId)
     {
         int currentUserId = _userService.LoggedInUserId();
         GroupMember deletedGroupMember = await _groupMemberRepository.Get(gm => gm.GroupId == groupId && gm.UserId == userId && gm.DeletedAt != null);
@@ -271,9 +268,11 @@ public class GroupService : IGroupService
                 return response;
             }
 
+            User currentUser = await _userService.LoggedInUser();
             await AddMember(groupId, userId);
 
             // Send email
+            await _emailService.AddedToGroupEmail(user.FirstName, $"{currentUser.FirstName} {currentUser.LastName}", group.Name, user.EmailAddress);
 
             response.Success = true;
             response.Message = NotificationMessages.MemberAddedToGroup.Replace("{0}", $"{user.FirstName} {user.LastName}").Replace("{0}", group.Name);
@@ -297,7 +296,7 @@ public class GroupService : IGroupService
             // Begin transaction
             await _transaction.Begin();
             ResponseVM response = new ResponseVM();
-            int currentUserId = _userService.LoggedInUserId();
+            User currentUser = await _userService.LoggedInUser();
 
             GroupMember groupMember = await _groupMemberRepository.Get(g => g.Id == groupMemberId && g.DeletedAt == null);
             if (groupMember == null)
@@ -309,13 +308,15 @@ public class GroupService : IGroupService
 
             // Delete member
             groupMember.DeletedAt = DateTime.Now;
-            groupMember.DeletedById = currentUserId;
+            groupMember.DeletedById = currentUser.Id;
             await _groupMemberRepository.Update(groupMember);
 
             User user = await _userService.GetById(groupMember.UserId);
             if (user != null)
             {
-                // Send mail to user
+                Group group = await _groupRepository.Get(g => g.Id == groupMember.GroupId);
+                // Send email
+                await _emailService.RemovedFromGroupEmail(user.FirstName, $"{currentUser.FirstName} {currentUser.LastName}", group.Name, user.EmailAddress);
             }
 
             response.Success = true;

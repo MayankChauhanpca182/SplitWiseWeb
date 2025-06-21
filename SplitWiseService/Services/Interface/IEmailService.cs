@@ -11,4 +11,6 @@ public interface IEmailService
     public Task FriendRequestAcceptedEmail(string recieverName, string senderName, string email);
     public Task FriendRequestRejectedEmail(string recieverName, string senderName, string email);
     public Task FriendRemovedEmail(string recieverName, string senderName, string email);
+    public Task AddedToGroupEmail(string recieverName, string senderName, string groupName, string email);
+    public Task RemovedFromGroupEmail(string recieverName, string senderName, string groupName, string email);
 }
