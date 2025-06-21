@@ -95,7 +95,7 @@ public class AuthService : IAuthService
         else if (PasswordHelper.Verify(password, user.PasswordHash))
         {
             response.Success = true;
-            response.StringValue = _jwtService.GenerateToken(user);
+            response.Token = _jwtService.GenerateToken(user);
         }
         else
         {

@@ -152,7 +152,6 @@ public class UserController : Controller
         }
 
         ResponseVM response = await _userService.Update(newUser);
-        User user = await _userService.LoggedInUser();
         CookieOptions options = new CookieOptions
         {
             Expires = DateTime.Now.AddHours(24),
@@ -160,8 +159,8 @@ public class UserController : Controller
             Secure = true,
             SameSite = SameSiteMode.Strict
         };
-        Response.Cookies.Append("UserName", $"{user.FirstName} {user.LastName}", options);
-        Response.Cookies.Append("ProfileImagePath", user.ProfileImagePath, options);
+        Response.Cookies.Append("UserName", response.Name, options);
+        Response.Cookies.Append("ProfileImagePath", response.ImagePath, options);
         return Json(response);
     }
     #endregion

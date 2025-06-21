@@ -240,6 +240,7 @@ public class GroupService : IGroupService
             UserId = gm.UserId,
             GroupId = groupId,
             Name = $"{gm.User.FirstName} {gm.User.LastName}",
+            EmailAddress = gm.User.EmailAddress,
             ProfileImagePath = gm.User.ProfileImagePath
         }).ToList();
     }

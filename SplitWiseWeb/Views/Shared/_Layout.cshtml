@@ -57,8 +57,8 @@
                     <button class="btn dropdown-toggle d-flex align-items-center gap-2 text-white border-0 p-0"
                         type="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <img src="@(ProfileImagePath ?? "/images/Default_pfp.png")" alt="" class="rounded-circle"
-                            width="30px" height="30px">
-                        <span class="d-none d-sm-block">@(userName)</span>
+                            id="profile-image" width="35px" height="35px">
+                        <span class="d-none d-sm-block" id="profile-name">@(userName)</span>
                     </button>
                     <ul class="dropdown-menu">
                         <li>

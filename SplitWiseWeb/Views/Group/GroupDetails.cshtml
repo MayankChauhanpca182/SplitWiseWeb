@@ -5,7 +5,7 @@
 
 <breadcrumb></breadcrumb>
 <h3
-    class="d-flex flex-wrap justify-content-between align-items-center gap-3 bg-white mb-3 px-3 py-3 text-dark-emphasis shadow">
+    class="d-flex flex-wrap justify-content-between align-items-center gap-3 bg-white mb-3 p-3 text-dark-emphasis shadow">
     <div class="d-flex align-items-center gap-3">
         <img src="@(Model.ImagePath ?? "/images/default_group_img.png")" alt="Group image"
             class="rounded-circle border border-dark-subtle object-fit-cover" width="70px" height="70px">
@@ -14,58 +14,47 @@
 
     <div class="d-flex align-items-center gap-2">
         <button class="btn btn-primary" type="button" onclick="addgroupMemberModal(@Model.Id)">Add new member</button>
-        <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                aria-expanded="false">
-                Members
-            </button>
-            <ul class="dropdown-menu p-2 w-auto" id="groupMemberList">
-                @foreach (GroupMemberVM user in Model.Members)
-                {
-                    <li class="d-flex justify-content-between align-items-center gap-3">
-                        <div class="d-flex align-items-center gap-2">
-                            <img src=@(user.ProfileImagePath ?? "/images/Default_pfp.png") alt=""
-                                class="rounded-circle border border-dark-subtle object-fit-cover" width="30px"
-                                height="30px">
-                            <span class="text-nowrap">
-                                @(user.UserId == currentUserId ? "You" : user.Name)
-                            </span>
-                        </div>
-                        @if (user.UserId != currentUserId)
-                        {
-                            <a class="btn border-0 px-0" title="Remove Member"
-                                onclick="removeGroupMember(@user.Id)">
-                                <i class="bi bi-person-x-fill text-danger"></i>
-                            </a>
-                        }
-                    </li>
-                }
-            </ul>
-        </div>
     </div>
 </h3>
+
+<div class="bg-white p-3" id="groupDetailContainer">
+    <ul class="nav nav-underline mb-3" id="pills-tab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="group-expenses-tab" data-bs-toggle="pill" data-bs-target="#group-expenses"
+                type="button" role="tab" aria-controls="group-expenses" aria-selected="false" onclick="">Expenses</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="group-activity-tab" data-bs-toggle="pill" data-bs-target="#group-activity"
+                type="button" role="tab" aria-controls="group-activity" aria-selected="false" onclick="">Activity</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="group-members-tab" data-bs-toggle="pill" data-bs-target="#group-members"
+                type="button" role="tab" aria-controls="group-members" aria-selected="true" onclick="fetchGroupMembers()">Members</button>
+        </li>
+    </ul>
+    <div class="tab-content" id="pills-tabContent">
+        <div class="tab-pane fade show active" id="group-expenses" role="tabpanel" aria-labelledby="group-expenses-tab">Group expenses.</div>
+        <div class="tab-pane fade" id="group-activity" role="tabpanel" aria-labelledby="group-activity-tab">Group activity.</div>
+        <div class="tab-pane fade" id="group-members" role="tabpanel" aria-labelledby="group-members-tab"></div>
+    </div>
+</div>
 
 @* Group members *@
 <script>
     // Fetch group members
-    function fetchFriends(groupId) {
-        let filter = {
-            PageNumber: currentPage,
-            PageSize: $("#groupListPageSize").val(),
-            SearchString: $("#groupListSearch").val()
-        };
-        
+    function fetchGroupMembers()
+    {
         $.ajax({
-            url: "/Friend/FriendList",
+            url: "/Group/GroupMembers",
             type: "GET",
-            data: { groupId },
+            data: { groupId: '@Model.Id' },
             success: function (response) {
                 if (!response.statusCode) {
                     if (response.success == false) {
                         toastr.error(response.message);
                     }
                     else {
-                        $("#groupMemberList").html(response);
+                        $("#group-members").html(response);
                     }
                 }
             },

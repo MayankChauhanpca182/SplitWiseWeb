@@ -73,15 +73,15 @@ public class GroupController : Controller
     {
         GroupVM group = await _groupService.GetGroup(groupId);
         group.Members = await _groupService.GetMembers(groupId);
-        return PartialView("GroupDetailsPartialView", group);
+        return PartialView("GroupDetails", group);
     }
 
     // GET GroupMembers
-    // public async Task<IActionResult> GroupMembers(int groupId)
-    // {
-    //     List<GroupMemberVM> members = await _groupService.GetMembers(groupId);
-    //     return PartialView("GroupMembersPartialView", members);
-    // }
+    public async Task<IActionResult> GroupMembers(int groupId)
+    {
+        List<GroupMemberVM> members = await _groupService.GetMembers(groupId);
+        return PartialView("GroupMembersPartialView", members);
+    }
 
     // GET AddgroupMemberModal
     public IActionResult AddgroupMemberModal(int groupId)

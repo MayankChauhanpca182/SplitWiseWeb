@@ -41,31 +41,13 @@ $(document).ready(function () {
                 break;
         }
 
+        // Fetch page
         getPage(endPoint, navId);
-
-        // $.ajax({
-        //     url: endPoint,
-        //     type: 'GET',
-        //     success: function (data) {
-        //         $('#right-section').html(data);
-        //         $(".navItems").removeClass("active");
-        //         $(`.navItems#${navId}`).addClass("active");
-
-        //         // Store into session storage
-        //         storeInSession(endPoint, navId);
-        //         // history.pushState(null, '', endPoint);
-        //     },
-        //     error: function () {
-        //         alert("Internal server error.");
-        //     }
-        // });
     });
 });
 
 // Fetch pages through ajax
 function getPage(endPoint, navId) {
-    console.log(endPoint, " ", navId)
-
     $.ajax({
         url: `/${endPoint}`,
         type: "GET",
@@ -107,6 +89,9 @@ $(document).on("submit", "#profileForm", function (e) {
             if (!response.statusCode) {
                 if (response.success) {
                     toastr.success(response.message);
+                    // Set profile details
+                    $("#profile-image").prop("src", response.imagePath);
+                    $("#profile-name").text(response.name);
                 }
                 else if (response.success == false) {
                     toastr.error(response.message);

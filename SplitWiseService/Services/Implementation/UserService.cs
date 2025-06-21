@@ -141,6 +141,8 @@ public class UserService : IUserService
             await _userRepository.Update(originalUser);
             response.Success = true;
             response.Message = string.Format(NotificationMessages.Saved, "Profile");
+            response.Name = $"{originalUser.FirstName} {originalUser.LastName}";
+            response.ImagePath = originalUser.ProfileImagePath;
 
             // Commit transaction
             await _transaction.Commit();

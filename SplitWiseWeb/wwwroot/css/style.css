@@ -275,7 +275,7 @@ footer.footer {
 }
 
 .table-responsive {
-    max-height: calc(100vh - 444px);
+    /* max-height: calc(100vh - 385px); */
 }
 
 .searchBox {
@@ -284,4 +284,11 @@ footer.footer {
 
 .sortBtn[data-order="desc"] {
     margin-left: -10px;
+}
+
+.nav-link, .nav-link:hover{
+    color: var(--clr-primary-dark) !important;
+    /* color: var(--clr-primary); */
+    padding-top: 0;
+    padding-bottom: 0;
 }

@@ -3,21 +3,36 @@
     int currentUserId = int.Parse(User.FindFirst("id")?.Value);
 }
 
-@foreach (GroupMemberVM user in Model)
-{
-    <li class="d-flex justify-content-between align-items-center gap-3">
-        <div class="d-flex align-items-center gap-2">
-            <img src=@(user.ProfileImagePath ?? "/images/Default_pfp.png") alt=""
-                class="rounded-circle border border-dark-subtle object-fit-cover" width="30px" height="30px">
-            <span class="text-nowrap">
-                @(user.UserId == currentUserId ? "You" : user.Name)
-            </span>
+<div class="d-flex flex-column gap-3">
+    @foreach (GroupMemberVM user in Model)
+    {
+        <div class="d-flex justify-content-between align-items-center gap-3">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 w-100">
+                <div class="d-flex align-items-center gap-2">
+                    <img src=@(user.ProfileImagePath ?? "/images/Default_pfp.png") alt=""
+                        class="rounded-circle border border-dark-subtle object-fit-cover" width="50px" height="50px">
+                    <div class="d-flex flex-column">
+                        <span class="text-nowrap">
+                            @(user.UserId == currentUserId ? "You" : user.Name)
+                        </span>
+                        <span class="text-nowrap">
+                            @user.EmailAddress
+                        </span>
+                    </div>
+                </div>
+                @if (user.UserId != currentUserId)
+                {
+                    @* <button class="btn btn-primary">Button Here</button> *@
+                }
+            </div>
+            <div style="width: 30px;">
+                @if (user.UserId != currentUserId)
+                {
+                    <a class="btn border-0" title="Remove Member" onclick="removeGroupMember(@user.GroupId, @user.UserId)">
+                        <i class="bi bi-person-x-fill text-danger"></i>
+                    </a>
+                }
+            </div>
         </div>
-        @if (user.UserId != currentUserId)
-        {
-            <a class="btn border-0 px-0" title="Remove Member" onclick="removeGroupMember(@user.GroupId, @user.UserId)">
-                <i class="bi bi-person-x-fill text-danger"></i>
-            </a>
-        }
-    </li>
-}
+    }
+</div>

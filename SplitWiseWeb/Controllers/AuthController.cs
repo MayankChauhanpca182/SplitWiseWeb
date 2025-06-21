@@ -65,7 +65,7 @@ public class AuthController : Controller
         // Fetch user
         User? user = await _userService.GetByEmailAddress(loginVM.Email);
 
-        Response.Cookies.Append("JwtToken", response.StringValue, options);
+        Response.Cookies.Append("JwtToken", response.Token, options);
         Response.Cookies.Append("UserName", $"{user.FirstName} {user.LastName}", options);
 
         if (!string.IsNullOrEmpty(user.ProfileImagePath))
@@ -74,7 +74,7 @@ public class AuthController : Controller
         }
         if (loginVM.IsRememberMe)
         {
-            Response.Cookies.Append("RememberMeToken", response.StringValue, options);
+            Response.Cookies.Append("RememberMeToken", response.Token, options);
         }
 
         // Redirect to dashboard

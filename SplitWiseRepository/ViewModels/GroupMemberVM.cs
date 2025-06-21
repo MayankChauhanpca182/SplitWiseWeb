@@ -6,5 +6,6 @@ public class GroupMemberVM
     public int UserId { get; set; }
     public int GroupId { get; set; }
     public string Name { get; set; }
+    public string EmailAddress { get; set; }
     public string ProfileImagePath { get; set; }
 }
