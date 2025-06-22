@@ -20,7 +20,7 @@
     function fetchAddGroupModal(groupId = 0) {
         $("#regularModalContent").empty();
         $.ajax({
-            url: "/Group/AddGroup",
+            url: "/Group/AddGroupModal",
             type: "GET",
             data: { groupId },
             success: function (response) {
@@ -74,7 +74,6 @@
 <script>
     sortColumn = "";
     sortOrder = "";
-    searchTimeout;
 
     $("#groupListSearch").on("input", function () {
         if (searchTimeout === null) {

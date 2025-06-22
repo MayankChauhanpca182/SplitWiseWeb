@@ -288,7 +288,10 @@ footer.footer {
 
 .nav-link, .nav-link:hover{
     color: var(--clr-primary-dark) !important;
-    /* color: var(--clr-primary); */
     padding-top: 0;
     padding-bottom: 0;
+}
+
+.removeExpenseMemberBtn{
+    font-size: 11px;
 }

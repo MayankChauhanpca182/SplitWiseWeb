@@ -161,7 +161,8 @@ public class GroupService : IGroupService
         }
 
         PaginatedItemsVM<Group> paginatedItems = await _groupRepository.PaginatedList(
-            predicate: g => g.GroupMembers.Any(gm => gm.UserId == currentUserId && gm.DeletedAt == null) && g.DeletedAt == null,
+            predicate: g => g.GroupMembers.Any(gm => gm.UserId == currentUserId && gm.DeletedAt == null) && g.DeletedAt == null
+                            && (string.IsNullOrEmpty(filter.SearchString) || g.Name.ToLower().Contains(filter.SearchString)),
             orderBy: orderBy,
             includes: new List<Expression<Func<Group, object>>>
             {
@@ -276,7 +277,7 @@ public class GroupService : IGroupService
             await _emailService.AddedToGroupEmail(user.FirstName, $"{currentUser.FirstName} {currentUser.LastName}", group.Name, user.EmailAddress);
 
             response.Success = true;
-            response.Message = NotificationMessages.MemberAddedToGroup.Replace("{0}", $"{user.FirstName} {user.LastName}").Replace("{0}", group.Name);
+            response.Message = NotificationMessages.MemberAddedToGroup.Replace("{0}", $"{user.FirstName} {user.LastName}").Replace("{1}", group.Name);
 
             // Commit transaction
             await _transaction.Commit();
@@ -313,15 +314,15 @@ public class GroupService : IGroupService
             await _groupMemberRepository.Update(groupMember);
 
             User user = await _userService.GetById(groupMember.UserId);
+            Group group = await _groupRepository.Get(g => g.Id == groupMember.GroupId);
             if (user != null)
             {
-                Group group = await _groupRepository.Get(g => g.Id == groupMember.GroupId);
                 // Send email
                 await _emailService.RemovedFromGroupEmail(user.FirstName, $"{currentUser.FirstName} {currentUser.LastName}", group.Name, user.EmailAddress);
             }
 
             response.Success = true;
-            response.Message = NotificationMessages.MemberAddedToGroup.Replace("{0}", $"{user.FirstName} {user.LastName}");
+            response.Message = NotificationMessages.MemberRemovedFromGroup.Replace("{0}", $"{user.FirstName} {user.LastName}").Replace("{1}",group.Name);
 
             // Commit transaction
             await _transaction.Commit();

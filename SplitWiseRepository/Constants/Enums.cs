@@ -10,3 +10,11 @@ public enum FeriendRequestStatus
     Accepted = 1,
     Rejected = 2
 }
+
+public enum SplitType
+{
+    Equaly = 0,
+    Unequaly = 1,
+    ByShare = 2,
+    ByPercentage = 3
+}

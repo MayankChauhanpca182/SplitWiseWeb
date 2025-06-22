@@ -21,4 +21,5 @@ public class SplitWiseDbContext : DbContext
     public virtual DbSet<FriendRequest> FriendRequests { get; set; }
     public virtual DbSet<Group> Groups { get; set; }
     public virtual DbSet<GroupMember> GroupMembers { get; set; }
+    public virtual DbSet<Category> Categories { get; set; }
 }

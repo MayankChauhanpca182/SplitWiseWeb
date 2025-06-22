@@ -106,3 +106,8 @@ $(document).on("click", "#hamBurger", function () {
   }
 });
 
+// On focus select value
+$(document).on("focus", "input", function () {
+  $(this).select();
+});
+

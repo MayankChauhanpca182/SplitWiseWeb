@@ -28,7 +28,7 @@
             <div style="width: 30px;">
                 @if (user.UserId != currentUserId)
                 {
-                    <a class="btn border-0" title="Remove Member" onclick="removeGroupMember(@user.GroupId, @user.UserId)">
+                    <a class="btn border-0" title="Remove Member" onclick="removeGroupMember(@user.Id)">
                         <i class="bi bi-person-x-fill text-danger"></i>
                     </a>
                 }

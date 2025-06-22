@@ -3,6 +3,16 @@ let sortColumn = "";
 let sortOrder = "";
 let searchTimeout;
 
+// Handle reaload 
+// $(document).ready(function () {
+//     const endPoint = sessionStorage.getItem("endPoint");
+//     const navId = sessionStorage.getItem("navId");
+
+//     if (endPoint && navId) {
+//         getPage(endPoint, navId);
+//     }
+// });
+
 // Store in session storage
 function storeInSession(endPoint, navId) {
     sessionStorage.setItem("endPoint", endPoint);
@@ -154,7 +164,7 @@ function fetchAddFriendModal() {
         },
         error: function () {
             $("#regularModal").modal("hide");
-            toastr.error('@(NotificationMessages.CanNot.Replace("{0}", "add friend"))');
+            toastr.error("Internal server error.");
         },
     });
 }
@@ -180,7 +190,7 @@ $(document).on("submit", "#addFriendRequestForm", function (e) {
             }
         },
         error: function (xhr, status, error) {
-            toastr.error("@NotificationMessages.InternalServerError");
+            toastr.error("Internal server error.");
         },
     });
 });
@@ -206,7 +216,27 @@ $(document).on("submit", "#sendReferralForm", function (e) {
             }
         },
         error: function (xhr, status, error) {
-            toastr.error("@NotificationMessages.InternalServerError");
+            toastr.error("Internal server error.");
         },
     });
 });
+
+// Get friend request modal
+function fetchAddExpenseModal(expenseId = 0) {
+    $("#regularModalContent").empty();
+    $.ajax({
+        url: "/Expense/AddExpenseModal",
+        type: "GET",
+        data: {expenseId},
+        success: function (response) {
+            if (!response.statusCode) {
+                $("#regularModalContent").html(response);
+                $("#regularModal").modal("show");
+            }
+        },
+        error: function () {
+            $("#regularModal").modal("hide");
+            toastr.error("Internal server error.");
+        },
+    });
+}

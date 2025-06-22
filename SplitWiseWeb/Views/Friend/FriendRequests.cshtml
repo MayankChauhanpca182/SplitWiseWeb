@@ -16,6 +16,7 @@
 <script>
     sortColumn = "";
     sortOrder = "";
+    @* searchTimeout = null; *@
 
     $(document).ready(function () {
         getFriendRequestList(1);
@@ -24,12 +25,15 @@
     $("#friendRequestSearch").on("input", function () {
         if (searchTimeout === null) {
             searchTimeout = setTimeout(function () {
-                getFriendList(1);
+                getFriendRequestList(1);
             }, 500);
         }
     });
 
     function getFriendRequestList(currentPage) {
+        clearTimeout(searchTimeout);
+        searchTimeout = null;
+        
         let filter = {
             PageNumber: currentPage,
             PageSize: $("#friendRequestPageSize").val(),

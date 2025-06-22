@@ -27,8 +27,8 @@ public class GroupController : Controller
         return PartialView("Index");
     }
 
-    // GET AddGroup
-    public async Task<IActionResult> AddGroup(int groupId = 0)
+    // GET AddGroupModal
+    public async Task<IActionResult> AddGroupModal(int groupId = 0)
     {
         GroupVM group = new GroupVM();
         if (groupId > 0)
@@ -40,6 +40,7 @@ public class GroupController : Controller
     }
 
     // POST SaveGroup
+    [HttpPost]
     public async Task<IActionResult> SaveGroup(GroupVM newGroupVM)
     {
         if (!ModelState.IsValid)
@@ -53,6 +54,7 @@ public class GroupController : Controller
     }
 
     // POST GroupList
+    [HttpPost]
     public async Task<IActionResult> GroupList(FilterVM filter)
     {
         PaginatedListVM<GroupVM> paginatedList = await _groupService.GroupList(filter);
@@ -60,6 +62,7 @@ public class GroupController : Controller
     }
 
     // POST DeleteGroup
+    [HttpPost]
     public async Task<IActionResult> DeleteGroup(int groupId)
     {
         ResponseVM response = await _groupService.DeleteGroup(groupId);
