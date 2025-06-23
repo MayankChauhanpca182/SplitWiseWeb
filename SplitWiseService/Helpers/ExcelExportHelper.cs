@@ -6,47 +6,59 @@ namespace SplitWiseService.Helpers;
 
 public static class ExcelExportHelper
 {
-    public static byte[] ExportToExcel<T>(IEnumerable<T> data, string sheetName = "Sheet1")
+    public static byte[] ExportToExcel<T>(IEnumerable<T> data, List<string> columns, string sheetName = "Sheet1")
+    {
+        using ExcelPackage package = new ExcelPackage();
+        ExcelWorksheet worksheet = package.Workbook.Worksheets.Add(sheetName);
+
+        // Get properties of the view model
+        PropertyInfo[] properties = typeof(T).GetProperties();
+
+        // Add headers
+        int col = 0;
+        for (int i = 0; i < properties.Length; i++)
         {
-            using ExcelPackage package = new ExcelPackage();
-            ExcelWorksheet worksheet = package.Workbook.Worksheets.Add(sheetName);
-
-            // Get properties of the view model
-            PropertyInfo[] properties = typeof(T).GetProperties();
-
-            // Add headers
-            for (int i = 0; i < properties.Length; i++)
+            if (columns.Contains(properties[i].Name))
             {
                 string displayName = properties[i].GetCustomAttribute<DisplayNameAttribute>()?.DisplayName ?? properties[i].Name;
-                worksheet.Cells[1, i + 1].Value = displayName;
-                worksheet.Cells[1, i + 1].Style.Font.Bold = true;
+                worksheet.Cells[1, col + 1].Value = displayName;
+                worksheet.Cells[1, col + 1].Style.Font.Bold = true;
+                col++;
             }
+        }
 
-            // Add data
-            int row = 2; 
-            foreach (T item in data)
+        // Add data
+        int row = 2;
+        foreach (T item in data)
+        {
+            col = 0;
+            for (int i = 0; i < properties.Length; i++)
             {
-                for (int col = 0; col < properties.Length; col++)
+                if (columns.Contains(properties[i].Name))
                 {
-                    object value = properties[col].GetValue(item);
+
+                    object value = properties[i].GetValue(item);
                     worksheet.Cells[row, col + 1].Value = value;
 
                     // Format specific types
-                    if (properties[col].PropertyType == typeof(DateTime) || properties[col].PropertyType == typeof(DateTime?))
+                    if (properties[i].PropertyType == typeof(DateTime) || properties[i].PropertyType == typeof(DateTime?))
                     {
                         worksheet.Cells[row, col + 1].Style.Numberformat.Format = "yyyy-mm-dd";
                     }
-                    else if (properties[col].PropertyType == typeof(decimal) || properties[col].PropertyType == typeof(decimal?))
+                    else if (properties[i].PropertyType == typeof(decimal) || properties[i].PropertyType == typeof(decimal?))
                     {
                         worksheet.Cells[row, col + 1].Style.Numberformat.Format = "#,##0.00";
                     }
+                    
+                    col++;
                 }
-                row++;
             }
-
-            // Auto-fit columns
-            worksheet.Cells.AutoFitColumns();
-
-            return package.GetAsByteArray();
+            row++;
         }
+
+        // Auto-fit columns
+        worksheet.Cells.AutoFitColumns();
+
+        return package.GetAsByteArray();
+    }
 }

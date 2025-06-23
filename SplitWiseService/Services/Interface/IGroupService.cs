@@ -11,4 +11,5 @@ public interface IGroupService
     public Task<List<GroupMemberVM>> GetMembers(int groupId);
     public Task<ResponseVM> AddGroupMembers(int groupId, int userId);
     public Task<ResponseVM> RemoveGroupMembers(int groupMemberId);
+    public Task<byte[]> ExportGroups(FilterVM filter);
 }

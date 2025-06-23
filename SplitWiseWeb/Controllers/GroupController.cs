@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using SmartBreadcrumbs.Attributes;
 using SplitWiseRepository.ViewModels;
+using SplitWiseService.Constants;
 using SplitWiseService.Services.Interface;
 
 namespace SplitWiseWeb.Controllers;
@@ -24,7 +25,8 @@ public class GroupController : Controller
     [Route("groups")]
     public IActionResult Index()
     {
-        return PartialView("Index");
+        ViewData["ActiveLink"] = "Groups";
+        return View("Index");
     }
 
     // GET AddGroupModal
@@ -76,7 +78,7 @@ public class GroupController : Controller
     {
         GroupVM group = await _groupService.GetGroup(groupId);
         group.Members = await _groupService.GetMembers(groupId);
-        return PartialView("GroupDetails", group);
+        return View("GroupDetails", group);
     }
 
     // GET GroupMembers
@@ -106,5 +108,17 @@ public class GroupController : Controller
     {
         ResponseVM response = await _groupService.RemoveGroupMembers(groupMemberId);
         return Json(response);
+    }
+
+    // POST ExportGroups
+    [HttpPost]
+    public async Task<IActionResult> ExportGroups(FilterVM filter)
+    {
+        byte[] fileData = await _groupService.ExportGroups(filter);
+        if (fileData == null)
+        {
+            return Json(new ResponseVM { Success = false, Message = NotificationMessages.CanNotExportEmptyList.Replace("{0}", "groups") });
+        }
+        return File(fileData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Groups.xlsx");
     }
 }

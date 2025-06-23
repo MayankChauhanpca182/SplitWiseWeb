@@ -25,155 +25,141 @@
 <div id="friendListOuter" class="listOuter bg-white"></div>
 
 
-@* Send friend request *@
-<script>
-    // Send friend request
-    function sendRequest(email) {
-        $.ajax({
-            url: "/Friend/SendFriendRequestAjax",
-            type: "POST",
-            data: { email },
-            success: function (response) {
-                if (!response.statusCode) {
-                    if (response.success == false) {
-                        toastr.error(response.message);
-                    }
-                    else {
-                        toastr.success(response.message);
-                        getFriendList(1);
-                    }
-                }
-            },
-            error: function () {
-                toastr.error('@NotificationMessages.InternalServerError');
-            }
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            getFriendList(1);
         });
-    }
-</script>
+    </script>
 
-@* Friend list *@
-<script>
-    sortColumn = "";
-    sortOrder = "";
-
-    $("#friendSearch").on("input", function () {
-        if (searchTimeout === null) {
-            searchTimeout = setTimeout(function () {
-                getFriendList(1);
-            }, 500);
+    @* Send friend request *@
+    <script>
+        // Send friend request
+        function sendRequest(email) {
+            $.ajax({
+                url: "/Friend/SendFriendRequestAjax",
+                type: "POST",
+                data: { email },
+                success: function (response) {
+                    if (!response.statusCode) {
+                        if (response.success == false) {
+                            toastr.error(response.message);
+                        }
+                        else {
+                            toastr.success(response.message);
+                            getFriendList(1);
+                        }
+                    }
+                },
+                error: function () {
+                    toastr.error('@NotificationMessages.InternalServerError');
+                }
+            });
         }
-    });
+    </script>
 
-    $(document).ready(function () {
-        getFriendList(1);
-    });
+    @* Friend list *@
+    <script>
+        sortColumn = "";
+        sortOrder = "";
 
-    function getFriendList(currentPage) {
-        clearTimeout(searchTimeout);
-        searchTimeout = null;
-
-        let filter = {
-            PageNumber: currentPage,
-            PageSize: $("#friendPageSize").val(),
-            SearchString: $("#friendSearch").val(),
-            SortColumn: sortColumn,
-            SortOrder: sortOrder,
-            IsDeleted: $("#deletedFriendsChk").prop("checked")
-        };
-
-        $.ajax({
-            url: "/Friend/FriendList",
-            type: "POST",
-            data: { filter },
-            success: function (response) {
-                if (!response.statusCode) {
-                    if (response.success == false) {
-                        toastr.error(response.message);
-                    }
-                    else {
-                        $("#friendListOuter").html(response);
-                    }
-                }
-            },
-            error: function () {
-                toastr.error('@NotificationMessages.InternalServerError');
+        $("#friendSearch").on("input", function () {
+            if (searchTimeout === null) {
+                searchTimeout = setTimeout(function () {
+                    getFriendList(1);
+                }, 500);
             }
         });
-    }
 
-    // Handle sorting
-    $(document).on("click", ".sortBtn", function () {
-        sortColumn = $(this).data("column");
-        sortOrder = $(this).data("order");
-        getFriendList(1);
-    });
-
-    // Export friends
-    function exportFriends() {
-        let filter = {
-            SearchString: $("#friendSearch").val(),
-            IsDeleted: $("#deletedFriendsChk").prop("checked")
-        };
-
-        $.ajax({
-            url: '/Friend/ExportFriends',
-            type: "POST",
-            data: { filter },
-            xhrFields: {
-                responseType: 'blob'
-            },
-            success: function (data, status, xhr) {
-                if (data.success === false) {
-                    console.log(data)
-                    toastr.error(data.message);
-                } else {
-                    let filename = `Friends_${new Date().getTime()}.xlsx`;
-
-                    let disposition = xhr.getResponseHeader('Content-Disposition');
-                    if (disposition && disposition.indexOf('attachment') !== -1) {
-                        let matches = /filename="([^"]+)"/.exec(disposition);
-                        if (matches !== null && matches[1]) filename = matches[1];
-                    }
-
-                    let blob = new Blob([data], { type: xhr.getResponseHeader('Content-Type') });
-                    let link = document.createElement('a');
-                    link.href = window.URL.createObjectURL(blob);
-                    link.download = filename;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-
-                    toastr.success("Data has been exported successfully.");
-                }
-            },
-            error: function () {
-                toastr.error("Export Failed");
-            }
+        $(document).ready(function () {
+            getFriendList(1);
         });
-    }
-</script>
 
-@* Remove friend *@
-<script>
-    function removeFriend(friendId) {
-        $.ajax({
-            url: "/Friend/RemoveFriend",
-            type: "POST",
-            data: { friendId },
-            success: function (response) {
-                if (!response.statusCode) {
-                    if (response.success == true) {
-                        toastr.success(response.message);
-                        getFriendList(1);
+        function getFriendList(currentPage) {
+            clearTimeout(searchTimeout);
+            searchTimeout = null;
+
+            let filter = {
+                PageNumber: currentPage,
+                PageSize: $("#friendPageSize").val(),
+                SearchString: $("#friendSearch").val(),
+                SortColumn: sortColumn,
+                SortOrder: sortOrder,
+                IsDeleted: $("#deletedFriendsChk").prop("checked")
+            };
+
+            $.ajax({
+                url: "/Friend/FriendList",
+                type: "POST",
+                data: { filter },
+                success: function (response) {
+                    if (!response.statusCode) {
+                        if (response.success == false) {
+                            toastr.error(response.message);
+                        }
+                        else {
+                            $("#friendListOuter").html(response);
+                        }
                     }
-                    else {
-                        toastr.error(response.message);
-                    }
+                },
+                error: function () {
+                    toastr.error('@NotificationMessages.InternalServerError');
                 }
-            },
-            error: function () {
-                toastr.error('@NotificationMessages.InternalServerError');
-            }
+            });
+        }
+
+        // Handle sorting
+        $(document).on("click", ".sortBtn", function () {
+            sortColumn = $(this).data("column");
+            sortOrder = $(this).data("order");
+            getFriendList(1);
         });
-    }
-</script>
+    </script>
+
+    @* Remove friend *@
+    <script>
+        function removeFriendConfirm(friendId) {
+            $.ajax({
+                url: "/Friend/RemoveFriend",
+                type: "POST",
+                data: { friendId },
+                success: function (response) {
+                    if (!response.statusCode) {
+                        if (response.success == true) {
+                            toastr.success(response.message);
+                            $("#confirmationModal").modal("hide");
+                            getFriendList(1);
+                        }
+                        else {
+                            toastr.error(response.message);
+                        }
+                    }
+                },
+                error: function () {
+                    toastr.error('@NotificationMessages.InternalServerError');
+                }
+            });
+        }
+
+        function removeFriend(friendId, friendName) {
+            $("#confirmationModalTitle").text(`Remove friend`);
+            $("#confirmationModalBody").text(`Are you sure you want to remove ${friendName} from friend list?`);
+            $("#confirmationModalYesBtn").attr("onclick", `removeFriendConfirm(${friendId})`);
+            $("#confirmationModal").modal("show");
+        }
+    </script>
+
+    @* Export friends *@
+    <script>
+        // Export friends
+        function exportFriends() {
+            let filter = {
+                SearchString: $("#friendSearch").val(),
+                IsDeleted: $("#deletedFriendsChk").prop("checked")
+            };
+            let fileName = filter.IsDeleted ? "Removed friends" : "Friends";
+
+            exportDataAjax(filter, "/Friend/ExportFriends", fileName);
+        }
+    </script>
+}

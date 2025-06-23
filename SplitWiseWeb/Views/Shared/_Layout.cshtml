@@ -63,18 +63,18 @@
                     </button>
                     <ul class="dropdown-menu">
                         <li>
-                            <button onclick="getPage('profile', 'profileNav')" id="profileNav"
-                                class="navItems dropdown-item d-flex align-items-center gap-2">
+                            <a asp-action="Profile" asp-controller="User"
+                                class="navItems dropdown-item d-flex align-items-center gap-2 @((ViewData["ActiveLink"] as string) == "Profile" ? "active" : "")">
                                 <i class="bi bi-person-circle fs-5"></i>
                                 Profile
-                            </button>
+                            </a>
                         </li>
                         <li>
-                            <button onclick="getPage('changePassword', 'changePasswordNav')" id="changePasswordNav"
-                                class="navItems dropdown-item d-flex align-items-center gap-2">
+                            <a asp-action="ChangePassword" asp-controller="User"
+                                class="navItems dropdown-item d-flex align-items-center gap-2 @((ViewData["ActiveLink"] as string) == "Change Password" ? "active" : "")">
                                 <i class="bi bi-arrow-clockwise fs-5 fw-semibold"></i>
                                 Change Password
-                            </button>
+                            </a>
                         </li>
                         <li>
                             <a asp-action="Logout" asp-controller="Auth"
@@ -91,37 +91,37 @@
             <!-- Navigation -->
             <aside class="navigation text-white bg-secondary-subtle" id="navigation">
                 <div>
-                    <a onclick="getPage('dashboard', 'dashboardPageNav')" id="dashboardPageNav"
-                        class="navItems d-flex align-items-center gap-3">
+                    <a asp-action="Index" asp-controller="Dashboard"
+                        class="navItems d-flex align-items-center gap-3 @((ViewData["ActiveLink"] as string) == "Dashboard" ? "active" : "")">
                         <i class="fa-solid fa-window-maximize"></i>
                         Dashboard
                     </a>
-                    <a onclick="getPage('groups', 'groupsPageNav')" id="groupsPageNav"
-                        class="navItems d-flex align-items-center gap-3">
+                    <a asp-action="Index" asp-controller="Group"
+                        class="navItems d-flex align-items-center gap-3 @((ViewData["ActiveLink"] as string) == "Groups" ? "active" : "")">
                         <i class="bi bi-diagram-3-fill"></i>
                         Groups
                     </a>
                     <div class="accordion accordion-flush" id="contactsAccordion">
                         <div class="accordion-item">
                             <h2 class="accordion-header">
-                                <button class="accordion-button d-flex gap-3 bg-blue-grey text-white collapsed"
+                                <button class="accordion-button d-flex gap-3 bg-blue-grey text-white "
                                     type="button" data-bs-toggle="collapse" data-bs-target="#contacts-flush-collapseOne"
-                                    aria-expanded="false" aria-controls="contacts-flush-collapseOne">
+                                    aria-expanded="true" aria-controls="contacts-flush-collapseOne">
                                     <i class="bi bi-person-lines-fill"></i>
                                     Contacts
                                 </button>
                             </h2>
-                            <div id="contacts-flush-collapseOne" class="accordion-collapse collapse "
+                            <div id="contacts-flush-collapseOne" class="accordion-collapse collapse show"
                                 data-bs-parent="#contactsAccordion">
                                 <div class="accordion-body bg-blue-grey text-white p-0">
-                                    <a onclick="getPage('friends', 'friendsPageNav')" id="friendsPageNav"
-                                        class="navItems d-flex align-items-center gap-2 ps-4">
+                                    <a asp-action="Index" asp-controller="Friend"
+                                        class="navItems d-flex align-items-center gap-2 ps-4 @((ViewData["ActiveLink"] as string) == "Friends" ? "active" : "")">
                                         <i class="bi bi-person-fill"></i>
                                         Friends
                                     </a>
-                                    <a onclick="getPage('friendRequests', 'friendRequestsPageNav')"
+                                    <a asp-action="FriendRequests" asp-controller="Friend"
                                         id="friendRequestsPageNav"
-                                        class="navItems d-flex align-items-center gap-2 ps-4">
+                                        class="navItems d-flex align-items-center gap-2 ps-4 @((ViewData["ActiveLink"] as string) == "Friend Requests" ? "active" : "")">
                                         <i class="bi bi-person-plus-fill"></i>
                                         Requests
                                     </a>

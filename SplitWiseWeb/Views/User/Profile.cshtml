@@ -7,6 +7,8 @@
 <div class="pb-3">
     <form asp-action="Update" asp-controller="User" id="profileForm" class="d-flex flex-column"
         style="max-width: 500px;" enctype="multipart/form-data">
+        <input asp-for="@Model.CurrencyId" hidden>
+
         <!-- Image -->
         <input asp-for="@Model.ProfileImage" accept="image/png, image/jpg, image/jpeg" hidden>
 
@@ -52,7 +54,7 @@
 
         <!-- Currency -->
         <div class="input-group mt-4 rounded-2 shadow-sm">
-            <select asp-for="@Model.CurrencyId" class="form-select rounded-2 border-secondary-subtle">
+            <select asp-for="@Model.CurrencyId" class="form-select rounded-2 border-secondary-subtle" disabled>
                 @foreach (Currency currency in Model.Currencies)
                 {
                     <option value="@currency.Id">@currency.Name</option>
@@ -63,33 +65,36 @@
 
         <div class="d-flex align-items-center gap-3 mt-4">
             <button type="submit" class="btn btn-primary w-auto shadow">Update</button>
-            <a href="#" onclick="getPage('dashboard', 'dashboardPageNav')" class="btn btn-secondary w-auto shadow">Cancel</a>
+            <a href="#" onclick="getPage('dashboard', 'dashboardPageNav')"
+                class="btn btn-secondary w-auto shadow">Cancel</a>
         </div>
     </form>
 </div>
 
-<script>
-    $(document).ready(function () {
-        $('#ProfileImage').on('change', function () {
-            const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-            const file = this.files[0];
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#ProfileImage').on('change', function () {
+                const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+                const file = this.files[0];
 
-            if (file) {
-                if (!validTypes.includes(file.type)) {
-                    toastr.error("Only following image types are allowed: jpeg, jpg, png.");
-                    $(this).val("");
-                    $('#previewImage').attr('src', '@(Model.ProfileImagePath ?? "/images/Default_pfp.png")');
-                    return;
+                if (file) {
+                    if (!validTypes.includes(file.type)) {
+                        toastr.error("Only following image types are allowed: jpeg, jpg, png.");
+                        $(this).val("");
+                        $('#previewImage').attr('src', '@(Model.ProfileImagePath ?? "/images/Default_pfp.png")');
+                        return;
+                    }
+                    else {
+                        // Show preview
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            $('#previewImage').attr('src', e.target.result);
+                        };
+                        reader.readAsDataURL(file);
+                    }
                 }
-                else {
-                    // Show preview
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                        $('#previewImage').attr('src', e.target.result);
-                    };
-                    reader.readAsDataURL(file);
-                }
-            }
+            });
         });
-    });
-</script>
+    </script>
+}

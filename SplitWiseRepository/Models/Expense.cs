@@ -17,6 +17,9 @@ public class Expense : AuditFields
     [MaxLength(100)]
     public string Title { get; set; }
 
+    [Column(TypeName = "decimal(10,2)")]
+    public decimal Amount { get; set; } = 0;
+
     public int PaidById { get; set; }
     [ForeignKey("PaidById")]
     public virtual User PaidByUser { get; set; }
@@ -36,5 +39,8 @@ public class Expense : AuditFields
     [MaxLength(1000)]
     public string Note { get; set; }
     public string AttachmentPath { get; set; }
+    
+
+    public virtual ICollection<ExpenseShare> ExpenseShares { get; set; }
 
 }

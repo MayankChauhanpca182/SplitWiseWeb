@@ -3,153 +3,6 @@ let sortColumn = "";
 let sortOrder = "";
 let searchTimeout;
 
-// Handle reaload 
-// $(document).ready(function () {
-//     const endPoint = sessionStorage.getItem("endPoint");
-//     const navId = sessionStorage.getItem("navId");
-
-//     if (endPoint && navId) {
-//         getPage(endPoint, navId);
-//     }
-// });
-
-// Store in session storage
-function storeInSession(endPoint, navId) {
-    sessionStorage.setItem("endPoint", endPoint);
-    sessionStorage.setItem("navId", navId);
-}
-
-// Breadcrumb
-$(document).ready(function () {
-    $('body').on('click', '.breadcrumb a', function (e) {
-        e.preventDefault();
-        let endPoint = $(this).attr('href').substring(1);
-        let navId;
-
-        switch (endPoint) {
-            case "home":
-                endPoint = 'dashboard';
-                navId = "dashboardPageNav";
-                break;
-            case "dashboard":
-                navId = "dashboardPageNav";
-                break;
-            case "changePassword":
-                navId = "changePasswordNav";
-                break;
-            case "profile":
-                navId = "profileNav";
-                break;
-            case "friends":
-                navId = "friendsPageNav";
-                break;
-            case "friendRequests":
-                navId = "friendRequestsPageNav";
-                break;
-            case "groups":
-                navId = "groupsPageNav";
-                break;
-        }
-
-        // Fetch page
-        getPage(endPoint, navId);
-    });
-});
-
-// Fetch pages through ajax
-function getPage(endPoint, navId) {
-    $.ajax({
-        url: `/${endPoint}`,
-        type: "GET",
-        success: function (response) {
-            if (!response.statusCode) {
-                if (response.success == false) {
-                    toastr.error(response.message);
-                }
-                else {
-                    $(".navItems").removeClass("active");
-                    $(`.navItems#${navId}`).addClass("active");
-                    $("#right-section").html(response);
-
-                    // Store into session storage
-                    storeInSession(endPoint, navId);
-                    // history.pushState(null, '', endPoint);
-                }
-            }
-        },
-        error: function () {
-            toastr.error("Internal server error.");
-        }
-    });
-}
-
-// Update profile
-$(document).on("submit", "#profileForm", function (e) {
-    e.preventDefault();
-
-    let formData = new FormData(this);
-
-    $.ajax({
-        url: $(this).attr("action"),
-        type: $(this).attr("method"),
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function (response) {
-            if (!response.statusCode) {
-                if (response.success) {
-                    toastr.success(response.message);
-                    // Set profile details
-                    $("#profile-image").prop("src", response.imagePath);
-                    $("#profile-name").text(response.name);
-                }
-                else if (response.success == false) {
-                    toastr.error(response.message);
-                }
-                else {
-                    $("#partialVewContainer").html(response);
-                }
-            }
-        },
-        error: function (xhr, status, error) {
-            toastr.error("Internal server error.");
-        }
-    });
-});
-
-// Change password
-$(document).on("submit", "#changePasswordForm", function (e) {
-    e.preventDefault();
-
-    let formData = new FormData(this);
-
-    $.ajax({
-        url: $(this).attr("action"),
-        type: $(this).attr("method"),
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function (response) {
-            if (!response.statusCode) {
-                if (response.success) {
-                    console.log("success")
-                    toastr.success(response.message);
-                    window.location = "/logout";
-                }
-                else if (response.success == false) {
-                    toastr.error(response.message);
-                }
-                else {
-                    $("#partialVewContainer").html(response);
-                }
-            }
-        },
-        error: function (xhr, status, error) {
-            toastr.error("Internal server error.");
-        }
-    });
-});
-
 // Get friend request modal
 function fetchAddFriendModal() {
     $("#regularModalContent").empty();
@@ -238,5 +91,44 @@ function fetchAddExpenseModal(expenseId = 0) {
             $("#regularModal").modal("hide");
             toastr.error("Internal server error.");
         },
+    });
+}
+
+// Export to excel
+function exportDataAjax(filter, url, fileName) {
+    $.ajax({
+        url: url,
+        type: "POST",
+        data: { filter },
+        xhrFields: {
+            responseType: 'blob'
+        },
+        success: function (data, status, xhr) {
+            if (data.success === false) {
+                console.log(data)
+                toastr.error(data.message);
+            } else {
+                let filename = `${fileName}_${new Date().getTime()}.xlsx`;
+
+                let disposition = xhr.getResponseHeader('Content-Disposition');
+                if (disposition && disposition.indexOf('attachment') !== -1) {
+                    let matches = /filename="([^"]+)"/.exec(disposition);
+                    if (matches !== null && matches[1]) filename = matches[1];
+                }
+
+                let blob = new Blob([data], { type: xhr.getResponseHeader('Content-Type') });
+                let link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                toastr.success(`${fileName} has been exported successfully.`);
+            }
+        },
+        error: function () {
+            toastr.error(`No ${fileName.toLowerCase()} fround.`);
+        }
     });
 }

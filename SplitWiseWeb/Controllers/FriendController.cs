@@ -23,7 +23,8 @@ public class FriendController : Controller
     [Route("friends")]
     public IActionResult Index()
     {
-        return PartialView("Index");
+        ViewData["ActiveLink"] = "Friends";
+        return View("Index");
     }
 
     // POST FriendList
@@ -93,7 +94,8 @@ public class FriendController : Controller
     [Route("friendRequests")]
     public IActionResult FriendRequests()
     {
-        return PartialView("FriendRequests");
+        ViewData["ActiveLink"] = "Friend Requests";
+        return View("FriendRequests");
     }
 
     // POST FriendRequestList
@@ -135,7 +137,7 @@ public class FriendController : Controller
         byte[] fileData = await _friendService.ExportFriends(filter);
         if (fileData == null)
         {
-            return Json(new ResponseVM { Success = false, Message = NotificationMessages.CanNotExportEmptyList.Replace("{0}", "friend") });
+            return Json(new ResponseVM { Success = false, Message = NotificationMessages.CanNotExportEmptyList.Replace("{0}", "friends") });
         }
         return File(fileData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Friends.xlsx");
     }

@@ -12,109 +12,125 @@
 
 <div id="friendRequestListOuter" class="listOuter bg-white"></div>
 
-@* Friend request list *@
-<script>
-    sortColumn = "";
-    sortOrder = "";
-    @* searchTimeout = null; *@
 
-    $(document).ready(function () {
-        getFriendRequestList(1);
-    });
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            getFriendRequestList(1);
+        });
+    </script>
 
-    $("#friendRequestSearch").on("input", function () {
-        if (searchTimeout === null) {
-            searchTimeout = setTimeout(function () {
-                getFriendRequestList(1);
-            }, 500);
+    @* Friend request list *@
+    <script>
+        sortColumn = "";
+        sortOrder = "";
+
+        $(document).ready(function () {
+            getFriendRequestList(1);
+        });
+
+        $("#friendRequestSearch").on("input", function () {
+            if (searchTimeout === null) {
+                searchTimeout = setTimeout(function () {
+                    getFriendRequestList(1);
+                }, 500);
+            }
+        });
+
+        function getFriendRequestList(currentPage = 1) {
+            clearTimeout(searchTimeout);
+            searchTimeout = null;
+
+            let filter = {
+                PageNumber: currentPage,
+                PageSize: $("#friendRequestPageSize").val(),
+                SearchString: $("#friendRequestSearch").val(),
+                SortColumn: sortColumn,
+                SortOrder: sortOrder,
+            };
+
+            $.ajax({
+                url: "/Friend/FriendRequestList",
+                type: "POST",
+                data: { filter },
+                success: function (response) {
+                    if (!response.statusCode) {
+                        if (response.success == false) {
+                            toastr.error(response.message);
+                        }
+                        else {
+                            $("#friendRequestListOuter").html(response);
+                        }
+                    }
+                },
+                error: function () {
+                    toastr.error('@NotificationMessages.InternalServerError');
+                }
+            });
         }
-    });
 
-    function getFriendRequestList(currentPage) {
-        clearTimeout(searchTimeout);
-        searchTimeout = null;
-        
-        let filter = {
-            PageNumber: currentPage,
-            PageSize: $("#friendRequestPageSize").val(),
-            SearchString: $("#friendRequestSearch").val(),
-            SortColumn: sortColumn,
-            SortOrder: sortOrder,
-        };
-
-        $.ajax({
-            url: "/Friend/FriendRequestList",
-            type: "POST",
-            data: { filter },
-            success: function (response) {
-                if (!response.statusCode) {
-                    if (response.success == false) {
-                        toastr.error(response.message);
-                    }
-                    else {
-                        $("#friendRequestListOuter").html(response);
-                    }
-                }
-            },
-            error: function () {
-                toastr.error('@NotificationMessages.InternalServerError');
-            }
+        // Handle sorting
+        $(document).on("click", ".sortBtn", function () {
+            sortColumn = $(this).data("column");
+            sortOrder = $(this).data("order");
+            getFriendRequestList(1);
         });
-    }
+    </script>
 
-    // Handle sorting
-    $(document).on("click", ".sortBtn", function () {
-        sortColumn = $(this).data("column");
-        sortOrder = $(this).data("order");
-        getFriendRequestList(1);
-    });
-</script>
-
-@* Accept / Reject friend request *@
-<script>
-    // Accept request
-    function acceptRequest(id) {
-        $.ajax({
-            url: "/Friend/AcceptRequest",
-            type: "POST",
-            data: { id },
-            success: function (response) {
-                if (!response.statusCode) {
-                    if (response.success == true) {
-                        toastr.success(response.message);
-                        getFriendRequestList(1);
+    @* Accept / Reject friend request *@
+    <script>
+        // Accept request
+        function acceptRequest(id) {
+            $.ajax({
+                url: "/Friend/AcceptRequest",
+                type: "POST",
+                data: { id },
+                success: function (response) {
+                    if (!response.statusCode) {
+                        if (response.success == true) {
+                            toastr.success(response.message);
+                            getFriendRequestList(1);
+                        }
+                        else {
+                            toastr.error(response.message);
+                        }
                     }
-                    else {
-                        toastr.error(response.message);
-                    }
+                },
+                error: function () {
+                    toastr.error('@NotificationMessages.InternalServerError');
                 }
-            },
-            error: function () {
-                toastr.error('@NotificationMessages.InternalServerError');
-            }
-        });
-    }
+            });
+        }
 
-    // Reject request
-    function rejectRequest(id) {
-        $.ajax({
-            url: "/Friend/RejectRequest",
-            type: "POST",
-            data: { id },
-            success: function (response) {
-                if (!response.statusCode) {
-                    if (response.success == true) {
-                        toastr.success(response.message);
-                        getFriendRequestList(1);
+        // Reject request
+        function rejectRequestConfirm(id) {
+            $.ajax({
+                url: "/Friend/RejectRequest",
+                type: "POST",
+                data: { id },
+                success: function (response) {
+                    if (!response.statusCode) {
+                        if (response.success == true) {
+                            toastr.success(response.message);
+                            $("#confirmationModal").modal("hide");
+                            getFriendRequestList(1);
+                        }
+                        else {
+                            toastr.error(response.message);
+                        }
                     }
-                    else {
-                        toastr.error(response.message);
-                    }
+                },
+                error: function () {
+                    toastr.error('@NotificationMessages.InternalServerError');
                 }
-            },
-            error: function () {
-                toastr.error('@NotificationMessages.InternalServerError');
-            }
-        });
-    }
-</script>
+            });
+        }
+
+        function rejectRequest(id, friendName) {
+            $("#confirmationModalTitle").text(`Reject friend request`);
+            $("#confirmationModalBody").text(`Are you sure you want to reject ${friendName}'s friend request?`);
+            $("#confirmationModalYesBtn").attr("onclick", `rejectRequestConfirm(${id})`);
+            $("#confirmationModal").modal("show");
+        }
+    </script>
+}

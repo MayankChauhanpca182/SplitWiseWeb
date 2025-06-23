@@ -1,11 +1,30 @@
+<!-- Regular modal -->
 <div class="modal fade" id="regularModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content" id="regularModalContent"></div>
     </div>
 </div>
 
+<!-- Large modal -->
 <div class="modal fade" id="largeModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content" id="largeModalContent"></div>
     </div>
+</div>
+
+<!-- Confirmation modal -->
+<div class="modal fade" id="confirmationModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="confirmationModalTitle">Modal title</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="confirmationModalBody"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="confirmationModalYesBtn">Yes</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+      </div>
+    </div>
+  </div>
 </div>

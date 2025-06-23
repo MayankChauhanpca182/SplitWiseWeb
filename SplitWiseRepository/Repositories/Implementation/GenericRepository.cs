@@ -17,14 +17,33 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         _dbSet = _context.Set<T>();
     }
 
-    public async Task<T> Get(Expression<Func<T, bool>> predicate = null)
+    public async Task<T> Get(
+        Expression<Func<T, bool>> predicate = null,
+        List<Expression<Func<T, object>>> includes = null,
+        List<Func<IQueryable<T>, IQueryable<T>>> thenIncludes = null
+        )
     {
-        return await _dbSet.FirstOrDefaultAsync(predicate);
-    }
+        IQueryable<T> query = _dbSet;
 
-    public async Task<T> GetLast(Expression<Func<T, bool>> predicate = null)
-    {
-        return await _dbSet.FirstOrDefaultAsync(predicate);
+        // Apply Includes (First-level navigation properties)
+        if (includes != null)
+        {
+            foreach (Expression<Func<T, object>> include in includes)
+            {
+                query = query.Include(include);
+            }
+        }
+
+        // Apply ThenIncludes (Deeper navigation properties)
+        if (thenIncludes != null)
+        {
+            foreach (var thenInclude in thenIncludes)
+            {
+                query = thenInclude(query);
+            }
+        }
+
+        return await query.FirstOrDefaultAsync(predicate);
     }
 
     public async Task<bool> Any(Expression<Func<T, bool>> predicate = null)
@@ -32,13 +51,39 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         return await _dbSet.AnyAsync(predicate);
     }
 
-    public async Task<List<T>> List(Expression<Func<T, bool>> predicate = null)
+    public async Task<List<T>> List(
+        Expression<Func<T, bool>> predicate = null,
+        List<Expression<Func<T, object>>> includes = null,
+        List<Func<IQueryable<T>, IQueryable<T>>> thenIncludes = null
+        )
     {
+        IQueryable<T> query = _dbSet;
+
+        //Apply Filters
         if (predicate != null)
         {
-            return await _dbSet.Where(predicate).ToListAsync();
+            query = query.Where(predicate);
         }
-        return _dbSet.ToList();
+
+        // Apply Includes (First-level navigation properties)
+        if (includes != null)
+        {
+            foreach (Expression<Func<T, object>> include in includes)
+            {
+                query = query.Include(include);
+            }
+        }
+
+        // Apply ThenIncludes (Deeper navigation properties)
+        if (thenIncludes != null)
+        {
+            foreach (var thenInclude in thenIncludes)
+            {
+                query = thenInclude(query);
+            }
+        }
+
+        return await query.ToListAsync();
     }
 
     public async Task<PaginatedItemsVM<T>> PaginatedList(

@@ -1,5 +1,6 @@
 @model GroupVM
 @{
+    ViewData["Title"] = "Group Details";
     int currentUserId = int.Parse(User.FindFirst("id")?.Value);
 }
 
@@ -20,91 +21,152 @@
 <div class="bg-white p-3" id="groupDetailContainer">
     <ul class="nav nav-underline mb-3" id="pills-tab" role="tablist">
         <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="group-expenses-tab" data-bs-toggle="pill" data-bs-target="#group-expenses"
-                type="button" role="tab" aria-controls="group-expenses" aria-selected="false" onclick="">Expenses</button>
+            <button class="nav-link active" id="group-expenses-tab" data-bs-toggle="pill"
+                data-bs-target="#group-expenses" type="button" role="tab" aria-controls="group-expenses"
+                aria-selected="false" onclick="">Expenses</button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="group-activity-tab" data-bs-toggle="pill" data-bs-target="#group-activity"
-                type="button" role="tab" aria-controls="group-activity" aria-selected="false" onclick="">Activity</button>
+                type="button" role="tab" aria-controls="group-activity" aria-selected="false"
+                onclick="">Activity</button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="group-members-tab" data-bs-toggle="pill" data-bs-target="#group-members"
-                type="button" role="tab" aria-controls="group-members" aria-selected="true" onclick="fetchGroupMembers()">Members</button>
+                type="button" role="tab" aria-controls="group-members" aria-selected="true"
+                onclick="fetchGroupMembers()">Members</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="group-noticeboard-tab" data-bs-toggle="pill"
+                data-bs-target="#group-noticeboard" type="button" role="tab" aria-controls="group-noticeboard"
+                aria-selected="true">Notice board</button>
         </li>
     </ul>
     <div class="tab-content" id="pills-tabContent">
-        <div class="tab-pane fade show active" id="group-expenses" role="tabpanel" aria-labelledby="group-expenses-tab">Group expenses.</div>
-        <div class="tab-pane fade" id="group-activity" role="tabpanel" aria-labelledby="group-activity-tab">Group activity.</div>
+        <div class="tab-pane fade show active" id="group-expenses" role="tabpanel" aria-labelledby="group-expenses-tab">
+            Group expenses.</div>
+        <div class="tab-pane fade" id="group-activity" role="tabpanel" aria-labelledby="group-activity-tab">Group
+            activity.</div>
         <div class="tab-pane fade" id="group-members" role="tabpanel" aria-labelledby="group-members-tab"></div>
+        <div class="tab-pane fade" id="group-noticeboard" role="tabpanel" aria-labelledby="group-noticeboard-tab">
+            <p>@Model.NoticeBoard</p>
+        </div>
     </div>
 </div>
 
-@* Group members *@
-<script>
-    // Fetch group members
-    function fetchGroupMembers()
-    {
-        $.ajax({
-            url: "/Group/GroupMembers",
-            type: "GET",
-            data: { groupId: '@Model.Id' },
-            success: function (response) {
-                if (!response.statusCode) {
-                    if (response.success == false) {
-                        toastr.error(response.message);
+@section Scripts {
+    @* Group members *@
+    <script>
+        // Fetch group members
+        function fetchGroupMembers() {
+            $.ajax({
+                url: "/Group/GroupMembers",
+                type: "GET",
+                data: { groupId: '@Model.Id' },
+                success: function (response) {
+                    if (!response.statusCode) {
+                        if (response.success == false) {
+                            toastr.error(response.message);
+                        }
+                        else {
+                            $("#group-members").html(response);
+                        }
                     }
-                    else {
-                        $("#group-members").html(response);
-                    }
+                },
+                error: function () {
+                    toastr.error("Internal server error.");
                 }
-            },
-            error: function () {
-                toastr.error("Internal server error.");
-            }
-        });
-    }
+            });
+        }
 
-    // Fetch add new member modal
-    function addgroupMemberModal(groupId) {
-        $("#largeModalContent").empty();
-        $.ajax({
-            url: "/Group/AddgroupMemberModal",
-            type: "GET",
-            data: { groupId },
-            success: function (response) {
-                if (!response.statusCode) {
-                    $("#largeModalContent").html(response);
-                    $("#largeModal").modal("show");
-                }
-            },
-            error: function () {
-                $("#largeModal").modal("hide");
-                toastr.error('@(NotificationMessages.CanNot.Replace("{0}", "add friend"))');
-            },
-        });
-    }
+        // Fetch add new member modal
+        function addgroupMemberModal(groupId) {
+            $("#largeModalContent").empty();
+            $.ajax({
+                url: "/Group/AddgroupMemberModal",
+                type: "GET",
+                data: { groupId },
+                success: function (response) {
+                    if (!response.statusCode) {
+                        $("#largeModalContent").html(response);
+                        $("#largeModal").modal("show");
+                    }
+                },
+                error: function () {
+                    $("#largeModal").modal("hide");
+                    toastr.error('@(NotificationMessages.CanNot.Replace("{0}", "add friend"))');
+                },
+            });
+        }
 
-    // Remove group member
-    function removeGroupMember(groupMemberId) {
-        $.ajax({
-            url: "/Group/RemoveGroupMembers",
-            type: "POST",
-            data: { groupMemberId },
-            success: function (response) {
-                if (!response.statusCode) {
-                    if (response.success == false) {
-                        toastr.error(response.message);
+        // Remove group member
+        function removeGroupMemberConfirm(groupMemberId) {
+            $.ajax({
+                url: "/Group/RemoveGroupMembers",
+                type: "POST",
+                data: { groupMemberId },
+                success: function (response) {
+                    if (!response.statusCode) {
+                        if (response.success == false) {
+                            toastr.error(response.message);
+                        }
+                        else {
+                            toastr.success(response.message);
+                            $("#confirmationModal").modal("hide");
+                            // Update member list
+                            fetchGroupMembers();
+                        }
                     }
-                    else {
-                        toastr.success(response.message);
-                        // Update member list
-                        fetchGroupMembers();
-                    }
+                },
+                error: function () {
+                    toastr.error('@NotificationMessages.InternalServerError');
                 }
-            },
-            error: function () {
-                toastr.error('@NotificationMessages.InternalServerError');
-            }
-        });
-    }
-</script>
+            });
+        }
+        function leaveGroupConfirm(groupMemberId) {
+            $.ajax({
+                url: "/Group/RemoveGroupMembers",
+                type: "POST",
+                data: { groupMemberId },
+                success: function (response) {
+                    if (!response.statusCode) {
+                        if (response.success == false) {
+                            toastr.error(response.message);
+                        }
+                        else {
+                            toastr.success(response.message);
+                            $("#confirmationModal").modal("hide");
+                            // Redirect to group list
+                            '@(TempData["successMessage"] = "You left the group successfully.")';
+                            window.location = "/groups";
+                        }
+                    }
+                },
+                error: function () {
+                    toastr.error('@NotificationMessages.InternalServerError');
+                }
+            });
+        }
+
+        function removeGroupMember(groupMemberId, userName) {
+            $("#confirmationModalTitle").text(`Remove group member`);
+            $("#confirmationModalBody").text(`Are you sure you want to remove ${userName} from group?`);
+            $("#confirmationModalYesBtn").attr("onclick", `removeGroupMemberConfirm(${groupMemberId})`);
+            $("#confirmationModal").modal("show");
+        }
+
+        function leaveGroup(groupMemberId) {
+            $("#confirmationModalTitle").text(`Leave group`);
+            $("#confirmationModalBody").text(`Are you sure you want to leave this group?`);
+            $("#confirmationModalYesBtn").attr("onclick", `leaveGroupConfirm(${groupMemberId})`);
+            $("#confirmationModal").modal("show");
+        }
+
+        function leaveAndDeleteGroup(groupMemberId) {
+            $("#confirmationModalTitle").text(`Leave and delete group`);
+            $("#confirmationModalBody").text(`Are you sure you want to leave and delete this group?`);
+            $("#confirmationModalYesBtn").attr("onclick", `leaveGroupConfirm(${groupMemberId})`);
+            $("#confirmationModal").modal("show");
+        }
+
+    </script>
+}

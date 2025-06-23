@@ -1,4 +1,7 @@
 @using SplitWiseService.Constants
+@{
+    ViewData["Title"] = "Groups";
+}
 
 <breadcrumb></breadcrumb>
 <h3 class="bg-white mb-3 p-3 text-dark-emphasis shadow">Groups</h3>
@@ -8,147 +11,172 @@
             placeholder="Search">
     </div>
     <div class="d-flex gap-2">
-        <button class="btn btn-primary" type="button" onclick="fetchAddGroupModal()">Create new group</button>
+        <button class="btn btn-secondary" type="button" onclick="exportGroups()">Export</button>
+        <button class="btn btn-primary" type="button" onclick="fetchAddGroupModal()">Add group</button>
     </div>
 </div>
 <div id="groupListOuter" class="listOuter bg-white"></div>
 
 
-@* Create new group *@
-<script>
-    // Get create new group modal
-    function fetchAddGroupModal(groupId = 0) {
-        $("#regularModalContent").empty();
-        $.ajax({
-            url: "/Group/AddGroupModal",
-            type: "GET",
-            data: { groupId },
-            success: function (response) {
-                if (!response.statusCode) {
-                    $("#regularModalContent").html(response);
-                    $("#regularModal").modal("show");
-                }
-            },
-            error: function () {
-                $("#regularModal").modal("hide");
-                toastr.error('@(NotificationMessages.CanNot.Replace("{0}", "add friend"))');
-            },
-        });
-    }
-
-    // Save group
-    $(document).on("submit", "#groupForm", function (e) {
-        e.preventDefault();
-
-        let formData = new FormData(this);
-
-        $.ajax({
-            url: $(this).attr("action"),
-            type: $(this).attr("method"),
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (response) {
-                if (!response.statusCode) {
-                    if (response.success) {
-                        toastr.success(response.message);
-                        $("#regularModal").modal("hide");
-                        getGroupList(1);
-                    }
-                    else if (response.success == false) {
-                        toastr.error(response.message);
-                    }
-                    else {
+@section Scripts {
+    @* Create new group *@
+    <script>
+        // Get create new group modal
+        function fetchAddGroupModal(groupId = 0) {
+            $("#regularModalContent").empty();
+            $.ajax({
+                url: "/Group/AddGroupModal",
+                type: "GET",
+                data: { groupId },
+                success: function (response) {
+                    if (!response.statusCode) {
                         $("#regularModalContent").html(response);
+                        $("#regularModal").modal("show");
                     }
-                }
-            },
-            error: function (xhr, status, error) {
-                toastr.error('@NotificationMessages.InternalServerError');
-            }
-        });
-    });
-</script>
-
-@* Group list *@
-<script>
-    sortColumn = "";
-    sortOrder = "";
-
-    $("#groupListSearch").on("input", function () {
-        if (searchTimeout === null) {
-            searchTimeout = setTimeout(function () {
-                getGroupList(1);
-            }, 500);
+                },
+                error: function () {
+                    $("#regularModal").modal("hide");
+                    toastr.error('@(NotificationMessages.CanNot.Replace("{0}", "add friend"))');
+                },
+            });
         }
-    });
 
-    $(document).ready(function () {
-        getGroupList(1);
-    });
+        // Save group
+        $(document).on("submit", "#groupForm", function (e) {
+            e.preventDefault();
 
-    function getGroupList(currentPage) {
-        clearTimeout(searchTimeout);
-        searchTimeout = null;
+            let formData = new FormData(this);
 
-        let filter = {
-            PageNumber: currentPage,
-            PageSize: $("#groupListPageSize").val(),
-            SearchString: $("#groupListSearch").val(),
-            SortColumn: sortColumn,
-            SortOrder: sortOrder
-        };
-
-        $.ajax({
-            url: "/Group/GroupList",
-            type: "POST",
-            data: { filter },
-            success: function (response) {
-                if (!response.statusCode) {
-                    if (response.success == false) {
-                        toastr.error(response.message);
+            $.ajax({
+                url: $(this).attr("action"),
+                type: $(this).attr("method"),
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (!response.statusCode) {
+                        if (response.success) {
+                            toastr.success(response.message);
+                            $("#regularModal").modal("hide");
+                            getGroupList(1);
+                        }
+                        else if (response.success == false) {
+                            toastr.error(response.message);
+                        }
+                        else {
+                            $("#regularModalContent").html(response);
+                        }
                     }
-                    else {
-                        $("#groupListOuter").html(response);
-                    }
+                },
+                error: function (xhr, status, error) {
+                    toastr.error('@NotificationMessages.InternalServerError');
                 }
-            },
-            error: function () {
-                toastr.error('@NotificationMessages.InternalServerError');
+            });
+        });
+    </script>
+
+    @* Group list *@
+    <script>
+        $(document).ready(function () {
+            getGroupList(1);
+        });
+
+        sortColumn = "";
+        sortOrder = "";
+
+        $("#groupListSearch").on("input", function () {
+            if (searchTimeout === null) {
+                searchTimeout = setTimeout(function () {
+                    getGroupList(1);
+                }, 500);
             }
         });
-    }
 
-    // Handle sorting
-    $(document).on("click", ".sortBtn", function () {
-        sortColumn = $(this).data("column");
-        sortOrder = $(this).data("order");
-        getGroupList(1);
-    });
-</script>
-
-@* Delte group *@
-<script>
-    // Delete group
-    function deleteGroup(groupId) {
-        $.ajax({
-            url: "/Group/DeleteGroup",
-            type: "POST",
-            data: { groupId },
-            success: function (response) {
-                if (!response.statusCode) {
-                    if (response.success == true) {
-                        toastr.success(response.message);
-                        getGroupList(1);
-                    }
-                    else {
-                        toastr.error(response.message);
-                    }
-                }
-            },
-            error: function () {
-                toastr.error('@NotificationMessages.InternalServerError');
-            }
+        $(document).ready(function () {
+            getGroupList(1);
         });
-    }
-</script>
+
+        function getGroupList(currentPage = 1) {
+            clearTimeout(searchTimeout);
+            searchTimeout = null;
+
+            let filter = {
+                PageNumber: currentPage,
+                PageSize: $("#groupListPageSize").val(),
+                SearchString: $("#groupListSearch").val(),
+                SortColumn: sortColumn,
+                SortOrder: sortOrder
+            };
+
+            $.ajax({
+                url: "/Group/GroupList",
+                type: "POST",
+                data: { filter },
+                success: function (response) {
+                    if (!response.statusCode) {
+                        if (response.success == false) {
+                            toastr.error(response.message);
+                        }
+                        else {
+                            $("#groupListOuter").html(response);
+                        }
+                    }
+                },
+                error: function () {
+                    toastr.error('@NotificationMessages.InternalServerError');
+                }
+            });
+        }
+
+        // Handle sorting
+        $(document).on("click", ".sortBtn", function () {
+            sortColumn = $(this).data("column");
+            sortOrder = $(this).data("order");
+            getGroupList(1);
+        });
+    </script>
+
+    @* Delte group *@
+    <script>
+        // Delete group
+        function deleteGroupConfirm(groupId) {
+            $.ajax({
+                url: "/Group/DeleteGroup",
+                type: "POST",
+                data: { groupId },
+                success: function (response) {
+                    if (!response.statusCode) {
+                        if (response.success == true) {
+                            toastr.success(response.message);
+                            $("#confirmationModal").modal("hide");
+                            getGroupList(1);
+                        }
+                        else {
+                            toastr.error(response.message);
+                        }
+                    }
+                },
+                error: function () {
+                    toastr.error('@NotificationMessages.InternalServerError');
+                }
+            });
+        }
+        function deleteGroup(groupId, groupName) {
+            $("#confirmationModalTitle").text(`Delete Group`);
+            $("#confirmationModalBody").text(`Are you sure you want to delete ${groupName} group?`);
+            $("#confirmationModalYesBtn").attr("onclick", `deleteGroupConfirm(${groupId})`);
+            $("#confirmationModal").modal("show");
+        }
+    </script>
+
+    @* Export groups *@
+    <script>
+        function exportGroups() {
+            let filter = {
+                SearchString: $("#groupListSearch").val()
+            };
+
+            exportDataAjax(filter, "/Group/ExportGroups", "Groups");
+        }
+    </script>
+}

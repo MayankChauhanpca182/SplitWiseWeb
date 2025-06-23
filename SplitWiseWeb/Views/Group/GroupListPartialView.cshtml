@@ -38,15 +38,15 @@
                     </td>
                     <td>@group.Expense</td>
                     <td class="text-center">
-                        <a class="btn border-0" title="Group Dashboard" onclick="getPage('groupDetails/@group.Id', 'groupsPageNav')">
+                        <a asp-action="GroupDetails" asp-controller="Group" asp-route-groupId="@group.Id" class="btn border-0" title="Dashboard">
                             <i class="fa-solid fa-window-maximize"></i>
                         </a>
-                        <a class="btn border-0" title="Edit group" onclick="fetchAddGroupModal(@group.Id)">
+                        <a class="btn border-0" title="Edit" onclick="fetchAddGroupModal(@group.Id)">
                             <i class="bi bi-pencil-square"></i>
                         </a>
-                        <a class="btn border-0" title="Delete group" onclick="deleteGroup(@group.Id)">
+                        <button type="button" class="btn border-0" title="Delete" onclick="deleteGroup(@group.Id, '@group.Name')">
                             <i class="bi bi-trash text-danger"></i>
-                        </a>
+                        </button>
                     </td>
                 </tr>
             }

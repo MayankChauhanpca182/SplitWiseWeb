@@ -15,7 +15,7 @@ public class Group : AuditFields
     [MaxLength(2000)]
     public string NoticeBoard { get; set; }
 
-    public int CurrencyId { get; set; } = 1;
+    public int CurrencyId { get; set; } = 23;
     public bool IsSimplifiedPayments { get; set; } = false;
 
     [MaxLength(1000)]

@@ -8,7 +8,7 @@ namespace SplitWiseRepository.ViewModels;
 public class ExpenseVM
 {
     public int Id { get; set; } = 0;
-    public int GroupId { get; set; } = 0;
+    public int? GroupId { get; set; }
 
     [Required(ErrorMessage = ValidationMessages.ExpenseTitleRequired)]
     [StringLength(100, ErrorMessage = ValidationMessages.ExpenseTitleRequired)]

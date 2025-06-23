@@ -97,7 +97,7 @@ public class GroupService : IGroupService
                     exisitngGroup.NoticeBoard = newGroupVm.NoticeBoard;
                     exisitngGroup.CurrencyId = newGroupVm.CurrencyId;
                     exisitngGroup.IsSimplifiedPayments = newGroupVm.IsSimplifiedPayments;
-                    if (newGroupVm.ImagePath != null)
+                    if (newGroupVm.Image != null)
                     {
                         exisitngGroup.ImagePath = ImageHelper.UploadImage(newGroupVm.Image, exisitngGroup.ImagePath);
                     }
@@ -119,7 +119,7 @@ public class GroupService : IGroupService
                     UpdatedAt = DateTime.Now,
                     UpdatedById = currentUser.Id
                 };
-                if (newGroupVm.ImagePath != null)
+                if (newGroupVm.Image != null)
                 {
                     newGroup.ImagePath = ImageHelper.UploadImage(newGroupVm.Image);
                 }
@@ -177,7 +177,9 @@ public class GroupService : IGroupService
         {
             Id = g.Id,
             Name = g.Name,
-            ImagePath = g.ImagePath
+            ImagePath = g.ImagePath,
+            IsSimplifiedPayments = g.IsSimplifiedPayments,
+            NoticeBoard = g.NoticeBoard
         }).ToList();
         paginatedList.Page.SetPagination(paginatedItems.totalRecords, filter.PageSize, filter.PageNumber);
 
@@ -314,15 +316,37 @@ public class GroupService : IGroupService
             await _groupMemberRepository.Update(groupMember);
 
             User user = await _userService.GetById(groupMember.UserId);
-            Group group = await _groupRepository.Get(g => g.Id == groupMember.GroupId);
-            if (user != null)
+            Group group = await _groupRepository.Get(
+                predicate: g => g.Id == groupMember.GroupId,
+                includes: new List<Expression<Func<Group, object>>>
+                {
+                    g => g.GroupMembers
+                }
+                );
+
+            // Delete group if no members
+            if (!group.GroupMembers.Any(gm => gm.DeletedAt == null))
             {
-                // Send email
-                await _emailService.RemovedFromGroupEmail(user.FirstName, $"{currentUser.FirstName} {currentUser.LastName}", group.Name, user.EmailAddress);
+                group.DeletedAt = DateTime.Now;
+                group.DeletedById = currentUser.Id;
+                await _groupRepository.Update(group);
             }
 
             response.Success = true;
-            response.Message = NotificationMessages.MemberRemovedFromGroup.Replace("{0}", $"{user.FirstName} {user.LastName}").Replace("{1}",group.Name);
+            response.Message = NotificationMessages.MemberRemovedFromGroup.Replace("{0}", $"{user.FirstName} {user.LastName}").Replace("{1}", group.Name);
+
+            if (user != null)
+            {
+                if (user.Id == currentUser.Id)
+                {
+                    response.Message = NotificationMessages.LeaveGroup.Replace("{0}", group.Name);
+                }
+                else
+                {
+                    // Send email
+                    await _emailService.RemovedFromGroupEmail(user.FirstName, $"{currentUser.FirstName} {currentUser.LastName}", group.Name, user.EmailAddress);
+                }
+            }
 
             // Commit transaction
             await _transaction.Commit();
@@ -334,5 +358,19 @@ public class GroupService : IGroupService
             await _transaction.Rollback();
             throw;
         }
+    }
+
+    public async Task<byte[]> ExportGroups(FilterVM filter)
+    {
+        PaginatedListVM<GroupVM> paginatedList = await GroupList(filter);
+        if (!paginatedList.List.Any())
+        {
+            return null;
+        }
+        List<string> columns = new List<string>
+        {
+            "Name", "Noticeboard", "IsSimplifiedPayments", "Expense"
+        };
+        return ExcelExportHelper.ExportToExcel(paginatedList.List, columns, "Groups");
     }
 }

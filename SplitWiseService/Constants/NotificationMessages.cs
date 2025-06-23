@@ -88,5 +88,6 @@ public static class NotificationMessages
 
     // Group
     public const string MemberAddedToGroup = "{0} has been successfully added to {1}.";
-    public const string MemberRemovedFromGroup = "{0} has been successfully removed from {1}.";
+    public const string MemberRemovedFromGroup = "{0} has been removed from {1} successfully.";
+    public const string LeaveGroup = "You have been left group {0} successfully.";
 }

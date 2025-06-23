@@ -46,9 +46,9 @@
                         }
                         else
                         {
-                            <a class="btn border-0" title="Remove Friend" onclick="removeFriend(@friend.FriendId)">
+                            <button type="button" class="btn border-0" title="Remove Friend" onclick="removeFriend(@friend.FriendId, '@friend.Name')">
                                 <i class="bi bi-person-x-fill text-danger"></i>
-                            </a>
+                            </button>
                         }
                     </td>
                 </tr>

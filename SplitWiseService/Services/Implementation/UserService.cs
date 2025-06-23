@@ -70,7 +70,7 @@ public class UserService : IUserService
                 LastName = registerUserVM.LastName,
                 EmailAddress = registerUserVM.Email,
                 PasswordHash = PasswordHelper.Hash(registerUserVM.Password),
-                CurrencyId = 1,
+                CurrencyId = 23,
                 ProfileImagePath = ImageHelper.GetRandomImage(),
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now

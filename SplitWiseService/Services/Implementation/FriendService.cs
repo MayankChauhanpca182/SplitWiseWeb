@@ -80,11 +80,17 @@ public class FriendService : IFriendService
                 response.Success = false;
                 response.Message = NotificationMessages.AlreadyFriend.Replace("{0}", $"{requestedUser.FirstName} {requestedUser.LastName}");
             }
+            else
+            {
+                response.Success = true;
+            }
+            return response;
         }
         else
         {
             response.Success = true;
         }
+
         return response;
     }
 
@@ -404,7 +410,7 @@ public class FriendService : IFriendService
                 && (groupId != 0
                     ? (f.Friend1 == currentUserId
                         ? !f.Friend2UserNavigation.GroupMembers.Any(gm => gm.GroupId == groupId && gm.DeletedAt == null)
-                        : !f.Friend1UserNavigation.GroupMembers.Any(gm => gm.GroupId == groupId && gm.DeletedAt == null))  
+                        : !f.Friend1UserNavigation.GroupMembers.Any(gm => gm.GroupId == groupId && gm.DeletedAt == null))
                     : true)
                 && (string.IsNullOrEmpty(filter.SearchString)
                     || (f.Friend1 == currentUserId
@@ -517,7 +523,11 @@ public class FriendService : IFriendService
         {
             return null;
         }
-        return ExcelExportHelper.ExportToExcel(paginatedList.List, "Friends");
+        List<string> columns = new List<string>
+        {
+            "Name", "EmailAddress"
+        };
+        return ExcelExportHelper.ExportToExcel(paginatedList.List, columns, "Friends");
     }
 
 }

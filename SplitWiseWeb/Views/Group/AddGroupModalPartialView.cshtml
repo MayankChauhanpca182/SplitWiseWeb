@@ -9,6 +9,7 @@
     <div class="modal-body">
         <!-- Image -->
         <input asp-for="@Model.Id" hidden>
+        <input asp-for="@Model.CurrencyId" hidden>
         <input asp-for="@Model.Image" accept="image/png, image/jpg, image/jpeg" hidden>
 
         <label asp-for="@Model.Image" class="cursor-pointer" title="Click to select an image" style="width: 100px;">
@@ -26,7 +27,7 @@
         <!-- Norice board -->
         <div class="input-group mt-4 rounded-0">
             <textarea asp-for=@Model.NoticeBoard class="form-control border-secondary-subtle rounded-0"
-                placeholder="Notice..." rows="3"></textarea>
+                placeholder="Notice board" rows="3"></textarea>
         </div>
 
         <!-- Simplified payment cbk -->
@@ -40,7 +41,7 @@
 
         <!-- Currency -->
         <div class="input-group mt-4 rounded-0">
-            <select asp-for="@Model.CurrencyId" class="form-select rounded-0 border-secondary-subtle">
+            <select asp-for="@Model.CurrencyId" class="form-select rounded-0 border-secondary-subtle" disabled>
                 @foreach (Currency currency in Model.Currencies)
                 {
                     <option value="@currency.Id">@currency.Name</option>

@@ -41,9 +41,9 @@
                         <a href="#" class="btn border-0" title="Accept" onclick="acceptRequest(@request.Id)">
                             <i class="bi bi-check-lg text-success fs-6"></i>
                         </a>
-                        <a href="#" class="btn border-0" title="Reject" onclick="rejectRequest(@request.Id)">
+                        <button type="button" class="btn border-0" title="Reject" onclick="rejectRequest(@request.Id, '@request.Name')">
                             <i class="bi bi-trash text-danger fs-6"></i>
-                        </a>
+                        </button>
                     </td>
                 </tr>
             }

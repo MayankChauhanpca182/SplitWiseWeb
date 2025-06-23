@@ -106,7 +106,8 @@ public class UserController : Controller
     [Route("changePassword")]
     public IActionResult ChangePassword()
     {
-        return PartialView("ChangePassword");
+        ViewData["ActiveLink"] = "Change Password";
+        return View("ChangePassword");
     }
 
     // POST ChangePassword
@@ -120,15 +121,14 @@ public class UserController : Controller
         }
 
         ResponseVM response = await _passwordResetService.ChangePassword(passwordReset);
-        return Json(response);
-        // if (!response.Success)
-        // {
-        //     TempData["errorMessage"] = response.Message;
-        //     return View(passwordReset);
-        // }
+        if (!response.Success)
+        {
+            TempData["errorMessage"] = response.Message;
+            return View(passwordReset);
+        }
 
-        // TempData["successMessage"] = response.Message;
-        // return RedirectToAction("Logout", "Auth");
+        TempData["successMessage"] = response.Message;
+        return RedirectToAction("Logout", "Auth");
     }
     #endregion
 
@@ -138,7 +138,8 @@ public class UserController : Controller
     [Route("profile")]
     public async Task<IActionResult> Profile()
     {
-        return PartialView("Profile", await _userService.GetProfile());
+        ViewData["ActiveLink"] = "Profile";
+        return View("Profile", await _userService.GetProfile());
     }
 
     // POST Profile
@@ -148,20 +149,32 @@ public class UserController : Controller
     {
         if (!ModelState.IsValid)
         {
-            return PartialView("Profile", await _userService.GetProfile());
+            return View("Profile", await _userService.GetProfile());
         }
 
         ResponseVM response = await _userService.Update(newUser);
-        CookieOptions options = new CookieOptions
+        if (!response.Success)
         {
-            Expires = DateTime.Now.AddHours(24),
-            HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.Strict
-        };
-        Response.Cookies.Append("UserName", response.Name, options);
-        Response.Cookies.Append("ProfileImagePath", response.ImagePath, options);
-        return Json(response);
+            TempData["errorMessage"] = response.Message;
+            return View("Profile", await _userService.GetProfile());
+        }
+        else
+        {
+            User user = await _userService.LoggedInUser();
+            CookieOptions options = new CookieOptions
+            {
+                Expires = DateTime.Now.AddHours(24),
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict
+            };
+            Response.Cookies.Append("UserName", $"{user.FirstName} {user.LastName}", options);
+            Response.Cookies.Append("ProfileImagePath", user.ProfileImagePath, options);
+
+            TempData["successMessage"] = response.Message;
+        }
+
+        return RedirectToAction("Profile");
     }
     #endregion
 

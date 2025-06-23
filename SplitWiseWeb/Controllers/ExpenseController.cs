@@ -10,7 +10,7 @@ public class ExpenseController : Controller
     }
 
     // GET AddExpenseModal
-    public IActionResult AddExpenseModal(int expenseId = 0)
+    public IActionResult AddExpenseModal(int expenseId = 0, int groupId = 0)
     {
         ExpenseVM expense = new ExpenseVM();
         if (expenseId > 0)
