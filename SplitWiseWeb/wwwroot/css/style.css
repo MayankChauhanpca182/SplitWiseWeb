@@ -162,6 +162,11 @@ button {
     box-shadow: none !important;
 }
 
+input, textarea {
+    border-color: #c4c8cb !important;
+    border-radius: 0 !important;
+}
+
 
 @media (max-width: 576px) {
     #loginFormOuter {
@@ -294,4 +299,23 @@ footer.footer {
 
 .removeExpenseMemberBtn{
     font-size: 11px;
+}
+
+/* Expense */
+.selectedMembersDiv{
+    width: 500px;
+}
+
+.dropdownList{
+    transform: translate(0, 40px) !important;
+}
+
+@media (max-width: 767px) {
+    .selectedMembersDiv{
+        width: 285px;
+    }
+    
+    .dropdownList{
+        transform: translate(0, 40px) !important;
+    }
 }

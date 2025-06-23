@@ -23,5 +23,5 @@ public class ExceptionLog
     [Required]
     [MaxLength(100)]
     public string MachineName { get; set; }
-    public virtual User User { get; set; } = null!;
+    // public virtual User User { get; set; } = null!;
 }

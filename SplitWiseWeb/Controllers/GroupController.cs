@@ -1,8 +1,5 @@
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using AspNetCoreGeneratedDocument;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using SmartBreadcrumbs.Attributes;
 using SplitWiseRepository.ViewModels;
 using SplitWiseService.Constants;
@@ -10,6 +7,7 @@ using SplitWiseService.Services.Interface;
 
 namespace SplitWiseWeb.Controllers;
 
+[Authorize]
 public class GroupController : Controller
 {
     private readonly IGroupService _groupService;

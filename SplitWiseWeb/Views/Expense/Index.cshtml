@@ -1,0 +1,18 @@
+@{
+    ViewData["Title"] = "Expenses";
+}
+
+<breadcrumb></breadcrumb>
+<h3 class="bg-white mb-3 p-3 text-dark-emphasis shadow">Expenses</h3>
+
+<div class="d-flex justify-content-between gap-3 mb-3">
+    <div class="d-flex align-items-center gap-2">
+        <span class="text-nowrap fw-semibold fs-4">Individual Expenses:</span>
+        <input type="text" class="searchBox form-control border-secondary-subtle rounded-0" id="individualExpenseListSearch" placeholder="Search">
+    </div>
+    <div class="d-flex gap-2">
+        @* <button class="btn btn-secondary" type="button" onclick="exportIndividualExpenses()">Export</button> *@
+        <a asp-action="AddExpense" asp-controller="Expense" as class="btn btn-primary" type="button">Add individual expense</a>
+    </div>
+</div>
+<div id="individualExpenseListOuter" class="listOuter bg-white"></div>

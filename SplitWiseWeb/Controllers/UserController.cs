@@ -1,4 +1,4 @@
-using System.Reflection.Metadata.Ecma335;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SmartBreadcrumbs.Attributes;
 using SplitWiseRepository.Models;
@@ -8,11 +8,11 @@ using SplitWiseService.Services.Interface;
 
 namespace SplitWiseWeb.Controllers;
 
+[Authorize]
 public class UserController : Controller
 {
     private readonly IUserService _userService;
     private readonly IPasswordResetService _passwordResetService;
-
 
     public UserController(IUserService userService, IPasswordResetService passwordResetService)
     {

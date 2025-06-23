@@ -74,26 +74,6 @@ $(document).on("submit", "#sendReferralForm", function (e) {
     });
 });
 
-// Get friend request modal
-function fetchAddExpenseModal(expenseId = 0) {
-    $("#regularModalContent").empty();
-    $.ajax({
-        url: "/Expense/AddExpenseModal",
-        type: "GET",
-        data: {expenseId},
-        success: function (response) {
-            if (!response.statusCode) {
-                $("#regularModalContent").html(response);
-                $("#regularModal").modal("show");
-            }
-        },
-        error: function () {
-            $("#regularModal").modal("hide");
-            toastr.error("Internal server error.");
-        },
-    });
-}
-
 // Export to excel
 function exportDataAjax(filter, url, fileName) {
     $.ajax({

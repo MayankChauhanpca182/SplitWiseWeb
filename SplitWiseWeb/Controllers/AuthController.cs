@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.ViewModels;
-using SplitWiseService.Constants;
 using SplitWiseService.Services.Interface;
 
 namespace SplitWiseWeb.Controllers;

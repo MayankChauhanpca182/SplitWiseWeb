@@ -51,7 +51,6 @@
                 </a>
             </div>
             <div class="d-flex align-items-center gap-3">
-                @* <button class="btn btn-navbar d-none d-sm-block" type="button" onclick="fetchAddExpenseModal(0)">Add Expense</button> *@
                 <button class="btn btn-navbar d-none d-sm-block" type="button" onclick="fetchAddFriendModal()">Add Friend</button>
 
                 <div class="dropdown">
@@ -95,6 +94,11 @@
                         class="navItems d-flex align-items-center gap-3 @((ViewData["ActiveLink"] as string) == "Dashboard" ? "active" : "")">
                         <i class="fa-solid fa-window-maximize"></i>
                         Dashboard
+                    </a>
+                    <a asp-action="Index" asp-controller="Expense"
+                        class="navItems d-flex align-items-center gap-3 @((ViewData["ActiveLink"] as string) == "Expenses" ? "active" : "")">
+                        <i class="bi bi-diagram-3-fill"></i>
+                        Expenses
                     </a>
                     <a asp-action="Index" asp-controller="Group"
                         class="navItems d-flex align-items-center gap-3 @((ViewData["ActiveLink"] as string) == "Groups" ? "active" : "")">
