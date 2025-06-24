@@ -32,7 +32,7 @@ $("#loader").show();
 $(document).ready(function () {
   $("#loader").hide();
 
-  $(document).on("submit", "form", function (e) {
+  $(document).on("submit", ".loaderForm", function (e) {
     $("#loader").show();
   });
 
@@ -109,14 +109,16 @@ $(document).on("click", "#hamBurger", function () {
 // On focus select value
 $(document).on("focus", "input", function () {
   $(this).select();
+  oldvalue = $(this).val();
 });
 
 // Format to INR
 function formatToINR(amount) {
-  return new Intl.NumberFormat("en-IN", {
+  let formatedAmount = new Intl.NumberFormat("en-IN", {
     style: "currency",
     currency: "INR",
     maximumFractionDigits: 2,
   }).format(amount);
+  return formatedAmount.replace("₹", "");
 }
 

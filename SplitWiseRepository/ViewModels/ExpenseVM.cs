@@ -16,10 +16,9 @@ public class ExpenseVM
     public string Title { get; set; }
 
     [Required(ErrorMessage = ValidationMessages.ExpenseAmountRequired)]
-    [Range(0, 10000000, ErrorMessage = ValidationMessages.ValidExpenseAmount)]
-    public decimal Amount { get; set; } = 0;
+    public string Amount { get; set; } = "0";
 
-    public int CategoryId { get; set; }
+    public int CategoryId { get; set; } = 16;
     public List<Category> Categories { get; set; } = new List<Category>();
 
     [Required(ErrorMessage = ValidationMessages.CurrencyRequired)]
@@ -35,7 +34,7 @@ public class ExpenseVM
     [Required(ErrorMessage = ValidationMessages.PaymentDateRequired)]
     [DataType(DataType.Date)]
     [NoFutureDate(ErrorMessage = ValidationMessages.NoFuturePaymentDate)]
-    public DateTime? PaidDate { get; set; } = DateTime.Today;
+    public DateTime PaidDate { get; set; } = DateTime.Today;
 
     [Required(ErrorMessage = ValidationMessages.SplitTypeRequired)]
     public SplitType SplitTypeEnum { get; set; } = 0;

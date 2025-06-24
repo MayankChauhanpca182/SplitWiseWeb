@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -36,9 +37,15 @@ public class ExpenseController : Controller
     }
 
     // POST SaveExpense
-    public IActionResult SaveExpense(ExpenseVM newExpense)
+    public async Task<IActionResult> SaveExpense(ExpenseVM newExpense, string expenseMembersJson)
     {
-        return View("AddExpense");
+        if (!string.IsNullOrEmpty(expenseMembersJson))
+        {
+            newExpense.ExpenseShares = JsonSerializer.Deserialize<List<ExpenseShareVM>>(expenseMembersJson);
+        }
+
+        ResponseVM response = await _expenseService.SaveExpense(newExpense);
+        return Json(response);
     }
 
 }
