@@ -77,12 +77,12 @@
 
     @* Group list *@
     <script>
+        sortColumn = "";
+        sortOrder = "";
+
         $(document).ready(function () {
             getGroupList(1);
         });
-
-        sortColumn = "";
-        sortOrder = "";
 
         $("#groupListSearch").on("input", function () {
             if (searchTimeout === null) {
@@ -90,10 +90,6 @@
                     getGroupList(1);
                 }, 500);
             }
-        });
-
-        $(document).ready(function () {
-            getGroupList(1);
         });
 
         function getGroupList(currentPage = 1) {

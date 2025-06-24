@@ -145,7 +145,7 @@ public class GroupService : IGroupService
     public async Task<PaginatedListVM<GroupVM>> GroupList(FilterVM filter)
     {
         int currentUserId = _userService.LoggedInUserId();
-        filter.SearchString = string.IsNullOrEmpty(filter.SearchString) ? "" : filter.SearchString.Replace(@"\s+", "").ToLower();
+        string searchString = string.IsNullOrEmpty(filter.SearchString) ? "" : filter.SearchString.Replace(@"\s+", "").ToLower();
 
         Func<IQueryable<Group>, IOrderedQueryable<Group>> orderBy = q => q.OrderBy(g => g.Id);
         if (!string.IsNullOrEmpty(filter.SortColumn))
@@ -162,7 +162,7 @@ public class GroupService : IGroupService
 
         PaginatedItemsVM<Group> paginatedItems = await _groupRepository.PaginatedList(
             predicate: g => g.GroupMembers.Any(gm => gm.UserId == currentUserId && gm.DeletedAt == null) && g.DeletedAt == null
-                            && (string.IsNullOrEmpty(filter.SearchString) || g.Name.ToLower().Contains(filter.SearchString)),
+                            && (string.IsNullOrEmpty(searchString) || g.Name.ToLower().Contains(searchString)),
             orderBy: orderBy,
             includes: new List<Expression<Func<Group, object>>>
             {
@@ -181,7 +181,7 @@ public class GroupService : IGroupService
             IsSimplifiedPayments = g.IsSimplifiedPayments,
             NoticeBoard = g.NoticeBoard
         }).ToList();
-        paginatedList.Page.SetPagination(paginatedItems.totalRecords, filter.PageSize, filter.PageNumber);
+        paginatedList.Page.SetPagination(paginatedItems.TotalRecords, filter.PageSize, filter.PageNumber);
 
         return paginatedList;
     }

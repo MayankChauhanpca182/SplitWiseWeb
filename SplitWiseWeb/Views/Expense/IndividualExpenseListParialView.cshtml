@@ -1,0 +1,91 @@
+@model PaginatedListVM<ExpenseVM>
+
+<div class="table-responsive bg-white px-2">
+    <table class="table text-nowrap">
+        <thead class="position-sticky top-0 z-1">
+            <tr>
+                <th scope="col" class="col-4">
+                    <span class="text-clr-grey text-dark-emphasis">Name</span>
+                    <button class="btn p-0 sortBtn" data-column="title" data-order="asc" title="Asc">
+                        <i class="bi bi-arrow-up"></i>
+                    </button>
+                    <button class="btn p-0 sortBtn" data-column="title" data-order="desc" title="Desc">
+                        <i class="bi bi-arrow-down"></i>
+                    </button>
+                </th>
+                <th scope="col" class="col-4">
+                    <span class="text-clr-grey text-dark-emphasis">Expense</span>
+                </th>
+                <th scope="col" class="col-4 text-center">
+                    <span class="text-clr-grey text-dark-emphasis">Date</span>
+                    <a class="btn p-0 sortBtn" data-column="date" data-order="asc" title="Asc">
+                        <i class="bi bi-arrow-up"></i>
+                    </a>
+                    <a class="btn p-0 sortBtn" data-column="date" data-order="desc" title="Desc">
+                        <i class="bi bi-arrow-down"></i>
+                    </a>
+                </th>
+                <th scope="col" class="col-4 text-center">
+                    <span class="text-clr-grey text-dark-emphasis">Actions</span>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (ExpenseVM expense in Model.List)
+            {
+                <tr>
+                    <td>
+                        <span class="ms-2">@expense.Title</span>
+                    </td>
+                    <td class="@(expense.NetAmount == 0 ? "text-dark" : (expense.NetAmount > 0 ? "text-success" : "text-danger"))">
+                        @(expense.NetAmount == 0 ? $"Expense is settled" : (expense.NetAmount > 0 ? $"You owe ₹{expense.NetAmount}" : $"Owes you ₹{(-1)*expense.NetAmount}"))
+                    </td>
+                    <td class="text-center">
+                        <span class="ms-2">@expense.PaidDate.ToString("dd-MM-yyyy")</span>
+                    </td>
+                    <td class="text-center">
+                        <a asp-action="ViewExpense" asp-controller="Expense" asp-route-expenseId="@expense.Id" class="btn border-0" title="Dashboard">
+                            <i class="fa-solid fa-window-maximize"></i>
+                        </a>
+                        <a asp-action="AddExpense" asp-controller="Expense" asp-route-expenseId="@expense.Id" class="btn border-0" title="Edit">
+                            <i class="bi bi-pencil-square"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@if (!(Model.Page.TotalRecord > 0))
+{
+    <p class="p-4 text-center">No expenses found</p>
+}
+else
+{
+    <!-- Pagination -->
+    <div class="pagination d-flex flex-column flex-sm-row justify-content-end align-items-sm-center mt-3 px-1 pb-3">
+        <div class="d-flex align-items-center">
+            <span class="mx-1">Items Per page: </span>
+            <select class="form-select w-auto mx-1" id="individualExpensePageSize" onchange="getIndividualExpenseList(1)"
+                aria-label="Default select example" title="Page sige">
+                <option value="5" selected="@(Model.Page.PageSize == 5 ? true : false)">5</option>
+                <option value="10" selected="@(Model.Page.PageSize == 10 ? true : false)">10</option>
+                <option value="15" selected="@(Model.Page.PageSize == 15 ? true : false)">15</option>
+            </select>
+        </div>
+        <span class="mx-1">
+            Showing @Model.Page.FromRec - @Model.Page.ToRec of @Model.Page.TotalRecord
+        </span>
+        <div>
+            <button class="btn p-1 border @(Model.Page.CurrentPage > 1 ? " " : "disabled")"
+                onclick="getIndividualExpenseList(@Model.Page.CurrentPage-1)" title="Prev page">
+                <i class="bi bi-chevron-left p-1"></i>
+            </button>
+            <button class="btn p-1 border @(Model.Page.CurrentPage < Model.Page.TotalPages ? " " : "disabled")"
+                onclick="getIndividualExpenseList(@Model.Page.CurrentPage+1)" title="Next page">
+                <i class="bi bi-chevron-right p-1"></i>
+            </button>
+        </div>
+    </div>
+    <!-- Pagination end -->
+}

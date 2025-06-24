@@ -2,7 +2,6 @@
 @model ExpenseVM
 @{
     ViewData["Title"] = "Add Expense";
-    string currentUserFullName = $"{Model.CurrentUser.FirstName} {Model.CurrentUser.LastName}";
 }
 
 <breadcrumb></breadcrumb>
@@ -11,8 +10,9 @@
     <form asp-action="SaveExpense" asp-controller="Expense" id="addExpenseForm"
         class="d-flex flex-column gap-3 p-3 bg-white col-12 col-lg-7" enctype="multipart/form-data">
 
-        <input type="text" name="expenseMembersJson" id="expenseMembersJson" hidden>
+        <input asp-for="@Model.Id" hidden>
         <input asp-for="@Model.CurrencyId" hidden>
+        <input type="text" name="expenseMembersJson" id="expenseMembersJson" hidden>
 
         <!-- New design -->
         <div class="">
@@ -20,13 +20,15 @@
             <div class="d-flex flex-wrap gap-3 align-items-center col-12">
                 <div class="btn-group w-100">
                     <div class="memberPillDiv d-flex gap-2 border border-secondary-subtle overflow-x-auto w-100 p-2">
-                        <span class="expenseMemberPill" id="expenseMemberPill-@Model.CurrentUser.Id">
-                            <img src=@(Model.CurrentUser.ProfileImagePath ?? "/images/Default_pfp.png")>
-                            <span>@currentUserFullName</span>
-                            <button type="button" class="btn-close removeMember" aria-label="Close"
-                                onclick="removePill(@Model.CurrentUser.Id)"></button>
-                        </span>
-                        <!-- Loop to display group members -->
+                        @foreach (ExpenseShareVM share in Model.ExpenseShares)
+                        {
+                            <span class="expenseMemberPill" id="expenseMemberPill-@share.UserId">
+                                <img src=@(share.ProfileImagePath ?? "/images/Default_pfp.png")>
+                                <span>@share.UserName</span>
+                                <button type="button" class="btn-close removeMember" aria-label="Close"
+                                    onclick="removePill(@share.UserId)"></button>
+                            </span>
+                        }
 
                     </div>
                     <button type="button"
@@ -39,7 +41,7 @@
                         {
                             <li class="d-flex align-items-center gap-2 px-2">
                                 <input class="userCkb form-check-input m-0" type="checkbox" id="userCkb-@user.UserId"
-                                    @(user.UserId == Model.CurrentUser.Id ? "checked" : "")
+                                    @(Model.ExpenseShares.Any(es => es.UserId == user.UserId) ? "checked" : "")
                                     data-user='@(Html.Raw(Json.Serialize(user)))'>
                                 <label for="userCkb-@user.UserId" class="d-flex align-items-center gap-2">
                                     <img src=@(user.ProfileImagePath ?? "/images/Default_pfp.png") alt=""
@@ -119,8 +121,11 @@
             <!-- Paid by -->
             <div class="form-floating col">
                 <select asp-for="@Model.PaidById" class="form-select" id="paidBySelect">
-                    <option value="@Model.CurrentUser.Id" id="paidByOption-@Model.CurrentUser.Id">
-                        @currentUserFullName</option>
+                    @foreach (ExpenseShareVM share in Model.ExpenseShares)
+                    {
+                        <option value="@share.UserId" id="paidByOption-@share.UserId">
+                            @share.UserName</option>
+                    }
                 </select>
                 <label asp-for="@Model.PaidById">Paid by</label>
                 <span class="text-danger" asp-validation-for="@Model.PaidById"></span>
@@ -149,39 +154,48 @@
             </div>
             <div class="col"></div>
         </div>
-
-        <div class="d-flex gap-2">
-            <!-- Attachment -->
-            <div class="d-flex align-items-center gap-2 col">
-                <label class="btn btn-secondary" asp-for="@Model.Attachment">Attachment</label>
-                <input asp-for=@Model.Attachment class="form-control rounded-2 border-secondary-subtle" hidden>
-                <span id="previewText"></span>
+        
+        @if (!Model.IsViewOnly)
+        {
+            <div class="d-flex gap-2">
+                <!-- Attachment -->
+                <div class="d-flex align-items-center gap-2 col">
+                    <label class="btn btn-secondary" asp-for="@Model.Attachment">Attachment</label>
+                    <input asp-for=@Model.Attachment class="form-control rounded-2 border-secondary-subtle" hidden>
+                    <span id="previewText"></span>
+                </div>
             </div>
-        </div>
-
-        <!-- Submit buttons -->
-        <div>
-            <button type="submit" class="btn btn-primary">Save</button>
-            <a asp-action="Index" asp-controller="Expense" class="btn btn-secondary">Cancel</a>
-        </div>
+        
+            <!-- Submit buttons -->
+            <div>
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a asp-action="Index" asp-controller="Expense" class="btn btn-secondary">Cancel</a>
+            </div>
+        }
     </form>
 
     <div class="bg-white w-100 p-3 col">
         <span class="fs-5 fw-semibold" id="splitTypeText">Split equally</span>
         <div id="expenseShareDiv" class="mb-3">
-            <div class="expenseShare" id="expenseShare-@Model.CurrentUser.Id">
-                <span>
-                    <img src=@(Model.CurrentUser.ProfileImagePath ?? "/images/Default_pfp.png")>
-                    @currentUserFullName
-                </span>
-                <span>
-                    <input type="text" class="amount form-control" id="amount-@Model.CurrentUser.Id" value="0" disabled>
-                    <span class="expenseShareTypeSymbole">Rs</span>
-                </span>
-            </div>
+            @foreach (ExpenseShareVM share in Model.ExpenseShares)
+            {
+                <div class="expenseShare" id="expenseShare-@share.UserId">
+                    <span>
+                        <img src=@(share.ProfileImagePath ?? "/images/Default_pfp.png")>
+                        @share.UserName
+                    </span>
+                    <span>
+                        <input type="text" class="amount form-control" id="amount-@share.UserId" value="@share.StringAmount"
+                            @(Model.SplitTypeEnum == SplitType.Equally ? "disabled" : "")>
+                        <span class="expenseShareTypeSymbole">Rs</span>
+                    </span>
+                </div>
+            }
         </div>
-        <span class="fs-6 fw-semibold">Remaining balance: </span>
-        <span class="fs-6 fw-semibold" id="remainigBalance"></span>
+        <div id="remainingBalanceDiv">
+            <span class="fs-6 fw-semibold">Remaining balance: </span>
+            <span class="fs-6 fw-semibold" id="remainigBalance">0 Rs</span>
+        </div>
     </div>
 </div>
 
@@ -192,22 +206,38 @@
         let isValid = true;
         let currencySymbole = "Rs";
         let oldValue;
+    </script>
 
-        // Add current member to array
-        members.push({
-            UserId: parseInt('@Model.CurrentUser.Id'),
-            ShareAmount: 0
-        });
+    <script>
+        if('@Model.IsViewOnly' === "True"){
+            $("input, button, textarea, select").prop("disabled", true);
+        }
     </script>
 
     @* Store img path in const *@
     <script>
         const categoryImages = {
-                    @foreach (var cat in Model.Categories)
+                    @foreach (Category cat in Model.Categories)
             {
                                 @:@cat.Id: "@cat.CategoryImagePath",
             }
-        };
+                    };
+    </script>
+
+
+    <script>
+        // Add current members to array
+        {
+                    @foreach (ExpenseShareVM share in Model.ExpenseShares)
+                {
+                    <text>
+                        members.push({
+                            UserId: @share.UserId,
+                        ShareAmount: @share.ShareAmount
+                                    });
+                    </text>
+            }
+                }
     </script>
 
     @* Validate selected file *@
@@ -292,12 +322,13 @@
         // Validate amount
         function validateAmounts() {
             let splitType = $("#splitTypeSelect").val();
-            let amount = parseFloat($("#Amount").val().replace(/,/g, ""));
+            let amount = parseFloat($("#Amount").val().replace(/,/g, "")) || 0;
             let splitTotal = getSplitTotal();
 
             switch (splitType) {
                 case '@SplitType.Equally':
-                    $("#remainigBalance").text((amount - splitTotal) + currencySymbole);
+                    $("#remainigBalance").text(formatToINR(amount - splitTotal) + currencySymbole);
+                    $("#remainingBalanceDiv").show();
                     if (splitTotal > amount) {
                         $(".amount, #remainigBalance").addClass("text-danger");
                         isValid = false;
@@ -308,7 +339,8 @@
                     }
                     break;
                 case '@SplitType.Unequally':
-                    $("#remainigBalance").text((amount - splitTotal) + currencySymbole);
+                    $("#remainigBalance").text(formatToINR(amount - splitTotal) + currencySymbole);
+                    $("#remainingBalanceDiv").show();
                     if (splitTotal > amount) {
                         $(".amount, #remainigBalance").addClass("text-danger");
                         isValid = false;
@@ -319,7 +351,8 @@
                     }
                     break;
                 case '@SplitType.ByPercentage':
-                    $("#remainigBalance").text((100 - splitTotal) + "%");
+                    $("#remainigBalance").text(formatToINR(100 - splitTotal) + "%");
+                    $("#remainingBalanceDiv").show();
                     if (splitTotal > 100) {
                         $(".amount, #remainigBalance").addClass("text-danger");
                         isValid = false;
@@ -328,6 +361,9 @@
                         $(".amount, #remainigBalance").removeClass("text-danger");
                         isValid = true;
                     }
+                    break;
+                case '@SplitType.ByShare':
+                    $("#remainingBalanceDiv").hide();
                     break;
             }
         }
@@ -354,7 +390,7 @@
 
             // Add into expense share div
             let div = `
-                <div class="expenseShare" id="expenseShare-${user.userId}"><span><img src=${user.profileImagePath ?? "/images/Default_pfp.png"}>${user.name}</span><span><input type="text" class="amount form-control" id="amount-${user.userId}" value="0"><span class="expenseShareTypeSymbole">${currencySymbole}</span></span></div>`;
+                        <div class="expenseShare" id="expenseShare-${user.userId}"><span><img src=${user.profileImagePath ?? "/images/Default_pfp.png"}>${user.name}</span><span><input type="text" class="amount form-control" id="amount-${user.userId}" value="0"><span class="expenseShareTypeSymbole">${currencySymbole}</span></span></div>`;
             $("#expenseShareDiv").append(div);
         }
 
@@ -406,27 +442,32 @@
 
         // Set change split type
         function setAmountAsPerSplitType() {
+            let expenseAmount = parseFloat($("#Amount").val().replace(/,/g, ""));
             let splitType = $("#splitTypeSelect").val();
             switch (splitType) {
                 case '@SplitType.Equally':
                     setExpenseShareSymbole(currencySymbole);
+                    $(".amount").prop("disabled", true).val(expenseAmount / members.length).trigger("input").trigger("blur");
                     $("#splitTypeText").text("Split equally");
                     break;
                 case '@SplitType.Unequally':
                     $("#splitTypeText").text("Split unequally");
+                    $(".amount").prop("disabled", false).val(0).trigger("input");
                     setExpenseShareSymbole(currencySymbole);
                     break;
                 case '@SplitType.ByShare':
                     $("#splitTypeText").text("Split by share");
+                    $(".amount").prop("disabled", false).val(1).trigger("input");
                     setExpenseShareSymbole("Share");
                     break;
                 case '@SplitType.ByPercentage':
                     $("#splitTypeText").text("Split by percentage");
+                    $(".amount").prop("disabled", false).val(100 / members.length).trigger("input").trigger("blur");
                     setExpenseShareSymbole("%");
                     break;
             }
-            setAmountIntoshare(splitType);
-        }
+            @* setAmountIntoshare(splitType); *@
+            }
 
         // Set symbole for expense share
         function setExpenseShareSymbole(symbole) {
@@ -449,14 +490,12 @@
         });
     </script>
 
-    @* Add expense form submit *@
+    @* Expense form submit *@
     <script>
         // Fetch expense share
         function fetchExpenseShare() {
             let expenseShare = [];
-            console.log("members: ",members)
             $.each(members, function (index, member) {
-                console.log($(`#amount-${member.UserId}`).val().replace(/,/g, ""));
                 expenseShare.push({
                     UserId: parseInt(member.UserId),
                     ShareAmount: parseFloat($("#amount-" + member.UserId).val().replace(/,/g, "") || 0)
@@ -472,9 +511,20 @@
             let amount = parseFloat($("#Amount").val().replace(/,/g, ""));
             let splitTotal = getSplitTotal();
 
+            if (amount === 0) {
+                toastr.error("Amount should not be zero");
+                return false;
+            }
+
             switch (splitType) {
                 case '@SplitType.Unequally':
                     if (amount - splitTotal !== 0) {
+                        toastr.error("Amount should be split properly");
+                        isSplitValid = false;
+                    }
+                    break;
+                case '@SplitType.ByShare':
+                    if (splitTotal === 0) {
                         toastr.error("Amount should be split properly");
                         isSplitValid = false;
                     }
@@ -512,7 +562,6 @@
                 $("#expenseMembersJson").val(JSON.stringify(expenseShare));
             }
 
-
             let formData = new FormData(this);
             $.ajax({
                 url: $(this).attr("action"),
@@ -525,7 +574,7 @@
                         if (response.success) {
                             toastr.success(response.message);
                         }
-                        else if (response.success == false) {
+                        else {
                             toastr.error(response.message);
                         }
                     }
@@ -534,5 +583,6 @@
                     toastr.error("Internal server error.");
                 }
             });
+        });
     </script>
 }

@@ -56,7 +56,7 @@ public static class ImageHelper
     public static void DeleteImage(string imagePath)
     {
         if (string.IsNullOrEmpty(imagePath) || imagePath.StartsWith("/defaultimages/", StringComparison.OrdinalIgnoreCase)
-        || imagePath.StartsWith("/images/default", StringComparison.OrdinalIgnoreCase))
+        || imagePath.StartsWith("/default", StringComparison.OrdinalIgnoreCase))
         {
             return;
         }

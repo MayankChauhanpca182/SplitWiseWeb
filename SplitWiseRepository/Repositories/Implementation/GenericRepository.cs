@@ -129,7 +129,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         }
 
         // Set total records
-        paginatedItems.totalRecords = await query.CountAsync();
+        paginatedItems.TotalRecords = await query.CountAsync();
 
         // Apply pagination
         if (pageSize != null && pageSize > 0 && pageNumber != null && pageNumber > 0)
@@ -156,5 +156,10 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         _dbSet.Update(entity);
         await _context.SaveChangesAsync();
         return entity;
+    }
+
+    public IQueryable<T> Query()
+    {
+        return _dbSet.AsQueryable(); 
     }
 }

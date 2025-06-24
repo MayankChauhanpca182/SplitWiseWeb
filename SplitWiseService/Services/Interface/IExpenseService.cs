@@ -6,4 +6,5 @@ public interface IExpenseService
 {
     public Task<ExpenseVM> GetExpense(int expenseId = 0, int groupId = 0);
     public Task<ResponseVM> SaveExpense(ExpenseVM newExpense);
+    public Task<PaginatedListVM<ExpenseVM>> IndividualList(FilterVM filter);
 }

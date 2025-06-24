@@ -41,7 +41,9 @@ public class ExpenseVM
 
     public IFormFile Attachment { get; set; }
 
-    public User CurrentUser { get; set; }
     public List<FriendVM> Friends { get; set; } = new List<FriendVM>();
     public List<ExpenseShareVM> ExpenseShares { get; set; } = new List<ExpenseShareVM>();
+
+    public decimal NetAmount { get; set; } = 0;
+    public bool IsViewOnly { get; set; } = false;
 }

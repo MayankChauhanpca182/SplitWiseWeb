@@ -1,3 +1,6 @@
+using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml.Drawing.Chart.ChartEx;
 using SplitWiseRepository.Constants;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.Repositories.Interface;
@@ -38,48 +41,55 @@ public class ExpenseService : IExpenseService
 
         if (expenseId > 0)
         {
-            // Expense expense = await _expenseRepository.Get(
-            //     predicate: e => e.Id == expenseId,
-            //     includes: new List<Expression<Func<Expense, object>>>
-            //     {
-            //         e => e.ExpenseShares
-            //     },
-            //     thenIncludes: new List<Func<IQueryable<Expense>, IQueryable<Expense>>>
-            //     {
-            //         q => q.Include(e => e.ExpenseShares)
-            //             .ThenInclude(es => es.User)
-            //     }
-            // );
-            // expenseVM.Id = expense.Id;
-            // expenseVM.GroupId = expense.GroupId;
-            // expenseVM.Title = expense.Title;
-            // expenseVM.Amount = expense.Amount;
-            // expenseVM.CategoryId = expense.ExpenseCategoryId;
-            // expenseVM.CurrencyId = expense.CurrencyId;
-            // expenseVM.PaidById = expense.PaidById;
-            // expenseVM.PaymentDate = expense.PaidDate;
-            // expenseVM.SplitType = expense.SplitType;
+            Expense expense = await _expenseRepository.Get(
+                predicate: e => e.Id == expenseId,
+                includes: new List<Expression<Func<Expense, object>>>
+                {
+                    e => e.ExpenseShares
+                },
+                thenIncludes: new List<Func<IQueryable<Expense>, IQueryable<Expense>>>
+                {
+                    q => q.Include(e => e.ExpenseShares)
+                        .ThenInclude(es => es.User)
+                }
+            );
+            expenseVM.Id = expense.Id;
+            expenseVM.GroupId = expense.GroupId;
+            expenseVM.Title = expense.Title;
+            expenseVM.Amount = expense.Amount.ToString("N2");
+            expenseVM.CategoryId = expense.ExpenseCategoryId;
+            expenseVM.CurrencyId = expense.CurrencyId;
+            expenseVM.PaidById = expense.PaidById;
+            expenseVM.PaidDate = expense.PaidDate;
+            expenseVM.SplitTypeEnum = expense.SplitType;
 
-            // expenseVM.ExpenseShares = expense.ExpenseShares
-            //         .Select(es => new ExpenseShareVM
-            //         {
-            //             Id = es.Id,
-            //             UserId = es.UserId,
-            //             ShareAmount = es.ShareAmount,
-            //             UserName = $"{es.User.FirstName} {es.User.LastName}",
-            //             ProfileImagePath = es.User.ProfileImagePath
-            //         }).ToList();
+            expenseVM.ExpenseShares = expense.ExpenseShares
+                    .Where(es => es.DeletedAt == null)
+                    .Select(es => new ExpenseShareVM
+                    {
+                        Id = es.Id,
+                        UserId = es.UserId,
+                        StringAmount = es.ShareAmount.ToString("N2"),
+                        UserName = $"{es.User.FirstName} {es.User.LastName}",
+                        ProfileImagePath = es.User.ProfileImagePath
+                    }).ToList();
         }
-        else if (groupId != null && groupId > 0)
+        else if (groupId > 0)
         {
             // expenseVM.ExpenseShares = await _groupService.GetMembers((int)groupId);
         }
         else
         {
-            expenseVM.Friends = _friendService.FriendList(new FilterVM { PageNumber = 0, PageSize = 0 }).Result.List.ToList();
+            // Add current user to expenseshares
+            expenseVM.ExpenseShares.Add(new ExpenseShareVM
+            {
+                UserId = currentUser.Id,
+                UserName = $"{currentUser.FirstName} {currentUser.LastName}",
+                ProfileImagePath = currentUser.ProfileImagePath
+            });
         }
 
-        expenseVM.CurrentUser = currentUser;
+        expenseVM.Friends = _friendService.FriendList(new FilterVM { PageNumber = 0, PageSize = 0 }).Result.List.ToList();
         expenseVM.Friends.Add(new FriendVM
         {
             UserId = currentUser.Id,
@@ -158,6 +168,7 @@ public class ExpenseService : IExpenseService
             // Begin transaction
             await _transaction.Begin();
             ResponseVM response = new ResponseVM();
+            int currentUserId = _userService.LoggedInUserId();
             bool isSplitEqually = newExpense.SplitTypeEnum == SplitWiseRepository.Constants.SplitType.Equally;
 
             if (newExpense.Id == 0)
@@ -173,13 +184,16 @@ public class ExpenseService : IExpenseService
                     ExpenseCategoryId = newExpense.CategoryId,
                     CurrencyId = newExpense.CurrencyId,
                     SplitType = isSplitEqually ? newExpense.SplitTypeEnum : SplitWiseRepository.Constants.SplitType.Unequally,
-                    Note = newExpense.Note
+                    Note = newExpense.Note,
+                    CreatedById = currentUserId,
+                    UpdatedAt = DateTime.Now,
+                    UpdatedById = currentUserId
                 };
 
                 // If Attachment
                 if (newExpense.Attachment != null)
                 {
-                    expense.AttachmentPath = ImageHelper.UploadImage(newExpense.Attachment);
+                    expense.AttachmentPath = FileHelper.UploadFile(newExpense.Attachment);
                 }
                 await _expenseRepository.Add(expense);
 
@@ -188,6 +202,34 @@ public class ExpenseService : IExpenseService
 
                 response.Success = true;
                 response.Message = NotificationMessages.Saved.Replace("{0}", "Expense");
+            }
+            else
+            {
+                // Update expense
+                Expense existingExpense = await _expenseRepository.Get(e => e.Id == newExpense.Id);
+                existingExpense.Title = newExpense.Title;
+                existingExpense.Amount = decimal.Parse(newExpense.Amount.Replace(",", ""));
+                existingExpense.PaidById = newExpense.PaidById;
+                existingExpense.PaidDate = newExpense.PaidDate;
+                existingExpense.ExpenseCategoryId = newExpense.CategoryId;
+                existingExpense.CurrencyId = newExpense.CurrencyId;
+                existingExpense.SplitType = isSplitEqually ? newExpense.SplitTypeEnum : SplitWiseRepository.Constants.SplitType.Unequally;
+                existingExpense.Note = newExpense.Note;
+                existingExpense.UpdatedAt = DateTime.Now;
+                existingExpense.UpdatedById = currentUserId;
+
+                if (newExpense.Attachment != null)
+                {
+                    existingExpense.AttachmentPath = FileHelper.UploadFile(newExpense.Attachment, existingExpense.AttachmentPath);
+                }
+
+                await _expenseRepository.Update(existingExpense);
+
+                // Add expense splits
+                await UpdateExpenseShare(existingExpense.Id, newExpense.ExpenseShares, existingExpense.Amount, newExpense.SplitTypeEnum);
+
+                response.Success = true;
+                response.Message = NotificationMessages.Updated.Replace("{0}", "Expense");
             }
 
             // Commit transaction
@@ -200,5 +242,52 @@ public class ExpenseService : IExpenseService
             await _transaction.Rollback();
             throw;
         }
+    }
+
+    public async Task<PaginatedListVM<ExpenseVM>> IndividualList(FilterVM filter)
+    {
+        int currentUserId = _userService.LoggedInUserId();
+        string searchString = string.IsNullOrEmpty(filter.SearchString) ? "" : filter.SearchString.Replace(@"\s+", "").ToLower();
+
+        Func<IQueryable<Expense>, IOrderedQueryable<Expense>> orderBy = q => q.OrderBy(e => e.Id);
+        if (!string.IsNullOrEmpty(filter.SortColumn))
+        {
+            switch (filter.SortColumn)
+            {
+                case "title":
+                    orderBy = filter.SortOrder == "asc" ? q => q.OrderBy(e => e.Title) : q => q.OrderByDescending(e => e.Title);
+                    break;
+                case "date":
+                    orderBy = filter.SortOrder == "asc" ? q => q.OrderBy(e => e.PaidDate) : q => q.OrderByDescending(e => e.PaidDate);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        PaginatedItemsVM<Expense> paginatedItems = await _expenseRepository.PaginatedList(
+            predicate: e => (e.PaidById == currentUserId || e.ExpenseShares.Any(es => es.UserId == currentUserId))
+                            && e.DeletedAt == null
+                            && (string.IsNullOrEmpty(searchString) || e.Title.ToLower().Contains(searchString)),
+            orderBy: orderBy,
+            includes: new List<System.Linq.Expressions.Expression<Func<Expense, object>>>
+            {
+                e => e.ExpenseShares
+            },
+            pageNumber: filter.PageNumber,
+            pageSize: filter.PageSize
+        );
+
+        PaginatedListVM<ExpenseVM> paginatedList = new PaginatedListVM<ExpenseVM>();
+        paginatedList.List = paginatedItems.Items.Select(e => new ExpenseVM
+        {
+            Id = e.Id,
+            Title = e.Title,
+            PaidDate = e.PaidDate,
+            NetAmount = (e.PaidById == currentUserId ? e.Amount : 0) - e.ExpenseShares.Where(es => es.UserId == currentUserId).Sum(es => es.ShareAmount)
+        }).ToList();
+
+        paginatedList.Page.SetPagination(paginatedItems.TotalRecords, filter.PageSize, filter.PageNumber);
+        return paginatedList;
     }
 }

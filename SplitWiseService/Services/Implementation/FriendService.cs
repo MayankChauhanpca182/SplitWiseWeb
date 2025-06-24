@@ -255,7 +255,7 @@ public class FriendService : IFriendService
             ProfileImagePath = fr.RequesterUserNavigation.ProfileImagePath
         }).ToList();
 
-        paginatedList.Page.SetPagination(paginatedItems.totalRecords, filter.PageSize, filter.PageNumber);
+        paginatedList.Page.SetPagination(paginatedItems.TotalRecords, filter.PageSize, filter.PageNumber);
 
         return paginatedList;
     }
@@ -448,7 +448,7 @@ public class FriendService : IFriendService
             ProfileImagePath = f.Friend2 == currentUserId ? f.Friend1UserNavigation.ProfileImagePath : f.Friend2UserNavigation.ProfileImagePath
         }).ToList();
 
-        paginatedList.Page.SetPagination(paginatedItems.totalRecords, filter.PageSize, filter.PageNumber);
+        paginatedList.Page.SetPagination(paginatedItems.TotalRecords, filter.PageSize, filter.PageNumber);
         paginatedList.IsDeletedData = filter.IsDeleted;
 
         return paginatedList;
