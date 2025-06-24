@@ -15,11 +15,11 @@ public class CategoryService : ICategoryService
         _userService = userService;
     }
 
-    public async Task<List<Category>> GetList(int? groupId)
+    public async Task<List<Category>> GetList()
     {
         int currentUserId = _userService.LoggedInUserId();
         List<Category> categories = await _categoryRepository.List(
-            predicate: c => c.IsSystem || c.GroupId == groupId || c.CreatedById == currentUserId
+            predicate: c => c.IsSystem
         );
         return categories;
     }

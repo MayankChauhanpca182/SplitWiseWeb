@@ -54,7 +54,7 @@ public static class ValidationMessages
     public const string ExpenseTitleRequired = "Expense title is required";
     public const string ExpenseTitleLength = "Expense tile can not exceed 100 characters";
     public const string ExpenseAmountRequired = "Expense amount is required.";
-    public const string ValidExpenseAmount = "Please enter a valid expense amount greater than zero.";
+    public const string ValidExpenseAmount = "Please enter a valid expense amount greater than zero and less then 10000000.";
     public const string PaymentDateRequired = "Payment date is required";
     public const string NoFuturePaymentDate = "The payment date must not be set in the future.";
     public const string SplitTypeRequired = "Select expense split type.";

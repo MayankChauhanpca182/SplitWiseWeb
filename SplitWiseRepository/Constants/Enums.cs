@@ -13,8 +13,8 @@ public enum FeriendRequestStatus
 
 public enum SplitType
 {
-    Equaly = 0,
-    Unequaly = 1,
+    Equally = 0,
+    Unequally = 1,
     ByShare = 2,
     ByPercentage = 3
 }

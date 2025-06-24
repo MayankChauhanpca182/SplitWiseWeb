@@ -1,15 +1,19 @@
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SmartBreadcrumbs.Attributes;
 using SplitWiseRepository.ViewModels;
+using SplitWiseService.Services.Interface;
 
 namespace SplitWiseWeb.Controllers;
 
 [Authorize]
 public class ExpenseController : Controller
 {
-    public ExpenseController()
+    private readonly IExpenseService _expenseService;
+    public ExpenseController(IExpenseService expenseService)
     {
+        _expenseService = expenseService;
     }
 
     // GET Index
@@ -22,16 +26,17 @@ public class ExpenseController : Controller
     }
 
     // GET AddExpensePage
-    [Breadcrumb("Expense Details")]
-    [Route("expenseDetails")]
-    public IActionResult AddExpense(int expenseId, int groupId)
+    [Breadcrumb("Add")]
+    [Route("expense/add")]
+    public async Task<IActionResult> AddExpense(int expenseId, int groupId)
     {
-        ViewData["ActiveLink"] = "Expense Details";
-        return View();
+        ExpenseVM expense = await _expenseService.GetExpense(expenseId, groupId);   
+        ViewData["ActiveLink"] = "Expenses";
+        return View(expense);
     }
 
     // POST SaveExpense
-    public IActionResult SaveExpense()
+    public IActionResult SaveExpense(ExpenseVM newExpense)
     {
         return View("AddExpense");
     }

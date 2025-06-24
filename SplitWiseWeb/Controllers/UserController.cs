@@ -8,7 +8,6 @@ using SplitWiseService.Services.Interface;
 
 namespace SplitWiseWeb.Controllers;
 
-[Authorize]
 public class UserController : Controller
 {
     private readonly IUserService _userService;

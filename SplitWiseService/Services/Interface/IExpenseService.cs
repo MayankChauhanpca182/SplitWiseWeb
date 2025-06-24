@@ -1,5 +1,8 @@
+using SplitWiseRepository.ViewModels;
+
 namespace SplitWiseService.Services.Interface;
 
 public interface IExpenseService
 {
+    public Task<ExpenseVM> GetExpense(int expenseId = 0, int groupId = 0);
 }

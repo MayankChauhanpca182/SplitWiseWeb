@@ -1,59 +1,410 @@
+@using SplitWiseRepository.Constants
+@model ExpenseVM
 @{
     ViewData["Title"] = "Add Expense";
+    string currentUserFullName = $"{Model.CurrentUser.FirstName} {Model.CurrentUser.LastName}";
 }
 
 <breadcrumb></breadcrumb>
-<form asp-action="SaveExpense" asp-controller="Expense">
-    <div class="d-flex flex-column gap-3">
-        <div class="d-flex flex-wrap gap-3">
-            <!-- Title -->
-            <div class="d-flex gap-3 align-items-center">
-                <div class="col-auto">
-                    <label for="expenseTitle" class="col-form-label fw-semibold">Title:</label>
-                </div>
-                <div class="col-auto">
-                    <input type="text" id="expenseTitle" class="form-control">
-                </div>
-            </div>
+<h3 class="bg-white mb-3 p-3 text-dark-emphasis shadow">@(Model.Id == 0 ? "Add" : "Edit") Expense</h3>
+<div class="d-flex flex-column flex-lg-row gap-2">
+    <form asp-action="SaveExpense" asp-controller="Expense" id="addExpenseForm"
+        class="d-flex flex-column gap-3 p-3 bg-white col-12 col-lg-7">
+        <!-- New design -->
+        <div class="">
             <!-- Members -->
-            <div class="d-flex flex-wrap gap-3 align-items-center">
-                <div class="col-auto">
-                    <label for="expenseTitle" class="col-form-label fw-semibold">Members:</label>
-                </div>
-                <div class="btn-group">
-                    <div class="selectedMembersDiv d-flex border border-secondary-subtle overflow-x-auto"></div>
-                    <button type="button" class="btn dropdown-toggle dropdown-toggle-split border-secondary-subtle rounded-0"
+            <div class="d-flex flex-wrap gap-3 align-items-center col-12">
+                <div class="btn-group w-100">
+                    <div class="memberPillDiv d-flex gap-2 border border-secondary-subtle overflow-x-auto w-100 p-2">
+                        <span class="expenseMemberPill" id="expenseMemberPill-@Model.CurrentUser.Id">
+                            <img src=@(Model.CurrentUser.ProfileImagePath ?? "/images/Default_pfp.png")>
+                            <span>@currentUserFullName</span>
+                            <button type="button" class="btn-close removeMember" aria-label="Close"
+                                onclick="removePill(@Model.CurrentUser.Id)"></button>
+                        </span>
+                        <!-- Loop to display group members -->
+
+                    </div>
+                    <button type="button"
+                        class="btn dropdown-toggle dropdown-toggle-split border-secondary-subtle rounded-0"
                         data-bs-toggle="dropdown" aria-expanded="false">
-                        <span class="visually-hidden">Toggle Dropdown</span>
+                        <span class="visually-hidden">User list</span>
                     </button>
                     <ul class="dropdownList dropdown-menu w-100">
-                        <li><a class="dropdown-item" href="#">Action</a></li>
+                        @foreach (FriendVM user in Model.Friends)
+                        {
+                            <li class="d-flex align-items-center gap-2 px-2">
+                                <input class="userCkb form-check-input m-0" type="checkbox" id="userCkb-@user.UserId"
+                                    @(user.UserId == Model.CurrentUser.Id ? "checked" : "")
+                                    data-user='@(Html.Raw(Json.Serialize(user)))'>
+                                <label for="userCkb-@user.UserId" class="d-flex align-items-center gap-2">
+                                    <img src=@(user.ProfileImagePath ?? "/images/Default_pfp.png") alt=""
+                                        class="rounded-circle border border-dark-subtle object-fit-cover" width="25px"
+                                        height="25px">
+                                    <span>@user.Name</span>
+                                </label>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>
         </div>
 
-        <div class="d-flex flex-wrap gap-3">
-            <!-- Amount -->
-            <div class="d-flex gap-3 align-items-center">
-                <div class="col-auto">
-                    <label for="expenseAmount" class="col-form-label fw-semibold">Amount:</label>
-                </div>
-                <div class="col-auto">
-                    <input type="text" id="expenseAmount" class="form-control">
-                </div>
+        <div class="d-flex gap-2">
+            <!-- Title -->
+            <div class="form-floating col">
+                <input asp-for="@Model.Title" type="text" class="form-control" placeholder="Title">
+                <label asp-for="@Model.Title">Title</label>
+                <span class="text-danger" asp-validation-for="@Model.Title"></span>
             </div>
-            <!-- Currency -->
-            <div class="d-flex gap-3 align-items-center">
-                <div class="col-auto">
-                    <label for="expenseAmount" class="col-form-label fw-semibold">Currency:</label>
-                </div>
-                <div class="col-auto">
-                    <select class="form-select" aria-label="Default select example">
-                        <option value="1">One</option>
-                    </select>
-                </div>
+            <!-- Amount -->
+            <div class="form-floating col">
+                <input asp-for="@Model.Amount" type="text" class="form-control" placeholder="Title"
+                    oninput="setAmountAsPerSplitType()">
+                <label asp-for="@Model.Amount">Amount</label>
+                <span class="text-danger" asp-validation-for="@Model.Amount"></span>
             </div>
         </div>
+
+        <div class="d-flex gap-2">
+            <!-- Currency -->
+            <div class="form-floating col">
+                <select asp-for="@Model.CurrencyId" class="form-select" disabled>
+                    @foreach (Currency currency in Model.Currencies)
+                    {
+                        <option value="@currency.Id">@currency.Name</option>
+                    }
+                </select>
+                <label asp-for="@Model.CurrencyId">Currency</label>
+                <span class="text-danger" asp-validation-for="@Model.CurrencyId"></span>
+            </div>
+            <!-- Category -->
+            <div class="form-floating col">
+                <select asp-for="@Model.CategoryId" class="form-select">
+                    @foreach (Category category in Model.Categories)
+                    {
+                        <option value="@category.Id">
+                            <img src="@(category.CategoryImagePath)" alt=""
+                                class="rounded-circle border border-dark-subtle object-fit-cover" width="25px"
+                                height="25px">
+                            @category.Name
+                        </option>
+                    }
+                </select>
+                <label asp-for="@Model.CategoryId">Category</label>
+                <span class="text-danger" asp-validation-for="@Model.CategoryId"></span>
+            </div>
+        </div>
+
+        <div class="d-flex gap-2">
+            <!-- Note -->
+            <div class="form-floating col">
+                <textarea asp-for=@Model.Note class="form-control border-secondary-subtle" placeholder="Note" rows="3"
+                    style="height: 85px"></textarea>
+                <label asp-for="@Model.Note" class="col-form-label fw-semibold">Note</label>
+            </div>
+        </div>
+
+        <div class="d-flex gap-2">
+            <!-- Paid by -->
+            <div class="form-floating col">
+                <select asp-for="@Model.PaidById" class="form-select" id="paidBySelect">
+                    <option value="@Model.CurrentUser.Id" id="paidByOption-@Model.CurrentUser.Id">
+                        @currentUserFullName</option>
+                </select>
+                <label asp-for="@Model.PaidById">Paid by</label>
+                <span class="text-danger" asp-validation-for="@Model.PaidById"></span>
+            </div>
+            <!-- Payment date -->
+            <div class="form-floating col">
+                <input asp-for=@Model.PaidDate type="date" class="form-control rounded-2 border-secondary-subtle"
+                    max="@DateTime.Today.ToString("yyyy-MM-dd")">
+                <label asp-for="@Model.PaidDate">Payment date</label>
+                <span class="text-danger" asp-validation-for="@Model.PaidDate"></span>
+            </div>
+        </div>
+
+        <div class="d-flex gap-2">
+            <!-- Split type -->
+            <div class="form-floating col">
+                <select asp-for="@Model.SplitTypeEnum" class="form-select" id="splitTypeSelect"
+                    onchange="setAmountAsPerSplitType()">
+                    <option value="@SplitType.Equally">@SplitType.Equally.ToString()</option>
+                    <option value="@SplitType.Unequally">@SplitType.Unequally.ToString()</option>
+                    <option value="@SplitType.ByShare">By Share</option>
+                    <option value="@SplitType.ByPercentage">By Percentage</option>
+                </select>
+                <label asp-for="@Model.SplitTypeEnum">Split type</label>
+                <span class="text-danger" asp-validation-for="@Model.SplitTypeEnum"></span>
+            </div>
+            <div class="col"></div>
+        </div>
+
+        <div class="d-flex gap-2">
+            <!-- Attachment -->
+            <div class="d-flex align-items-center gap-2 col">
+                <label class="btn btn-secondary" asp-for="@Model.Attachment">Attachment</label>
+                <input asp-for=@Model.Attachment class="form-control rounded-2 border-secondary-subtle" hidden>
+                <span id="previewText"></span>
+            </div>
+        </div>
+
+        <!-- Submit buttons -->
+        <div>
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a asp-action="Index" asp-controller="Expense" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+
+    <div class="bg-white w-100 p-3 col">
+        <span class="fs-5 fw-semibold" id="splitTypeText">Split equally</span>
+        <div id="expenseShareDiv" class="mb-3">
+            <div class="expenseShare" id="expenseShare-@Model.CurrentUser.Id">
+                <span>
+                    <img src=@(Model.CurrentUser.ProfileImagePath ?? "/images/Default_pfp.png")>
+                    @currentUserFullName
+                </span>
+                <span>
+                    <input type="text" class="amount form-control" value="0.00">
+                    <span class="expenseShareTypeSymbole">Rs</span>
+                </span>
+            </div>
+        </div>
+        <span class="fs-6 fw-semibold">Remaining balance: </span>
+        <span class="fs-6 fw-semibold" id="remainigBalance"></span>
     </div>
-</form>
+</div>
+
+@section Scripts {
+    @* Validate selected file *@
+    <script>
+        $(document).ready(function () {
+            $('#Attachment').on('change', function () {
+                const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
+                const file = this.files[0];
+
+                if (file) {
+                    if (!validTypes.includes(file.type)) {
+                        toastr.error("Only following image types are allowed: jpeg, jpg, png, pdf");
+                        $(this).val("");
+                        $('#previewText').text("");
+                        return;
+                    }
+                    else {
+                        // Show preview text
+                        $('#previewText').text(file.name);
+                    }
+                }
+            });
+        });
+    </script>
+
+    @* Validate amount *@
+    <script>
+        // Prevent negative amount
+        $(document).on("input", ".amount", function () {
+            let input = this;
+
+            let formatedValue = input.value.toString().replace(/[^0-9.]/gi, "");
+
+            if (formatedValue.startsWith(".")) {
+                formatedValue = "0" + formatedValue;
+            }
+
+            // Handle multiple dots
+            let firstDotIndex = formatedValue.indexOf(".");
+            if (firstDotIndex !== -1) {
+                let beforeDot = formatedValue.substring(0, firstDotIndex + 1);
+                let afterDot = formatedValue.substring(firstDotIndex + 1).replace(/\./g, "");
+                formatedValue = beforeDot + afterDot;
+                formatedValue = beforeDot + afterDot.substring(0, 2);
+            }
+
+            // Prevent invalid leading zeros
+            if (formatedValue.startsWith("00") && !formatedValue.startsWith("0.")) {
+                formatedValue = formatedValue.replace(/^0+/, "0");
+            }
+
+            if (input.value !== formatedValue) {
+                input.value = formatedValue || "0.00";
+            }
+
+            validateAmounts();
+        });
+
+        // Validate amount
+        function validateAmounts() {
+            let splitType = $("#splitTypeSelect").val();
+            let amount = parseFloat($("#Amount").val());
+            let sum = 0;
+            $(".amount").each(function () {
+                sum = sum + parseFloat($(this).val());
+            });
+            switch (splitType) {
+                case '@SplitType.Equally':
+                    $("#remainigBalance").text(amount - sum);
+                    isValid = true;
+                    break;
+                case '@SplitType.Unequally':
+                    if (sum > amount) {
+                        $(".amount").addClass("text-danger");
+                        isValid = false;
+                    }
+                    else {
+                        $("#remainigBalance").text(amount - sum);
+                        isValid = true;
+                    }
+                    break;
+                case '@SplitType.ByPercentage':
+                    break;
+            }
+        }
+
+
+
+    </script>
+
+    @* Variables *@
+    <script>
+        let members = [];
+        let isValid = true;
+        let currencySymbole = "Rs";
+
+        // Add current member to array
+        members.push({
+            UserId: '@Model.CurrentUser.Id',
+            ShareAmount: 0
+        });
+    </script>
+
+    @* Add / Remove member *@
+    <script>
+        // Add member
+        function addMember(user) {
+            // Add to array
+            members.push({
+                UserId: user.userId,
+                ShareAmount: 0
+            });
+
+            // Add pill
+            let newPill = `<span class="expenseMemberPill" id=${"expenseMemberPill-" + user.userId}><img src=${user.profileImagePath ?? "/images/Default_pfp.png"}><span>${user.name}</span><button type="button" class="btn-close removeMember" aria-label="Close"  onclick="removePill(${user.userId})"></button></span>`;
+            $(".memberPillDiv").append(newPill);
+
+            // Add into paid by
+            let newOption = `<option value="${user.userId}" id="paidByOption-${user.userId}">${user.name}</option>`;
+            $("#paidBySelect").append(newOption);
+
+            // Add into expense share div
+            let div = `
+                                        <div class="expenseShare" id="expenseShare-${user.userId}"><span><img src=${user.profileImagePath ?? "/images/Default_pfp.png"}>${user.name}</span><span><input type="text" class="amount form-control" value="0.00"><span class="expenseShareTypeSymbole">${currencySymbole}</span></span></div>`;
+            $("#expenseShareDiv").append(div);
+        }
+
+        // Remove member
+        function removeMember(userId) {
+            // remove from array
+            members = members.filter(m => m.UserId !== userId);
+            // Remove pill
+            $("#userCkb-" + userId).prop("checked", false);
+            $("#expenseMemberPill-" + userId).remove();
+            // Remove paid by option
+            $("#paidByOption-" + userId).remove();
+            // Remove expense share
+            $("#expenseShare-" + userId).remove();
+        }
+
+        // Checkbox change
+        $(document).on("change", ".userCkb", function () {
+            let isChecked = $(this).prop("checked");
+            let userObj = $(this).data("user")
+            if (isChecked) {
+                addMember(userObj);
+            }
+            else {
+                removeMember(userObj.userId);
+            }
+            setAmountAsPerSplitType();
+        });
+
+        // Remove pill
+        function removePill(userId) {
+            removeMember(userId);
+            setAmountAsPerSplitType();
+        }
+    </script>
+
+    @* Change split type *@
+    <script>
+        // Set amount in share
+        function setAmountIntoshare(splitType) {
+            let expenseAmount = parseFloat($("#Amount").val());
+            if (splitType === '@SplitType.Equally') {
+                $(".amount").prop("disabled", true).val(expenseAmount / members.length).trigger("input");
+            }
+            else {
+                $(".amount").prop("disabled", false).val(0).trigger("input");
+            }
+        }
+
+        // Set change split type
+        function setAmountAsPerSplitType() {
+            let splitType = $("#splitTypeSelect").val();
+            switch (splitType) {
+                case '@SplitType.Equally':
+                    setExpenseShareSymbole(currencySymbole);
+                    $("#splitTypeText").text("Split equally");
+                    break;
+                case '@SplitType.Unequally':
+                    $("#splitTypeText").text("Split unequally");
+                    setExpenseShareSymbole(currencySymbole);
+                    break;
+                case '@SplitType.ByShare':
+                    $("#splitTypeText").text("Split by share");
+                    setExpenseShareSymbole("Share");
+                    break;
+                case '@SplitType.ByPercentage':
+                    $("#splitTypeText").text("Split by percentage");
+                    setExpenseShareSymbole("%");
+                    break;
+            }
+            setAmountIntoshare(splitType);
+        }
+
+        // Set symbole for expense share
+        function setExpenseShareSymbole(symbole) {
+            $(".expenseShareTypeSymbole").text(symbole);
+        }
+    </script>
+
+    @* Add expense form submit *@
+    <script>
+        // Submit friend request form
+        $(document).on("submit", "#addExpenseForm", function (e) {
+            e.preventDefault();
+
+            console.log(members)
+
+            @* $.ajax({
+                url: $(this).attr("action"),
+                type: $(this).attr("method"),
+                data: $(this).serialize(),
+                success: function (response) {
+                    if (!response.statusCode) {
+                        if (response.success) {
+                            $("#regularModal").modal("hide");
+                            toastr.success(response.message);
+                        } else if (response.success == false) {
+                            toastr.error(response.message);
+                        } else {
+                            $("#regularModalContent").html(response);
+                        }
+                    }
+                },
+                error: function (xhr, status, error) {
+                    toastr.error("Internal server error.");
+                },
+            }); *@
+                            });
+    </script>
+}

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 using SplitWiseRepository.Attributes;
 using SplitWiseRepository.Constants;
 using SplitWiseRepository.Models;
@@ -15,7 +16,7 @@ public class ExpenseVM
     public string Title { get; set; }
 
     [Required(ErrorMessage = ValidationMessages.ExpenseAmountRequired)]
-    [Range(0, double.MaxValue, ErrorMessage = ValidationMessages.ValidExpenseAmount)]
+    [Range(0, 10000000, ErrorMessage = ValidationMessages.ValidExpenseAmount)]
     public decimal Amount { get; set; } = 0;
 
     public int CategoryId { get; set; }
@@ -23,18 +24,25 @@ public class ExpenseVM
 
     [Required(ErrorMessage = ValidationMessages.CurrencyRequired)]
     [Range(1, int.MaxValue, ErrorMessage = ValidationMessages.CurrencyRequired)]
-    public int CurrencyId { get; set; }
+    public int CurrencyId { get; set; } = 23;
     public List<Currency> Currencies { get; set; } = new List<Currency>();
+
+    [StringLength(1000)]
+    public string Note { get; set; }
 
     public int PaidById { get; set; }
 
     [Required(ErrorMessage = ValidationMessages.PaymentDateRequired)]
     [DataType(DataType.Date)]
     [NoFutureDate(ErrorMessage = ValidationMessages.NoFuturePaymentDate)]
-    public DateTime? PaymentDate { get; set; }
+    public DateTime? PaidDate { get; set; } = DateTime.Today;
 
     [Required(ErrorMessage = ValidationMessages.SplitTypeRequired)]
-    public SplitType SplitType { get; set; } = 0;
+    public SplitType SplitTypeEnum { get; set; } = 0;
 
+    public IFormFile Attachment { get; set; }
+
+    public User CurrentUser { get; set; }
+    public List<FriendVM> Friends { get; set; } = new List<FriendVM>();
     public List<ExpenseShareVM> ExpenseShares { get; set; } = new List<ExpenseShareVM>();
 }

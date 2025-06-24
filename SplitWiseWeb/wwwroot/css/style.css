@@ -43,7 +43,8 @@
     border-radius: 0;
 }
 
-.btn-navbar, .btn-navbar:hover {
+.btn-navbar,
+.btn-navbar:hover {
     background: #ffffff;
     border-radius: 20px;
     color: darkslategray;
@@ -162,9 +163,9 @@ button {
     box-shadow: none !important;
 }
 
-input, textarea {
+input, select,
+textarea {
     border-color: #c4c8cb !important;
-    border-radius: 0 !important;
 }
 
 
@@ -291,31 +292,74 @@ footer.footer {
     margin-left: -10px;
 }
 
-.nav-link, .nav-link:hover{
+.nav-link,
+.nav-link:hover {
     color: var(--clr-primary-dark) !important;
     padding-top: 0;
     padding-bottom: 0;
 }
 
-.removeExpenseMemberBtn{
+.removeExpenseMemberBtn {
     font-size: 11px;
 }
 
 /* Expense */
-.selectedMembersDiv{
-    width: 500px;
-}
 
-.dropdownList{
+.dropdownList {
     transform: translate(0, 40px) !important;
 }
 
+.expenseMemberPill {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    border: 1px solid var(--clr-grey);
+    border-radius: 20px;
+    padding: 5px;
+    margin: 2px;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.expenseMemberPill img {
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+#expenseShareDiv{
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.expenseShare {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 5px;
+    padding: 5px;
+}
+
+.expenseShare img {
+    height: 25px;
+    width: 25px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.expenseShare span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.amount {
+    max-width: 100px;
+}
+
 @media (max-width: 767px) {
-    .selectedMembersDiv{
-        width: 285px;
-    }
-    
-    .dropdownList{
+    .dropdownList {
         transform: translate(0, 40px) !important;
     }
 }
