@@ -1,18 +1,115 @@
 @model DashboardVM
 @{
     ViewData["Title"] = "Dashboard";
+    int currentUserId = int.Parse(User.FindFirst("id")?.Value);
 }
 
-<h3 class="bg-white mb-3 p-3 text-dark-emphasis shadow mt-3">Dashboard</h3>
+<h3 class="bg-white my-3 p-3 text-dark-emphasis shadow">Dashboard</h3>
 
-@* <div class="d-flex">
-    <div class="dashboardCards col-3 bg-white p-3">
+<div class="d-flex flex-wrap justify-content-between gap-3 mb-3">
+    <a asp-action="Index" asp-controller="Friend" class="dashboardCards bg-white col p-3 border border-2" style="background-color: #EDF3FF !important;">
         <div class="d-flex justify-content-between align-items-center">
-            <span class="fs-4">Friend Count</span>
+            <span class="fs-4 text-nowrap">Friends</span>
             <i class="bi bi-person-fill fs-4"></i>
         </div>
-        <div class="d-flex justify-content-end align-items-center">
-            <span class="fs-4">15</span>
+        <div class="d-flex justify-content-between align-items-center px-4">
+            <div class="d-flex flex-column align-items-center gap-2">
+                <span>Accepted</span>
+                <span>@Model.FriendsAccepted</span>
+            </div>
+            <div class="d-flex flex-column align-items-center gap-2">
+                <span>Requested</span>
+                <span>@Model.FriendsRequested</span>
+            </div>
+            <div class="d-flex flex-column align-items-center gap-2">
+                <span>Pending</span>
+                <span>@Model.FriendsPending</span>
+            </div>
+            <div class="d-flex flex-column align-items-center gap-2">
+                <span>Refered</span>
+                <span>@Model.FriendsReferred</span>
+            </div>
         </div>
+    </a>
+    <a asp-action="Index" asp-controller="Group" class="dashboardCards col bg-white p-3 border border-2" style="background-color: #FFF0EE !important;">
+        <div class="d-flex justify-content-between align-items-center">
+            <span class="fs-4 text-nowrap">Groups</span>
+            <i class="bi bi-diagram-3-fill fs-4"></i>
+        </div>
+        <div class="d-flex justify-content-between align-items-center px-4">
+            <div class="d-flex flex-column align-items-center gap-2">
+                <span>Total</span>
+                <span>@Model.GroupsCount</span>
+            </div>
+            <div class="d-flex flex-column align-items-center gap-2">
+                <span>Expense</span>
+                <span>₹ @Model.AllGroupExpenceStr</span>
+            </div>
+        </div>
+    </a>
+    <a asp-action="Index" asp-controller="Expense" class="dashboardCards col bg-white p-3 border border-2" style="background-color: #EBF8F3 !important;">
+        <div class="d-flex justify-content-between align-items-center">
+            <span class="fs-4 text-nowrap">Expenses</span>
+            <i class="bi bi-cash fs-4"></i>
+        </div>
+        <div class="d-flex align-items-center">
+            <span class="fs-5 pe-2 @(Model.TotalExpense == 0 ? "text-dark" : (Model.TotalExpense > 0 ? "text-success" : "text-danger"))">
+                @(Model.TotalExpense == 0 ? $"All expenses are settled" : (Model.TotalExpense > 0 ? $"You owe ₹{Model.TotalExpense.ToString("N2")}" : $"You owes ₹{((-1) * Model.TotalExpense).ToString("N2")}"))
+                </span>
+        </div>
+    </a>
+</div>
+
+<div class="bg-white p-3">
+    <p class="fw-semibold fs-5 text-dark-emphasis">Recent Expences</p>
+    <div class="table-responsive bg-white">
+        <table class="table text-nowrap">
+            <thead class="position-sticky top-0 z-1">
+                <tr>
+                    <th scope="col" class="col-2">
+                        <span class="text-clr-grey text-dark-emphasis">Title</span>
+                    </th>
+                    <th scope="col" class="col-2">
+                        <span class="text-clr-grey text-dark-emphasis">Paid By</span>
+                    </th>
+                    <th scope="col" class="col-3">
+                        <span class="text-clr-grey text-dark-emphasis"
+                            style="max-width: 500px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Members</span>
+                    </th>
+                    <th scope="col" class="col">
+                        <span class="text-clr-grey text-dark-emphasis">Expense</span>
+                    </th>
+                    <th scope="col" class="col-1 text-center">
+                        <span class="text-clr-grey text-dark-emphasis">Date</span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (ExpenseVM expense in Model.RecentExpenses)
+                {
+                    <tr>
+                        <td>
+                            <span class="ms-2">@expense.Title</span>
+                        </td>
+                        <td>
+                            <span class="ms-2">@(expense.PaidById == currentUserId ? "You" : expense.PaidByName)</span>
+                        </td>
+                        <td style="max-width: 500px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            <span class="ms-2" title="@(string.Join(", ", expense.MemberNames))">@(string.Join(", ", expense.MemberNames))</span>
+                        </td>
+                        <td class="@(expense.NetAmount == 0 ? "text-dark" : (expense.NetAmount > 0 ? "text-success" : "text-danger"))">
+                            @(expense.NetAmount == 0 ? $"Expense is settled" : (expense.NetAmount > 0 ? $"You owe ₹{expense.NetAmount}" : $"{expense.PaidByName} owes you ₹{(-1)*expense.NetAmount}"))
+                        </td>
+                        <td class="text-center">
+                            <span class="ms-2">@expense.PaidDate.ToString("dd-MM-yyyy")</span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
-</div> *@
+    @if (Model.RecentExpenses.Count() == 0)
+    {
+        <p class="p-4 text-center">No recent expenses found</p>
+    }
+</div>

@@ -15,4 +15,5 @@ public interface IFriendService
     public Task<ResponseVM> RemoveFriend(int friendId);
     public Task UpdateReferrals(User newUser);
     public Task<byte[]> ExportFriends(FilterVM filter);
+    public Task<int> FriendsCount();
 }

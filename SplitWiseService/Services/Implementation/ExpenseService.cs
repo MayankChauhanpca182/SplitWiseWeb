@@ -111,7 +111,7 @@ public class ExpenseService : IExpenseService
         return expenseVM;
     }
 
-    private async Task UpdateExpenseShare(int expenseId,int paidById, List<ExpenseShareVM> updatedShares, decimal totalAmount, SplitType splitType)
+    private async Task UpdateExpenseShare(int expenseId, int paidById, List<ExpenseShareVM> updatedShares, decimal totalAmount, SplitType splitType)
     {
         User currentUser = await _userService.LoggedInUser();
 
@@ -321,5 +321,4 @@ public class ExpenseService : IExpenseService
         paginatedList.Page.SetPagination(paginatedItems.TotalRecords, filter.PageSize, filter.PageNumber);
         return paginatedList;
     }
-
 }

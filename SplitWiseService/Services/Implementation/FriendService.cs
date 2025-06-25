@@ -530,4 +530,13 @@ public class FriendService : IFriendService
         return ExcelExportHelper.ExportToExcel(paginatedList.List, columns, "Friends");
     }
 
+    public async Task<int> FriendsCount()
+    {
+        int currentUserId = _userService.LoggedInUserId();
+        int count = await _friendRepository.Count(
+            predicate: f => f.DeletedAt == null && (f.Friend1 == currentUserId || f.Friend2 == currentUserId)
+        );
+        return count;
+    }
+
 }

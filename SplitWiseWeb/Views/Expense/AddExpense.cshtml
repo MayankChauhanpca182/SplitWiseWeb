@@ -5,7 +5,10 @@
 }
 
 <breadcrumb></breadcrumb>
-<h3 class="bg-white mb-3 p-3 text-dark-emphasis shadow">@(Model.Id == 0 ? "Add" : "Edit") Expense</h3>
+<h3 class="d-flex justify-content-between align-items-center bg-white mb-3 p-3 text-dark-emphasis shadow">
+    <span>@(Model.IsViewOnly ? "View" : (Model.Id == 0 ? "Add" : "Edit")) Expense</span>
+    <a asp-action="Index" asp-controller="Expense" class="btn btn-secondary">Back</a>
+</h3>
 <div class="d-flex flex-column flex-lg-row gap-2">
     <form asp-action="SaveExpense" asp-controller="Expense" id="addExpenseForm"
         class="d-flex flex-column gap-3 p-3 bg-white col-12 col-lg-7" enctype="multipart/form-data">
@@ -172,12 +175,6 @@
                 <a asp-action="Index" asp-controller="Expense" class="btn btn-secondary">Cancel</a>
             </div>
         }
-        else
-        {
-            <div>
-                <a asp-action="Index" asp-controller="Expense" class="btn btn-secondary">Back</a>
-            </div>
-        }
     </form>
 
     <div class="bg-white w-100 p-3 col">
@@ -216,7 +213,8 @@
 
     <script>
         if('@Model.IsViewOnly' === "True"){
-            $("input, button, textarea, select").prop("disabled", true);
+            $("#addExpenseForm").find("input, button, textarea, select").prop("disabled", true);
+            $(".amount").prop("disabled", true);
         }
     </script>
 
@@ -576,6 +574,7 @@
             }
 
             let formData = new FormData(this);
+
             $.ajax({
                 url: $(this).attr("action"),
                 type: $(this).attr("method"),
@@ -585,7 +584,6 @@
                 success: function (response) {
                     if (!response.statusCode) {
                         if (response.success) {
-                            '@(TempData["successMessage"] = "Expense has been saved successfully.")';
                             window.location = "/expenses";
                         }
                         else {
@@ -598,5 +596,6 @@
                 }
             });
         });
+    
     </script>
 }

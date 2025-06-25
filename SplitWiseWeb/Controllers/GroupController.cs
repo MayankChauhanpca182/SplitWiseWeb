@@ -12,11 +12,13 @@ public class GroupController : Controller
 {
     private readonly IGroupService _groupService;
     private readonly ICommonService _commonService;
+    private readonly IUserService _userService;
 
-    public GroupController(IGroupService groupService, ICommonService commonService)
+    public GroupController(IGroupService groupService, ICommonService commonService, IUserService userService)
     {
         _groupService = groupService;
         _commonService = commonService;
+        _userService = userService;
     }
 
     [Breadcrumb("Groups")]
@@ -105,6 +107,11 @@ public class GroupController : Controller
     public async Task<IActionResult> RemoveGroupMembers(int groupMemberId)
     {
         ResponseVM response = await _groupService.RemoveGroupMembers(groupMemberId);
+        int currentUserId = _userService.LoggedInUserId();
+        if (groupMemberId == currentUserId && response.Success)
+        {
+            TempData["successMessage"] = response.Message;
+        }
         return Json(response);
     }
 

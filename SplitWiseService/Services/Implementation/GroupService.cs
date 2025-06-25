@@ -166,7 +166,7 @@ public class GroupService : IGroupService
             orderBy: orderBy,
             includes: new List<Expression<Func<Group, object>>>
             {
-                fr => fr.GroupMembers
+                g => g.GroupMembers
             },
             pageNumber: filter.PageNumber,
             pageSize: filter.PageSize
@@ -372,5 +372,18 @@ public class GroupService : IGroupService
             "Name", "Noticeboard", "IsSimplifiedPayments", "Expense"
         };
         return ExcelExportHelper.ExportToExcel(paginatedList.List, columns, "Groups");
+    }
+
+    public async Task<int> GroupCount()
+    {
+        int currentUserId = _userService.LoggedInUserId();
+        int count = await _groupRepository.Count(
+            predicate: g => g.DeletedAt == null && g.GroupMembers.Any(gm => gm.UserId == currentUserId && gm.DeletedAt == null),
+            includes: new List<Expression<Func<Group, object>>>
+            {
+                g => g.GroupMembers
+            }
+        );
+        return count;
     }
 }

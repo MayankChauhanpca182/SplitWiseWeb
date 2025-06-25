@@ -15,6 +15,7 @@
 
     <div class="d-flex align-items-center gap-2">
         <button class="btn btn-primary" type="button" onclick="addgroupMemberModal(@Model.Id)">Add new member</button>
+        <a asp-action="Index" asp-controller="Group" class="btn btn-secondary">Back</a>
     </div>
 </h3>
 
@@ -122,6 +123,7 @@
                 }
             });
         }
+
         function leaveGroupConfirm(groupMemberId) {
             $.ajax({
                 url: "/Group/RemoveGroupMembers",
@@ -136,7 +138,6 @@
                             toastr.success(response.message);
                             $("#confirmationModal").modal("hide");
                             // Redirect to group list
-                            '@(TempData["successMessage"] = "You left the group successfully.")';
                             window.location = "/groups";
                         }
                     }

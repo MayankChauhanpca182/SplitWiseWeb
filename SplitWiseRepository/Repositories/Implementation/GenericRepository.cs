@@ -160,11 +160,13 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
 
     public IQueryable<T> Query()
     {
-        return _dbSet.AsQueryable(); 
+        return _dbSet.AsQueryable();
     }
 
     public async Task<int> Count(
-        Expression<Func<T, bool>> predicate = null
+        Expression<Func<T, bool>> predicate = null,
+        List<Expression<Func<T, object>>> includes = null,
+        List<Func<IQueryable<T>, IQueryable<T>>> thenIncludes = null
     )
     {
         IQueryable<T> query = _dbSet;
@@ -175,6 +177,60 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
             query = query.Where(predicate);
         }
 
+        // Apply Includes (First-level navigation properties)
+        if (includes != null)
+        {
+            foreach (Expression<Func<T, object>> include in includes)
+            {
+                query = query.Include(include);
+            }
+        }
+
+        // Apply ThenIncludes (Deeper navigation properties)
+        if (thenIncludes != null)
+        {
+            foreach (var thenInclude in thenIncludes)
+            {
+                query = thenInclude(query);
+            }
+        }
+
         return await query.CountAsync();
+    }
+
+    public async Task<decimal> Sum(
+        Expression<Func<T, decimal>> selector,
+        Expression<Func<T, bool>> predicate = null,
+        List<Expression<Func<T, object>>> includes = null,
+        List<Func<IQueryable<T>, IQueryable<T>>> thenIncludes = null
+    )
+    {
+        IQueryable<T> query = _dbSet;
+
+        //Apply Filters
+        if (predicate != null)
+        {
+            query = query.Where(predicate);
+        }
+
+        // Apply Includes (First-level navigation properties)
+        if (includes != null)
+        {
+            foreach (Expression<Func<T, object>> include in includes)
+            {
+                query = query.Include(include);
+            }
+        }
+
+        // Apply ThenIncludes (Deeper navigation properties)
+        if (thenIncludes != null)
+        {
+            foreach (var thenInclude in thenIncludes)
+            {
+                query = thenInclude(query);
+            }
+        }
+
+        return await query.SumAsync(selector);
     }
 }

@@ -363,8 +363,21 @@ footer.footer {
 
 /* Dashboard */
 .dashboardCards{
+    color: darkslategrey;
     height: 150px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    background-color: var(--clr-mint);
+}
+
+.dashboardCards i {
+    color: #ffffff;
+    background-color: var(--clr-blue-gray);
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
