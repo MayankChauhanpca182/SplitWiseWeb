@@ -16,10 +16,11 @@ public class FriendService : IFriendService
     private readonly ITransactionRepository _transaction;
     private readonly IGenericRepository<UserReferral> _userReferralRepository;
     private readonly IGenericRepository<Friend> _friendRepository;
+    private readonly IGenericRepository<Expense> _expenseRepository;
     private readonly IUserService _userService;
     private readonly IEmailService _emailService;
 
-    public FriendService(IUserService userService, IEmailService emailService, IGenericRepository<FriendRequest> friendRequestRepository, ITransactionRepository transaction, IGenericRepository<UserReferral> userReferralRepository, IGenericRepository<Friend> friendRepository)
+    public FriendService(IUserService userService, IEmailService emailService, IGenericRepository<FriendRequest> friendRequestRepository, ITransactionRepository transaction, IGenericRepository<UserReferral> userReferralRepository, IGenericRepository<Friend> friendRepository, IGenericRepository<Expense> expenseRepository)
     {
         _userService = userService;
         _emailService = emailService;
@@ -27,6 +28,7 @@ public class FriendService : IFriendService
         _transaction = transaction;
         _userReferralRepository = userReferralRepository;
         _friendRepository = friendRepository;
+        _expenseRepository = expenseRepository;
     }
 
     private async Task AddFriendRequest(int requesterId, int? receiverId = null, int? referralId = null)
@@ -383,6 +385,7 @@ public class FriendService : IFriendService
         int currentUserId = _userService.LoggedInUserId();
         filter.SearchString = string.IsNullOrEmpty(filter.SearchString) ? "" : filter.SearchString.Replace(@"\s+", "").ToLower();
 
+        // Order filter
         Func<IQueryable<Friend>, IOrderedQueryable<Friend>> orderBy = q => q.OrderBy(f => f.Id);
         if (!string.IsNullOrEmpty(filter.SortColumn))
         {
@@ -403,6 +406,7 @@ public class FriendService : IFriendService
             }
         }
 
+        // Get paginated records
         PaginatedItemsVM<Friend> paginatedItems = await _friendRepository.PaginatedList(
             predicate: f => (f.Friend1 == currentUserId || f.Friend2 == currentUserId)
                 && (filter.IsDeleted ? f.DeletedAt != null : f.DeletedAt == null)
@@ -438,14 +442,42 @@ public class FriendService : IFriendService
             pageNumber: filter.PageNumber
         );
 
+        // Friend id list
+        List<int> friendUserIds = paginatedItems.Items
+        .Select(f => f.Friend1 == currentUserId ? f.Friend2 : f.Friend1)
+        .ToList();
+
+        // Calculate net amount
+        Dictionary<int, decimal> netAmounts = await (
+            from e in _expenseRepository.Query()
+            where e.DeletedAt == null
+            from es in e.ExpenseShares
+            where (e.PaidById == currentUserId && friendUserIds.Contains(es.UserId))
+            || (es.UserId == currentUserId && friendUserIds.Contains(e.PaidById))
+            group new { e, es } by (e.PaidById == currentUserId ? es.UserId : e.PaidById) into g
+            select new
+            {
+                FriendUserId = g.Key,
+                NetAmount = g.Sum(x => x.e.PaidById == currentUserId ? x.es.ShareAmount : -x.es.ShareAmount)
+            }
+        ).ToDictionaryAsync(x => x.FriendUserId, x => x.NetAmount);
+
+        // Set paginatet data to viewmodel
         PaginatedListVM<FriendVM> paginatedList = new PaginatedListVM<FriendVM>();
-        paginatedList.List = paginatedItems.Items.Select(f => new FriendVM
+        paginatedList.List = paginatedItems.Items.Select(f =>
         {
-            FriendId = f.Id,
-            UserId = f.Friend2 == currentUserId ? f.Friend1UserNavigation.Id : f.Friend2UserNavigation.Id,
-            Name = f.Friend2 == currentUserId ? f.Friend1UserNavigation.FirstName + " " + f.Friend1UserNavigation.LastName : f.Friend2UserNavigation.FirstName + " " + f.Friend2UserNavigation.LastName,
-            EmailAddress = f.Friend2 == currentUserId ? f.Friend1UserNavigation.EmailAddress : f.Friend2UserNavigation.EmailAddress,
-            ProfileImagePath = f.Friend2 == currentUserId ? f.Friend1UserNavigation.ProfileImagePath : f.Friend2UserNavigation.ProfileImagePath
+            User friendUser = f.Friend1 == currentUserId ? f.Friend2UserNavigation : f.Friend1UserNavigation;
+            decimal netAmount = netAmounts.ContainsKey(friendUser.Id) ? netAmounts[friendUser.Id] : 0;
+
+            return new FriendVM
+            {
+                FriendId = f.Id,
+                UserId = friendUser.Id,
+                Name = $"{friendUser.FirstName} {friendUser.LastName}",
+                EmailAddress = friendUser.EmailAddress,
+                ProfileImagePath = friendUser.ProfileImagePath,
+                NetAmount = netAmount
+            };
         }).ToList();
 
         paginatedList.Page.SetPagination(paginatedItems.TotalRecords, filter.PageSize, filter.PageNumber);
@@ -528,15 +560,6 @@ public class FriendService : IFriendService
             "Name", "EmailAddress"
         };
         return ExcelExportHelper.ExportToExcel(paginatedList.List, columns, "Friends");
-    }
-
-    public async Task<int> FriendsCount()
-    {
-        int currentUserId = _userService.LoggedInUserId();
-        int count = await _friendRepository.Count(
-            predicate: f => f.DeletedAt == null && (f.Friend1 == currentUserId || f.Friend2 == currentUserId)
-        );
-        return count;
     }
 
 }

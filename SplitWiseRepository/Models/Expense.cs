@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 using SplitWiseRepository.Constants;
 
 namespace SplitWiseRepository.Models;
-
 public class Expense : AuditFields
 {
     public int Id { get; set; }

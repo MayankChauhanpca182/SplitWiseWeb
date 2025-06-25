@@ -25,7 +25,8 @@ public interface IGenericRepository<T> where T : class
         List<Expression<Func<T, object>>> includes = null,
         List<Func<IQueryable<T>, IQueryable<T>>> thenIncludes = null,
         int? pageSize = null,
-        int? pageNumber = null
+        int? pageNumber = null,
+        IQueryable<T> sourceQuery = null
     );
 
     public Task<T> Add(T entity);

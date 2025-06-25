@@ -4,7 +4,7 @@
     <table class="table text-nowrap">
         <thead class="position-sticky top-0 z-1">
             <tr>
-                <th scope="col" class="col-4">
+                <th scope="col" class="col">
                     <span class="text-clr-grey text-dark-emphasis">Name</span>
                     <button class="btn p-0 sortBtn" data-column="name" data-order="asc" title="Asc">
                         <i class="bi bi-arrow-up"></i>
@@ -13,7 +13,7 @@
                         <i class="bi bi-arrow-down"></i>
                     </button>
                 </th>
-                <th scope="col" class="col-4">
+                <th scope="col" class="col">
                     <span class="text-clr-grey text-dark-emphasis">Expense</span>
                     <a class="btn p-0 sortBtn" data-column="expense" data-order="asc" title="Asc">
                         <i class="bi bi-arrow-up"></i>
@@ -22,7 +22,7 @@
                         <i class="bi bi-arrow-down"></i>
                     </a>
                 </th>
-                <th scope="col" class="col-4 text-center">
+                <th scope="col" class="col-1 text-center">
                     <span class="text-clr-grey text-dark-emphasis">Actions</span>
                 </th>
             </tr>
@@ -34,7 +34,7 @@
                     <td>
                         <img src="@(group.ImagePath ?? "/images/default_group_img.png")"
                             class="object-fit-cover rounded-circle" width="40px">
-                        <span class="ms-2">@group.Name</span>
+                        <span>@group.Name</span>
                     </td>
                     <td>@group.Expense</td>
                     <td class="text-center">

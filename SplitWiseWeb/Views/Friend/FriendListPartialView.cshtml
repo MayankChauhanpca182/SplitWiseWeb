@@ -4,7 +4,7 @@
     <table class="table text-nowrap">
         <thead class="position-sticky top-0 z-1">
             <tr>
-                <th scope="col" class="col-4">
+                <th scope="col" class="col-3">
                     <span class="text-clr-grey text-dark-emphasis">Name</span>
                     <button class="btn p-0 sortBtn" data-column="name" data-order="asc" title="Asc">
                         <i class="bi bi-arrow-up"></i>
@@ -22,7 +22,10 @@
                         <i class="bi bi-arrow-down"></i>
                     </a>
                 </th>
-                <th scope="col" class="col-4 text-center">
+                <th scope="col" class="col">
+                    <span class="text-clr-grey text-dark-emphasis">Expense</span>
+                </th>
+                <th scope="col" class="col-1 text-center">
                     <span class="text-clr-grey text-dark-emphasis">Actions</span>
                 </th>
             </tr>
@@ -34,9 +37,13 @@
                     <td class="d-flex align-items-center gap-2">
                         <img src="@(friend.ProfileImagePath ?? "/images/Default_pfp.png")"
                             class="object-fit-cover rounded-circle border border-secondary-subtle" width="40px">
-                        <span class="ms-2">@friend.Name</span>
+                        <span>@friend.Name</span>
                     </td>
-                    <td><span class="my-auto">@friend.EmailAddress</span></td>
+                    <td>@friend.EmailAddress</td>
+                    <td
+                        class="@(friend.NetAmount == 0 ? "text-dark" : (friend.NetAmount > 0 ? "text-success" : "text-danger"))">
+                        @(friend.NetAmount == 0 ? $"Expense is settled" : (friend.NetAmount > 0 ? $"You owe ₹{friend.NetAmount.ToString("N2")}" : $"Owes you ₹{((-1)*friend.NetAmount).ToString("N2")}"))
+                    </td>
                     <td class="text-center">
                         @if (Model.IsDeletedData)
                         {
@@ -46,7 +53,8 @@
                         }
                         else
                         {
-                            <button type="button" class="btn border-0" title="Remove Friend" onclick="removeFriend(@friend.FriendId, '@friend.Name')">
+                            <button type="button" class="btn border-0" title="Remove Friend"
+                                onclick="removeFriend(@friend.FriendId, '@friend.Name')">
                                 <i class="bi bi-person-x-fill text-danger"></i>
                             </button>
                         }
