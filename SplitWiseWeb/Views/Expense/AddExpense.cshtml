@@ -74,7 +74,7 @@
         <div class="d-flex gap-2">
             <!-- Currency -->
             <div class="form-floating col">
-                <select asp-for="@Model.CurrencyId" class="form-select" disabled>
+                <select asp-for="@Model.CurrencyId" class="form-select" id="currencySelect" disabled>
                     @foreach (Currency currency in Model.Currencies)
                     {
                         <option value="@currency.Id">@currency.Name</option>
@@ -223,6 +223,25 @@
             }
             };
     </script>
+
+    @* Store currency symboles in array *@
+    <script>
+        const currencySymboles = {
+            @foreach (Currency currency in Model.Currencies)
+            {
+            @:@currency.Id: "@currency.Symbole",
+            }
+            };
+
+        
+        // Change symbole on currency change
+        $("#currencySelect").on("change", function(){
+            let currencyId = $(this).val();
+            currencySymbole = currencySymboles[currencyId];
+            setAmountAsPerSplitType();
+        });
+    </script>
+    
 
 
     <script>
@@ -459,7 +478,7 @@
 
         // Set symbole for expense share
         function setExpenseShareSymbole(symbole) {
-            $(".expenseShareTypeSymbole").text(symbole);
+            $(".expenseShareTypeSymbole").html(symbole);
         }
     </script>
 
