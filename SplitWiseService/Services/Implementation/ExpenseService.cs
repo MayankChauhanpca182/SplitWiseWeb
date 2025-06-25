@@ -98,12 +98,20 @@ public class ExpenseService : IExpenseService
             Name = $"{currentUser.FirstName} {currentUser.LastName}",
             ProfileImagePath = currentUser.ProfileImagePath
         });
+
+        expenseVM.Friends = expenseVM.Friends.Concat(expenseVM.ExpenseShares.Where(es => !expenseVM.Friends.Any(f => f.UserId == es.UserId)).Select(es => new FriendVM
+        {
+            UserId = es.UserId,
+            Name = es.UserName,
+            ProfileImagePath = es.ProfileImagePath
+        }).ToList()).ToList();
+
         expenseVM.Categories = await _categoryService.GetList();
         expenseVM.Currencies = await _commonService.CurrencyList();
         return expenseVM;
     }
 
-    private async Task UpdateExpenseShare(int expenseId, List<ExpenseShareVM> updatedShares, decimal totalAmount, SplitType splitType)
+    private async Task UpdateExpenseShare(int expenseId,int paidById, List<ExpenseShareVM> updatedShares, decimal totalAmount, SplitType splitType)
     {
         User currentUser = await _userService.LoggedInUser();
 
@@ -166,8 +174,11 @@ public class ExpenseService : IExpenseService
 
             // Send mail to user
             User user = await _userService.GetById(share.UserId);
+            bool hasUserPaid = user.Id == paidById;
             string senderName = user.Id == currentUser.Id ? "you" : $"{currentUser.FirstName} {currentUser.LastName}";
-            await _emailService.AddIndividualExpense($"{currentUser.FirstName} {currentUser.LastName}", senderName, totalAmount.ToString("N2"), splitTypeName, shareAmount.ToString("N2"), user.EmailAddress);
+            string oweVariable = hasUserPaid ? "owes" : "owe";
+            string shareAmountStr = hasUserPaid ? (totalAmount - share.ShareAmount).ToString("N2") : share.ShareAmount.ToString("N2");
+            await _emailService.AddIndividualExpense($"{currentUser.FirstName} {currentUser.LastName}", senderName, totalAmount.ToString("N2"), splitTypeName, shareAmountStr, user.EmailAddress);
         }
         return;
     }
@@ -209,7 +220,7 @@ public class ExpenseService : IExpenseService
                 await _expenseRepository.Add(expense);
 
                 // Add expense splits
-                await UpdateExpenseShare(expense.Id, newExpense.ExpenseShares, expense.Amount, newExpense.SplitTypeEnum);
+                await UpdateExpenseShare(expense.Id, expense.PaidById, newExpense.ExpenseShares, expense.Amount, newExpense.SplitTypeEnum);
 
                 response.Success = true;
                 response.Message = NotificationMessages.Saved.Replace("{0}", "Expense");
@@ -237,7 +248,7 @@ public class ExpenseService : IExpenseService
                 await _expenseRepository.Update(existingExpense);
 
                 // Add expense splits
-                await UpdateExpenseShare(existingExpense.Id, newExpense.ExpenseShares, existingExpense.Amount, newExpense.SplitTypeEnum);
+                await UpdateExpenseShare(existingExpense.Id, existingExpense.PaidById, newExpense.ExpenseShares, existingExpense.Amount, newExpense.SplitTypeEnum);
 
                 response.Success = true;
                 response.Message = NotificationMessages.Updated.Replace("{0}", "Expense");
