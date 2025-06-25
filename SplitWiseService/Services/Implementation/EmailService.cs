@@ -146,4 +146,13 @@ public class EmailService : IEmailService
         await Send(email, EmailSubjects.RemovedFromGroup, emailBody);
         return;
     }
+
+    public async Task AddIndividualExpense(string recieverName, string senderName, string amount, string splitType, string shareAmount, string email)
+    {
+        string fileText = GetEmailTemplate(EmailTemplates.AddIndividualExpense);
+
+        string emailBody = fileText.Replace("{recieverName}", recieverName).Replace("{senderName}", senderName).Replace("{splittype}", splitType).Replace("{amount}", amount).Replace("{shareamount}", shareAmount);
+        await Send(email, EmailSubjects.AddIndividualExpense.Replace("{amount}", amount), emailBody);
+        return;
+    }
 }

@@ -31,4 +31,7 @@ public interface IGenericRepository<T> where T : class
     public Task<T> Add(T entity);
     public Task<T> Update(T entity);
     public IQueryable<T> Query();
+    public Task<int> Count(
+        Expression<Func<T, bool>> predicate = null
+    );
 }

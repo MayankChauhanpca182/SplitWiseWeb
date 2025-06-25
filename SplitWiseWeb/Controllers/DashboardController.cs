@@ -1,6 +1,8 @@
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SmartBreadcrumbs.Attributes;
+using SplitWiseRepository.ViewModels;
 using SplitWiseService.Services.Interface;
 
 namespace SplitWiseWeb.Controllers;
@@ -19,10 +21,11 @@ public class DashboardController : Controller
     #region Dashboard
     // GET Index
     [Route("dashboard")]
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
+        DashboardVM dashboard = await _dashboardService.GetDashboard();
         ViewData["ActiveLink"] = "Dashboard";
-        return View();
+        return View(dashboard);
     }
 
     #endregion

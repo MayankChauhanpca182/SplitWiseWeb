@@ -21,8 +21,9 @@ public class ExpenseService : IExpenseService
     private readonly IGroupService _groupService;
     private readonly IUserService _userService;
     private readonly IFriendService _friendService;
+    private readonly IEmailService _emailService;
 
-    public ExpenseService(IGenericRepository<Expense> expenseRepository, ICategoryService categoryService, ICommonService commonService, IGroupService groupService, IUserService userService, IFriendService friendService, ITransactionRepository transaction, IGenericRepository<ExpenseShare> expenseShareRepository)
+    public ExpenseService(IGenericRepository<Expense> expenseRepository, ICategoryService categoryService, ICommonService commonService, IGroupService groupService, IUserService userService, IFriendService friendService, ITransactionRepository transaction, IGenericRepository<ExpenseShare> expenseShareRepository, IEmailService emailService)
     {
         _expenseRepository = expenseRepository;
         _categoryService = categoryService;
@@ -32,6 +33,7 @@ public class ExpenseService : IExpenseService
         _friendService = friendService;
         _transaction = transaction;
         _expenseShareRepository = expenseShareRepository;
+        _emailService = emailService;
     }
 
     public async Task<ExpenseVM> GetExpense(int expenseId = 0, int groupId = 0)
@@ -103,7 +105,7 @@ public class ExpenseService : IExpenseService
 
     private async Task UpdateExpenseShare(int expenseId, List<ExpenseShareVM> updatedShares, decimal totalAmount, SplitType splitType)
     {
-        int currentUserId = _userService.LoggedInUserId();
+        User currentUser = await _userService.LoggedInUser();
 
         List<ExpenseShare> existingShares = await _expenseShareRepository.List(es => es.ExpenseId == expenseId);
 
@@ -114,24 +116,28 @@ public class ExpenseService : IExpenseService
         foreach (ExpenseShare share in sharesToDelete)
         {
             share.DeletedAt = DateTime.Now;
-            share.DeletedById = currentUserId;
+            share.DeletedById = currentUser.Id;
             await _expenseShareRepository.Update(share);
         }
 
         foreach (ExpenseShareVM share in updatedShares)
         {
             decimal shareAmount = 0;
+            string splitTypeName;
 
             switch (splitType)
             {
                 case SplitType.ByShare:
+                    splitTypeName = "by share";
                     decimal totalShare = updatedShares.Sum(es => es.ShareAmount);
                     shareAmount = (totalAmount * share.ShareAmount) / totalShare;
                     break;
                 case SplitType.ByPercentage:
+                    splitTypeName = "by percentage";
                     shareAmount = (totalAmount * share.ShareAmount) / 100;
                     break;
                 default:
+                    splitTypeName = splitType.ToString().ToLower();
                     shareAmount = share.ShareAmount;
                     break;
             }
@@ -141,7 +147,7 @@ public class ExpenseService : IExpenseService
             {
                 existingShare.ShareAmount = shareAmount;
                 existingShare.UpdatedAt = DateTime.Now;
-                existingShare.UpdatedById = currentUserId;
+                existingShare.UpdatedById = currentUser.Id;
                 await _expenseShareRepository.Update(existingShare);
             }
             else
@@ -151,12 +157,17 @@ public class ExpenseService : IExpenseService
                     ExpenseId = expenseId,
                     UserId = share.UserId,
                     ShareAmount = shareAmount,
-                    CreatedById = currentUserId,
+                    CreatedById = currentUser.Id,
                     UpdatedAt = DateTime.Now,
-                    UpdatedById = currentUserId
+                    UpdatedById = currentUser.Id
                 };
                 await _expenseShareRepository.Add(newShare);
             }
+
+            // Send mail to user
+            User user = await _userService.GetById(share.UserId);
+            string senderName = user.Id == currentUser.Id ? "you" : $"{currentUser.FirstName} {currentUser.LastName}";
+            await _emailService.AddIndividualExpense($"{currentUser.FirstName} {currentUser.LastName}", senderName, totalAmount.ToString("N2"), splitTypeName, shareAmount.ToString("N2"), user.EmailAddress);
         }
         return;
     }
@@ -168,7 +179,7 @@ public class ExpenseService : IExpenseService
             // Begin transaction
             await _transaction.Begin();
             ResponseVM response = new ResponseVM();
-            int currentUserId = _userService.LoggedInUserId();
+            User currentUser = await _userService.LoggedInUser();
             bool isSplitEqually = newExpense.SplitTypeEnum == SplitWiseRepository.Constants.SplitType.Equally;
 
             if (newExpense.Id == 0)
@@ -185,9 +196,9 @@ public class ExpenseService : IExpenseService
                     CurrencyId = newExpense.CurrencyId,
                     SplitType = isSplitEqually ? newExpense.SplitTypeEnum : SplitWiseRepository.Constants.SplitType.Unequally,
                     Note = newExpense.Note,
-                    CreatedById = currentUserId,
+                    CreatedById = currentUser.Id,
                     UpdatedAt = DateTime.Now,
-                    UpdatedById = currentUserId
+                    UpdatedById = currentUser.Id
                 };
 
                 // If Attachment
@@ -216,7 +227,7 @@ public class ExpenseService : IExpenseService
                 existingExpense.SplitType = isSplitEqually ? newExpense.SplitTypeEnum : SplitWiseRepository.Constants.SplitType.Unequally;
                 existingExpense.Note = newExpense.Note;
                 existingExpense.UpdatedAt = DateTime.Now;
-                existingExpense.UpdatedById = currentUserId;
+                existingExpense.UpdatedById = currentUser.Id;
 
                 if (newExpense.Attachment != null)
                 {
@@ -272,7 +283,13 @@ public class ExpenseService : IExpenseService
             orderBy: orderBy,
             includes: new List<System.Linq.Expressions.Expression<Func<Expense, object>>>
             {
-                e => e.ExpenseShares
+                e => e.ExpenseShares,
+                e => e.PaidByUser
+            },
+            thenIncludes: new List<Func<IQueryable<Expense>, IQueryable<Expense>>>
+            {
+                q => q.Include(e => e.ExpenseShares)
+                    .ThenInclude(es => es.User)
             },
             pageNumber: filter.PageNumber,
             pageSize: filter.PageSize
@@ -284,10 +301,14 @@ public class ExpenseService : IExpenseService
             Id = e.Id,
             Title = e.Title,
             PaidDate = e.PaidDate,
+            PaidById = e.PaidById,
+            PaidByName = e.PaidByUser.FirstName + " " + e.PaidByUser.LastName,
+            MemberNames = e.ExpenseShares.Where(es => es.DeletedAt == null).Select(es => es.User.FirstName + " " + es.User.LastName).ToList(),
             NetAmount = (e.PaidById == currentUserId ? e.Amount : 0) - e.ExpenseShares.Where(es => es.UserId == currentUserId).Sum(es => es.ShareAmount)
         }).ToList();
 
         paginatedList.Page.SetPagination(paginatedItems.TotalRecords, filter.PageSize, filter.PageNumber);
         return paginatedList;
     }
+
 }

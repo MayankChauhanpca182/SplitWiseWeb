@@ -162,4 +162,19 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         return _dbSet.AsQueryable(); 
     }
+
+    public async Task<int> Count(
+        Expression<Func<T, bool>> predicate = null
+    )
+    {
+        IQueryable<T> query = _dbSet;
+
+        //Apply Filters
+        if (predicate != null)
+        {
+            query = query.Where(predicate);
+        }
+
+        return await query.CountAsync();
+    }
 }

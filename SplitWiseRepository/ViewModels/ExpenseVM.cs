@@ -46,4 +46,6 @@ public class ExpenseVM
 
     public decimal NetAmount { get; set; } = 0;
     public bool IsViewOnly { get; set; } = false;
+    public string PaidByName { get; set; }
+    public List<string> MemberNames { get; set; } = new List<string>();
 }

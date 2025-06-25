@@ -280,10 +280,6 @@ footer.footer {
     cursor: pointer;
 }
 
-.table-responsive {
-    /* max-height: calc(100vh - 385px); */
-}
-
 .searchBox {
     max-width: 300px;
 }
@@ -362,4 +358,13 @@ footer.footer {
     .dropdownList {
         transform: translate(0, 40px) !important;
     }
+}
+
+
+/* Dashboard */
+.dashboardCards{
+    height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }

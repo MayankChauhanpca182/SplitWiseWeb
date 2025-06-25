@@ -13,4 +13,5 @@ public interface IEmailService
     public Task FriendRemovedEmail(string recieverName, string senderName, string email);
     public Task AddedToGroupEmail(string recieverName, string senderName, string groupName, string email);
     public Task RemovedFromGroupEmail(string recieverName, string senderName, string groupName, string email);
+    public Task AddIndividualExpense(string recieverName, string senderName, string amount, string splitType, string shareAmount, string email);
 }

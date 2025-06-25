@@ -1,11 +1,14 @@
 @model PaginatedListVM<ExpenseVM>
+@{
+    int currentUserId = int.Parse(User.FindFirst("id")?.Value);
+}
 
-<div class="table-responsive bg-white px-2">
+<div class="table-responsive bg-white">
     <table class="table text-nowrap">
         <thead class="position-sticky top-0 z-1">
             <tr>
-                <th scope="col" class="col-4">
-                    <span class="text-clr-grey text-dark-emphasis">Name</span>
+                <th scope="col" class="col-2">
+                    <span class="text-clr-grey text-dark-emphasis">Title</span>
                     <button class="btn p-0 sortBtn" data-column="title" data-order="asc" title="Asc">
                         <i class="bi bi-arrow-up"></i>
                     </button>
@@ -13,10 +16,16 @@
                         <i class="bi bi-arrow-down"></i>
                     </button>
                 </th>
-                <th scope="col" class="col-4">
+                <th scope="col" class="col-2">
+                    <span class="text-clr-grey text-dark-emphasis">Paid By</span>
+                </th>
+                <th scope="col" class="col-3">
+                    <span class="text-clr-grey text-dark-emphasis" style="max-width: 500px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Members</span>
+                </th>
+                <th scope="col" class="col">
                     <span class="text-clr-grey text-dark-emphasis">Expense</span>
                 </th>
-                <th scope="col" class="col-4 text-center">
+                <th scope="col" class="col-1 text-center">
                     <span class="text-clr-grey text-dark-emphasis">Date</span>
                     <a class="btn p-0 sortBtn" data-column="date" data-order="asc" title="Asc">
                         <i class="bi bi-arrow-up"></i>
@@ -25,7 +34,7 @@
                         <i class="bi bi-arrow-down"></i>
                     </a>
                 </th>
-                <th scope="col" class="col-4 text-center">
+                <th scope="col" class="col-1 text-center">
                     <span class="text-clr-grey text-dark-emphasis">Actions</span>
                 </th>
             </tr>
@@ -37,8 +46,14 @@
                     <td>
                         <span class="ms-2">@expense.Title</span>
                     </td>
+                    <td>
+                        <span class="ms-2">@(expense.PaidById == currentUserId ? "You" : expense.PaidByName)</span>
+                    </td>
+                    <td style="max-width: 500px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        <span class="ms-2" title="@(string.Join(", ", expense.MemberNames))">@(string.Join(", ", expense.MemberNames))</span>
+                    </td>
                     <td class="@(expense.NetAmount == 0 ? "text-dark" : (expense.NetAmount > 0 ? "text-success" : "text-danger"))">
-                        @(expense.NetAmount == 0 ? $"Expense is settled" : (expense.NetAmount > 0 ? $"You owe ₹{expense.NetAmount}" : $"Owes you ₹{(-1)*expense.NetAmount}"))
+                        @(expense.NetAmount == 0 ? $"Expense is settled" : (expense.NetAmount > 0 ? $"You owe ₹{expense.NetAmount}" : $"{expense.PaidByName} owes you ₹{(-1)*expense.NetAmount}"))
                     </td>
                     <td class="text-center">
                         <span class="ms-2">@expense.PaidDate.ToString("dd-MM-yyyy")</span>

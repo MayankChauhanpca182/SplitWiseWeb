@@ -579,7 +579,8 @@
                 success: function (response) {
                     if (!response.statusCode) {
                         if (response.success) {
-                            toastr.success(response.message);
+                            '@(TempData["successMessage"] = "Expense has been saved successfully.")';
+                            window.location = "/expenses";
                         }
                         else {
                             toastr.error(response.message);
