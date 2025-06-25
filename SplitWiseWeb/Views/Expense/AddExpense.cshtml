@@ -217,11 +217,11 @@
     @* Store img path in const *@
     <script>
         const categoryImages = {
-                    @foreach (Category cat in Model.Categories)
+            @foreach (Category cat in Model.Categories)
             {
-                                @:@cat.Id: "@cat.CategoryImagePath",
+            @:@cat.Id: "@cat.CategoryImagePath",
             }
-                    };
+            };
     </script>
 
 
@@ -429,17 +429,6 @@
 
     @* Change split type *@
     <script>
-        // Set amount in share
-        function setAmountIntoshare(splitType) {
-            let expenseAmount = parseFloat($("#Amount").val().replace(/,/g, ""));
-            if (splitType === '@SplitType.Equally') {
-                $(".amount").prop("disabled", true).val(expenseAmount / members.length).trigger("input").trigger("blur");
-            }
-            else {
-                $(".amount").prop("disabled", false).val(0).trigger("input");
-            }
-        }
-
         // Set change split type
         function setAmountAsPerSplitType() {
             let expenseAmount = parseFloat($("#Amount").val().replace(/,/g, ""));
@@ -457,7 +446,7 @@
                     break;
                 case '@SplitType.ByShare':
                     $("#splitTypeText").text("Split by share");
-                    $(".amount").prop("disabled", false).val(1).trigger("input");
+                    $(".amount").prop("disabled", false);
                     setExpenseShareSymbole("Share");
                     break;
                 case '@SplitType.ByPercentage':
@@ -466,8 +455,7 @@
                     setExpenseShareSymbole("%");
                     break;
             }
-            @* setAmountIntoshare(splitType); *@
-            }
+        }
 
         // Set symbole for expense share
         function setExpenseShareSymbole(symbole) {
