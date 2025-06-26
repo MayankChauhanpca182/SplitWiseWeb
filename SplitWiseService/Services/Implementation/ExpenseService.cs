@@ -141,11 +141,11 @@ public class ExpenseService : IExpenseService
         return expenseVM;
     }
 
-    private async Task UpdateExpenseShare(int expenseId, int paidById, List<ExpenseShareVM> updatedShares, decimal totalAmount, SplitType splitType)
+    private async Task UpdateExpenseShare(Expense expense, List<ExpenseShareVM> updatedShares, SplitType splitType, bool isNew)
     {
         User currentUser = await _userService.LoggedInUser();
 
-        List<ExpenseShare> existingShares = await _expenseShareRepository.List(es => es.ExpenseId == expenseId);
+        List<ExpenseShare> existingShares = await _expenseShareRepository.List(es => es.ExpenseId == expense.Id);
 
         HashSet<int> updatedUserIds = updatedShares.Select(es => es.UserId).ToHashSet();
 
@@ -168,11 +168,11 @@ public class ExpenseService : IExpenseService
                 case SplitType.ByShare:
                     splitTypeName = "by share";
                     decimal totalShare = updatedShares.Sum(es => es.ShareAmount);
-                    shareAmount = (totalAmount * share.ShareAmount) / totalShare;
+                    shareAmount = expense.Amount * share.ShareAmount / totalShare;
                     break;
                 case SplitType.ByPercentage:
                     splitTypeName = "by percentage";
-                    shareAmount = (totalAmount * share.ShareAmount) / 100;
+                    shareAmount = expense.Amount * share.ShareAmount / 100;
                     break;
                 default:
                     splitTypeName = splitType.ToString().ToLower();
@@ -192,7 +192,7 @@ public class ExpenseService : IExpenseService
             {
                 ExpenseShare newShare = new ExpenseShare
                 {
-                    ExpenseId = expenseId,
+                    ExpenseId = expense.Id,
                     UserId = share.UserId,
                     ShareAmount = shareAmount,
                     CreatedById = currentUser.Id,
@@ -204,11 +204,19 @@ public class ExpenseService : IExpenseService
 
             // Send mail to user
             User user = await _userService.GetById(share.UserId);
-            bool hasUserPaid = user.Id == paidById;
+            bool hasUserPaid = user.Id == expense.PaidById;
             string senderName = user.Id == currentUser.Id ? "you" : $"{currentUser.FirstName} {currentUser.LastName}";
             string oweVariable = hasUserPaid ? "owes" : "owe";
-            string shareAmountStr = hasUserPaid ? (totalAmount - share.ShareAmount).ToString("N2") : share.ShareAmount.ToString("N2");
-            await _emailService.AddIndividualExpense($"{currentUser.FirstName} {currentUser.LastName}", senderName, totalAmount.ToString("N2"), splitTypeName, shareAmountStr, user.EmailAddress);
+            string shareAmountStr = hasUserPaid ? (expense.Amount - share.ShareAmount).ToString("N2") : share.ShareAmount.ToString("N2");
+
+            if (isNew)
+            {
+                await _emailService.AddIndividualExpense($"{user.FirstName} {user.LastName}", senderName, expense.Title, expense.Amount.ToString("N2"), splitTypeName, shareAmountStr, user.EmailAddress, oweVariable);
+            }
+            else
+            {
+                await _emailService.UpdateIndividualExpense($"{user.FirstName} {user.LastName}", senderName, expense.Title, expense.Amount.ToString("N2"), splitTypeName, shareAmountStr, user.EmailAddress, oweVariable);
+            }
         }
         return;
     }
@@ -250,7 +258,7 @@ public class ExpenseService : IExpenseService
                 await _expenseRepository.Add(expense);
 
                 // Add expense splits
-                await UpdateExpenseShare(expense.Id, expense.PaidById, newExpense.ExpenseShares, expense.Amount, newExpense.SplitTypeEnum);
+                await UpdateExpenseShare(expense, newExpense.ExpenseShares, newExpense.SplitTypeEnum, isNew: true);
 
                 response.Success = true;
                 response.Message = NotificationMessages.Saved.Replace("{0}", "Expense");
@@ -278,7 +286,7 @@ public class ExpenseService : IExpenseService
                 await _expenseRepository.Update(existingExpense);
 
                 // Add expense splits
-                await UpdateExpenseShare(existingExpense.Id, existingExpense.PaidById, newExpense.ExpenseShares, existingExpense.Amount, newExpense.SplitTypeEnum);
+                await UpdateExpenseShare(existingExpense, newExpense.ExpenseShares, newExpense.SplitTypeEnum, isNew: false);
 
                 response.Success = true;
                 response.Message = NotificationMessages.Updated.Replace("{0}", "Expense");

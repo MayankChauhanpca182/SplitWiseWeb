@@ -147,12 +147,21 @@ public class EmailService : IEmailService
         return;
     }
 
-    public async Task AddIndividualExpense(string recieverName, string senderName, string amount, string splitType, string shareAmount, string email)
+    public async Task AddIndividualExpense(string recieverName, string senderName, string expenseName, string amount, string splitType, string shareAmount, string email, string oweVariable)
     {
         string fileText = GetEmailTemplate(EmailTemplates.AddIndividualExpense);
 
-        string emailBody = fileText.Replace("{recieverName}", recieverName).Replace("{senderName}", senderName).Replace("{splittype}", splitType).Replace("{amount}", amount).Replace("{shareamount}", shareAmount);
-        await Send(email, EmailSubjects.AddIndividualExpense.Replace("{amount}", amount), emailBody);
+        string emailBody = fileText.Replace("{recieverName}", recieverName).Replace("{senderName}", senderName).Replace("{splittype}", splitType).Replace("{amount}", amount).Replace("{shareamount}", shareAmount).Replace("{owe}", oweVariable).Replace("{expenseName}", expenseName);
+        await Send(email, EmailSubjects.AddIndividualExpense, emailBody);
+        return;
+    }
+
+    public async Task UpdateIndividualExpense(string recieverName, string senderName, string expenseName, string amount, string splitType, string shareAmount, string email, string oweVariable)
+    {
+        string fileText = GetEmailTemplate(EmailTemplates.UpdateIndividualExpense);
+
+        string emailBody = fileText.Replace("{recieverName}", recieverName).Replace("{senderName}", senderName).Replace("{splittype}", splitType).Replace("{amount}", amount).Replace("{shareamount}", shareAmount).Replace("{owe}", oweVariable).Replace("{expenseName}", expenseName);
+        await Send(email, EmailSubjects.UpdateIndividualExpense, emailBody);
         return;
     }
 }
