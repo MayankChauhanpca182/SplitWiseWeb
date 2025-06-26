@@ -3,79 +3,47 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <style>
-      @import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
-
-      body {
-        font-family: "Roboto", sans-serif;
-        background-color: #e1e1e1;
-      }
-
-      .text-primary {
-        color: #1cc29f !important;
-        padding-top: 15px;
-      }
-
-      .btn-primary {
-        background-color: #1cc29f !important;
-        text-decoration: none;
-        color: #ffffff;
-        margin: 20px 0;
-        padding: 10px;
-        font-size: large !important;
-        border-radius: 10px;
-        text-decoration: none;
-      }
-
-      .container {
-        width: 700px;
-        margin-left: auto;
-        margin-right: auto;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
-
-      .heading {
-        display: flex;
-        align-items: center;
-        font-size: xx-large;
-        padding: 30px 0;
-      }
-
-      .content {
-        width: 100% !important;
-        font-size: 20px;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      p {
-        margin: 8px 0;
-      }
-    </style>
+    <title>SplitMate Email</title>
+    <meta name="color-scheme" content="light dark">
+    <meta name="supported-color-schemes" content="light dark">
   </head>
-  <body>
-    <div class="container">
-      <!-- Heading -->
-      <div class="heading">
-        <img src="https://i.postimg.cc/t4kz4qjc/fulllogo-transparent-nobuffer.png" alt="" width="150px" />
-      </div>
+  <body style="margin: 0; padding: 0; background-color: #e1e1e1; font-family: Arial, sans-serif; color: #000000;">
+    <table width="100%" bgcolor="#e1e1e1" cellpadding="0" cellspacing="0" role="presentation">
+      <tr>
+        <td align="center">
+          <!-- Main Container -->
+          <table width="700" cellpadding="0" cellspacing="0" style="background-color: #ffffff; color: #000000;" role="presentation">
+            
+            <!-- Heading -->
+            <tr>
+              <td align="center" style="padding: 30px 0; font-size: 24px; font-weight: bold; background-color: #ffffff; color: #000000;">
+                <!-- You can insert a logo here -->
+                SplitMate
+              </td>
+            </tr>
 
-      <!-- Content -->
-      <div class="content">
-        <p><strong>Dear {recieverName},</strong></p>
+            <!-- Content -->
+            <tr>
+              <td style="padding: 20px; font-size: 16px; line-height: 1.5; background-color: #ffffff; color: #000000;">
+                <p><strong>Hello {recieverName},</strong></p>
 
-        {content}
+                {content}
 
-        <br />
-        <p><strong>Thank you,</strong></p>
-        <p><strong>SplitMate team</strong></p>
-      </div>
+                <br />
+                <p><strong>Thank you,</strong></p>
+                <p><strong>The SplitMate Team</strong></p>
+              </td>
+            </tr>
 
-      <div></div>
-    </div>
+            <!-- Footer -->
+            <tr>
+              <td align="center" style="padding: 20px; font-size: 12px; background-color: #ffffff; color: #666666;">
+                © 2025 SplitMate. All rights reserved.
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
   </body>
 </html>

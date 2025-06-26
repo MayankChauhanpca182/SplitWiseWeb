@@ -164,7 +164,7 @@ public class UserController : Controller
             {
                 Expires = DateTime.Now.AddHours(24),
                 HttpOnly = true,
-                Secure = true,
+                Secure = false,
                 SameSite = SameSiteMode.Strict
             };
             Response.Cookies.Append("UserName", $"{user.FirstName} {user.LastName}", options);

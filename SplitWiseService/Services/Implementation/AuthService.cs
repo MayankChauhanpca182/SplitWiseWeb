@@ -37,7 +37,7 @@ public class AuthService : IAuthService
             await _transaction.Begin();
 
             string email = _aesHelper.Decrypt(token);
-            User? user = await _userRepository.Get(u => u.EmailAddress == email && u.DeactivatedAt == null);
+            User? user = await _userRepository.Get(u => u.EmailAddress == email && u.DeactivatedAt == null && u.DeletedAt == null);
             ResponseVM response = new();
             if (user == null)
             {
@@ -79,7 +79,7 @@ public class AuthService : IAuthService
 
     public async Task<ResponseVM> ValidateUser(string email, string password)
     {
-        User? user = await _userRepository.Get(u => u.EmailAddress.ToLower() == email.ToLower() && u.DeactivatedAt == null);
+        User? user = await _userRepository.Get(u => u.EmailAddress.ToLower() == email.ToLower() && u.DeactivatedAt == null && u.DeletedAt == null);
         ResponseVM response = new ResponseVM();
 
         if (user == null)
@@ -115,7 +115,7 @@ public class AuthService : IAuthService
             ResponseVM response = new ResponseVM();
 
             // Fetch user
-            User? user = await _userRepository.Get(u => u.EmailAddress.ToLower() == email.ToLower() && u.DeactivatedAt == null);
+            User? user = await _userRepository.Get(u => u.EmailAddress.ToLower() == email.ToLower() && u.DeactivatedAt == null && u.DeletedAt == null);
             if (user == null)
             {
                 response.Success = false;

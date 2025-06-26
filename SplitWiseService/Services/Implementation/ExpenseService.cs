@@ -64,9 +64,7 @@ public class ExpenseService : IExpenseService
             expenseVM.PaidById = expense.PaidById;
             expenseVM.PaidDate = expense.PaidDate;
             expenseVM.SplitTypeEnum = expense.SplitType;
-
-            expenseVM.ExpenseShares = expense.ExpenseShares
-                    .Where(es => es.DeletedAt == null)
+            expenseVM.ExpenseShares = expense.ExpenseShares.Where(es => es.DeletedAt == null)
                     .Select(es => new ExpenseShareVM
                     {
                         Id = es.Id,
@@ -75,10 +73,48 @@ public class ExpenseService : IExpenseService
                         UserName = $"{es.User.FirstName} {es.User.LastName}",
                         ProfileImagePath = es.User.ProfileImagePath
                     }).ToList();
+
+            if (expenseVM.GroupId > 0)
+            {
+
+            }
+            else
+            {
+                expenseVM.Friends = _friendService.FriendList(new FilterVM { PageNumber = 0, PageSize = 0 }).Result.List.ToList();
+                // Add current user in friendlist
+                expenseVM.Friends.Add(new FriendVM
+                {
+                    UserId = currentUser.Id,
+                    Name = $"{currentUser.FirstName} {currentUser.LastName}",
+                    ProfileImagePath = currentUser.ProfileImagePath
+                });
+
+                // Add expense members into friend list who are not in friend list
+                expenseVM.Friends = expenseVM.Friends.Concat(expenseVM.ExpenseShares.Where(es => !expenseVM.Friends.Any(f => f.UserId == es.UserId)).Select(es => new FriendVM
+                {
+                    UserId = es.UserId,
+                    Name = es.UserName,
+                    ProfileImagePath = es.ProfileImagePath
+                }).ToList()).ToList();
+            }
         }
         else if (groupId > 0)
         {
-            // expenseVM.ExpenseShares = await _groupService.GetMembers((int)groupId);
+            expenseVM.GroupDetails = await _groupService.GetGroup(groupId);
+            expenseVM.ExpenseShares = _groupService.GetMembers((int)groupId).Result.Select(gm => new ExpenseShareVM
+            {
+                UserId = gm.UserId,
+                StringAmount = "0.00",
+                UserName = gm.Name,
+                ProfileImagePath = gm.ProfileImagePath
+            }).ToList();
+
+            expenseVM.Friends = _groupService.GetMembers((int)groupId).Result.Select(gm => new FriendVM
+            {
+                UserId = gm.UserId,
+                Name = gm.Name,
+                ProfileImagePath = gm.ProfileImagePath
+            }).ToList();
         }
         else
         {
@@ -89,22 +125,16 @@ public class ExpenseService : IExpenseService
                 UserName = $"{currentUser.FirstName} {currentUser.LastName}",
                 ProfileImagePath = currentUser.ProfileImagePath
             });
+
+            expenseVM.Friends = _friendService.FriendList(new FilterVM { PageNumber = 0, PageSize = 0 }).Result.List.ToList();
+            // Add current user in friendlist
+            expenseVM.Friends.Add(new FriendVM
+            {
+                UserId = currentUser.Id,
+                Name = $"{currentUser.FirstName} {currentUser.LastName}",
+                ProfileImagePath = currentUser.ProfileImagePath
+            });
         }
-
-        expenseVM.Friends = _friendService.FriendList(new FilterVM { PageNumber = 0, PageSize = 0 }).Result.List.ToList();
-        expenseVM.Friends.Add(new FriendVM
-        {
-            UserId = currentUser.Id,
-            Name = $"{currentUser.FirstName} {currentUser.LastName}",
-            ProfileImagePath = currentUser.ProfileImagePath
-        });
-
-        expenseVM.Friends = expenseVM.Friends.Concat(expenseVM.ExpenseShares.Where(es => !expenseVM.Friends.Any(f => f.UserId == es.UserId)).Select(es => new FriendVM
-        {
-            UserId = es.UserId,
-            Name = es.UserName,
-            ProfileImagePath = es.ProfileImagePath
-        }).ToList()).ToList();
 
         expenseVM.Categories = await _categoryService.GetList();
         expenseVM.Currencies = await _commonService.CurrencyList();
@@ -266,7 +296,7 @@ public class ExpenseService : IExpenseService
         }
     }
 
-    public async Task<PaginatedListVM<ExpenseVM>> IndividualList(FilterVM filter)
+    public async Task<PaginatedListVM<ExpenseVM>> ExpenseList(FilterVM filter, bool isAllExpense = false, bool isGroupExpenses = false)
     {
         int currentUserId = _userService.LoggedInUserId();
         string searchString = string.IsNullOrEmpty(filter.SearchString) ? "" : filter.SearchString.Replace(@"\s+", "").ToLower();
@@ -290,12 +320,14 @@ public class ExpenseService : IExpenseService
         PaginatedItemsVM<Expense> paginatedItems = await _expenseRepository.PaginatedList(
             predicate: e => (e.PaidById == currentUserId || e.ExpenseShares.Any(es => es.UserId == currentUserId))
                             && e.DeletedAt == null
+                            && (isAllExpense ? true : (isGroupExpenses ? e.GroupId != null : e.GroupId == null))
                             && (string.IsNullOrEmpty(searchString) || e.Title.ToLower().Contains(searchString)),
             orderBy: orderBy,
             includes: new List<System.Linq.Expressions.Expression<Func<Expense, object>>>
             {
                 e => e.ExpenseShares,
-                e => e.PaidByUser
+                e => e.PaidByUser,
+                e => e.Group
             },
             thenIncludes: new List<Func<IQueryable<Expense>, IQueryable<Expense>>>
             {
@@ -310,6 +342,11 @@ public class ExpenseService : IExpenseService
         paginatedList.List = paginatedItems.Items.Select(e => new ExpenseVM
         {
             Id = e.Id,
+            GroupId = e.GroupId,
+            // GroupDetails = new GroupVM
+            // {
+            //     Name =e.Group.Name
+            // },
             Title = e.Title,
             PaidDate = e.PaidDate,
             PaidById = e.PaidById,
@@ -321,4 +358,5 @@ public class ExpenseService : IExpenseService
         paginatedList.Page.SetPagination(paginatedItems.TotalRecords, filter.PageSize, filter.PageNumber);
         return paginatedList;
     }
+
 }

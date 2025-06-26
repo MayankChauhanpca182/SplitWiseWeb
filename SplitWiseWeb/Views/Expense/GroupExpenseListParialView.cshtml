@@ -17,6 +17,9 @@
                     </button>
                 </th>
                 <th scope="col" class="col">
+                    <span class="text-clr-grey text-dark-emphasis">Group</span>
+                </th>
+                <th scope="col" class="col">
                     <span class="text-clr-grey text-dark-emphasis">Paid By</span>
                 </th>
                 <th scope="col" class="col-3">
@@ -44,7 +47,10 @@
             {
                 <tr>
                     <td>
-                        <span class="text-dark">@expense.Title</span>
+                        <span class="text-dark ">@expense.Title</span>
+                    </td>
+                    <td>
+                        <span class="text-dark ">@expense.GroupDetails.Name</span>
                     </td>
                     <td>
                         <span>@(expense.PaidById == currentUserId ? "You" : expense.PaidByName)</span>
@@ -59,10 +65,10 @@
                         <span>@expense.PaidDate.ToString("dd-MM-yyyy")</span>
                     </td>
                     <td class="text-center">
-                        <a asp-action="ViewIndividualExpense" asp-controller="Expense" asp-route-expenseId="@expense.Id" class="btn border-0" title="View">
+                        <a asp-action="ViewGroupExpense" asp-controller="Expense" asp-route-expenseId="@expense.Id" class="btn border-0" title="View">
                             <i class="bi bi-file-earmark-fill"></i>
                         </a>
-                        <a asp-action="AddIndividualExpense" asp-controller="Expense" asp-route-expenseId="@expense.Id" class="btn border-0" title="Edit">
+                        <a asp-action="AddGroupExpense" asp-controller="Expense" asp-route-expenseId="@expense.Id" class="btn border-0" title="Edit">
                             <i class="bi bi-pencil-square"></i>
                         </a>
                     </td>
@@ -73,7 +79,7 @@
 </div>
 @if (!(Model.Page.TotalRecord > 0))
 {
-    <p class="p-4 text-center">No expenses found</p>
+    <p class="p-4 text-center">No group expenses found</p>
 }
 else
 {
@@ -81,7 +87,7 @@ else
     <div class="pagination d-flex flex-column flex-sm-row justify-content-end align-items-sm-center mt-3 px-1 pb-3">
         <div class="d-flex align-items-center">
             <span class="mx-1">Items Per page: </span>
-            <select class="form-select w-auto mx-1" id="individualExpensePageSize" onchange="getIndividualExpenseList(1)"
+            <select class="form-select w-auto mx-1" id="groupExpensePageSize" onchange="getGroupExpenseList(1)"
                 aria-label="Default select example" title="Page sige">
                 <option value="5" selected="@(Model.Page.PageSize == 5 ? true : false)">5</option>
                 <option value="10" selected="@(Model.Page.PageSize == 10 ? true : false)">10</option>
@@ -93,11 +99,11 @@ else
         </span>
         <div>
             <button class="btn p-1 border @(Model.Page.CurrentPage > 1 ? " " : "disabled")"
-                onclick="getIndividualExpenseList(@Model.Page.CurrentPage-1)" title="Prev page">
+                onclick="getGroupExpenseList(@Model.Page.CurrentPage-1)" title="Prev page">
                 <i class="bi bi-chevron-left p-1"></i>
             </button>
             <button class="btn p-1 border @(Model.Page.CurrentPage < Model.Page.TotalPages ? " " : "disabled")"
-                onclick="getIndividualExpenseList(@Model.Page.CurrentPage+1)" title="Next page">
+                onclick="getGroupExpenseList(@Model.Page.CurrentPage+1)" title="Next page">
                 <i class="bi bi-chevron-right p-1"></i>
             </button>
         </div>

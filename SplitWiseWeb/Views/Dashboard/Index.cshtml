@@ -5,7 +5,7 @@
 }
 
 <div class="d-flex flex-wrap justify-content-between gap-3 mb-3 mt-3">
-    <a asp-action="Index" asp-controller="Friend" class="dashboardCards col p-3 border border-2" style="background-color: #EDF3FF;">
+    <a asp-action="Index" asp-controller="Friend" class="friendCard dashboardCards col p-3 border border-2">
         <div class="d-flex justify-content-between align-items-center">
             <span class="fs-4 text-nowrap">Friends</span>
             <i class="bi bi-people-fill fs-4"></i>
@@ -29,12 +29,12 @@
             </div>
         </div>
     </a>
-    <a asp-action="Index" asp-controller="Group" class="dashboardCards col p-3 border border-2" style="background-color: #f8f3e7;">
+    <a asp-action="Index" asp-controller="Group" class="groupCard dashboardCards col p-3 border border-2">
         <div class="d-flex justify-content-between align-items-center">
             <span class="fs-4 text-nowrap">Groups</span>
             <i class="bi bi-diagram-3-fill fs-4"></i>
         </div>
-        <div class="d-flex justify-content-between align-items-center px-3">
+        <div class="d-flex gap-5 align-items-center px-3">
             <div class="d-flex flex-column align-items-center gap-2">
                 <span>Total</span>
                 <span>@Model.GroupsCount</span>
@@ -45,7 +45,7 @@
             </div>
         </div>
     </a>
-    <a asp-action="Index" asp-controller="Expense" class="dashboardCards col p-3 border border-2" style="background-color: #EBF8F3;">
+    <a asp-action="Index" asp-controller="Expense" class="expenseCard dashboardCards col p-3 border border-2">
         <div class="d-flex justify-content-between align-items-center">
             <span class="fs-4 text-nowrap">Expenses</span>
             <i class="bi bi-cash fs-4"></i>
@@ -86,9 +86,18 @@
                 {
                     <tr>
                         <td>
-                            <a asp-action="ViewExpense" asp-controller="Expense" asp-route-expenseId="@expense.Id">
-                                <span class="text-dark">@expense.Title</span>
-                            </a>
+                            @if(expense.GroupId != null && expense.GroupId > 0)
+                            {
+                                <a asp-action="ViewGroupExpense" asp-controller="Expense" asp-route-expenseId="@expense.Id">
+                                    <span class="text-dark">@expense.Title</span>
+                                </a>
+                            }
+                            else
+                            {
+                                <a asp-action="ViewIndividualExpense" asp-controller="Expense" asp-route-expenseId="@expense.Id">
+                                    <span class="text-dark">@expense.Title</span>
+                                </a>
+                            }
                         </td>
                         <td>
                             <span>@(expense.GroupId != null && expense.GroupId > 0 ? "Group" : "Individual")</span>

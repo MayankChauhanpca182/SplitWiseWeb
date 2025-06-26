@@ -27,7 +27,7 @@ public class UserVM
 
     [Required(ErrorMessage = ValidationMessages.CurrencyRequired)]
     [Range(1, int.MaxValue, ErrorMessage = ValidationMessages.CurrencyRequired)]
-    public int CurrencyId { get; set; } = 23;
+    public int CurrencyId { get; set; } = DefaultValues.CurrencyId;
 
     [StringLength(500)]
     public string Address { get; set; }

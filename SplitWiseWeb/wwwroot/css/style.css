@@ -382,3 +382,15 @@ footer.footer {
     align-items: center;
     justify-content: center;
 }
+
+.friendCard{
+    background-color: #EDF3FF;
+}
+
+.groupCard{
+    background-color: #f8f3e7;
+}
+
+.expenseCard{
+    background-color: #EBF8F3;
+}

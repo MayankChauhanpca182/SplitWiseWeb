@@ -18,23 +18,18 @@ public class ExpenseController : Controller
     }
 
     // GET Index
-    [Breadcrumb("Expenses")]
-    [Route("expenses")]
-    public IActionResult Index()
-    {
-        ViewData["ActiveLink"] = "Expenses";
-        return View();
-    }
-
     [Breadcrumb("Individual Expenses")]
     [Route("individualExpenses")]
-    public IActionResult IndividialExpenses()
+    public IActionResult Index()
     {
+        // ViewData["ActiveLink"] = "Expenses";
+        // return View();
         ViewData["ActiveLink"] = "Individual Expenses";
-        return View();
+        return View("IndividialExpenses");
     }
 
-    [Breadcrumb("Group Expenses")]
+    // GET GroupExpenses
+    [Breadcrumb("Group Expenses", FromController = typeof(DashboardController))]
     [Route("groupExpenses")]
     public IActionResult GroupExpenses()
     {
@@ -42,24 +37,45 @@ public class ExpenseController : Controller
         return View();
     }
 
-    // GET AddExpense
+    // GET AddIndividualExpense
     [Breadcrumb("Add")]
-    [Route("expense/add")]
-    public async Task<IActionResult> AddExpense(int expenseId, int groupId)
+    [Route("individualExpenses/add")]
+    public async Task<IActionResult> AddIndividualExpense(int expenseId, int groupId)
     {
         ExpenseVM expense = await _expenseService.GetExpense(expenseId, groupId);
-        ViewData["ActiveLink"] = "Expenses";
-        return View(expense);
+        ViewData["ActiveLink"] = "Individual Expenses";
+        return View("AddExpense", expense);
     }
 
-    // GET ViewExpense
+    // GET AddGroupExpense
+    [Breadcrumb("Add", FromAction = "GroupExpenses")]
+    [Route("groupExpenses/add")]
+    public async Task<IActionResult> AddGroupExpense(int expenseId, int groupId)
+    {
+        ExpenseVM expense = await _expenseService.GetExpense(expenseId, groupId);
+        ViewData["ActiveLink"] = "Group Expenses";
+        return View("AddExpense", expense);
+    }
+
+    // GET ViewIndividualExpense
     [Breadcrumb("View")]
-    [Route("expense/view")]
-    public async Task<IActionResult> ViewExpense(int expenseId, int groupId)
+    [Route("individualExpenses/view")]
+    public async Task<IActionResult> ViewIndividualExpense(int expenseId, int groupId)
     {
         ExpenseVM expense = await _expenseService.GetExpense(expenseId, groupId);
         expense.IsViewOnly = true;
-        ViewData["ActiveLink"] = "Expenses";
+        ViewData["ActiveLink"] = "Individual Expenses";
+        return View("AddExpense", expense);
+    }
+
+    // GET ViewGroupExpense
+    [Breadcrumb("View", FromAction = "GroupExpenses")]
+    [Route("groupExpenses/view")]
+    public async Task<IActionResult> ViewGroupExpense(int expenseId, int groupId)
+    {
+        ExpenseVM expense = await _expenseService.GetExpense(expenseId, groupId);
+        expense.IsViewOnly = true;
+        ViewData["ActiveLink"] = "Group Expenses";
         return View("AddExpense", expense);
     }
 
@@ -73,10 +89,6 @@ public class ExpenseController : Controller
         }
 
         ResponseVM response = await _expenseService.SaveExpense(newExpense);
-        if (response.Success)
-        {
-            TempData["successMessage"] = response.Message;
-        }
         return Json(response);
     }
 
@@ -84,7 +96,15 @@ public class ExpenseController : Controller
     [HttpPost]
     public async Task<IActionResult> IndividualExpenseList(FilterVM filter)
     {
-        PaginatedListVM<ExpenseVM> expense = await _expenseService.IndividualList(filter);
-        return PartialView("IndividualExpenseListParialView", expense);
+        PaginatedListVM<ExpenseVM> expenses = await _expenseService.ExpenseList(filter);
+        return PartialView("IndividualExpenseListParialView", expenses);
+    }
+
+    // POST GroupExpenseList
+    [HttpPost]
+    public async Task<IActionResult> GroupExpenseList(FilterVM filter)
+    {
+        PaginatedListVM<ExpenseVM> expenses = await _expenseService.ExpenseList(filter, isGroupExpenses: true);
+        return PartialView("GroupExpenseListParialView", expenses);
     }
 }

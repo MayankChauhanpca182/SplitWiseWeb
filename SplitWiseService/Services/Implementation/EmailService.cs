@@ -97,7 +97,7 @@ public class EmailService : IEmailService
         string fileText = GetEmailTemplate(EmailTemplates.Referral);
         string loginLink = _urlBuilder.Create("Register", "User");
 
-        string emailBody = fileText.Replace(" {recieverName}", "").Replace("{senderName}", senderName).Replace("{link}", loginLink);
+        string emailBody = fileText.Replace(" {recieverName}", "Sir or Madam").Replace("{senderName}", senderName).Replace("{link}", loginLink);
         await Send(email, EmailSubjects.ReferralRequest, emailBody);
         return;
     }

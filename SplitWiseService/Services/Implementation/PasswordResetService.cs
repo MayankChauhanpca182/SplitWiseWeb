@@ -120,7 +120,7 @@ public class PasswordResetService : IPasswordResetService
             }
 
             // Fetch user
-            User? user = await _userRepository.Get(u => u.Id == resetToken.UserId && u.DeactivatedAt == null && u.IsEmailConfirmed);
+            User? user = await _userRepository.Get(u => u.Id == resetToken.UserId && u.DeactivatedAt == null && u.IsEmailConfirmed && u.DeletedAt == null);
             if (user == null)
             {
                 response.Success = false;

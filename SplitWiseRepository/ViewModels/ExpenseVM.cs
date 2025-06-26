@@ -10,6 +10,7 @@ public class ExpenseVM
 {
     public int Id { get; set; } = 0;
     public int? GroupId { get; set; }
+    public GroupVM GroupDetails { get; set; } = new GroupVM();
 
     [Required(ErrorMessage = ValidationMessages.ExpenseTitleRequired)]
     [StringLength(100, ErrorMessage = ValidationMessages.ExpenseTitleRequired)]
@@ -18,7 +19,7 @@ public class ExpenseVM
     [Required(ErrorMessage = ValidationMessages.ExpenseAmountRequired)]
     public string Amount { get; set; } = "0";
 
-    public int CategoryId { get; set; } = 16;
+    public int CategoryId { get; set; }
     public List<Category> Categories { get; set; } = new List<Category>();
 
     [Required(ErrorMessage = ValidationMessages.CurrencyRequired)]

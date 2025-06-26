@@ -20,7 +20,7 @@ public class GroupVM
 
     [StringLength(2000)]
     public string NoticeBoard { get; set; }
-    public int CurrencyId { get; set; } = 23;
+    public int CurrencyId { get; set; } = DefaultValues.CurrencyId;
     public bool IsSimplifiedPayments { get; set; } = false;
 
     public decimal Expense { get; set; } = 0;

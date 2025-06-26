@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Mvc;
+using SplitWiseRepository.Constants;
 
 namespace SplitWiseRepository.Models;
 
@@ -15,7 +16,7 @@ public class Group : AuditFields
     [MaxLength(2000)]
     public string NoticeBoard { get; set; }
 
-    public int CurrencyId { get; set; } = 23;
+    public int CurrencyId { get; set; }
     public bool IsSimplifiedPayments { get; set; } = false;
 
     [MaxLength(1000)]

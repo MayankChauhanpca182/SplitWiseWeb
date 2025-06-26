@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using Org.BouncyCastle.Crypto.Engines;
 using SplitWiseRepository.Constants;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.Repositories.Interface;
@@ -66,7 +67,7 @@ public class DashboardService : IDashboardService
             SortColumn = "date",
             SortOrder = "desc"
         };
-        PaginatedListVM<ExpenseVM> expenses = await _expenseService.IndividualList(filter);
+        PaginatedListVM<ExpenseVM> expenses = await _expenseService.ExpenseList(filter, isAllExpense: true);
         dashboard.RecentExpenses = expenses.List.ToList();
         return dashboard;
     }

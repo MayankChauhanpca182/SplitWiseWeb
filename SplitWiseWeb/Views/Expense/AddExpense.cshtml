@@ -14,48 +14,61 @@
         class="d-flex flex-column gap-3 p-3 bg-white col-12 col-lg-7" enctype="multipart/form-data">
 
         <input asp-for="@Model.Id" hidden>
+        <input asp-for="@Model.GroupId" hidden>
         <input asp-for="@Model.CurrencyId" hidden>
         <input type="text" name="expenseMembersJson" id="expenseMembersJson" hidden>
 
-        <!-- New design -->
-        <div class="">
-            <!-- Members -->
+        @if(Model.GroupId > 0)
+        {
+            <!-- Group -->
             <div class="d-flex flex-wrap gap-3 align-items-center col-12">
                 <div class="btn-group w-100">
                     <div class="memberPillDiv d-flex gap-2 border border-secondary-subtle overflow-x-auto w-100 p-2">
-                        @foreach (ExpenseShareVM share in Model.ExpenseShares)
-                        {
-                            <span class="expenseMemberPill" id="expenseMemberPill-@share.UserId">
-                                <img src=@(share.ProfileImagePath ?? "/images/Default_pfp.png")>
-                                <span>@share.UserName</span>
-                                <button type="button" class="btn-close removeMember" aria-label="Close"
-                                    onclick="removePill(@share.UserId)"></button>
-                            </span>
-                        }
-
+                        <span class="expenseMemberPill" id="groupPill-@Model.GroupDetails.Id">
+                            <img src=@(Model.GroupDetails.ImagePath ?? "/images/default_group_img.png")>
+                            <span>@Model.GroupDetails.Name</span>
+                            <button type="button" class="btn-close" aria-label="Close" disabled></button>
+                        </span>
                     </div>
-                    <button type="button"
-                        class="btn dropdown-toggle dropdown-toggle-split border-secondary-subtle rounded-0"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        <span class="visually-hidden">User list</span>
-                    </button>
-                    <ul class="dropdownList dropdown-menu w-100">
-                        @foreach (FriendVM user in Model.Friends)
-                        {
-                            <li class="d-flex align-items-center gap-2 px-2">
-                                <input class="userCkb form-check-input m-0" type="checkbox" id="userCkb-@user.UserId"
-                                    @(Model.ExpenseShares.Any(es => es.UserId == user.UserId) ? "checked" : "")
-                                    data-user='@(Html.Raw(Json.Serialize(user)))'>
-                                <label for="userCkb-@user.UserId" class="d-flex align-items-center gap-2">
-                                    <img src=@(user.ProfileImagePath ?? "/images/Default_pfp.png") alt=""
-                                        class="rounded-circle border border-dark-subtle object-fit-cover" width="25px"
-                                        height="25px">
-                                    <span>@user.Name</span>
-                                </label>
-                            </li>
-                        }
-                    </ul>
                 </div>
+            </div>
+        }
+
+        <!-- Members -->
+        <div class="d-flex flex-wrap gap-3 align-items-center col-12">
+            <div class="btn-group w-100">
+                <div class="memberPillDiv d-flex gap-2 border border-secondary-subtle overflow-x-auto w-100 p-2">
+                    @foreach (ExpenseShareVM share in Model.ExpenseShares)
+                    {
+                        <span class="expenseMemberPill" id="expenseMemberPill-@share.UserId">
+                            <img src=@(share.ProfileImagePath ?? "/images/Default_pfp.png")>
+                            <span>@share.UserName</span>
+                            <button type="button" class="btn-close removeMember" aria-label="Close"
+                                onclick="removePill(@share.UserId)"></button>
+                        </span>
+                    }
+                </div>
+                <button type="button"
+                    class="btn dropdown-toggle dropdown-toggle-split border-secondary-subtle rounded-0"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="visually-hidden">User list</span>
+                </button>
+                <ul class="dropdownList dropdown-menu w-100">
+                    @foreach (FriendVM user in Model.Friends)
+                    {
+                        <li class="d-flex align-items-center gap-2 px-2">
+                            <input class="userCkb form-check-input m-0" type="checkbox" id="userCkb-@user.UserId"
+                                @(Model.ExpenseShares.Any(es => es.UserId == user.UserId) ? "checked" : "")
+                                data-user='@(Html.Raw(Json.Serialize(user)))'>
+                            <label for="userCkb-@user.UserId" class="d-flex align-items-center gap-2">
+                                <img src=@(user.ProfileImagePath ?? "/images/Default_pfp.png") alt=""
+                                    class="rounded-circle border border-dark-subtle object-fit-cover" width="25px"
+                                    height="25px">
+                                <span>@user.Name</span>
+                            </label>
+                        </li>
+                    }
+                </ul>
             </div>
         </div>
 
@@ -105,8 +118,7 @@
                     <label asp-for="@Model.CategoryId">Category</label>
                     <span class="text-danger" asp-validation-for="@Model.CategoryId"></span>
                 </div>
-                <img src=@(Model.Categories.Where(c => c.Id == Model.CategoryId).Select(c =>
-                                         c.CategoryImagePath).First() ?? "/defaultcategory/other.png") alt="" id="categoryImage"
+                <img src=@(Model.CategoryId > 0 ? (Model.Categories.Where(c => c.Id == Model.CategoryId).Select(c => c.CategoryImagePath).First()?? "/defaultcategory/other.png") : Model.Categories.Select(c => c.CategoryImagePath).First()) alt="" id="categoryImage"
                     class="my-auto" width="50px" height="50px">
             </div>
         </div>
@@ -584,7 +596,8 @@
                 success: function (response) {
                     if (!response.statusCode) {
                         if (response.success) {
-                            window.location = "/expenses";
+                            // window.location = "/expenses";
+                            toastr.success(response.message);
                         }
                         else {
                             toastr.error(response.message);

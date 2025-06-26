@@ -57,7 +57,7 @@ public class AuthController : Controller
         {
             Expires = loginVM.IsRememberMe ? DateTime.Now.AddHours(24) : DateTime.Now.AddHours(1),
             HttpOnly = true,
-            Secure = true,
+            Secure = false,
             SameSite = SameSiteMode.Strict
         };
 
@@ -108,7 +108,7 @@ public class AuthController : Controller
     #region Forgot Password
     // GET ForgotPassword
     [Route("forgotPassword")]
-    public async Task<IActionResult> ForgotPassword()
+    public IActionResult ForgotPassword()
     {
         return View();
     }
