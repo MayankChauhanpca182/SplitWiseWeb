@@ -26,6 +26,22 @@ public class ExpenseController : Controller
         return View();
     }
 
+    [Breadcrumb("Individual Expenses")]
+    [Route("individualExpenses")]
+    public IActionResult IndividialExpenses()
+    {
+        ViewData["ActiveLink"] = "Individual Expenses";
+        return View();
+    }
+
+    [Breadcrumb("Group Expenses")]
+    [Route("groupExpenses")]
+    public IActionResult GroupExpenses()
+    {
+        ViewData["ActiveLink"] = "Group Expenses";
+        return View();
+    }
+
     // GET AddExpense
     [Breadcrumb("Add")]
     [Route("expense/add")]

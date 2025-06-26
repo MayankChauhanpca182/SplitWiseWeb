@@ -4,13 +4,11 @@
     int currentUserId = int.Parse(User.FindFirst("id")?.Value);
 }
 
-<h3 class="bg-white my-3 p-3 text-dark-emphasis shadow">Dashboard</h3>
-
-<div class="d-flex flex-wrap justify-content-between gap-3 mb-3">
-    <a asp-action="Index" asp-controller="Friend" class="dashboardCards bg-white col p-3 border border-2" style="background-color: #EDF3FF !important;">
+<div class="d-flex flex-wrap justify-content-between gap-3 mb-3 mt-3">
+    <a asp-action="Index" asp-controller="Friend" class="dashboardCards col p-3 border border-2" style="background-color: #EDF3FF;">
         <div class="d-flex justify-content-between align-items-center">
             <span class="fs-4 text-nowrap">Friends</span>
-            <i class="bi bi-person-fill fs-4"></i>
+            <i class="bi bi-people-fill fs-4"></i>
         </div>
         <div class="d-flex justify-content-between align-items-center px-3">
             <div class="d-flex flex-column align-items-center gap-2">
@@ -26,12 +24,12 @@
                 <span>@Model.FriendsPending</span>
             </div>
             <div class="d-flex flex-column align-items-center gap-2">
-                <span>Refered</span>
+                <span>Referred</span>
                 <span>@Model.FriendsReferred</span>
             </div>
         </div>
     </a>
-    <a asp-action="Index" asp-controller="Group" class="dashboardCards col bg-white p-3 border border-2" style="background-color: #FFF0EE !important;">
+    <a asp-action="Index" asp-controller="Group" class="dashboardCards col p-3 border border-2" style="background-color: #f8f3e7;">
         <div class="d-flex justify-content-between align-items-center">
             <span class="fs-4 text-nowrap">Groups</span>
             <i class="bi bi-diagram-3-fill fs-4"></i>
@@ -47,13 +45,13 @@
             </div>
         </div>
     </a>
-    <a asp-action="Index" asp-controller="Expense" class="dashboardCards col bg-white p-3 border border-2" style="background-color: #EBF8F3 !important;">
+    <a asp-action="Index" asp-controller="Expense" class="dashboardCards col p-3 border border-2" style="background-color: #EBF8F3;">
         <div class="d-flex justify-content-between align-items-center">
             <span class="fs-4 text-nowrap">Expenses</span>
             <i class="bi bi-cash fs-4"></i>
         </div>
         <div class="d-flex align-items-center">
-            <span class="fs-5 pe-2 @(Model.TotalExpense == 0 ? "text-dark" : (Model.TotalExpense > 0 ? "text-success" : "text-danger"))">
+            <span class="pe-2 @(Model.TotalExpense < 0 ? "text-danger" : "text-success")">
                 @(Model.TotalExpense == 0 ? $"All expenses are settled" : (Model.TotalExpense > 0 ? $"You owe ₹{Model.TotalExpense.ToString("N2")}" : $"You are owed ₹{((-1) * Model.TotalExpense).ToString("N2")}"))
                 </span>
         </div>
@@ -61,7 +59,7 @@
 </div>
 
 <div class="bg-white p-3">
-    <p class="fw-semibold fs-5 text-dark-emphasis">Recent Expences</p>
+    <p class="fw-semibold fs-5 text-dark-emphasis">Recent Expenses</p>
     <div class="table-responsive bg-white">
         <table class="table text-nowrap">
             <thead class="position-sticky top-0 z-1">
@@ -70,11 +68,10 @@
                         <span class="text-clr-grey text-dark-emphasis">Title</span>
                     </th>
                     <th scope="col" class="col">
-                        <span class="text-clr-grey text-dark-emphasis">Paid By</span>
+                        <span class="text-clr-grey text-dark-emphasis">Type</span>
                     </th>
-                    <th scope="col" class="col-3">
-                        <span class="text-clr-grey text-dark-emphasis"
-                            style="max-width: 500px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Members</span>
+                    <th scope="col" class="col">
+                        <span class="text-clr-grey text-dark-emphasis">Paid By</span>
                     </th>
                     <th scope="col" class="col">
                         <span class="text-clr-grey text-dark-emphasis">Expense</span>
@@ -89,16 +86,18 @@
                 {
                     <tr>
                         <td>
-                            <span>@expense.Title</span>
+                            <a asp-action="ViewExpense" asp-controller="Expense" asp-route-expenseId="@expense.Id">
+                                <span class="text-dark">@expense.Title</span>
+                            </a>
+                        </td>
+                        <td>
+                            <span>@(expense.GroupId != null && expense.GroupId > 0 ? "Group" : "Individual")</span>
                         </td>
                         <td>
                             <span>@(expense.PaidById == currentUserId ? "You" : expense.PaidByName)</span>
                         </td>
-                        <td style="max-width: 500px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                            <span title="@(string.Join(", ", expense.MemberNames))">@(string.Join(", ", expense.MemberNames))</span>
-                        </td>
-                        <td class="@(expense.NetAmount == 0 ? "text-dark" : (expense.NetAmount > 0 ? "text-success" : "text-danger"))">
-                            @(expense.NetAmount == 0 ? $"Expense is settled" : (expense.NetAmount > 0 ? $"You owe ₹{expense.NetAmount}" : $"{expense.PaidByName} owes you ₹{(-1)*expense.NetAmount}"))
+                        <td class="@(expense.NetAmount < 0 ? "text-danger" : "text-success")">
+                            @(expense.NetAmount == 0 ? $"Settled" : (expense.NetAmount > 0 ? $"₹{expense.NetAmount}" : $"₹{(-1)*expense.NetAmount}"))
                         </td>
                         <td class="text-center">
                             <span>@expense.PaidDate.ToString("dd-MM-yyyy")</span>

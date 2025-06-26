@@ -165,6 +165,7 @@ button {
 
 input, select,
 textarea {
+    border-radius: 0;
     border-color: #c4c8cb !important;
 }
 
@@ -248,11 +249,11 @@ aside.navigation .navItems.active {
     background-color: var(--clr-mint) !important;
 }
 
-#contactsAccordion .accordion-button {
+.navigatinAccordion .accordion-button {
     padding: 8px;
 }
 
-#contactsAccordion .accordion-button::after {
+.navigatinAccordion .accordion-button::after {
     filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(1%) hue-rotate(4deg) brightness(103%) contrast(101%);
     ;
 }

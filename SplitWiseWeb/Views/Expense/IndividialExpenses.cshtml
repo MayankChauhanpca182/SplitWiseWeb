@@ -1,0 +1,79 @@
+@{
+    ViewData["Title"] = "Individual Expenses";
+}
+
+<breadcrumb></breadcrumb>
+<h3 class="bg-white mb-3 p-3 text-dark-emphasis shadow">Individual Expenses</h3>
+
+<div class="bg-white p-3">
+    <div class="d-flex justify-content-between gap-3 mb-3">
+        <div class="d-flex align-items-center gap-2">
+            <input type="text" class="searchBox form-control border-secondary-subtle rounded-0"
+                id="individualExpenseListSearch" placeholder="Search">
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="AddExpense" asp-controller="Expense" as class="btn btn-primary" type="button">Add Expense</a>
+        </div>
+    </div>
+    <div id="individualExpenseListOuter" class="listOuter bg-white"></div>
+</div>
+
+
+@section Scripts {
+    @* Individual expence list *@
+    <script>
+        sortColumn = "";
+        sortOrder = "";
+
+        $(document).ready(function () {
+            getIndividualExpenseList(1);
+        });
+
+        $("#individualExpenseListSearch").on("input", function () {
+            if (searchTimeout === null) {
+                searchTimeout = setTimeout(function () {
+                    getIndividualExpenseList(1);
+                }, 500);
+            }
+        });
+
+        function getIndividualExpenseList(currentPage = 1) {
+            clearTimeout(searchTimeout);
+            searchTimeout = null;
+
+            let filter = {
+                PageNumber: currentPage,
+                PageSize: $("#individualExpensePageSize").val(),
+                SearchString: $("#individualExpenseListSearch").val(),
+                SortColumn: sortColumn,
+                SortOrder: sortOrder
+            };
+
+            $.ajax({
+                url: "/Expense/IndividualExpenseList",
+                type: "POST",
+                data: { filter },
+                success: function (response) {
+                    if (!response.statusCode) {
+                        if (response.success == false) {
+                            toastr.error(response.message);
+                        }
+                        else {
+                            $("#individualExpenseListOuter").html(response);
+                        }
+                    }
+                },
+                error: function () {
+                    toastr.error('@NotificationMessages.InternalServerError');
+                }
+            });
+        }
+
+        // Handle sorting
+        $(document).on("click", ".sortBtn", function () {
+            sortColumn = $(this).data("column");
+            sortOrder = $(this).data("order");
+            getIndividualExpenseList(1);
+        });
+    </script>
+}

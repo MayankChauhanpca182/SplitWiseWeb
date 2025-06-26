@@ -95,17 +95,39 @@
                         <i class="fa-solid fa-window-maximize"></i>
                         Dashboard
                     </a>
-                    <a asp-action="Index" asp-controller="Expense"
-                        class="navItems d-flex align-items-center gap-3 @((ViewData["ActiveLink"] as string) == "Expenses" ? "active" : "")">
-                        <i class="bi bi-cash"></i>
-                        Expenses
-                    </a>
                     <a asp-action="Index" asp-controller="Group"
                         class="navItems d-flex align-items-center gap-3 @((ViewData["ActiveLink"] as string) == "Groups" ? "active" : "")">
                         <i class="bi bi-diagram-3-fill"></i>
                         Groups
                     </a>
-                    <div class="accordion accordion-flush" id="contactsAccordion">
+                    <div class="navigatinAccordion accordion accordion-flush" id="expensesAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button d-flex gap-3 bg-blue-grey text-white "
+                                    type="button" data-bs-toggle="collapse" data-bs-target="#expenses-flush-collapseOne"
+                                    aria-expanded="true" aria-controls="expenses-flush-collapseOne">
+                                    <i class="bi bi-cash"></i>
+                                    Expenses
+                                </button>
+                            </h2>
+                            <div id="expenses-flush-collapseOne" class="accordion-collapse collapse show"
+                                data-bs-parent="#expensesAccordion">
+                                <div class="accordion-body bg-blue-grey text-white p-0">
+                                    <a asp-action="IndividialExpenses" asp-controller="Expense"
+                                        class="navItems d-flex align-items-center gap-2 ps-4 @((ViewData["ActiveLink"] as string) == "Individual Expenses" ? "active" : "")">
+                                        <i class="bi bi-person-fill"></i>
+                                        Individual
+                                    </a>
+                                    <a asp-action="GroupExpenses" asp-controller="Expense"
+                                        class="navItems d-flex align-items-center gap-2 ps-4 @((ViewData["ActiveLink"] as string) == "Group Expenses" ? "active" : "")">
+                                        <i class="bi bi-people-fill"></i>
+                                        Group
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="navigatinAccordion accordion accordion-flush" id="contactsAccordion">
                         <div class="accordion-item">
                             <h2 class="accordion-header">
                                 <button class="accordion-button d-flex gap-3 bg-blue-grey text-white "
@@ -120,11 +142,10 @@
                                 <div class="accordion-body bg-blue-grey text-white p-0">
                                     <a asp-action="Index" asp-controller="Friend"
                                         class="navItems d-flex align-items-center gap-2 ps-4 @((ViewData["ActiveLink"] as string) == "Friends" ? "active" : "")">
-                                        <i class="bi bi-person-fill"></i>
+                                        <i class="bi bi-people-fill"></i>
                                         Friends
                                     </a>
                                     <a asp-action="FriendRequests" asp-controller="Friend"
-                                        id="friendRequestsPageNav"
                                         class="navItems d-flex align-items-center gap-2 ps-4 @((ViewData["ActiveLink"] as string) == "Friend Requests" ? "active" : "")">
                                         <i class="bi bi-person-plus-fill"></i>
                                         Requests
