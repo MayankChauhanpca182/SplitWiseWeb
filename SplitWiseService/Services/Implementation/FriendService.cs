@@ -208,7 +208,7 @@ public class FriendService : IFriendService
 
     public async Task<PaginatedListVM<FriendRequestVM>> FriendRequestList(FilterVM filter)
     {
-        int userId = _userService.LoggedInUserId();
+        int currentUserId = _userService.LoggedInUserId();
 
         filter.SearchString = string.IsNullOrEmpty(filter.SearchString) ? "" : filter.SearchString.Replace(@"\s+", "").ToLower();
 
@@ -229,12 +229,16 @@ public class FriendService : IFriendService
         }
 
         PaginatedItemsVM<FriendRequest> paginatedItems = await _friendRequestRepository.PaginatedList(
-            predicate: fr => fr.ReceiverId == userId
+            predicate: fr => fr.ReceiverId == currentUserId
             && fr.Status == FeriendRequestStatus.Requested
             && (string.IsNullOrEmpty(filter.SearchString)
-                || fr.ReceiverUserNavigation.FirstName.ToLower().Contains(filter.SearchString)
-                || fr.ReceiverUserNavigation.LastName.ToLower().Contains(filter.SearchString)
-                || fr.ReceiverUserNavigation.EmailAddress.ToLower().Contains(filter.SearchString)),
+                ||(fr.RequesterId == currentUserId
+                    ? (fr.ReceiverUserNavigation.FirstName.ToLower().Contains(filter.SearchString)
+                        || fr.ReceiverUserNavigation.LastName.ToLower().Contains(filter.SearchString)
+                        || fr.ReceiverUserNavigation.EmailAddress.ToLower().Contains(filter.SearchString))
+                    : (fr.RequesterUserNavigation.FirstName.ToLower().Contains(filter.SearchString)
+                        || fr.RequesterUserNavigation.LastName.ToLower().Contains(filter.SearchString)
+                        || fr.RequesterUserNavigation.EmailAddress.ToLower().Contains(filter.SearchString)))),
             orderBy: orderBy,
             includes: new List<Expression<Func<FriendRequest, object>>>
             {

@@ -53,7 +53,7 @@
                         <span title="@(string.Join(", ", expense.MemberNames))">@(string.Join(", ", expense.MemberNames))</span>
                     </td>
                     <td class="@(expense.NetAmount == 0 ? "text-dark" : (expense.NetAmount > 0 ? "text-success" : "text-danger"))">
-                        @(expense.NetAmount == 0 ? $"Expense is settled" : (expense.NetAmount > 0 ? $"You owe ₹{expense.NetAmount.ToString("N2")}" : $"{expense.PaidByName} owes you ₹{((-1)*expense.NetAmount).ToString("N2")}"))
+                        @(expense.NetAmount == 0 ? $"Expense is settled" : (expense.NetAmount > 0 ? $"You are owed ₹{expense.NetAmount.ToString("N2")}" : $"{expense.PaidByName} owes you ₹{((-1)*expense.NetAmount).ToString("N2")}"))
                     </td>
                     <td class="text-center">
                         <span>@expense.PaidDate.ToString("dd-MM-yyyy")</span>

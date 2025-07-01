@@ -18,7 +18,7 @@ public class PasswordResetVM
 
     [Required(ErrorMessage = ValidationMessages.ConfirmPasswordRequired)]
     [DataType(DataType.Password)]
-    [Compare("NewPassword", ErrorMessage = ValidationMessages.MatchPassword)]
+    [Compare("NewPassword", ErrorMessage = ValidationMessages.MatchNewPassword)]
     [MinLength(8, ErrorMessage = ValidationMessages.ConfirmPasswordLength)]
     [RegularExpression(ValidationRegex.PasswordRegex, ErrorMessage = ValidationMessages.ValidConfirmPassword)]
     public string ConfirmPassword { get; set; } = null!;

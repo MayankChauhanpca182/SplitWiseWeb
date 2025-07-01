@@ -20,46 +20,52 @@
 
         <p class="mt-4 mb-0"><strong>Email:</strong> @Model.EmailAddress</p>
 
+        <!-- Title -->
+        @* <div class="form-floating col">
+            <input asp-for="@Model.Title" type="text" class="form-control" placeholder="Title">
+            <label asp-for="@Model.Title">Title</label>
+            <span class="text-danger" asp-validation-for="@Model.Title"></span>
+        </div> *@
+
         <!-- First Name -->
-        <div class="input-group mt-4 rounded-2 shadow-sm">
-            <input asp-for=@Model.FirstName class="form-control border-secondary-subtle border-end-0"
+        <div class="form-floating mt-4 rounded-2 shadow-sm">
+            <input asp-for=@Model.FirstName class="form-control border-secondary-subtle"
                 id="inputFirstName" placeholder="First Name">
-            <span class="input-group-text bg-white border-secondary-subtle border-start-0" id="basic-addon1">
-                <img src="~/images/icons/customer-dark.svg" alt="" class="0">
-            </span>
+            <label asp-for="@Model.FirstName">First Name</label>
         </div>
         <span class="text-danger" asp-validation-for="@Model.FirstName"></span>
 
         <!-- Last Name -->
-        <div class="input-group mt-4 rounded-2 shadow-sm">
-            <input asp-for=@Model.LastName class="form-control border-secondary-subtle border-end-0" id="inputLastName"
+        <div class="form-floating mt-4 rounded-2 shadow-sm">
+            <input asp-for=@Model.LastName class="form-control border-secondary-subtle" id="inputLastName"
                 placeholder="Last Name">
-            <span class="input-group-text bg-white border-secondary-subtle border-start-0" id="basic-addon1">
-                <img src="~/images/icons/customer-dark.svg" alt="" class="0">
-            </span>
+            <label asp-for="@Model.LastName">Last Name</label>
         </div>
         <span class="text-danger" asp-validation-for="@Model.LastName"></span>
 
         <!-- Address -->
-        <div class="input-group mt-4 rounded-2 shadow-sm">
+        <div class="form-floating mt-4 rounded-2 shadow-sm">
             <textarea asp-for=@Model.Address class="form-control border-secondary-subtle" placeholder="Address"
                 rows="3"></textarea>
+            <label asp-for="@Model.Address">Address</label>
         </div>
 
         <!-- Birthdate -->
-        <div class="input-group mt-4 rounded-2 shadow-sm">
+        <div class="form-floating mt-4 rounded-2 shadow-sm">
             <input asp-for=@Model.Birthdate type="date" class="form-control rounded-2 border-secondary-subtle">
+            <label asp-for="@Model.Birthdate">date of Birth</label>
         </div>
         <span class="text-danger" asp-validation-for="@Model.Birthdate"></span>
 
         <!-- Currency -->
-        <div class="input-group mt-4 rounded-2 shadow-sm">
+        <div class="form-floating mt-4 rounded-2 shadow-sm">
             <select asp-for="@Model.CurrencyId" class="form-select rounded-2 border-secondary-subtle" disabled>
                 @foreach (Currency currency in Model.Currencies)
                 {
                     <option value="@currency.Id">@currency.Name</option>
                 }
             </select>
+            <label asp-for="@Model.CurrencyId">Currency</label>
         </div>
         <span class="text-danger" asp-validation-for="@Model.CurrencyId"></span>
 

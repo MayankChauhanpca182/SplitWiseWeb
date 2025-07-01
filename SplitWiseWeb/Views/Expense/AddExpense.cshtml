@@ -81,7 +81,7 @@
             </div>
             <!-- Amount -->
             <div class="form-floating col">
-                <input asp-for="@Model.Amount" type="text" class="form-control" oninput="setAmountAsPerSplitType()">
+                <input asp-for="@Model.Amount" type="text" class="form-control" onblur="setAmountAsPerSplitType(), validateAmounts()">
                 <label asp-for="@Model.Amount">Amount</label>
                 <span class="text-danger" asp-validation-for="@Model.Amount"></span>
             </div>
@@ -303,7 +303,7 @@
         // Prevent negative amount
         $(document).on("input", "#Amount, .amount", function () {
             let input = this;
-            let maxAmount = $(this).attr("max")
+            let maxAmount = 10000000;
 
             let formatedValue = input.value.toString().replace(/[^0-9.]/gi, "");
 
@@ -327,16 +327,14 @@
 
             // Validate for max amount
             if (maxAmount && parseFloat(formatedValue) > maxAmount) {
-                toastr.error(`The maximum allowed value is ${maxAmount}, Please enter value with in permitted range.`);
                 // Replace with old value
                 formatedValue = oldValue;
+                toastr.error(`The maximum allowed value is ${maxAmount}, Please enter value with in permitted range.`);
             }
 
             if (input.value !== formatedValue) {
                 input.value = formatedValue || "0.00";
             }
-
-            validateAmounts();
         });
 
         // Formate amount
@@ -399,6 +397,8 @@
                     break;
                 case '@SplitType.ByShare':
                     $("#remainingBalanceDiv").hide();
+                    $(".amount, #remainigBalance").removeClass("text-danger");
+                        isValid = true;
                     break;
             }
         }
@@ -481,7 +481,7 @@
                     break;
                 case '@SplitType.ByShare':
                     $("#splitTypeText").text("Split by share");
-                    $(".amount").prop("disabled", false);
+                    $(".amount").prop("disabled", false).trigger("input").trigger("blur");
                     setExpenseShareSymbole("Share");
                     break;
                 case '@SplitType.ByPercentage':

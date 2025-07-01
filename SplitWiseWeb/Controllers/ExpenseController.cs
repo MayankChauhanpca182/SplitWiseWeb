@@ -36,7 +36,7 @@ public class ExpenseController : Controller
     }
 
     // GET AddIndividualExpense
-    [Breadcrumb("Add")]
+    [Breadcrumb("Details")]
     [Route("individual-expenses/add")]
     public async Task<IActionResult> AddIndividualExpense(int expenseId, int groupId)
     {
@@ -46,7 +46,7 @@ public class ExpenseController : Controller
     }
 
     // GET AddGroupExpense
-    [Breadcrumb("Add", FromAction = "GroupExpenses")]
+    [Breadcrumb("Details", FromAction = "GroupExpenses")]
     [Route("group-expenses/add")]
     public async Task<IActionResult> AddGroupExpense(int expenseId, int groupId)
     {

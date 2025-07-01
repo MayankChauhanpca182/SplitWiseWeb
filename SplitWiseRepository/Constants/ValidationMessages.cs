@@ -25,7 +25,8 @@ public static class ValidationMessages
     public const string ConfirmPasswordRequired = "Confirm password is required";
     public const string ConfirmPasswordLength = "Confirm password must be at least 8 characters long";
     public const string ValidConfirmPassword = "Confirm password must contain at least one letter, one number, and one special character";
-    public const string MatchPassword = "New password and confirmation Password must match.";
+    public const string MatchPassword = "password and confirmation Password must match.";
+    public const string MatchNewPassword = "New password and confirmation Password must match.";
 
     // First name
     public const string FirstNameRequired = "First name is required";
