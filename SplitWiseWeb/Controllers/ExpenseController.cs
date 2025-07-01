@@ -52,7 +52,7 @@ public class ExpenseController : Controller
     {
         ExpenseVM expense = await _expenseService.GetExpense(expenseId, groupId);
         ViewData["ActiveLink"] = "Group Expenses";
-        return View("AddExpense", expense);
+        return View("AddGroupExpense", expense);
     }
 
     // GET ViewIndividualExpense
@@ -74,7 +74,7 @@ public class ExpenseController : Controller
         ExpenseVM expense = await _expenseService.GetExpense(expenseId, groupId);
         expense.IsViewOnly = true;
         ViewData["ActiveLink"] = "Group Expenses";
-        return View("AddExpense", expense);
+        return View("AddGroupExpense", expense);
     }
 
     // POST SaveExpense

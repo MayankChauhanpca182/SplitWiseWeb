@@ -258,8 +258,6 @@
         });
     </script>
     
-
-
     <script>
         // Add current members to array
         {
@@ -402,7 +400,6 @@
                     break;
             }
         }
-
     </script>
 
     @* Add / Remove member *@
@@ -490,6 +487,7 @@
                     setExpenseShareSymbole("%");
                     break;
             }
+            validateAmounts();
         }
 
         // Set symbole for expense share
@@ -608,7 +606,6 @@
                     toastr.error("Internal server error.");
                 }
             });
-        });
-    
+        });    
     </script>
 }

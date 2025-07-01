@@ -50,4 +50,5 @@ public class ExpenseVM
     public bool IsViewOnly { get; set; } = false;
     public string PaidByName { get; set; }
     public List<string> MemberNames { get; set; } = new List<string>();
+    public List<GroupVM> GroupList { get; set; } = new List<GroupVM>();
 }
