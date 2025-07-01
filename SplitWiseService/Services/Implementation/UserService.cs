@@ -36,7 +36,7 @@ public class UserService : IUserService
     #region Get user
     public async Task<User> GetByEmailAddress(string email)
     {
-        return await _userRepository.Get(u => u.EmailAddress.ToLower() == email.ToLower());
+        return await _userRepository.Get(u => u.EmailAddress.ToLower() == email.ToLower() && u.DeletedAt == null);
     }
 
     public async Task<User> GetById(int userId)

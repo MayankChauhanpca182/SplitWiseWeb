@@ -19,7 +19,7 @@ public class ExpenseController : Controller
 
     // GET Index
     [Breadcrumb("Individual Expenses")]
-    [Route("individualExpenses")]
+    [Route("individual-expenses")]
     public IActionResult Index()
     {
         // ViewData["ActiveLink"] = "Expenses";
@@ -30,7 +30,7 @@ public class ExpenseController : Controller
 
     // GET GroupExpenses
     [Breadcrumb("Group Expenses", FromController = typeof(DashboardController))]
-    [Route("groupExpenses")]
+    [Route("group-expenses")]
     public IActionResult GroupExpenses()
     {
         ViewData["ActiveLink"] = "Group Expenses";
@@ -39,7 +39,7 @@ public class ExpenseController : Controller
 
     // GET AddIndividualExpense
     [Breadcrumb("Add")]
-    [Route("individualExpenses/add")]
+    [Route("individual-expenses/add")]
     public async Task<IActionResult> AddIndividualExpense(int expenseId, int groupId)
     {
         ExpenseVM expense = await _expenseService.GetExpense(expenseId, groupId);
@@ -49,7 +49,7 @@ public class ExpenseController : Controller
 
     // GET AddGroupExpense
     [Breadcrumb("Add", FromAction = "GroupExpenses")]
-    [Route("groupExpenses/add")]
+    [Route("group-expenses/add")]
     public async Task<IActionResult> AddGroupExpense(int expenseId, int groupId)
     {
         ExpenseVM expense = await _expenseService.GetExpense(expenseId, groupId);
@@ -59,7 +59,7 @@ public class ExpenseController : Controller
 
     // GET ViewIndividualExpense
     [Breadcrumb("View")]
-    [Route("individualExpenses/view")]
+    [Route("individual-expenses/view")]
     public async Task<IActionResult> ViewIndividualExpense(int expenseId, int groupId)
     {
         ExpenseVM expense = await _expenseService.GetExpense(expenseId, groupId);
@@ -70,7 +70,7 @@ public class ExpenseController : Controller
 
     // GET ViewGroupExpense
     [Breadcrumb("View", FromAction = "GroupExpenses")]
-    [Route("groupExpenses/view")]
+    [Route("group-expenses/view")]
     public async Task<IActionResult> ViewGroupExpense(int expenseId, int groupId)
     {
         ExpenseVM expense = await _expenseService.GetExpense(expenseId, groupId);

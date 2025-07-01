@@ -1,0 +1,16 @@
+@{
+    ViewData["Title"] = "401";
+    Layout = "_LoginLayout";
+}
+<div class="d-flex flex-column align-items-center vh-100">
+    <div class="d-flex flex-column align-items-center p-4 p-md-5 rounded-4 bg-white shadow my-auto" id="loginFormOuter">
+        <div class="d-flex justify-content-center my-3">
+            <div class="d-flex align-items-center gap-2">
+                <img src="/images/splitmate/fulllogo_transparent_nobuffer.png" alt="" width="100px">
+            </div>
+        </div>
+        <span class="errCode my-3">401</span>
+        <span class="fs-5 my-3">You Are Unauthorized</span>
+        <a asp-controller="Auth" asp-action="Login" class="text-primary link-underline-light fw-semibold">Login here</a>
+    </div>
+</div>

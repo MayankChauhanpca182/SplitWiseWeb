@@ -83,7 +83,7 @@ public class AuthController : Controller
 
     #region User Verification
     // GET UserVerification
-    [Route("userVerification")]
+    [Route("user-verification")]
     public async Task<IActionResult> UserVerification(string token)
     {
         if (string.IsNullOrEmpty(token))
@@ -107,14 +107,14 @@ public class AuthController : Controller
 
     #region Forgot Password
     // GET ForgotPassword
-    [Route("forgotPassword")]
+    [Route("forgot-password")]
     public IActionResult ForgotPassword()
     {
         return View();
     }
 
     // POST ForgotPassword
-    [Route("forgotPassword")]
+    [Route("forgotpassword")]
     [HttpPost]
     public async Task<IActionResult> ForgotPassword(LoginVM loginVM)
     {
@@ -156,11 +156,24 @@ public class AuthController : Controller
     #endregion
 
     #region Error
-    [Route("/Auth/Error/{code}")]
+    [Route("/auth/error/{code}")]
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error(int code)
     {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        if (code == 404)
+        {
+            return View("404");
+        }
+        if (code == 401)
+        {
+            return View("401");
+        }
+        if (code == 403)
+        {
+            return View("403");
+        }
+
+        return View("500");
     }
 
     public IActionResult HandleExceptionWithToaster(string message)

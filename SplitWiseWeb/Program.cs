@@ -125,7 +125,7 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseSession();
 
-// app.UseStatusCodePagesWithReExecute("/Auth/Error/{0}");
+app.UseStatusCodePagesWithReExecute("/auth/error/{0}");
 
 app.UseAuthentication();
 app.UseAuthorization();

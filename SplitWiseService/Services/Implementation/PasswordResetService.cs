@@ -171,14 +171,22 @@ public class PasswordResetService : IPasswordResetService
             User user = await _userService.GetById(userId);
             if (PasswordHelper.Verify(passwordReset.Password, user.PasswordHash))
             {
-                // Set new password
-                await SetPassword(userId, passwordReset.NewPassword);
+                if (PasswordHelper.Verify(passwordReset.NewPassword, user.PasswordHash))
+                {
+                    response.Success = false;
+                    response.Message = NotificationMessages.CannotSetSamePassword;
+                }
+                else
+                {
+                    // Set new password
+                    await SetPassword(userId, passwordReset.NewPassword);
 
-                // Send email notification
-                await _emailService.PasswordChangedEmail(user.FirstName, user.EmailAddress);
+                    // Send email notification
+                    await _emailService.PasswordChangedEmail(user.FirstName, user.EmailAddress);
 
-                response.Success = true;
-                response.Message = NotificationMessages.PasswordChangeSuccess;
+                    response.Success = true;
+                    response.Message = NotificationMessages.PasswordChangeSuccess;
+                }
             }
             else
             {

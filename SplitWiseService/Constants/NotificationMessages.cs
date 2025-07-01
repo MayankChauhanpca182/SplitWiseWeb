@@ -65,6 +65,7 @@ public static class NotificationMessages
     public const string IncorrectPassword = "The current password you entered is incorrect.";
     public const string PasswordChangeSuccess = "Your password has been changed successfully.";
     public const string PasswordResetSuccess = "Your password has been reset successfully.";
+    public const string CannotSetSamePassword = "You can not update password to current password.";
 
     // Ajax errors
     public const string CanNot = "Can not {0} at this time." + TryAgain;

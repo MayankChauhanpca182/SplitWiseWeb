@@ -67,7 +67,7 @@ public class FriendService : IFriendService
         ResponseVM response = new ResponseVM();
 
         User currentUser = await _userService.LoggedInUser();
-        if (email == currentUser.EmailAddress)
+        if (email.ToLower() == currentUser.EmailAddress)
         {
             response.Success = false;
             response.Message = NotificationMessages.FriendRequestToSelf;
@@ -105,6 +105,7 @@ public class FriendService : IFriendService
 
             ResponseVM response = new ResponseVM();
             User requestedUser = await _userService.GetByEmailAddress(emailAddress);
+
             if (requestedUser == null)
             {
                 response.Success = false;

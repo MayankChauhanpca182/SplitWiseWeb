@@ -139,6 +139,12 @@ a {
     margin: 0 10px;
 }
 
+/* Error pages */
+.errCode {
+    font-size: 100px;
+    font-weight: bold;
+}
+
 
 /* Login page */
 #loginFormOuter {

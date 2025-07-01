@@ -91,7 +91,7 @@ public class FriendController : Controller
 
     // GET FriendRequests
     [Breadcrumb("Friend Requests", FromController = typeof(DashboardController))]
-    [Route("friendRequests")]
+    [Route("friend-requests")]
     public IActionResult FriendRequests()
     {
         ViewData["ActiveLink"] = "Friend Requests";

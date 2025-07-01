@@ -54,7 +54,7 @@ public class UserController : Controller
 
     #region Reset Password
     // GET ResetPassword
-    [Route("resetPassword")]
+    [Route("reset-password")]
     public async Task<IActionResult> ResetPassword(string? token = null)
     {
         if (string.IsNullOrEmpty(token))
@@ -75,7 +75,7 @@ public class UserController : Controller
 
     // POST ResetPassword
     [HttpPost]
-    [Route("resetPassword")]
+    [Route("reset-password")]
     public async Task<IActionResult> ResetPassword(PasswordResetVM passwordReset)
     {
         ModelState.Remove("Password");
@@ -102,7 +102,7 @@ public class UserController : Controller
     #region Change Password
     // GET ChangePassword
     [Breadcrumb("Change Password", FromAction = "Index", FromController = typeof(DashboardController))]
-    [Route("changePassword")]
+    [Route("change-password")]
     public IActionResult ChangePassword()
     {
         ViewData["ActiveLink"] = "Change Password";
@@ -111,7 +111,7 @@ public class UserController : Controller
 
     // POST ChangePassword
     [HttpPost]
-    [Route("changePassword")]
+    [Route("change-password")]
     public async Task<IActionResult> ChangePassword(PasswordResetVM passwordReset)
     {
         if (!ModelState.IsValid)
