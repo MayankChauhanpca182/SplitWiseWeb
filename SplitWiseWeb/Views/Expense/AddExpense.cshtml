@@ -19,8 +19,9 @@
 
         <!-- Members -->
         <div class="d-flex flex-wrap gap-3 align-items-center col-12">
-            <div class="btn-group w-100">
-                <div class="memberPillDiv d-flex gap-2 border border-secondary-subtle overflow-x-auto w-100 p-2">
+            <div class="btn-group w-100 border border-secondary-subtle">
+                <span class="d-flex align-items-center py-3 ps-2">Members: </span>
+                <div class="memberPillDiv d-flex gap-2 overflow-x-auto w-100 p-2">
                     @foreach (ExpenseShareVM share in Model.ExpenseShares)
                     {
                         <span class="expenseMemberPill" id="expenseMemberPill-@share.UserId">
@@ -336,7 +337,8 @@
         // Formate amount
         $(document).on("blur", "#Amount, .amount", function () {
             let input = this;
-            input.value = formatToINR(input.value)
+            input.value = formatToINR(input.value);
+            validateAmounts();
         });
 
         // Get split total 
@@ -535,9 +537,11 @@
                 return false;
             }
 
+            console.log(amount - splitTotal);
+
             switch (splitType) {
                 case '@SplitType.Unequally':
-                    if (amount - splitTotal !== 0) {
+                    if (amount - splitTotal > 0.99) {
                         toastr.error("Amount should be split properly");
                         isSplitValid = false;
                     }
@@ -549,7 +553,7 @@
                     }
                     break;
                 case '@SplitType.ByPercentage':
-                    if (100 - splitTotal !== 0) {
+                    if (100 - splitTotal > 0.99) {
                         toastr.error("Amount should be split properly");
                         isSplitValid = false;
                     }

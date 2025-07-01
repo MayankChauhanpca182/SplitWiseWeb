@@ -20,15 +20,16 @@
 
         <!-- Group -->
         <div class="d-flex flex-wrap gap-3 align-items-center col-12">
-            <div class="btn-group w-100">
-                <div class="groupPillDiv d-flex gap-2 border border-secondary-subtle overflow-x-auto w-100 p-2">
-                @if(Model.GroupId > 0)
-                {
-                    <span class="expenseMemberPill" id="groupPill-@Model.GroupDetails.Id">
-                        <img src=@(Model.GroupDetails.ImagePath ?? "/images/default_group_img.png")>
-                        <span>@Model.GroupDetails.Name</span>
-                    </span>
-                }
+            <div class="btn-group w-100 border border-secondary-subtle">
+                <span class="d-flex align-items-center py-3 ps-2">Group: </span>
+                <div class="groupPillDiv d-flex gap-2 overflow-x-auto w-100 p-2">
+                    @if(Model.GroupId > 0)
+                    {
+                        <span class="expenseMemberPill" id="groupPill-@Model.GroupDetails.Id">
+                            <img src=@(Model.GroupDetails.ImagePath ?? "/images/default_group_img.png")>
+                            <span>@Model.GroupDetails.Name</span>
+                        </span>
+                    }
                 </div>
                 <button type="button"
                     class="btn dropdown-toggle dropdown-toggle-split border-secondary-subtle rounded-0"
@@ -53,8 +54,9 @@
 
         <!-- Members -->
         <div class="d-flex flex-wrap gap-3 align-items-center col-12">
-            <div class="btn-group w-100">
-                <div class="memberPillDiv d-flex gap-2 border border-secondary-subtle overflow-x-auto w-100 p-2">
+            <div class="btn-group w-100 border border-secondary-subtle">
+                <span class="d-flex align-items-center py-3 ps-2">Members: </span>
+                <div class="memberPillDiv d-flex gap-2 overflow-x-auto w-100 p-2">
                     @foreach (ExpenseShareVM share in Model.ExpenseShares)
                     {
                         <span class="expenseMemberPill" id="expenseMemberPill-@share.UserId">
@@ -358,7 +360,8 @@
         // Formate amount
         $(document).on("blur", "#Amount, .amount", function () {
             let input = this;
-            input.value = formatToINR(input.value)
+            input.value = formatToINR(input.value);
+            validateAmounts();
         });
 
         // Get split total 
@@ -536,14 +539,14 @@
     <script>
         // Fetch expense share
         function fetchExpenseShare() {
-            let expenseShare = [];
+            let expenseShares = [];
             $.each(members, function (index, member) {
-                expenseShare.push({
+                expenseShares.push({
                     UserId: parseInt(member.UserId),
                     ShareAmount: parseFloat($("#amount-" + member.UserId).val().replace(/,/g, "") || 0)
                 });
             });
-            return expenseShare;
+            return expenseShares;
         }
 
         // Validate split amount
@@ -560,7 +563,7 @@
 
             switch (splitType) {
                 case '@SplitType.Unequally':
-                    if (amount - splitTotal !== 0) {
+                    if (amount - splitTotal > 0.99) {
                         toastr.error("Amount should be split properly");
                         isSplitValid = false;
                     }
@@ -572,7 +575,7 @@
                     }
                     break;
                 case '@SplitType.ByPercentage':
-                    if (100 - splitTotal !== 0) {
+                    if (100 - splitTotal > 0.99) {
                         toastr.error("Amount should be split properly");
                         isSplitValid = false;
                     }
@@ -589,10 +592,10 @@
                 toastr.error("Expense split amount is not valid.");
                 return;
             }
-            let expenseShare = fetchExpenseShare();
+            let expenseShares = fetchExpenseShare();
             let splitTotal = getSplitTotal();
 
-            if (expenseShare.length === 0) {
+            if (expenseShares.length === 0) {
                 toastr.error("You have not selected any expense members.");
                 return;
             }
@@ -601,7 +604,7 @@
             }
             else {
                 // Set into hidden feild
-                $("#expenseMembersJson").val(JSON.stringify(expenseShare));
+                $("#expenseMembersJson").val(JSON.stringify(expenseShares));
             }
 
             let formData = new FormData(this);
