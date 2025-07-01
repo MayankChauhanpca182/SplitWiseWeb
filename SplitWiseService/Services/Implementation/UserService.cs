@@ -1,5 +1,6 @@
 using System.Reflection.Metadata.Ecma335;
 using System.Security.Claims;
+using MailKit;
 using Microsoft.AspNetCore.Http;
 using Org.BouncyCastle.Bcpg.Sig;
 using Org.BouncyCastle.Security;
@@ -58,6 +59,10 @@ public class UserService : IUserService
             User? existingUser = await _userRepository.Get(u => u.EmailAddress == registerUserVM.Email && u.DeletedAt == null);
             if (existingUser != null)
             {
+                if (!existingUser.IsEmailConfirmed)
+                {
+                    response.ShowNextAction = true;
+                }
                 response.Success = false;
                 response.Message = NotificationMessages.EmailExists.Replace("{0}", registerUserVM.Email);
                 return response;
@@ -95,6 +100,27 @@ public class UserService : IUserService
             await _transaction.Rollback();
             throw;
         }
+    }
+
+    public async Task<ResponseVM> SendVerificationLink(string email)
+    {
+        ResponseVM response = new ResponseVM();
+        User user = await GetByEmailAddress(email);
+
+        if (user == null)
+        {
+            response.Success = false;
+            response.Message = NotificationMessages.UserNotFoundByEmail;
+        }
+        else
+        {
+            // Send Email
+            await _emailService.UserVarificationEmail(user.FirstName, user.EmailAddress);
+
+            response.Success = true;
+            response.Message = NotificationMessages.VerificationLinkSent;
+        }
+        return response;
     }
     #endregion
 

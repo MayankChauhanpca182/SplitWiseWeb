@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.Repositories.Interface;
 using SplitWiseRepository.ViewModels;
@@ -12,17 +13,19 @@ public class GroupService : IGroupService
 {
     private readonly IGenericRepository<Group> _groupRepository;
     private readonly IGenericRepository<GroupMember> _groupMemberRepository;
+    private readonly IGenericRepository<Expense> _expenseRepository;
     private readonly ITransactionRepository _transaction;
     private readonly IUserService _userService;
     private readonly IEmailService _emailService;
 
-    public GroupService(IGenericRepository<Group> groupRepository, ITransactionRepository transaction, IUserService userService, IGenericRepository<GroupMember> groupMemberRepository, IEmailService emailService)
+    public GroupService(IGenericRepository<Group> groupRepository, ITransactionRepository transaction, IUserService userService, IGenericRepository<GroupMember> groupMemberRepository, IEmailService emailService, IGenericRepository<Expense> expenseRepository)
     {
         _groupRepository = groupRepository;
         _transaction = transaction;
         _userService = userService;
         _groupMemberRepository = groupMemberRepository;
         _emailService = emailService;
+        _expenseRepository = expenseRepository;
     }
 
     private async Task AddMember(int groupId, int userId)
@@ -310,41 +313,66 @@ public class GroupService : IGroupService
                 return response;
             }
 
-            // Delete member
-            groupMember.DeletedAt = DateTime.Now;
-            groupMember.DeletedById = currentUser.Id;
-            await _groupMemberRepository.Update(groupMember);
+            List<int> groupMemberIds = GetMembers(groupMember.GroupId).Result.Select(gm => gm.UserId).ToList();
 
-            User user = await _userService.GetById(groupMember.UserId);
-            Group group = await _groupRepository.Get(
-                predicate: g => g.Id == groupMember.GroupId,
-                includes: new List<Expression<Func<Group, object>>>
+            // Calculate net amount
+            Dictionary<int, decimal> netAmounts = await (
+                from e in _expenseRepository.Query()
+                where e.DeletedAt == null && e.GroupId == groupMember.GroupId
+                from es in e.ExpenseShares
+                where (e.PaidById == groupMember.UserId && groupMemberIds.Contains(es.UserId))
+                || (es.UserId == groupMember.UserId && groupMemberIds.Contains(e.PaidById))
+                group new { e, es } by (e.PaidById == groupMember.UserId ? es.UserId : e.PaidById) into g
+                select new
                 {
-                    g => g.GroupMembers
+                    UserId = g.Key,
+                    NetAmount = g.Sum(x => x.e.PaidById == groupMember.UserId ? x.es.ShareAmount : -x.es.ShareAmount)
                 }
-                );
+            ).ToDictionaryAsync(x => x.UserId, x => x.NetAmount);
 
-            // Delete group if no members
-            if (!group.GroupMembers.Any(gm => gm.DeletedAt == null))
+            if (!netAmounts.All(a => a.Value == 0))
             {
-                group.DeletedAt = DateTime.Now;
-                group.DeletedById = currentUser.Id;
-                await _groupRepository.Update(group);
+                response.Success = false;
+                response.Message = NotificationMessages.SettleBeforeRemove.Replace("{0}", "group member");
             }
-
-            response.Success = true;
-            response.Message = NotificationMessages.MemberRemovedFromGroup.Replace("{0}", $"{user.FirstName} {user.LastName}").Replace("{1}", group.Name);
-
-            if (user != null)
+            else
             {
-                if (user.Id == currentUser.Id)
+                // Delete member
+                groupMember.DeletedAt = DateTime.Now;
+                groupMember.DeletedById = currentUser.Id;
+                await _groupMemberRepository.Update(groupMember);
+
+                User user = await _userService.GetById(groupMember.UserId);
+                Group group = await _groupRepository.Get(
+                    predicate: g => g.Id == groupMember.GroupId,
+                    includes: new List<Expression<Func<Group, object>>>
+                    {
+                    g => g.GroupMembers
+                    }
+                    );
+
+                // Delete group if no members
+                if (!group.GroupMembers.Any(gm => gm.DeletedAt == null))
                 {
-                    response.Message = NotificationMessages.LeaveGroup.Replace("{0}", group.Name);
+                    group.DeletedAt = DateTime.Now;
+                    group.DeletedById = currentUser.Id;
+                    await _groupRepository.Update(group);
                 }
-                else
+
+                response.Success = true;
+                response.Message = NotificationMessages.MemberRemovedFromGroup.Replace("{0}", $"{user.FirstName} {user.LastName}").Replace("{1}", group.Name);
+
+                if (user != null)
                 {
-                    // Send email
-                    await _emailService.RemovedFromGroupEmail(user.FirstName, $"{currentUser.FirstName} {currentUser.LastName}", group.Name, user.EmailAddress);
+                    if (user.Id == currentUser.Id)
+                    {
+                        response.Message = NotificationMessages.LeaveGroup.Replace("{0}", group.Name);
+                    }
+                    else
+                    {
+                        // Send email
+                        await _emailService.RemovedFromGroupEmail(user.FirstName, $"{currentUser.FirstName} {currentUser.LastName}", group.Name, user.EmailAddress);
+                    }
                 }
             }
 

@@ -78,6 +78,7 @@ public class GroupController : Controller
     {
         GroupVM group = await _groupService.GetGroup(groupId);
         group.Members = await _groupService.GetMembers(groupId);
+        ViewData["ActiveLink"] = "Groups";
         return View("GroupDetails", group);
     }
 

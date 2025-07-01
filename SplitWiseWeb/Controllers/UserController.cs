@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SmartBreadcrumbs.Attributes;
@@ -39,16 +40,26 @@ public class UserController : Controller
 
         // Add User
         ResponseVM response = await _userService.RegisterUser(registerUserVM);
+        return Json(response);
+    }
+
+    // POST ResendLinkModal
+    [HttpPost]
+    public IActionResult ResendLinkModal(string email)
+    {
+        return PartialView("ResendVerificationLinkModalPartialView", email);
+    }
+
+    // POST ResendLink
+    [HttpPost]
+    public async Task<IActionResult> ResendLink(string email)
+    {
+        ResponseVM response = await _userService.SendVerificationLink(email);
         if (response.Success)
         {
             TempData["successMessage"] = response.Message;
         }
-        else
-        {
-            TempData["errorMessage"] = response.Message;
-        }
-
-        return RedirectToAction("Login", "Auth");
+        return Json(response);
     }
     #endregion
 

@@ -13,7 +13,7 @@
         </div>
 
         <!-- Login -->
-        <form asp-action="Register" asp-controller="User" class="loaderForm">
+        <form asp-action="Register" asp-controller="User" class="loaderForm" id="registerForm">
             <!-- First Name -->
             <div class="input-group mt-4 rounded-2 shadow-sm">
                 <input asp-for=@Model.FirstName class="form-control border-secondary-subtle border-end-0"
@@ -26,8 +26,8 @@
 
             <!-- Last Name -->
             <div class="input-group mt-4 rounded-2 shadow-sm">
-                <input asp-for=@Model.LastName class="form-control border-secondary-subtle border-end-0" id="inputLastName"
-                    placeholder="Last Name">
+                <input asp-for=@Model.LastName class="form-control border-secondary-subtle border-end-0"
+                    id="inputLastName" placeholder="Last Name">
                 <span class="input-group-text bg-white border-secondary-subtle border-start-0" id="basic-addon1">
                     <img src="~/images/icons/customer-dark.svg" alt="" class="0">
                 </span>
@@ -66,8 +66,93 @@
 
             <div class="d-flex flex-column justify-content-center align-items-center gap-3 mt-4">
                 <button type="submit" class="btn btn-primary w-auto shadow rounded-2">Register</button>
-                <a asp-action="Login" asp-controller="Auth" class="text-primary link-underline-light fw-semibold">Back to Login</a>
+                <a asp-action="Login" asp-controller="Auth" class="text-primary link-underline-light fw-semibold">Back
+                    to Login</a>
             </div>
         </form>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        // Save group
+        $(document).on("submit", "#registerForm", function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: $(this).attr("action"),
+                type: $(this).attr("method"),
+                data: $(this).serialize(),
+                success: function (response) {
+                    if (!response.statusCode) {
+                        if (response.success) {
+                            toastr.success(response.message);
+                            // Redirect to login
+                            window.location = "/Auth/Login";
+                        }
+                        else {
+                            toastr.error(response.message);
+                            if (response.showNextAction) {
+                                resendVerificationLink();
+                            }
+                        }
+                    }
+                },
+                error: function (xhr, status, error) {
+                    toastr.error('@NotificationMessages.InternalServerError');
+                }
+            });
+        });
+
+        // Resend verification link
+        function resendVerificationLink() {
+            let email = $("#inputEmail").val();
+            $("#regularModalContent").empty();
+            $.ajax({
+                url: "/User/ResendLinkModal",
+                type: "POST",
+                data: { email },
+                success: function (response) {
+                    if (!response.statusCode) {
+                        console.log(response)
+                        $("#regularModalContent").html(response);
+                        $("#regularModal").modal("show");
+                    }
+                },
+                error: function () {
+                    $("#regularModal").modal("hide");
+                    toastr.error('@NotificationMessages.InternalServerError');
+                },
+            });
+        }
+
+        // Resend link
+        $(document).on("submit", "#resendEmailForm", function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: $(this).attr("action"),
+                type: $(this).attr("method"),
+                data: $(this).serialize(),
+                success: function (response) {
+                    if (!response.statusCode) {
+                        if (response.success) {
+                            toastr.success(response.message);
+                            // Redirect to login
+                            window.location = "/Auth/Login";
+                        }
+                        else {
+                            toastr.error(response.message);
+                            if (response.showNextAction) {
+                                resendVerificationLink();
+                            }
+                        }
+                    }
+                },
+                error: function (xhr, status, error) {
+                    toastr.error('@NotificationMessages.InternalServerError');
+                }
+            });
+        });
+    </script>
+}

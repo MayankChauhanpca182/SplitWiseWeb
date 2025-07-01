@@ -11,6 +11,7 @@ public interface IUserService
 
     // Register
     public Task<ResponseVM> RegisterUser(RegisterUserVM registerUserVM);
+    public Task<ResponseVM> SendVerificationLink(string email);
 
     // Profile
     public Task<UserVM> GetProfile();

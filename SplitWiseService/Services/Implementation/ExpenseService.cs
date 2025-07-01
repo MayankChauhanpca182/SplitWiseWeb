@@ -74,9 +74,15 @@ public class ExpenseService : IExpenseService
                         ProfileImagePath = es.User.ProfileImagePath
                     }).ToList();
 
-            if (expenseVM.GroupId > 0)
+            if (expense.GroupId > 0)
             {
-
+                expenseVM.GroupDetails = await _groupService.GetGroup((int)expense.GroupId);
+                expenseVM.Friends = _groupService.GetMembers((int)expense.GroupId).Result.Select(gm => new FriendVM
+                {
+                    UserId = gm.UserId,
+                    Name = gm.Name,
+                    ProfileImagePath = gm.ProfileImagePath
+                }).ToList();
             }
             else
             {
@@ -100,6 +106,7 @@ public class ExpenseService : IExpenseService
         }
         else if (groupId > 0)
         {
+            expenseVM.GroupId = groupId;
             expenseVM.GroupDetails = await _groupService.GetGroup(groupId);
             expenseVM.ExpenseShares = _groupService.GetMembers((int)groupId).Result.Select(gm => new ExpenseShareVM
             {
@@ -204,6 +211,7 @@ public class ExpenseService : IExpenseService
 
             // Send mail to user
             User user = await _userService.GetById(share.UserId);
+            GroupVM group = expense.GroupId == null ? new GroupVM() : await _groupService.GetGroup((int)expense.GroupId);
             bool hasUserPaid = user.Id == expense.PaidById;
             string senderName = user.Id == currentUser.Id ? "you" : $"{currentUser.FirstName} {currentUser.LastName}";
             string oweVariable = hasUserPaid ? "owes" : "owe";
@@ -211,11 +219,11 @@ public class ExpenseService : IExpenseService
 
             if (isNew)
             {
-                await _emailService.AddIndividualExpense($"{user.FirstName} {user.LastName}", senderName, expense.Title, expense.Amount.ToString("N2"), splitTypeName, shareAmountStr, user.EmailAddress, oweVariable);
+                await _emailService.AddExpense(user.FirstName, senderName, expense.Title, expense.Amount.ToString("N2"), splitTypeName, shareAmountStr, user.EmailAddress, oweVariable, group.Name);
             }
             else
             {
-                await _emailService.UpdateIndividualExpense($"{user.FirstName} {user.LastName}", senderName, expense.Title, expense.Amount.ToString("N2"), splitTypeName, shareAmountStr, user.EmailAddress, oweVariable);
+                await _emailService.UpdateExpense(user.FirstName, senderName, expense.Title, expense.Amount.ToString("N2"), splitTypeName, shareAmountStr, user.EmailAddress, oweVariable, group.Name);
             }
         }
         return;
@@ -351,10 +359,7 @@ public class ExpenseService : IExpenseService
         {
             Id = e.Id,
             GroupId = e.GroupId,
-            // GroupDetails = new GroupVM
-            // {
-            //     Name =e.Group.Name
-            // },
+            GroupDetails = isGroupExpenses ? new GroupVM { Name =e.Group.Name } : new GroupVM(),
             Title = e.Title,
             PaidDate = e.PaidDate,
             PaidById = e.PaidById,

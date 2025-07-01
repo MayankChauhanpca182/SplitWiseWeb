@@ -12,6 +12,7 @@ public class GroupVM
 
     [Required(ErrorMessage = ValidationMessages.GroupName)]
     [StringLength(50, ErrorMessage = ValidationMessages.FirstNameLength)]
+    [RegularExpression(ValidationRegex.GroupNameRegex, ErrorMessage = ValidationMessages.ValidGroupName)]
     public string Name { get; set; }
 
     [ImageType]

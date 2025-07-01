@@ -17,10 +17,11 @@ public class FriendService : IFriendService
     private readonly IGenericRepository<UserReferral> _userReferralRepository;
     private readonly IGenericRepository<Friend> _friendRepository;
     private readonly IGenericRepository<Expense> _expenseRepository;
+    private readonly IGenericRepository<ExpenseShare> _expenseShareRepository;
     private readonly IUserService _userService;
     private readonly IEmailService _emailService;
 
-    public FriendService(IUserService userService, IEmailService emailService, IGenericRepository<FriendRequest> friendRequestRepository, ITransactionRepository transaction, IGenericRepository<UserReferral> userReferralRepository, IGenericRepository<Friend> friendRepository, IGenericRepository<Expense> expenseRepository)
+    public FriendService(IUserService userService, IEmailService emailService, IGenericRepository<FriendRequest> friendRequestRepository, ITransactionRepository transaction, IGenericRepository<UserReferral> userReferralRepository, IGenericRepository<Friend> friendRepository, IGenericRepository<Expense> expenseRepository, IGenericRepository<ExpenseShare> expenseShareRepository)
     {
         _userService = userService;
         _emailService = emailService;
@@ -29,6 +30,7 @@ public class FriendService : IFriendService
         _userReferralRepository = userReferralRepository;
         _friendRepository = friendRepository;
         _expenseRepository = expenseRepository;
+        _expenseShareRepository = expenseShareRepository;
     }
 
     private async Task AddFriendRequest(int requesterId, int? receiverId = null, int? referralId = null)
@@ -497,21 +499,42 @@ public class FriendService : IFriendService
             User currentUser = await _userService.LoggedInUser();
 
             ResponseVM response = new ResponseVM();
-
             Friend friend = await _friendRepository.Get(f => f.Id == friendId);
 
-            friend.DeletedAt = DateTime.Now;
-            friend.DeletedById = currentUser.Id;
-            await _friendRepository.Update(friend);
+            int otherUserId = friend.Friend1 == currentUser.Id ? friend.Friend2 : friend.Friend1;
 
-            int friendUserId = friend.Friend1 == currentUser.Id ? friend.Friend2 : friend.Friend1;
-            User friendUser = await _userService.GetById(friendUserId);
+            // Calculate net amount
+            decimal netAmount = await _expenseShareRepository.Sum(
+                selector: es => es.Expense.PaidById == currentUser.Id ? es.ShareAmount : -es.ShareAmount,
+                predicate: es => es.DeletedAt == null && es.Expense.DeletedAt == null
+                            && ((es.UserId == currentUser.Id && es.Expense.PaidById == otherUserId)
+                                || (es.Expense.PaidById == currentUser.Id && es.UserId == otherUserId)),
+                includes: new List<Expression<Func<ExpenseShare, object>>>
+                {
+                    es => es.Expense
+                }
+            );
 
-            // Send email
-            await _emailService.FriendRemovedEmail(friendUser.FirstName, $"{currentUser.FirstName} {currentUser.LastName}", friendUser.EmailAddress);
+            if (netAmount != 0)
+            {
+                response.Success = false;
+                response.Message = NotificationMessages.SettleBeforeRemove.Replace("{0}", "friend");
+            }
+            else
+            {
+                friend.DeletedAt = DateTime.Now;
+                friend.DeletedById = currentUser.Id;
+                await _friendRepository.Update(friend);
 
-            response.Success = true;
-            response.Message = NotificationMessages.FriendRemoved.Replace("{0}", friendUser.FirstName);
+                int friendUserId = friend.Friend1 == currentUser.Id ? friend.Friend2 : friend.Friend1;
+                User friendUser = await _userService.GetById(friendUserId);
+
+                // Send email
+                await _emailService.FriendRemovedEmail(friendUser.FirstName, $"{currentUser.FirstName} {currentUser.LastName}", friendUser.EmailAddress);
+
+                response.Success = true;
+                response.Message = NotificationMessages.FriendRemoved.Replace("{0}", friendUser.FirstName);
+            }
 
             // Commit transaction
             await _transaction.Commit();

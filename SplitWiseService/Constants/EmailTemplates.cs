@@ -15,6 +15,8 @@ public static class EmailTemplates
     public const string RemovedFromGroup = "RemovedFromGroup.html";
     public const string AddIndividualExpense = "AddIndividualExpense.html";
     public const string UpdateIndividualExpense = "UpdateIndividualExpense.html";
+    public const string AddGroupExpense = "AddGroupExpense.html";
+    public const string UpdateGroupExpense = "UpdateGroupExpense.html";
 }
 
 public static class EmailSubjects
@@ -32,5 +34,7 @@ public static class EmailSubjects
     public const string RemovedFromGroup = "You have been removed from a group.";
     public const string AddIndividualExpense = "Individual expense has been added.";
     public const string UpdateIndividualExpense = "Individual expense has been updated.";
+    public const string AddGroupExpense = "Group expense has been added.";
+    public const string UpdateGroupExpense = "Group expense has been updated.";
 }
 

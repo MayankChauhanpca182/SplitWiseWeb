@@ -1,0 +1,17 @@
+@model string
+
+<div class="modal-header">
+    <h1 class="modal-title fs-5" id="addFriendModalLabel">Resend verification link</h1>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<form asp-action="ResendLink" asp-controller="User" id="resendEmailForm" class="d-flex flex-column" style="max-width: 500px;"
+    enctype="multipart/form-data">
+    <div class="modal-body">
+        <input value="@Model" name="email" hidden>
+        <p>Resend verification link</p>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Resend</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+    </div>
+</form>

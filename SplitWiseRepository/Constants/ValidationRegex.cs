@@ -9,5 +9,8 @@ public static class ValidationRegex
     public const string PasswordRegex = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]+$";
 
     // Name
-    public const string NameRegex = @"^[A-Za-z\s]+$";
+    public const string NameRegex = @"^[A-Za-z]+$";
+
+    // Group Name
+    public const string GroupNameRegex = @"^[A-Za-z0-9]+$";
 }

@@ -48,13 +48,14 @@ public static class ValidationMessages
     // Group
     public const string GroupName = "Group name is required";
     public const string GroupNameLength = "Group name can not exceed 50 characters";
+    public const string ValidGroupName = "Group name can not contain spaces.";
 
 
     // Expense
     public const string ExpenseTitleRequired = "Expense title is required";
     public const string ExpenseTitleLength = "Expense tile can not exceed 100 characters";
     public const string ExpenseAmountRequired = "Expense amount is required.";
-    // public const string ValidExpenseAmount = "Please enter a valid expense amount greater than zero and less then 10000000.";
+    public const string ValidExpenseAmount = "Expense amount must be less then 9999999.";
     public const string PaymentDateRequired = "Payment date is required";
     public const string NoFuturePaymentDate = "The payment date must not be set in the future.";
     public const string SplitTypeRequired = "Select expense split type.";

@@ -44,12 +44,22 @@
     </ul>
     <div class="tab-content" id="pills-tabContent">
         <div class="tab-pane fade show active" id="group-expenses" role="tabpanel" aria-labelledby="group-expenses-tab">
-            Group expenses.</div>
-        <div class="tab-pane fade" id="group-activity" role="tabpanel" aria-labelledby="group-activity-tab">Group
-            activity.</div>
+            <a asp-action="AddGroupExpense" asp-controller="Expense" asp-route-groupId="@Model.Id" class="btn btn-primary border-0"
+                title="Add Expense">
+                Add Expense
+            </a>
+            <div class="mt-3" id="group-expense-list">
+                This group has no expenses.
+            </div>
+        </div>
+        <div class="tab-pane fade" id="group-activity" role="tabpanel" aria-labelledby="group-activity-tab">This group
+            has no activity.</div>
         <div class="tab-pane fade" id="group-members" role="tabpanel" aria-labelledby="group-members-tab"></div>
         <div class="tab-pane fade" id="group-noticeboard" role="tabpanel" aria-labelledby="group-noticeboard-tab">
-            <p>@Model.NoticeBoard</p>
+            <div class="input-group mt-4 rounded-0">
+                <textarea asp-for=@Model.NoticeBoard class="form-control border-secondary-subtle rounded-0"
+                    placeholder="Notice board" rows="10" disabled></textarea>
+            </div>
         </div>
     </div>
 </div>

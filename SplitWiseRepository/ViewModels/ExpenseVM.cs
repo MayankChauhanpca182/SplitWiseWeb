@@ -17,6 +17,7 @@ public class ExpenseVM
     public string Title { get; set; }
 
     [Required(ErrorMessage = ValidationMessages.ExpenseAmountRequired)]
+    // [StringLength(7, ErrorMessage = ValidationMessages.ValidExpenseAmount)]
     public string Amount { get; set; } = "0";
 
     public int CategoryId { get; set; }

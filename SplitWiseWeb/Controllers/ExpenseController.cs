@@ -22,8 +22,6 @@ public class ExpenseController : Controller
     [Route("individual-expenses")]
     public IActionResult Index()
     {
-        // ViewData["ActiveLink"] = "Expenses";
-        // return View();
         ViewData["ActiveLink"] = "Individual Expenses";
         return View("IndividialExpenses");
     }
