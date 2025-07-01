@@ -38,9 +38,9 @@ public class ExpenseController : Controller
     // GET AddIndividualExpense
     [Breadcrumb("Details")]
     [Route("individual-expenses/add")]
-    public async Task<IActionResult> AddIndividualExpense(int expenseId, int groupId)
+    public async Task<IActionResult> AddIndividualExpense(int expenseId)
     {
-        ExpenseVM expense = await _expenseService.GetExpense(expenseId, groupId);
+        ExpenseVM expense = await _expenseService.GetIndividualExpense(expenseId);
         ViewData["ActiveLink"] = "Individual Expenses";
         return View("AddExpense", expense);
     }
@@ -50,7 +50,7 @@ public class ExpenseController : Controller
     [Route("group-expenses/add")]
     public async Task<IActionResult> AddGroupExpense(int expenseId, int groupId)
     {
-        ExpenseVM expense = await _expenseService.GetExpense(expenseId, groupId);
+        ExpenseVM expense = await _expenseService.GetGroupExpense(expenseId, groupId);
         ViewData["ActiveLink"] = "Group Expenses";
         return View("AddGroupExpense", expense);
     }
@@ -58,9 +58,9 @@ public class ExpenseController : Controller
     // GET ViewIndividualExpense
     [Breadcrumb("View")]
     [Route("individual-expenses/view")]
-    public async Task<IActionResult> ViewIndividualExpense(int expenseId, int groupId)
+    public async Task<IActionResult> ViewIndividualExpense(int expenseId)
     {
-        ExpenseVM expense = await _expenseService.GetExpense(expenseId, groupId);
+        ExpenseVM expense = await _expenseService.GetIndividualExpense(expenseId);
         expense.IsViewOnly = true;
         ViewData["ActiveLink"] = "Individual Expenses";
         return View("AddExpense", expense);
@@ -69,9 +69,9 @@ public class ExpenseController : Controller
     // GET ViewGroupExpense
     [Breadcrumb("View", FromAction = "GroupExpenses")]
     [Route("group-expenses/view")]
-    public async Task<IActionResult> ViewGroupExpense(int expenseId, int groupId)
+    public async Task<IActionResult> ViewGroupExpense(int expenseId)
     {
-        ExpenseVM expense = await _expenseService.GetExpense(expenseId, groupId);
+        ExpenseVM expense = await _expenseService.GetGroupExpense(expenseId);
         expense.IsViewOnly = true;
         ViewData["ActiveLink"] = "Group Expenses";
         return View("AddGroupExpense", expense);
@@ -105,4 +105,5 @@ public class ExpenseController : Controller
         PaginatedListVM<ExpenseVM> expenses = await _expenseService.ExpenseList(filter, isGroupExpenses: true);
         return PartialView("GroupExpenseListParialView", expenses);
     }
+
 }

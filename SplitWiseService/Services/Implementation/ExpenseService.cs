@@ -36,7 +36,7 @@ public class ExpenseService : IExpenseService
         _emailService = emailService;
     }
 
-    public async Task<ExpenseVM> GetExpense(int expenseId = 0, int groupId = 0)
+    public async Task<ExpenseVM> GetIndividualExpense(int expenseId = 0)
     {
         ExpenseVM expenseVM = new ExpenseVM();
         User currentUser = await _userService.LoggedInUser();
@@ -64,6 +64,7 @@ public class ExpenseService : IExpenseService
             expenseVM.PaidById = expense.PaidById;
             expenseVM.PaidDate = expense.PaidDate;
             expenseVM.SplitTypeEnum = expense.SplitType;
+            expenseVM.AttachmentPath = expense.AttachmentPath;
             expenseVM.ExpenseShares = expense.ExpenseShares.Where(es => es.DeletedAt == null)
                     .Select(es => new ExpenseShareVM
                     {
@@ -74,35 +75,95 @@ public class ExpenseService : IExpenseService
                         ProfileImagePath = es.User.ProfileImagePath
                     }).ToList();
 
-            if (expense.GroupId > 0)
+            expenseVM.Friends = _friendService.FriendList(new FilterVM { PageNumber = 0, PageSize = 0 }).Result.List.ToList();
+            // Add current user in friendlist
+            expenseVM.Friends.Add(new FriendVM
             {
-                expenseVM.GroupDetails = await _groupService.GetGroup((int)expense.GroupId);
-                expenseVM.Friends = _groupService.GetMembers((int)expense.GroupId).Result.Select(gm => new FriendVM
-                {
-                    UserId = gm.UserId,
-                    Name = gm.Name,
-                    ProfileImagePath = gm.ProfileImagePath
-                }).ToList();
-            }
-            else
-            {
-                expenseVM.Friends = _friendService.FriendList(new FilterVM { PageNumber = 0, PageSize = 0 }).Result.List.ToList();
-                // Add current user in friendlist
-                expenseVM.Friends.Add(new FriendVM
-                {
-                    UserId = currentUser.Id,
-                    Name = $"{currentUser.FirstName} {currentUser.LastName}",
-                    ProfileImagePath = currentUser.ProfileImagePath
-                });
+                UserId = currentUser.Id,
+                Name = $"{currentUser.FirstName} {currentUser.LastName}",
+                ProfileImagePath = currentUser.ProfileImagePath
+            });
 
-                // Add expense members into friend list who are not in friend list
-                expenseVM.Friends = expenseVM.Friends.Concat(expenseVM.ExpenseShares.Where(es => !expenseVM.Friends.Any(f => f.UserId == es.UserId)).Select(es => new FriendVM
+            // Add expense members into friend list who are not in friend list
+            expenseVM.Friends = expenseVM.Friends.Concat(expenseVM.ExpenseShares.Where(es => !expenseVM.Friends.Any(f => f.UserId == es.UserId)).Select(es => new FriendVM
+            {
+                UserId = es.UserId,
+                Name = es.UserName,
+                ProfileImagePath = es.ProfileImagePath
+            }).ToList()).ToList();
+
+        }
+        else
+        {
+            // Add current user to expenseshares
+            expenseVM.ExpenseShares.Add(new ExpenseShareVM
+            {
+                UserId = currentUser.Id,
+                UserName = $"{currentUser.FirstName} {currentUser.LastName}",
+                ProfileImagePath = currentUser.ProfileImagePath
+            });
+
+            expenseVM.Friends = _friendService.FriendList(new FilterVM { PageNumber = 0, PageSize = 0 }).Result.List.ToList();
+            // Add current user in friendlist
+            expenseVM.Friends.Add(new FriendVM
+            {
+                UserId = currentUser.Id,
+                Name = $"{currentUser.FirstName} {currentUser.LastName}",
+                ProfileImagePath = currentUser.ProfileImagePath
+            });
+        }
+
+        expenseVM.Categories = await _categoryService.GetList();
+        expenseVM.Currencies = await _commonService.CurrencyList();
+        return expenseVM;
+    }
+
+    public async Task<ExpenseVM> GetGroupExpense(int expenseId = 0, int groupId = 0)
+    {
+        ExpenseVM expenseVM = new ExpenseVM();
+        User currentUser = await _userService.LoggedInUser();
+
+        if (expenseId > 0)
+        {
+            Expense expense = await _expenseRepository.Get(
+                predicate: e => e.Id == expenseId,
+                includes: new List<Expression<Func<Expense, object>>>
                 {
-                    UserId = es.UserId,
-                    Name = es.UserName,
-                    ProfileImagePath = es.ProfileImagePath
-                }).ToList()).ToList();
-            }
+                    e => e.ExpenseShares
+                },
+                thenIncludes: new List<Func<IQueryable<Expense>, IQueryable<Expense>>>
+                {
+                    q => q.Include(e => e.ExpenseShares)
+                        .ThenInclude(es => es.User)
+                }
+            );
+            expenseVM.Id = expense.Id;
+            expenseVM.GroupId = expense.GroupId;
+            expenseVM.Title = expense.Title;
+            expenseVM.Amount = expense.Amount.ToString("N2");
+            expenseVM.CategoryId = expense.ExpenseCategoryId;
+            expenseVM.CurrencyId = expense.CurrencyId;
+            expenseVM.PaidById = expense.PaidById;
+            expenseVM.PaidDate = expense.PaidDate;
+            expenseVM.SplitTypeEnum = expense.SplitType;
+            expenseVM.AttachmentPath = expense.AttachmentPath;
+            expenseVM.ExpenseShares = expense.ExpenseShares.Where(es => es.DeletedAt == null)
+                    .Select(es => new ExpenseShareVM
+                    {
+                        Id = es.Id,
+                        UserId = es.UserId,
+                        StringAmount = es.ShareAmount.ToString("N2"),
+                        UserName = $"{es.User.FirstName} {es.User.LastName}",
+                        ProfileImagePath = es.User.ProfileImagePath
+                    }).ToList();
+
+            expenseVM.GroupDetails = await _groupService.GetGroup((int)expense.GroupId);
+            expenseVM.Friends = _groupService.GetMembers((int)expense.GroupId).Result.Select(gm => new FriendVM
+            {
+                UserId = gm.UserId,
+                Name = gm.Name,
+                ProfileImagePath = gm.ProfileImagePath
+            }).ToList();
         }
         else if (groupId > 0)
         {
@@ -125,24 +186,8 @@ public class ExpenseService : IExpenseService
         }
         else
         {
-            // Add current user to expenseshares
-            expenseVM.ExpenseShares.Add(new ExpenseShareVM
-            {
-                UserId = currentUser.Id,
-                UserName = $"{currentUser.FirstName} {currentUser.LastName}",
-                ProfileImagePath = currentUser.ProfileImagePath
-            });
-
-            expenseVM.Friends = _friendService.FriendList(new FilterVM { PageNumber = 0, PageSize = 0 }).Result.List.ToList();
-            // Add current user in friendlist
-            expenseVM.Friends.Add(new FriendVM
-            {
-                UserId = currentUser.Id,
-                Name = $"{currentUser.FirstName} {currentUser.LastName}",
-                ProfileImagePath = currentUser.ProfileImagePath
-            });
+            expenseVM.GroupList = _groupService.GroupList(new FilterVM { PageNumber = 0, PageSize = 0 }).Result.List.ToList();
         }
-
         expenseVM.Categories = await _categoryService.GetList();
         expenseVM.Currencies = await _commonService.CurrencyList();
         return expenseVM;
@@ -359,7 +404,7 @@ public class ExpenseService : IExpenseService
         {
             Id = e.Id,
             GroupId = e.GroupId,
-            GroupDetails = isGroupExpenses ? new GroupVM { Name =e.Group.Name } : new GroupVM(),
+            GroupDetails = isGroupExpenses ? new GroupVM { Name = e.Group.Name } : new GroupVM(),
             Title = e.Title,
             PaidDate = e.PaidDate,
             PaidById = e.PaidById,

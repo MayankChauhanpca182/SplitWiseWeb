@@ -7,7 +7,7 @@
 <breadcrumb></breadcrumb>
 <h3 class="d-flex justify-content-between align-items-center bg-white mb-3 p-3 text-dark-emphasis shadow">
     <span>@(Model.IsViewOnly ? "View" : (Model.Id == 0 ? "Add" : "Edit")) Expense</span>
-    <a asp-action="Index" asp-controller="Expense" class="btn btn-secondary">Back</a>
+    <a asp-action="GroupExpenses" asp-controller="Expense" class="btn btn-secondary">Back</a>
 </h3>
 <div class="d-flex flex-column flex-lg-row gap-2">
     <form asp-action="SaveExpense" asp-controller="Expense" id="addExpenseForm"
@@ -21,13 +21,12 @@
         <!-- Group -->
         <div class="d-flex flex-wrap gap-3 align-items-center col-12">
             <div class="btn-group w-100">
-                <div class="memberPillDiv d-flex gap-2 border border-secondary-subtle overflow-x-auto w-100 p-2">
+                <div class="groupPillDiv d-flex gap-2 border border-secondary-subtle overflow-x-auto w-100 p-2">
                 @if(Model.GroupId > 0)
                 {
                     <span class="expenseMemberPill" id="groupPill-@Model.GroupDetails.Id">
                         <img src=@(Model.GroupDetails.ImagePath ?? "/images/default_group_img.png")>
                         <span>@Model.GroupDetails.Name</span>
-                        <button type="button" class="btn-close" aria-label="Close" disabled></button>
                     </span>
                 }
                 </div>
@@ -39,8 +38,8 @@
                 <ul class="dropdownList dropdown-menu w-100">
                     @foreach (GroupVM group in Model.GroupList)
                     {
-                        <li class="d-flex align-items-center gap-2 px-2">
-                            <span class="d-flex align-items-center gap-2" onclick="changeGroup(@group.Id)">
+                        <li class="d-flex align-items-center gap-2 px-2 cursor-pointer" onclick='changeGroup(@Html.Raw(Json.Serialize(group)))'>
+                            <span class="d-flex align-items-center gap-2">
                                 <img src=@(group.ImagePath ?? "/images/Default_pfp.png") alt=""
                                     class="rounded-circle border border-dark-subtle object-fit-cover" width="25px"
                                     height="25px">
@@ -71,7 +70,7 @@
                     data-bs-toggle="dropdown" aria-expanded="false">
                     <span class="visually-hidden">User list</span>
                 </button>
-                <ul class="dropdownList dropdown-menu w-100">
+                <ul class="dropdownList dropdown-menu w-100" id="friendsDropdown">
                     @foreach (FriendVM user in Model.Friends)
                     {
                         <li class="d-flex align-items-center gap-2 px-2">
@@ -188,23 +187,26 @@
             <div class="col"></div>
         </div>
         
-        @if (!Model.IsViewOnly)
-        {
-            <div class="d-flex gap-2">
+        <div class="d-flex gap-2">
+            <!-- View Attachment -->
+            @if (!string.IsNullOrEmpty(Model.AttachmentPath))
+            {
+                <div class="d-flex align-items-center">
+                    <a asp-action="View" asp-controller="File" asp-route-filePath="@Model.AttachmentPath"
+                        class="btn btn-primary">View Attachment</a>
+                </div>
+            }
+
+            @if (!Model.IsViewOnly)
+            {
                 <!-- Attachment -->
                 <div class="d-flex align-items-center gap-2 col">
-                    <label class="btn btn-secondary" asp-for="@Model.Attachment">Attachment</label>
+                    <label class="btn btn-secondary" asp-for="@Model.Attachment">Add Attachment</label>
                     <input asp-for=@Model.Attachment class="form-control rounded-2 border-secondary-subtle" hidden>
                     <span id="previewText"></span>
                 </div>
-            </div>
-        
-            <!-- Submit buttons -->
-            <div>
-                <button type="submit" class="btn btn-primary">Save</button>
-                <a asp-action="GroupExpenses" asp-controller="Expense" class="btn btn-secondary">Cancel</a>
-            </div>
-        }
+            }
+        </div>
     </form>
 
     <div class="bg-white w-100 p-3 col">
@@ -425,6 +427,7 @@
     <script>
         // Add member
         function addMember(user) {
+            console.log(user)
             // Add to array
             members.push({
                 UserId: user.userId,
@@ -631,8 +634,55 @@
     @* Change group *@
     <script>
         // Change group
-        function changeGroup(groupId){
-            console.log(groupId);
+        function changeGroup(group){
+            $.ajax({
+                url: "/Group/GroupMembersJson",
+                type: "GET",
+                data: { groupId: group.id },
+                success: function (response) {
+                    if (!response.statusCode) {
+                        console.log(response);
+                        addGroupPill(group);
+                        addMembers(response);
+                    }
+                },
+                error: function () {
+                    toastr.error('@NotificationMessages.InternalServerError');
+                }
+            });
+        }
+
+        function addGroupPill(group){
+            // Clear lists
+            $(".memberPillDiv").empty();
+            $("#paidBySelect").empty();
+            $("#expenseShareDiv").empty();
+
+            let pill = `<span class="expenseMemberPill" id="groupPill-${group.id}">
+                        <img src=${group.imagePath ?? "/images/default_group_img.png"}>
+                        <span>${group.name}</span>
+                    </span>`;
+            $(".groupPillDiv").html(pill);
+
+            // Set group id in hidden field
+            $("#GroupId").val(group.id);
+        }
+
+        function addMembers(groupmembers){
+            $("#friendsDropdown").empty();
+            $.each(groupmembers, function(index, member){
+                let memberLi = `<li class="d-flex align-items-center gap-2 px-2">
+                            <input class="userCkb form-check-input m-0" type="checkbox" id="userCkb-${member.id}"
+                                data-user='${JSON.stringify(member)}'>
+                            <label for="userCkb-${member.id}" class="d-flex align-items-center gap-2">
+                                <img src=${member.profileImagePath ?? "/images/Default_pfp.png"} alt=""
+                                    class="rounded-circle border border-dark-subtle object-fit-cover" width="25px"
+                                    height="25px">
+                                <span>${member.name}</span>
+                            </label>
+                        </li>`;
+                $("#friendsDropdown").append(memberLi);
+            });
         }
     </script>
 }

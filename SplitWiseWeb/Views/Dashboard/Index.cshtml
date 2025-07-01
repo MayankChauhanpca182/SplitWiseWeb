@@ -52,7 +52,7 @@
         </div>
         <div class="d-flex align-items-center">
             <span class="pe-2 @(Model.TotalExpense < 0 ? "text-danger" : "text-success")">
-                @(Model.TotalExpense == 0 ? $"All expenses are settled" : (Model.TotalExpense > 0 ? $"You owe ₹{Model.TotalExpense.ToString("N2")}" : $"You are owed ₹{((-1) * Model.TotalExpense).ToString("N2")}"))
+                @(Model.TotalExpense == 0 ? $"All expenses are settled" : (Model.TotalExpense > 0 ? $"You are owed ₹{Model.TotalExpense.ToString("N2")}" : $"You owe ₹{((-1) * Model.TotalExpense).ToString("N2")}"))
                 </span>
         </div>
     </a>

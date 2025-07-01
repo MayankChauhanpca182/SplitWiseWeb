@@ -89,6 +89,13 @@ public class GroupController : Controller
         return PartialView("GroupMembersPartialView", members);
     }
 
+    // GET GroupMembersJson
+    public async Task<IActionResult> GroupMembersJson(int groupId)
+    {
+        List<GroupMemberVM> members = await _groupService.GetMembers(groupId);
+        return Json(members);
+    }
+
     // GET AddgroupMemberModal
     public IActionResult AddgroupMemberModal(int groupId)
     {
