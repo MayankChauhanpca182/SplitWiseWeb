@@ -165,7 +165,6 @@ public class FriendService : IFriendService
             await _transaction.Begin();
 
             ResponseVM response = new ResponseVM();
-            response.Message = NotificationMessages.ReferralSuccess;
 
             User currentUser = await _userService.LoggedInUser();
 
@@ -175,12 +174,6 @@ public class FriendService : IFriendService
                 response.Success = false;
                 response.Message = NotificationMessages.AlreadyReferred.Replace("{0}", request.Email);
                 return response;
-            }
-
-            // Check if already referred
-            if (await _userReferralRepository.Any(ur => ur.ReferredToEmailAddress.ToLower() == request.Email.ToLower() && !ur.IsAccountRegistered))
-            {
-                response.Message = NotificationMessages.AlreadyReferredBySomeone.Replace("{0}", request.Email);
             }
 
             // Add into user referral
@@ -199,6 +192,7 @@ public class FriendService : IFriendService
             await _emailService.ReferralEmail($"{currentUser.FirstName} {currentUser.LastName}", request.Email);
 
             response.Success = true;
+            response.Message = NotificationMessages.ReferralSuccess;
 
             // Commit transaction
             await _transaction.Commit();

@@ -175,14 +175,37 @@ public class GroupService : IGroupService
             pageSize: filter.PageSize
         );
 
+        // Group id list
+        List<int> groupIds = paginatedItems.Items.Select(g => g.Id).ToList();
+
+        // Calculate net amount
+        Dictionary<int, decimal> netAmounts = await (
+            from e in _expenseRepository.Query()
+            where e.DeletedAt == null && (e.GroupId != null ? groupIds.Contains((int)e.GroupId) : false)
+            from es in e.ExpenseShares
+            where e.PaidById == currentUserId || es.UserId == currentUserId
+            group new { e, es } by (int)e.GroupId into g
+            select new
+            {
+                GroupId = g.Key,
+                NetAmount = g.Sum(x => x.e.PaidById == currentUserId ? x.es.ShareAmount : -x.es.ShareAmount)
+            }
+        ).ToDictionaryAsync(x => x.GroupId, x => x.NetAmount);
+
         PaginatedListVM<GroupVM> paginatedList = new PaginatedListVM<GroupVM>();
-        paginatedList.List = paginatedItems.Items.Select(g => new GroupVM
+        paginatedList.List = paginatedItems.Items.Select(g =>
         {
-            Id = g.Id,
-            Name = g.Name,
-            ImagePath = g.ImagePath,
-            IsSimplifiedPayments = g.IsSimplifiedPayments,
-            NoticeBoard = g.NoticeBoard
+            decimal netAmount = netAmounts.ContainsKey(g.Id) ? netAmounts[g.Id] : 0;
+
+            return new GroupVM
+            {
+                Id = g.Id,
+                Name = g.Name,
+                ImagePath = g.ImagePath,
+                IsSimplifiedPayments = g.IsSimplifiedPayments,
+                NoticeBoard = g.NoticeBoard,
+                Expense = netAmount
+            };
         }).ToList();
         paginatedList.Page.SetPagination(paginatedItems.TotalRecords, filter.PageSize, filter.PageNumber);
 

@@ -2,6 +2,7 @@ using System.Reflection.Metadata.Ecma335;
 using System.Security.Claims;
 using MailKit;
 using Microsoft.AspNetCore.Http;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using Org.BouncyCastle.Bcpg.Sig;
 using Org.BouncyCastle.Security;
 using SplitWiseRepository.Models;
@@ -71,9 +72,9 @@ public class UserService : IUserService
             //  Create User Instance
             User newUser = new()
             {
-                FirstName = registerUserVM.FirstName,
-                LastName = registerUserVM.LastName,
-                EmailAddress = registerUserVM.Email,
+                FirstName = TextHelper.CapitalizeWord(registerUserVM.FirstName),
+                LastName = TextHelper.CapitalizeWord(registerUserVM.LastName),
+                EmailAddress = TextHelper.NormalizeEmail(registerUserVM.Email),
                 PasswordHash = PasswordHelper.Hash(registerUserVM.Password),
                 CurrencyId = 23,
                 ProfileImagePath = ImageHelper.GetRandomImage(),

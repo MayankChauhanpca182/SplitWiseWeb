@@ -36,7 +36,10 @@
                             class="object-fit-cover rounded-circle" width="40px">
                         <span>@group.Name</span>
                     </td>
-                    <td>@group.Expense</td>
+                    <td
+                        class="@(group.Expense < 0 ? "text-danger" : "text-success")">
+                        @(group.Expense == 0 ? $"Expense is settled" : (group.Expense > 0 ? $"You owe ₹{group.Expense.ToString("N2")}" : $"Owes you ₹{((-1)*group.Expense).ToString("N2")}"))
+                    </td>
                     <td class="text-center">
                         <a asp-action="GroupDetails" asp-controller="Group" asp-route-groupId="@group.Id"
                             class="btn border-0" title="Dashboard">
