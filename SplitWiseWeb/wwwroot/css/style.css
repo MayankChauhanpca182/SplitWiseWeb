@@ -111,7 +111,7 @@ body {
 }
 
 #loginLayoutBody {
-    background-image: url("/images/4077186_17580.jpg");
+    background-image: url("/images/Splitmate_LoginPage.jpg");
     background-size: cover;
     background-repeat: no-repeat;
 }
@@ -394,3 +394,5 @@ footer.footer {
 .expenseCard{
     background-color: #EBF8F3;
 }
+
+
