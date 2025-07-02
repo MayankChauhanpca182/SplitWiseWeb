@@ -24,7 +24,7 @@
                 {
                     <div class="d-flex gap-2">
                         <span class="@(user.NetAmount < 0 ? "text-danger" : "text-success")">
-                            @(user.NetAmount == 0 ? $"Expense is settled" : (user.NetAmount > 0 ? $"You are owed ₹{user.NetAmount.ToString("N2")}" : $"Owes you ₹{((-1)*user.NetAmount).ToString("N2")}"))
+                            @(user.NetAmount == 0 ? $"Expense is settled" : (user.NetAmount > 0 ? $"You lent ₹{user.NetAmount.ToString("N2")} to {user.Name}" : $"You borrowed ₹{((-1)*user.NetAmount).ToString("N2")} from {user.Name}"))
                         </span>
                     </div>
                 }

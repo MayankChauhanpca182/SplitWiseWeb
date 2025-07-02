@@ -110,4 +110,11 @@ public class ExpenseController : Controller
         return PartialView("GroupExpenseListParialView", expenses);
     }
 
+    // POST ExpensesByGroup
+    public async Task<IActionResult> ExpensesByGroup(FilterVM filter, int groupId)
+    {
+        PaginatedListVM<ExpenseVM> expenses = await _expenseService.ExpenseList(filter, isGroupExpenses: true, groupId: groupId);
+        return PartialView("GroupExpenseListParialView", expenses);
+    }
+
 }

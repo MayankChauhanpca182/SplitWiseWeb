@@ -357,7 +357,7 @@ public class ExpenseService : IExpenseService
         }
     }
 
-    public async Task<PaginatedListVM<ExpenseVM>> ExpenseList(FilterVM filter, bool isAllExpense = false, bool isGroupExpenses = false)
+    public async Task<PaginatedListVM<ExpenseVM>> ExpenseList(FilterVM filter, bool isAllExpense = false, bool isGroupExpenses = false, int groupId = 0)
     {
         int currentUserId = _userService.LoggedInUserId();
         string searchString = string.IsNullOrEmpty(filter.SearchString) ? "" : filter.SearchString.Replace(@"\s+", "").ToLower();
@@ -382,6 +382,7 @@ public class ExpenseService : IExpenseService
             predicate: e => (e.PaidById == currentUserId || e.ExpenseShares.Any(es => es.UserId == currentUserId))
                             && e.DeletedAt == null
                             && (isAllExpense ? true : (isGroupExpenses ? e.GroupId != null : e.GroupId == null))
+                            && (groupId == 0 || e.GroupId == groupId)
                             && (string.IsNullOrEmpty(searchString) || e.Title.ToLower().Contains(searchString)),
             orderBy: orderBy,
             includes: new List<System.Linq.Expressions.Expression<Func<Expense, object>>>

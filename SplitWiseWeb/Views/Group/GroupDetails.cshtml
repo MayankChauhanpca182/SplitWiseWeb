@@ -24,7 +24,7 @@
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="group-expenses-tab" data-bs-toggle="pill"
                 data-bs-target="#group-expenses" type="button" role="tab" aria-controls="group-expenses"
-                aria-selected="false" onclick="">Expenses</button>
+                aria-selected="false" onclick="getGroupExpenseList(1)">Expenses</button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="group-activity-tab" data-bs-toggle="pill" data-bs-target="#group-activity"
@@ -44,13 +44,17 @@
     </ul>
     <div class="tab-content" id="pills-tabContent">
         <div class="tab-pane fade show active" id="group-expenses" role="tabpanel" aria-labelledby="group-expenses-tab">
-            <a asp-action="AddGroupExpense" asp-controller="Expense" asp-route-groupId="@Model.Id" class="btn btn-primary border-0"
-                title="Add Expense">
-                Add Expense
-            </a>
-            <div class="mt-3" id="group-expense-list">
-                This group has no expenses.
+            <div class="d-flex flex-wrap justify-content-between gap-3 mb-3">
+                <div class="d-flex align-items-center gap-2">
+                    <input type="text" class="searchBox form-control border-secondary-subtle rounded-0"
+                        id="groupExpenseListSearch" placeholder="Search through Title">
+                </div>
+                <div class="d-flex gap-2">
+                    <a asp-action="AddGroupExpense" asp-controller="Expense" asp-route-groupId="@Model.Id"
+                        class="btn btn-primary" type="button">Add Expense</a>
+                </div>
             </div>
+            <div id="groupExpensesOuter" class="listOuter bg-white"></div>
         </div>
         <div class="tab-pane fade" id="group-activity" role="tabpanel" aria-labelledby="group-activity-tab">This group
             has no activity.</div>
@@ -180,5 +184,62 @@
             $("#confirmationModal").modal("show");
         }
 
+    </script>
+
+    @* Group Expenses *@
+    <script>
+        sortColumn = "";
+        sortOrder = "";
+
+        $(document).ready(function () {
+            getGroupExpenseList(1);
+        });
+
+        $("#groupExpenseListSearch").on("input", function () {
+            if (searchTimeout === null) {
+                searchTimeout = setTimeout(function () {
+                    getGroupExpenseList(1);
+                }, 500);
+            }
+        });
+
+        function getGroupExpenseList(currentPage = 1) {
+            clearTimeout(searchTimeout);
+            searchTimeout = null;
+
+            let filter = {
+                PageNumber: currentPage,
+                PageSize: $("#groupExpensePageSize").val(),
+                SearchString: $("#groupExpenseListSearch").val(),
+                SortColumn: sortColumn,
+                SortOrder: sortOrder
+            };
+
+            $.ajax({
+                url: "/Expense/ExpensesByGroup",
+                type: "POST",
+                data: { filter, groupId: '@Model.Id' },
+                success: function (response) {
+                    if (!response.statusCode) {
+                        if (response.success == false) {
+                            toastr.error(response.message);
+                        }
+                        else {
+                            $("#groupExpensesOuter").html(response);
+                        }
+                    }
+                },
+                error: function () {
+                    toastr.error('@NotificationMessages.InternalServerError');
+                }
+            });
+        }
+
+        // Handle sorting
+        $(document).on("click", ".sortBtn", function () {
+            sortColumn = $(this).data("column");
+            sortOrder = $(this).data("order");
+            getGroupExpenseList(1);
+        });
     </script>
 }
