@@ -17,9 +17,10 @@ public class DashboardService : IDashboardService
     private readonly IGenericRepository<Group> _groupRepository;
     private readonly IGenericRepository<Expense> _expenseRepository;
     private readonly IExpenseService _expenseService;
+    private readonly IGroupService _groupService;
     private readonly IUserService _userService;
 
-    public DashboardService(IExpenseService expenseService, IGenericRepository<FriendRequest> friendRequestRepository, IUserService userService, IGenericRepository<UserReferral> referalRepository, IGenericRepository<ExpenseShare> expenseShareRepository, IGenericRepository<Friend> friendRepository, IGenericRepository<Group> groupRepository, IGenericRepository<Expense> expenseRepository)
+    public DashboardService(IExpenseService expenseService, IGenericRepository<FriendRequest> friendRequestRepository, IUserService userService, IGenericRepository<UserReferral> referalRepository, IGenericRepository<ExpenseShare> expenseShareRepository, IGenericRepository<Friend> friendRepository, IGenericRepository<Group> groupRepository, IGenericRepository<Expense> expenseRepository, IGroupService groupService)
     {
         _expenseService = expenseService;
         _friendRequestRepository = friendRequestRepository;
@@ -29,6 +30,7 @@ public class DashboardService : IDashboardService
         _friendRepository = friendRepository;
         _groupRepository = groupRepository;
         _expenseRepository = expenseRepository;
+        _groupService = groupService;
     }
 
     public async Task<DashboardVM> GetDashboard()
@@ -58,6 +60,8 @@ public class DashboardService : IDashboardService
                 g => g.GroupMembers
             }
         );
+        // dashboard.TotalGroupExpense = await TotalGroupExpense();
+        dashboard.TotalGroupExpense = await NetGroupExpense();
 
         // Expenses
         dashboard.TotalExpense = await NetBalance();
@@ -72,13 +76,9 @@ public class DashboardService : IDashboardService
         return dashboard;
     }
 
-    public async Task<decimal> NetBalance()
+    private async Task<decimal> NetBalance()
     {
         int currentUserId = _userService.LoggedInUserId();
-        // decimal totalExpense = await _expenseShareRepository.Sum(
-        //     selector: e => e.ShareAmount,
-        //     predicate: e => e.DeletedAt == null && e.UserId == currentUserId
-        // );
 
         decimal youAreOwed = await _expenseShareRepository.Sum(
             selector: es => es.ShareAmount,
@@ -101,4 +101,31 @@ public class DashboardService : IDashboardService
         return youAreOwed - youOweOthers;
     }
 
+    private async Task<decimal> TotalGroupExpense()
+    {
+        int currentUserId = _userService.LoggedInUserId();
+
+        decimal total = await _expenseShareRepository.Sum(
+            selector: es => es.ShareAmount,
+            predicate: es => es.DeletedAt == null && es.UserId == currentUserId
+                    && es.Expense.DeletedAt == null
+                    && es.Expense.GroupId != null,
+            includes: new List<Expression<Func<ExpenseShare, object>>>
+            {
+                es => es.Expense
+            }
+        );
+        return total;
+    }
+
+    private async Task<decimal> NetGroupExpense()
+    {
+        int currentUserId = _userService.LoggedInUserId();
+
+        List<GroupVM> list = _groupService.GroupList(new FilterVM { PageNumber = 0, PageSize = 0 }).Result.List.ToList();
+
+        decimal total = list.Sum(g => g.Expense);
+
+        return total;
+    }
 }

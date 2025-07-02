@@ -144,7 +144,7 @@
             <!-- Split type -->
             <div class="form-floating col">
                 <select asp-for="@Model.SplitTypeEnum" class="form-select" id="splitTypeSelect"
-                    onchange="setAmountAsPerSplitType()">
+                    onchange="setAmountAsPerSplitType(), setDefaultSplitValues()">
                     <option value="@SplitType.Equally">@SplitType.Equally.ToString()</option>
                     <option value="@SplitType.Unequally">@SplitType.Unequally.ToString()</option>
                     <option value="@SplitType.ByShare">By Share</option>
@@ -232,21 +232,21 @@
     @* Store img path in const *@
     <script>
         const categoryImages = {
-                    @foreach (Category cat in Model.Categories)
+                        @foreach (Category cat in Model.Categories)
             {
-                            @:@cat.Id: "@cat.CategoryImagePath",
+                                    @:@cat.Id: "@cat.CategoryImagePath",
             }
-                    };
+                        };
     </script>
 
     @* Store currency symboles in array *@
     <script>
         const currencySymboles = {
-                    @foreach (Currency currency in Model.Currencies)
+                        @foreach (Currency currency in Model.Currencies)
             {
-                            @:@currency.Id: "@currency.Symbole",
+                                    @:@currency.Id: "@currency.Symbole",
             }
-                    };
+                        };
 
 
         // Change symbole on currency change
@@ -260,16 +260,16 @@
     <script>
         // Add current members to array
         {
-                            @foreach (ExpenseShareVM share in Model.ExpenseShares)
+                                @foreach (ExpenseShareVM share in Model.ExpenseShares)
                 {
                     <text>
                         members.push({
                             UserId: @share.UserId,
                         ShareAmount: @share.ShareAmount
-                                                    });
+                                                            });
                     </text>
             }
-                        }
+                            }
     </script>
 
     @* Validate selected file *@
@@ -422,7 +422,7 @@
 
             // Add into expense share div
             let div = `
-                                <div class="expenseShare" id="expenseShare-${user.userId}"><span><img src=${user.profileImagePath ?? "/images/Default_pfp.png"}>${user.name}</span><span><input type="text" class="amount form-control" id="amount-${user.userId}" value="0"><span class="expenseShareTypeSymbole">${currencySymbole}</span></span></div>`;
+                    <div class="expenseShare" id="expenseShare-${user.userId}"><span><img src=${user.profileImagePath ?? "/images/Default_pfp.png"}>${user.name}</span><span><input type="text" class="amount form-control" id="amount-${user.userId}" value="0"><span class="expenseShareTypeSymbole">${currencySymbole}</span></span></div>`;
             $("#expenseShareDiv").append(div);
         }
 
@@ -461,19 +461,39 @@
 
     @* Change split type *@
     <script>
+        // Set default split values
+        function setDefaultSplitValues() {
+            let expenseAmount = parseFloat($("#Amount").val().replace(/,/g, ""));
+            let splitType = $("#splitTypeSelect").val();
+            switch (splitType) {
+                case '@SplitType.Equally':
+                    $(".amount").prop("disabled", true).val(expenseAmount / members.length).trigger("input").trigger("blur");
+                    break;
+                case '@SplitType.Unequally':
+                    $(".amount").prop("disabled", false).val(0).trigger("input").trigger("blur");
+                    break;
+                case '@SplitType.ByShare':
+                    $(".amount").prop("disabled", false).val(1).trigger("input").trigger("blur");
+                    break;
+                case '@SplitType.ByPercentage':
+                    $(".amount").prop("disabled", false).val(100 / members.length).trigger("input").trigger("blur");
+                    break;
+            }
+        }
+
         // Set change split type
         function setAmountAsPerSplitType() {
             let expenseAmount = parseFloat($("#Amount").val().replace(/,/g, ""));
             let splitType = $("#splitTypeSelect").val();
             switch (splitType) {
                 case '@SplitType.Equally':
-                    setExpenseShareSymbole(currencySymbole);
-                    $(".amount").prop("disabled", true).val(expenseAmount / members.length).trigger("input").trigger("blur");
                     $("#splitTypeText").text("Split equally");
+                    $(".amount").prop("disabled", true).val(expenseAmount / members.length).trigger("input").trigger("blur");
+                    setExpenseShareSymbole(currencySymbole);
                     break;
                 case '@SplitType.Unequally':
                     $("#splitTypeText").text("Split unequally");
-                    $(".amount").prop("disabled", false).val(0).trigger("input");
+                    $(".amount").prop("disabled", false).trigger("input").trigger("blur");
                     setExpenseShareSymbole(currencySymbole);
                     break;
                 case '@SplitType.ByShare':

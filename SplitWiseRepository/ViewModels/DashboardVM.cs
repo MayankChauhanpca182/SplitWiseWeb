@@ -8,7 +8,7 @@ public class DashboardVM
     public int FriendsReferred { get; set; } = 0;
 
     public int GroupsCount { get; set; } = 0;
-    public string AllGroupExpenceStr { get; set; } = "0.00";
+    public decimal TotalGroupExpense { get; set; } = 0;
 
 
     public decimal TotalExpense { get; set; } = 0;
