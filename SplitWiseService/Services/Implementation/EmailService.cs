@@ -97,7 +97,7 @@ public class EmailService : IEmailService
         string fileText = GetEmailTemplate(EmailTemplates.Referral);
         string loginLink = _urlBuilder.Create("Register", "User");
 
-        string emailBody = fileText.Replace(" {recieverName}", "Sir or Madam").Replace("{senderName}", senderName).Replace("{link}", loginLink);
+        string emailBody = fileText.Replace("{recieverName}", "Sir or Madam").Replace("{senderName}", senderName).Replace("{link}", loginLink);
         await Send(email, EmailSubjects.ReferralRequest, emailBody);
         return;
     }
@@ -150,38 +150,44 @@ public class EmailService : IEmailService
     public async Task AddExpense(string recieverName, string senderName, string expenseName, string amount, string splitType, string shareAmount, string email, string oweVariable, string groupName = "")
     {
         string fileText;
+        string subject;
 
         if (!string.IsNullOrEmpty(groupName))
         {
             fileText = GetEmailTemplate(EmailTemplates.AddGroupExpense);
             fileText = fileText.Replace("{groupName}", groupName);
+            subject = EmailSubjects.AddGroupExpense;
         }
         else
         {
             fileText = GetEmailTemplate(EmailTemplates.AddIndividualExpense);
+            subject = EmailSubjects.AddIndividualExpense;
         }
 
         string emailBody = fileText.Replace("{recieverName}", recieverName).Replace("{senderName}", senderName).Replace("{splittype}", splitType).Replace("{amount}", amount).Replace("{shareamount}", shareAmount).Replace("{owe}", oweVariable).Replace("{expenseName}", expenseName);
-        await Send(email, EmailSubjects.AddIndividualExpense, emailBody);
+        await Send(email, subject, emailBody);
         return;
     }
 
     public async Task UpdateExpense(string recieverName, string senderName, string expenseName, string amount, string splitType, string shareAmount, string email, string oweVariable, string groupName = "")
     {
         string fileText;
+        string subject;
 
         if (!string.IsNullOrEmpty(groupName))
         {
             fileText = GetEmailTemplate(EmailTemplates.UpdateGroupExpense);
             fileText = fileText.Replace("{groupName}", groupName);
+            subject = EmailSubjects.UpdateGroupExpense;
         }
         else
         {
             fileText = GetEmailTemplate(EmailTemplates.UpdateIndividualExpense);
+            subject = EmailSubjects.UpdateIndividualExpense;
         }
 
         string emailBody = fileText.Replace("{recieverName}", recieverName).Replace("{senderName}", senderName).Replace("{splittype}", splitType).Replace("{amount}", amount).Replace("{shareamount}", shareAmount).Replace("{owe}", oweVariable).Replace("{expenseName}", expenseName);
-        await Send(email, EmailSubjects.UpdateIndividualExpense, emailBody);
+        await Send(email, subject, emailBody);
         return;
     }
 

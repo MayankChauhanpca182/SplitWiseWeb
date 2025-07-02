@@ -12,10 +12,12 @@ namespace SplitWiseWeb.Controllers;
 public class DashboardController : Controller
 {
     private readonly IDashboardService _dashboardService;
+    private readonly IEmailService _emailService;
 
-    public DashboardController(IDashboardService dashboardService)
+    public DashboardController(IDashboardService dashboardService, IEmailService emailService)
     {
         _dashboardService = dashboardService;
+        _emailService = emailService;
     }
 
     #region Dashboard
@@ -28,6 +30,15 @@ public class DashboardController : Controller
         return View(dashboard);
     }
 
+    #endregion
+
+    #region SendMail
+    public async Task<IActionResult> SendMail()
+    {
+        await _emailService.ReferralEmail("SplitMate", "chauhanmayankr534@gmail.com");
+        ResponseVM response = new ResponseVM(){Success = true};
+        return Json(response);
+    }
     #endregion
 
 }

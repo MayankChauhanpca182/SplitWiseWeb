@@ -87,6 +87,10 @@ public class ExpenseController : Controller
         }
 
         ResponseVM response = await _expenseService.SaveExpense(newExpense);
+        if (response.Success)
+        {
+            TempData["successMessage"] = response.Message;
+        }
         return Json(response);
     }
 

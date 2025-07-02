@@ -259,7 +259,7 @@ public class ExpenseService : IExpenseService
             GroupVM group = expense.GroupId == null ? new GroupVM() : await _groupService.GetGroup((int)expense.GroupId);
             bool hasUserPaid = user.Id == expense.PaidById;
             string senderName = user.Id == currentUser.Id ? "you" : $"{currentUser.FirstName} {currentUser.LastName}";
-            string oweVariable = hasUserPaid ? "owes" : "owe";
+            string oweVariable = hasUserPaid ? "are owed" : "owe";
             string shareAmountStr = hasUserPaid ? (expense.Amount - share.ShareAmount).ToString("N2") : share.ShareAmount.ToString("N2");
 
             if (isNew)
