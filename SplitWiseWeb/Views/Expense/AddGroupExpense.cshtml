@@ -39,7 +39,7 @@
                 <ul class="dropdownList dropdown-menu w-100">
                     @foreach (GroupVM group in Model.GroupList)
                     {
-                        <li class="d-flex align-items-center gap-2 px-2 cursor-pointer" onclick='changeGroup(@Html.Raw(Json.Serialize(group)))'>
+                        <li class="d-flex align-items-center gap-2 px-2 py-1 cursor-pointer" onclick='changeGroup(@Html.Raw(Json.Serialize(group)))'>
                             <span class="d-flex align-items-center gap-2">
                                 <img src=@(group.ImagePath ?? "/images/Default_pfp.png") alt=""
                                     class="rounded-circle border border-dark-subtle object-fit-cover" width="25px"
@@ -360,7 +360,7 @@
         // Formate amount
         $(document).on("blur", "#Amount, .amount", function () {
             let input = this;
-            input.value = formatToINR(input.value);
+            input.value = formatToINR(input.value.replace(/,/g, ""));
             validateAmounts();
         });
 

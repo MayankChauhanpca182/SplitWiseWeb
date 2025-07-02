@@ -288,7 +288,7 @@ footer.footer {
 }
 
 .searchBox {
-    max-width: 300px;
+    width: 275px;
 }
 
 .sortBtn[data-order="desc"] {
