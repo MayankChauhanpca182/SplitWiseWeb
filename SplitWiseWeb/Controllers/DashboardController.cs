@@ -31,14 +31,4 @@ public class DashboardController : Controller
     }
 
     #endregion
-
-    #region SendMail
-    public async Task<IActionResult> SendMail()
-    {
-        await _emailService.ReferralEmail("SplitMate", "chauhanmayankr534@gmail.com");
-        ResponseVM response = new ResponseVM(){Success = true};
-        return Json(response);
-    }
-    #endregion
-
 }

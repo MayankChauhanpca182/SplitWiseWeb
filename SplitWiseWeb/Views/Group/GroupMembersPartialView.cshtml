@@ -22,7 +22,11 @@
                 </div>
                 @if (user.UserId != currentUserId)
                 {
-                    @* <button class="btn btn-primary">Button Here</button> *@
+                    <div class="d-flex gap-2">
+                        <span class="@(user.NetAmount < 0 ? "text-danger" : "text-success")">
+                            @(user.NetAmount == 0 ? $"Expense is settled" : (user.NetAmount > 0 ? $"You are owed ₹{user.NetAmount.ToString("N2")}" : $"Owes you ₹{((-1)*user.NetAmount).ToString("N2")}"))
+                        </span>
+                    </div>
                 }
             </div>
             <div style="width: 30px;">

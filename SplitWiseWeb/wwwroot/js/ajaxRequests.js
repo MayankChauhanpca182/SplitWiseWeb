@@ -113,16 +113,3 @@ function exportDataAjax(filter, url, fileName) {
     });
 }
 
-// Send mail
-function sendMail() {
-    $.ajax({
-        url: "/Dashboard/SendMail",
-        type: "GET",
-        success: function (response) {
-            console.log(response);
-        },
-        error: function (xhr, status, error) {
-            toastr.error("Internal server error.");
-        },
-    });
-}

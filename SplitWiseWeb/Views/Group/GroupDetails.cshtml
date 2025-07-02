@@ -69,6 +69,7 @@
     <script>
         // Fetch group members
         function fetchGroupMembers() {
+            $("#group-members").empty();
             $.ajax({
                 url: "/Group/GroupMembers",
                 type: "GET",

@@ -256,6 +256,8 @@ public class GroupService : IGroupService
 
     public async Task<List<GroupMemberVM>> GetMembers(int groupId)
     {
+        int currentUserId = _userService.LoggedInUserId();
+
         PaginatedItemsVM<GroupMember> paginatedItems = await _groupMemberRepository.PaginatedList(
             predicate: gm => gm.GroupId == groupId && gm.DeletedAt == null,
             includes: new List<Expression<Func<GroupMember, object>>>
@@ -263,14 +265,38 @@ public class GroupService : IGroupService
                 fr => fr.User
             });
 
-        return paginatedItems.Items.Select(gm => new GroupMemberVM
+        // Group member id list
+        List<int> groupMemberIds = paginatedItems.Items.Where(gm => gm.UserId != currentUserId).Select(gm => gm.UserId).ToList();
+
+        // Calculate net amount
+        Dictionary<int, decimal> netAmounts = await (
+            from e in _expenseRepository.Query()
+            where e.DeletedAt == null && e.GroupId == groupId
+            from es in e.ExpenseShares
+            where (e.PaidById == currentUserId && groupMemberIds.Contains(es.UserId))
+            || (es.UserId == currentUserId && groupMemberIds.Contains(e.PaidById))
+            group new { e, es } by (e.PaidById == currentUserId ? es.UserId : e.PaidById) into g
+            select new
+            {
+                UserId = g.Key,
+                NetAmount = g.Sum(x => x.e.PaidById == currentUserId ? x.es.ShareAmount : -x.es.ShareAmount)
+            }
+        ).ToDictionaryAsync(x => x.UserId, x => x.NetAmount);
+
+        return paginatedItems.Items.Select(gm =>
         {
-            Id = gm.Id,
-            UserId = gm.UserId,
-            GroupId = groupId,
-            Name = $"{gm.User.FirstName} {gm.User.LastName}",
-            EmailAddress = gm.User.EmailAddress,
-            ProfileImagePath = gm.User.ProfileImagePath
+            decimal netAmount = netAmounts.ContainsKey(gm.UserId) ? netAmounts[gm.UserId] : 0;
+
+            return new GroupMemberVM
+            {
+                Id = gm.Id,
+                UserId = gm.UserId,
+                GroupId = groupId,
+                Name = $"{gm.User.FirstName} {gm.User.LastName}",
+                EmailAddress = gm.User.EmailAddress,
+                ProfileImagePath = gm.User.ProfileImagePath,
+                NetAmount = netAmount
+            };
         }).ToList();
     }
 

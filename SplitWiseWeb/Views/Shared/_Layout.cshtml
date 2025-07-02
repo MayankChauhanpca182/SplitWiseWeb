@@ -52,7 +52,6 @@
                 </a>
             </div>
             <div class="d-flex align-items-center gap-3">
-                @* <button class="btn btn-navbar d-none d-sm-block" type="button" onclick="sendMail()">Send Mail</button> *@
                 <button class="btn btn-navbar d-none d-sm-block" type="button" onclick="fetchAddFriendModal()">Add Friend</button>
 
                 <div class="dropdown">
@@ -166,7 +165,7 @@
                     <div class="floating-menu">
                         <button class="main-btn" title="Add Expense"><i class="bi bi-cash"></i></button>
                         <div class="submenu">
-                            <a asp-action="GroupExpenses" asp-controller="Expense" class="sub-btn" title="Add Group Expense"><i
+                            <a asp-action="AddGroupExpense" asp-controller="Expense" class="sub-btn" title="Add Group Expense"><i
                                     class="bi bi-people-fill"></i></a>
                             <a asp-action="AddIndividualExpense" title="Add Individual Expense" class="sub-btn"
                                 asp-controller="Expense">
