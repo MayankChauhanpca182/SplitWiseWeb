@@ -192,26 +192,40 @@
             <div class="col"></div>
         </div>
 
-        <div class="d-flex gap-2">
-            <!-- View Attachment -->
-            @if (!string.IsNullOrEmpty(Model.AttachmentPath))
-            {
-                <div class="d-flex align-items-center">
-                    <a asp-action="View" asp-controller="File" asp-route-filePath="@Model.AttachmentPath"
-                        class="btn btn-primary">View Attachment</a>
-                </div>
-            }
-
-            @if (!Model.IsViewOnly)
-            {
-                <!-- Attachment -->
-                <div class="d-flex align-items-center gap-2 col">
-                    <label class="btn btn-secondary" asp-for="@Model.Attachment">Add Attachment</label>
+        <!-- Attachment -->
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <div>
+                @if (!Model.IsViewOnly)
+                {
+                    <label class="btn btn-primary" asp-for="@Model.Attachment">@(string.IsNullOrEmpty(Model.AttachmentName)
+                                            ? "Upload" : "Update")
+                        Attachment</label>
                     <input asp-for=@Model.Attachment class="form-control rounded-2 border-secondary-subtle" hidden>
-                    <span id="previewText"></span>
+                }
+                <span id="previewText">@Model.AttachmentName</span>
+            </div>
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <div>
+                    <a asp-action="View" asp-controller="File" asp-route-filePath="@Model.AttachmentPath"
+                        class="no-loader btn btn-secondary me-2" id="viewAttachment" target="_blank"
+                        style="@(string.IsNullOrEmpty(Model.AttachmentPath) ? "display: none;" : "")">View</a>
                 </div>
-            }
+                @if (!string.IsNullOrEmpty(Model.AttachmentName) && !Model.IsViewOnly)
+                {
+                    <button type="button" class="no-loader btn btn-danger me-2" id="removeAttachmentBtn" target="_blank"
+                        onclick="removeAttachment(@Model.Id)">Remove</button>
+                }
+            </div>
         </div>
+
+        @if (!Model.IsViewOnly)
+        {
+            <!-- Submit buttons -->
+            <div>
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a asp-action="GroupExpenses" asp-controller="Expense" class="btn btn-secondary">Cancel</a>
+            </div>
+        }
     </form>
 
     <div class="bg-white w-100 p-3 col">
@@ -527,54 +541,71 @@
 
     @* Expense form submit *@
     <script>
+        let pendingExpenseForm = null;
+        let remainingAmountToAdd = 0;
+
         // Fetch expense share
         function fetchExpenseShare() {
-            let expenseShares = [];
+            let expenseShare = [];
             $.each(members, function (index, member) {
-                expenseShares.push({
+                expenseShare.push({
                     UserId: parseInt(member.UserId),
                     ShareAmount: parseFloat($("#amount-" + member.UserId).val().replace(/,/g, "") || 0)
                 });
             });
-            return expenseShares;
+            return expenseShare;
         }
 
-        // Validate split amount
-        function validateSplitAmount() {
-            let isSplitValid = true;
-            let splitType = $("#splitTypeSelect").val();
-            let amount = parseFloat($("#Amount").val().replace(/,/g, ""));
-            let splitTotal = getSplitTotal();
+        // Confirmation logic to handle split difference
+        function handleSplitConfirmation(form, expenseShare, amount, splitTotal) {
+            remainingAmountToAdd = parseFloat((amount - splitTotal).toFixed(2));
 
-            if (amount === 0) {
-                toastr.error("Amount should not be zero");
-                return false;
-            }
+            $("#confirmationModalTitle").text("Split Adjustment");
+            $("#confirmationModalBody").html(`<span>Remaining amount <strong>₹${remainingAmountToAdd}</strong> will be added to one of the members. Do you want to continue?</span>`);
+            $("#confirmationModalYesBtn").attr("onclick", "confirmSplitAndSubmit()");
+            $("#confirmationModal").modal("show");
 
-            switch (splitType) {
-                case '@SplitType.Unequally':
-                    if (amount - splitTotal > 0.99) {
-                        toastr.error("Amount should be split properly");
-                        isSplitValid = false;
-                    }
-                    break;
-                case '@SplitType.ByShare':
-                    if (splitTotal === 0) {
-                        toastr.error("Amount should be split properly");
-                        isSplitValid = false;
-                    }
-                    break;
-                case '@SplitType.ByPercentage':
-                    if (100 - splitTotal > 0.99) {
-                        toastr.error("Amount should be split properly");
-                        isSplitValid = false;
-                    }
-                    break;
-            }
-            return isSplitValid;
+            // Save form and data for later use
+            pendingExpenseForm = form;
         }
 
-        // Submit friend request form
+        // On confirmation: add remaining to first member and submit
+        function confirmSplitAndSubmit() {
+            if (!pendingExpenseForm) return;
+
+            const expenseShare = fetchExpenseShare();
+            if (expenseShare.length > 0) {
+                expenseShare[0].ShareAmount += remainingAmountToAdd; // Add remaining to first member
+            }
+
+            $("#expenseMembersJson").val(JSON.stringify(expenseShare));
+            const formData = new FormData(pendingExpenseForm);
+
+            $.ajax({
+                url: $(pendingExpenseForm).attr("action"),
+                type: $(pendingExpenseForm).attr("method"),
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (!response.statusCode) {
+                        if (response.success) {
+                            window.location = "/individual-expenses";
+                        } else {
+                            toastr.error(response.message);
+                        }
+                    }
+                },
+                error: function () {
+                    toastr.error("Internal server error.");
+                }
+            });
+
+            $("#confirmationModal").modal("hide");
+            pendingExpenseForm = null;
+        }
+
+        // Expense form submit
         $(document).on("submit", "#addExpenseForm", function (e) {
             e.preventDefault();
 
@@ -582,22 +613,53 @@
                 toastr.error("Expense split amount is not valid.");
                 return;
             }
-            let expenseShares = fetchExpenseShare();
-            let splitTotal = getSplitTotal();
 
-            if (expenseShares.length === 0) {
+            const amount = parseFloat($("#Amount").val().replace(/,/g, "") || 0);
+            const expenseShare = fetchExpenseShare();
+            const splitTotal = getSplitTotal();
+            const splitType = $("#splitTypeSelect").val();
+
+            if (amount === 0) {
+                toastr.error("Amount should not be zero.");
+                return;
+            }
+
+            if (expenseShare.length === 0) {
                 toastr.error("You have not selected any expense members.");
                 return;
             }
-            else if (!validateSplitAmount()) {
-                return;
-            }
-            else {
-                // Set into hidden feild
-                $("#expenseMembersJson").val(JSON.stringify(expenseShares));
+
+            // Split validation based on type
+            switch (splitType) {
+                case '@SplitType.Equally':
+                case '@SplitType.Unequally':
+                    const diff = amount - splitTotal;
+                    if (diff > 0.99) {
+                        toastr.error("Amount should be split properly");
+                        return;
+                    } else if (diff > 0) {
+                        // Ask for confirmation to adjust remaining amount
+                        handleSplitConfirmation(this, expenseShare, amount, splitTotal);
+                        return;
+                    }
+                    break;
+                case '@SplitType.ByShare':
+                    if (splitTotal === 0) {
+                        toastr.error("Amount should be split properly");
+                        return;
+                    }
+                    break;
+                case '@SplitType.ByPercentage':
+                    if ((100 - splitTotal) > 0.99) {
+                        toastr.error("Amount should be split properly");
+                        return;
+                    }
+                    break;
             }
 
-            let formData = new FormData(this);
+            // If everything is valid without need for confirmation
+            $("#expenseMembersJson").val(JSON.stringify(expenseShare));
+            const formData = new FormData(this);
 
             $.ajax({
                 url: $(this).attr("action"),
@@ -608,20 +670,17 @@
                 success: function (response) {
                     if (!response.statusCode) {
                         if (response.success) {
-                            // window.location = "/expenses";
-                            toastr.success(response.message);
-                        }
-                        else {
+                            window.location = "/individual-expenses";
+                        } else {
                             toastr.error(response.message);
                         }
                     }
                 },
-                error: function (xhr, status, error) {
+                error: function () {
                     toastr.error("Internal server error.");
                 }
             });
         });
-
     </script>
 
     @* Change group *@

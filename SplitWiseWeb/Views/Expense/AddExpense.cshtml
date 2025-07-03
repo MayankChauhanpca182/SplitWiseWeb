@@ -366,6 +366,7 @@
                     break;
                 case '@SplitType.Unequally':
                     $("#remainigBalance").text(formatToINR(amount - splitTotal) + currencySymbole);
+                    console.log(formatToINR(amount - splitTotal))
                     $("#remainingBalanceDiv").show();
                     if (splitTotal > amount) {
                         $(".amount, #remainigBalance").addClass("text-danger");
@@ -527,6 +528,9 @@
 
     @* Expense form submit *@
     <script>
+        let pendingExpenseForm = null;
+        let remainingAmountToAdd = 0;
+
         // Fetch expense share
         function fetchExpenseShare() {
             let expenseShare = [];
@@ -539,44 +543,56 @@
             return expenseShare;
         }
 
-        // Validate split amount
-        function validateSplitAmount() {
-            let isSplitValid = true;
-            let splitType = $("#splitTypeSelect").val();
-            let amount = parseFloat($("#Amount").val().replace(/,/g, ""));
-            let splitTotal = getSplitTotal();
+        // Confirmation logic to handle split difference
+        function handleSplitConfirmation(form, expenseShare, amount, splitTotal) {
+            remainingAmountToAdd = parseFloat((amount - splitTotal).toFixed(2));
 
-            if (amount === 0) {
-                toastr.error("Amount should not be zero");
-                return false;
-            }
+            $("#confirmationModalTitle").text("Split Adjustment");
+            $("#confirmationModalBody").html(`<span>Remaining amount <strong>₹${remainingAmountToAdd}</strong> will be added to one of the members. Do you want to continue?</span>`);
+            $("#confirmationModalYesBtn").attr("onclick", "confirmSplitAndSubmit()");
+            $("#confirmationModal").modal("show");
 
-            console.log(amount - splitTotal);
-
-            switch (splitType) {
-                case '@SplitType.Unequally':
-                    if (amount - splitTotal > 0.99) {
-                        toastr.error("Amount should be split properly");
-                        isSplitValid = false;
-                    }
-                    break;
-                case '@SplitType.ByShare':
-                    if (splitTotal === 0) {
-                        toastr.error("Amount should be split properly");
-                        isSplitValid = false;
-                    }
-                    break;
-                case '@SplitType.ByPercentage':
-                    if (100 - splitTotal > 0.99) {
-                        toastr.error("Amount should be split properly");
-                        isSplitValid = false;
-                    }
-                    break;
-            }
-            return isSplitValid;
+            // Save form and data for later use
+            pendingExpenseForm = form;
         }
 
-        // Submit friend request form
+        // On confirmation: add remaining to first member and submit
+        function confirmSplitAndSubmit() {
+            if (!pendingExpenseForm) return;
+
+            const expenseShare = fetchExpenseShare();
+            if (expenseShare.length > 0) {
+                expenseShare[0].ShareAmount += remainingAmountToAdd; // Add remaining to first member
+            }
+
+            $("#expenseMembersJson").val(JSON.stringify(expenseShare));
+            const formData = new FormData(pendingExpenseForm);
+
+            $.ajax({
+                url: $(pendingExpenseForm).attr("action"),
+                type: $(pendingExpenseForm).attr("method"),
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (!response.statusCode) {
+                        if (response.success) {
+                            window.location = "/individual-expenses";
+                        } else {
+                            toastr.error(response.message);
+                        }
+                    }
+                },
+                error: function () {
+                    toastr.error("Internal server error.");
+                }
+            });
+
+            $("#confirmationModal").modal("hide");
+            pendingExpenseForm = null;
+        }
+
+        // Expense form submit
         $(document).on("submit", "#addExpenseForm", function (e) {
             e.preventDefault();
 
@@ -584,22 +600,53 @@
                 toastr.error("Expense split amount is not valid.");
                 return;
             }
-            let expenseShare = fetchExpenseShare();
-            let splitTotal = getSplitTotal();
+
+            const amount = parseFloat($("#Amount").val().replace(/,/g, "") || 0);
+            const expenseShare = fetchExpenseShare();
+            const splitTotal = getSplitTotal();
+            const splitType = $("#splitTypeSelect").val();
+
+            if (amount === 0) {
+                toastr.error("Amount should not be zero.");
+                return;
+            }
 
             if (expenseShare.length === 0) {
                 toastr.error("You have not selected any expense members.");
                 return;
             }
-            else if (!validateSplitAmount()) {
-                return;
-            }
-            else {
-                // Set into hidden feild
-                $("#expenseMembersJson").val(JSON.stringify(expenseShare));
+
+            // Split validation based on type
+            switch (splitType) {
+                case '@SplitType.Equally':
+                case '@SplitType.Unequally':
+                    const diff = amount - splitTotal;
+                    if (diff > 0.99) {
+                        toastr.error("Amount should be split properly");
+                        return;
+                    } else if (diff > 0) {
+                        // Ask for confirmation to adjust remaining amount
+                        handleSplitConfirmation(this, expenseShare, amount, splitTotal);
+                        return;
+                    }
+                    break;
+                case '@SplitType.ByShare':
+                    if (splitTotal === 0) {
+                        toastr.error("Amount should be split properly");
+                        return;
+                    }
+                    break;
+                case '@SplitType.ByPercentage':
+                    if ((100 - splitTotal) > 0.99) {
+                        toastr.error("Amount should be split properly");
+                        return;
+                    }
+                    break;
             }
 
-            let formData = new FormData(this);
+            // If everything is valid without need for confirmation
+            $("#expenseMembersJson").val(JSON.stringify(expenseShare));
+            const formData = new FormData(this);
 
             $.ajax({
                 url: $(this).attr("action"),
@@ -611,17 +658,16 @@
                     if (!response.statusCode) {
                         if (response.success) {
                             window.location = "/individual-expenses";
-                        }
-                        else {
+                        } else {
                             toastr.error(response.message);
                         }
                     }
                 },
-                error: function (xhr, status, error) {
+                error: function () {
                     toastr.error("Internal server error.");
                 }
             });
-        });    
+        });
     </script>
 
     @* Remove attachment *@
