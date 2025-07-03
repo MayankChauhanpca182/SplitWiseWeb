@@ -38,6 +38,8 @@ public class Expense : AuditFields
     [MaxLength(1000)]
     public string Note { get; set; }
     public string AttachmentPath { get; set; }
+
+    public string AttachmentName { get; set; }
     
 
     public virtual ICollection<ExpenseShare> ExpenseShares { get; set; }

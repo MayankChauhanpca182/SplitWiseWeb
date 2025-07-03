@@ -65,6 +65,7 @@ public class ExpenseService : IExpenseService
             expenseVM.PaidDate = expense.PaidDate;
             expenseVM.SplitTypeEnum = expense.SplitType;
             expenseVM.AttachmentPath = expense.AttachmentPath;
+            expenseVM.AttachmentName = expense.AttachmentName;
             expenseVM.ExpenseShares = expense.ExpenseShares.Where(es => es.DeletedAt == null)
                     .Select(es => new ExpenseShareVM
                     {
@@ -147,6 +148,7 @@ public class ExpenseService : IExpenseService
             expenseVM.PaidDate = expense.PaidDate;
             expenseVM.SplitTypeEnum = expense.SplitType;
             expenseVM.AttachmentPath = expense.AttachmentPath;
+            expenseVM.AttachmentName = expense.AttachmentName;
             expenseVM.ExpenseShares = expense.ExpenseShares.Where(es => es.DeletedAt == null)
                     .Select(es => new ExpenseShareVM
                     {
@@ -306,6 +308,7 @@ public class ExpenseService : IExpenseService
                 // If Attachment
                 if (newExpense.Attachment != null)
                 {
+                    expense.AttachmentName = newExpense.Attachment.FileName;
                     expense.AttachmentPath = FileHelper.UploadFile(newExpense.Attachment);
                 }
                 await _expenseRepository.Add(expense);
@@ -333,6 +336,7 @@ public class ExpenseService : IExpenseService
 
                 if (newExpense.Attachment != null)
                 {
+                    existingExpense.AttachmentName = newExpense.Attachment.FileName;
                     existingExpense.AttachmentPath = FileHelper.UploadFile(newExpense.Attachment, existingExpense.AttachmentPath);
                 }
 
@@ -419,4 +423,43 @@ public class ExpenseService : IExpenseService
         return paginatedList;
     }
 
+    public async Task<ResponseVM> RemoveAttachment(int expenseId)
+    {
+        try
+        {
+            // Begin transaction
+            await _transaction.Begin();
+            ResponseVM response = new ResponseVM();
+            User currentUser = await _userService.LoggedInUser();
+
+            Expense expense = await _expenseRepository.Get(e => e.Id == expenseId);
+
+            if (expense == null)
+            {
+                response.Success = false;
+                response.Message = NotificationMessages.NotFound.Replace("{0}", "expense");
+            }
+            else
+            {
+                expense.AttachmentName = null;
+                expense.AttachmentPath = null;
+
+                await _expenseRepository.Update(expense);
+
+                response.Success = true;
+                response.Message = NotificationMessages.AttachmentRemoved;
+
+                // Commit transaction
+                await _transaction.Commit();
+            }
+            return response;
+        }
+        catch
+        {
+            // Rollback transaction
+            await _transaction.Rollback();
+            throw;
+        }
+
+    }
 }

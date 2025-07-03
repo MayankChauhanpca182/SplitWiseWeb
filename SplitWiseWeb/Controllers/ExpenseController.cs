@@ -117,4 +117,12 @@ public class ExpenseController : Controller
         return PartialView("GroupExpenseListParialView", expenses);
     }
 
+    // POST RemoveAttachment
+    [HttpPost]
+    public async Task<IActionResult> RemoveAttachment(int expenseId)
+    {
+        ResponseVM response = await _expenseService.RemoveAttachment(expenseId);
+        return Json(response);
+    }
+
 }

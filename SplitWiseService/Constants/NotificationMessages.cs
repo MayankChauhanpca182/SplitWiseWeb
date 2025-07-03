@@ -94,4 +94,7 @@ public static class NotificationMessages
     public const string MemberRemovedFromGroup = "{0} has been removed from {1} successfully.";
     public const string LeaveGroup = "You have been left group {0} successfully.";
 
+    // Expense
+    public const string AttachmentRemoved = "Attachment has been removed successfully.";
+
 }
