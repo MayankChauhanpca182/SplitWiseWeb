@@ -367,6 +367,10 @@ footer.footer {
     max-width: 100px;
 }
 
+.attachmentBtn{
+    width: 200px;
+}
+
 @media (max-width: 767px) {
     .dropdownList {
         transform: translate(0, 40px) !important;

@@ -53,5 +53,6 @@ public class ExpenseVM
     public List<User> Members { get; set; } = new List<User>();
     public List<string> MemberNames { get; set; } = new List<string>();
     public List<GroupVM> GroupList { get; set; } = new List<GroupVM>();
-    public string AttachmentPath { get; set; }
+    public string AttachmentPath { get; set; } = string.Empty;
+    public string AttachmentName { get; set; } = string.Empty;
 }

@@ -64,21 +64,21 @@
                     <ul class="dropdown-menu">
                         <li>
                             <a asp-action="Profile" asp-controller="User"
-                                class="navItems dropdown-item d-flex align-items-center gap-2 @((ViewData["ActiveLink"] as string) == "Profile" ? "active" : "")">
+                                class="navItems dropdown-item d-flex align-items-center gap-2 text-dark-emphasis @((ViewData["ActiveLink"] as string) == "Profile" ? "active" : "")">
                                 <i class="bi bi-person-circle fs-5"></i>
                                 Profile
                             </a>
                         </li>
                         <li>
                             <a asp-action="ChangePassword" asp-controller="User"
-                                class="navItems dropdown-item d-flex align-items-center gap-2 @((ViewData["ActiveLink"] as string) == "Change Password" ? "active" : "")">
+                                class="navItems dropdown-item d-flex align-items-center gap-2 text-dark-emphasis @((ViewData["ActiveLink"] as string) == "Change Password" ? "active" : "")">
                                 <i class="bi bi-arrow-clockwise fs-5 fw-semibold"></i>
                                 Change Password
                             </a>
                         </li>
                         <li>
                             <a asp-action="Logout" asp-controller="Auth"
-                                class="navItems dropdown-item d-flex align-items-center gap-2">
+                                class="navItems dropdown-item d-flex align-items-center gap-2 text-dark-emphasis">
                                 <i class="bi bi-box-arrow-left fs-5 fw-semibold"></i>
                                 Logout
                             </a>
