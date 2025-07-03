@@ -125,6 +125,7 @@ public class UserController : Controller
 
     // POST ChangePassword
     [HttpPost]
+    [Breadcrumb("Change Password", FromAction = "Index", FromController = typeof(DashboardController))]
     [Route("change-password")]
     public async Task<IActionResult> ChangePassword(PasswordResetVM passwordReset)
     {

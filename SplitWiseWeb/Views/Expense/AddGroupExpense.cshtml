@@ -240,7 +240,7 @@
     </form>
 
     <div class="bg-white w-100 p-3 col">
-        <span class="fs-5 fw-semibold" id="splitTypeText">Split equally</span>
+        <span class="fs-5 fw-semibold" id="splitTypeText">Split @(Model.SplitTypeEnum == SplitType.Equally ? "equally" : "unequally")</span>
         <div id="expenseShareDiv" class="mb-3">
             @foreach (ExpenseShareVM share in Model.ExpenseShares)
             {

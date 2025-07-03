@@ -579,7 +579,7 @@ public class FriendService : IFriendService
         }
         List<string> columns = new List<string>
         {
-            "Name", "EmailAddress"
+            "Name", "EmailAddress", "NetAmount"
         };
         return ExcelExportHelper.ExportToExcel(paginatedList.List, columns, "Friends");
     }

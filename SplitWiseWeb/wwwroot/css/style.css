@@ -95,6 +95,10 @@ textarea {
     resize: none;
 }
 
+th, td{
+    vertical-align: middle;
+}
+
 /* Tool Tip */
 .tooltip-inner {
     background-color: #2e2e2e;

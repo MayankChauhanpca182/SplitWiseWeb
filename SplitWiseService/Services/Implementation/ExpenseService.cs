@@ -262,7 +262,7 @@ public class ExpenseService : IExpenseService
             bool hasUserPaid = user.Id == expense.PaidById;
             string senderName = user.Id == currentUser.Id ? "you" : $"{currentUser.FirstName} {currentUser.LastName}";
             string oweVariable = hasUserPaid ? "are owed" : "owe";
-            string shareAmountStr = hasUserPaid ? (expense.Amount - share.ShareAmount).ToString("N2") : share.ShareAmount.ToString("N2");
+            string shareAmountStr = hasUserPaid ? (expense.Amount - shareAmount).ToString("N2") : shareAmount.ToString("N2");
 
             if (isNew)
             {
@@ -391,7 +391,8 @@ public class ExpenseService : IExpenseService
                                 || e.Title.ToLower().Contains(searchString)
                                 || e.PaidByUser.FirstName.ToLower().Contains(searchString)
                                 || e.PaidByUser.LastName.ToLower().Contains(searchString)
-                                || (e.PaidByUser.FirstName + e.PaidByUser.LastName).ToLower().Contains(searchString)),
+                                || (e.PaidByUser.FirstName + e.PaidByUser.LastName).ToLower().Contains(searchString)
+                                || (isGroupExpenses && e.Group.Name.ToLower().Contains(searchString))),
             orderBy: orderBy,
             includes: new List<System.Linq.Expressions.Expression<Func<Expense, object>>>
             {
@@ -450,6 +451,8 @@ public class ExpenseService : IExpenseService
                 FileHelper.DeleteFile(expense.AttachmentPath);
                 expense.AttachmentName = null;
                 expense.AttachmentPath = null;
+                expense.UpdatedAt = DateTime.Now;
+                expense.UpdatedById = currentUser.Id;
 
                 await _expenseRepository.Update(expense);
 

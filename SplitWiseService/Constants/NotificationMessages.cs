@@ -84,7 +84,7 @@ public static class NotificationMessages
     public const string FriendRequestAccepted = "Friend request from {0} has been accepted successfully.";
     public const string FriendRequestRejected = "Friend request from {0} has been rejected successfully.";
     public const string FriendRemoved = "{0} has been removed from your friend list successfully.";
-    public const string SettleBeforeRemove = "Expenses must be setttled before removing the {0}.";
+    public const string SettleBeforeRemove = "Expenses must be settled before removing the {0}.";
 
     // Export
     public const string CanNotExportEmptyList = "The {0} list is empty, so there is nothing to export.";

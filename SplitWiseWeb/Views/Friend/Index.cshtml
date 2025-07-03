@@ -8,7 +8,7 @@
 <div class="d-flex flex-wrap justify-content-between gap-3 mb-3">
     <div class="d-flex align-items-center gap-4">
         <input type="text" class="searchBox form-control border-secondary-subtle rounded-0" id="friendSearch"
-            placeholder="Search through Name, Email">
+            placeholder="Search">
         <div class="form-check">
             <input class="form-check-input border border-secondary-subtle" type="checkbox" value=""
                 id="deletedFriendsChk" onchange="getFriendList(1)">
@@ -126,6 +126,7 @@
                         }
                         else {
                             toastr.error(response.message);
+                            $("#confirmationModal").modal("hide");
                         }
                     }
                 },
@@ -137,7 +138,7 @@
 
         function removeFriend(friendId, friendName) {
             $("#confirmationModalTitle").text(`Remove friend`);
-            $("#confirmationModalBody").text(`Are you sure you want to remove ${friendName} from friend list?`);
+            $("#confirmationModalBody").html(`<span>Are you sure you want to remove <strong>${friendName}</strong> from friend list?</span>`);
             $("#confirmationModalYesBtn").attr("onclick", `removeFriendConfirm(${friendId})`);
             $("#confirmationModal").modal("show");
         }

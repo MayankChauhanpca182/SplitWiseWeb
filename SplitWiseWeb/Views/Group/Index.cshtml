@@ -8,7 +8,7 @@
 <div class="d-flex flex-wrap justify-content-between gap-3 mb-3">
     <div class="d-flex align-items-center gap-4">
         <input type="text" class="searchBox form-control border-secondary-subtle rounded-0" id="groupListSearch"
-            placeholder="Search through Name">
+            placeholder="Search">
     </div>
     <div class="d-flex gap-2">
         <button class="btn btn-secondary" type="button" onclick="exportGroups()">Export</button>
@@ -159,7 +159,7 @@
         }
         function deleteGroup(groupId, groupName) {
             $("#confirmationModalTitle").text(`Delete Group`);
-            $("#confirmationModalBody").text(`Are you sure you want to delete ${groupName} group?`);
+            $("#confirmationModalBody").html(`<span>Are you sure you want to delete <strong>${groupName}</strong> group?</span>`);
             $("#confirmationModalYesBtn").attr("onclick", `deleteGroupConfirm(${groupId})`);
             $("#confirmationModal").modal("show");
         }

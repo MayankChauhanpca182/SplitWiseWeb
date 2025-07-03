@@ -18,7 +18,7 @@
         <input type="text" name="expenseMembersJson" id="expenseMembersJson" hidden>
 
         <!-- Members -->
-        <div class="d-flex flex-wrap gap-3 align-items-center col-12">
+        <div class="d-flex flex-wrap gap-3 align-items-center col-12 ">
             <div class="btn-group w-100 border border-secondary-subtle">
                 <span class="d-flex align-items-center py-3 ps-2">Members: </span>
                 <div class="memberPillDiv d-flex gap-2 overflow-x-auto w-100 p-2">
@@ -199,7 +199,8 @@
     </form>
 
     <div class="bg-white w-100 p-3 col">
-        <span class="fs-5 fw-semibold" id="splitTypeText">Split equally</span>
+        <span class="fs-5 fw-semibold" id="splitTypeText">Split @(Model.SplitTypeEnum == SplitType.Equally ? "equally" :
+                        "unequally")</span>
         <div id="expenseShareDiv" class="mb-3">
             @foreach (ExpenseShareVM share in Model.ExpenseShares)
             {
@@ -242,21 +243,21 @@
     @* Store img path in const *@
     <script>
         const categoryImages = {
-                                                @foreach (Category cat in Model.Categories)
+                                                        @foreach (Category cat in Model.Categories)
             {
-                                                                                                    @:@cat.Id: "@cat.CategoryImagePath",
+                                                                                                                    @:@cat.Id: "@cat.CategoryImagePath",
             }
-                                                    };
+                                                            };
     </script>
 
     @* Store currency symboles in array *@
     <script>
         const currencySymboles = {
-                                                @foreach (Currency currency in Model.Currencies)
+                                                        @foreach (Currency currency in Model.Currencies)
             {
-                                                                                            @:@currency.Id: "@currency.Symbole",
+                                                                                                            @:@currency.Id: "@currency.Symbole",
             }
-                                                };
+                                                        };
 
 
         // Change symbole on currency change
@@ -270,16 +271,16 @@
     <script>
         // Add current members to array
         {
-                                                        @foreach (ExpenseShareVM share in Model.ExpenseShares)
+                                                                @foreach (ExpenseShareVM share in Model.ExpenseShares)
                 {
                     <text>
                         members.push({
                             UserId: @share.UserId,
                         ShareAmount: @share.ShareAmount
-                                                                                                });
+                                                                                                                });
                     </text>
             }
-                                                }
+                                                        }
     </script>
 
     @* Validate selected file *@

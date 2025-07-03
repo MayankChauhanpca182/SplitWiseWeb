@@ -14,7 +14,7 @@
     </div>
 
     <div class="d-flex align-items-center gap-2">
-        <button class="btn btn-primary" type="button" onclick="addgroupMemberModal(@Model.Id)">Add new member</button>
+        <button class="btn btn-primary" type="button" onclick="addgroupMemberModal(@Model.Id)">Add New Member</button>
         <a asp-action="Index" asp-controller="Group" class="btn btn-secondary">Back</a>
     </div>
 </h3>
@@ -47,7 +47,7 @@
             <div class="d-flex flex-wrap justify-content-between gap-3 mb-3">
                 <div class="d-flex align-items-center gap-2">
                     <input type="text" class="searchBox form-control border-secondary-subtle rounded-0"
-                        id="groupExpenseListSearch" placeholder="Search through Title">
+                        id="groupExpenseListSearch" placeholder="Search">
                 </div>
                 <div class="d-flex gap-2">
                     <a asp-action="AddGroupExpense" asp-controller="Expense" asp-route-groupId="@Model.Id"
@@ -147,6 +147,7 @@
                 success: function (response) {
                     if (!response.statusCode) {
                         if (response.success == false) {
+                            $("#confirmationModal").modal("hide");
                             toastr.error(response.message);
                         }
                         else {
@@ -165,21 +166,21 @@
 
         function removeGroupMember(groupMemberId, userName) {
             $("#confirmationModalTitle").text(`Remove group member`);
-            $("#confirmationModalBody").text(`Are you sure you want to remove ${userName} from group?`);
+            $("#confirmationModalBody").html(`<span>Are you sure you want to remove <strong>${userName}</strong> from group?</span>`);
             $("#confirmationModalYesBtn").attr("onclick", `removeGroupMemberConfirm(${groupMemberId})`);
             $("#confirmationModal").modal("show");
         }
 
         function leaveGroup(groupMemberId) {
             $("#confirmationModalTitle").text(`Leave group`);
-            $("#confirmationModalBody").text(`Are you sure you want to leave this group?`);
+            $("#confirmationModalBody").html(`<span>Are you sure you want to leave this group?</span>`);
             $("#confirmationModalYesBtn").attr("onclick", `leaveGroupConfirm(${groupMemberId})`);
             $("#confirmationModal").modal("show");
         }
 
         function leaveAndDeleteGroup(groupMemberId) {
             $("#confirmationModalTitle").text(`Leave and delete group`);
-            $("#confirmationModalBody").text(`Are you sure you want to leave and delete this group?`);
+            $("#confirmationModalBody").html(`<span>Are you sure you want to leave and delete this group?</span>`);
             $("#confirmationModalYesBtn").attr("onclick", `leaveGroupConfirm(${groupMemberId})`);
             $("#confirmationModal").modal("show");
         }

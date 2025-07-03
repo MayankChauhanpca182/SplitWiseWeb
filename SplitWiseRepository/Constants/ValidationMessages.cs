@@ -6,7 +6,7 @@ public static class ValidationMessages
 
     // Email
     public const string EmailRequired = "Email is required.";
-    public const string ValidEmail = "Please anter a valid Email Address.";
+    public const string ValidEmail = "Please enter a valid Email Address.";
 
     // Password
     public const string PasswordRequired = "Password is required.";
@@ -26,7 +26,7 @@ public static class ValidationMessages
     public const string ConfirmPasswordLength = "Confirm Password must be at least 8 characters long.";
     public const string ValidConfirmPassword = "Confirm Password must contain at least one letter, one number, and one special character.";
     public const string MatchPassword = "Password and Confirmation Password must match.";
-    public const string MatchNewPassword = "New Password and confirmation Password must match.";
+    public const string MatchNewPassword = "New Password and Confirmation Password must match.";
 
     // First name
     public const string FirstNameRequired = "First Name is required.";

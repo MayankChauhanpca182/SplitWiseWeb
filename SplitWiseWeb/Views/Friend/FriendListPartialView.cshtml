@@ -39,7 +39,7 @@
                             class="object-fit-cover rounded-circle border border-secondary-subtle" width="40px">
                         <span>@friend.Name</span>
                     </td>
-                    <td>@friend.EmailAddress</td>
+                    <td >@friend.EmailAddress</td>
                     <td
                         class="@(friend.NetAmount < 0 ? "text-danger" : "text-success")">
                         @(friend.NetAmount == 0 ? $"Expense is settled" : (friend.NetAmount > 0 ? $"You are owed ₹{friend.NetAmount.ToString("N2")}" : $"Owes you ₹{((-1)*friend.NetAmount).ToString("N2")}"))
