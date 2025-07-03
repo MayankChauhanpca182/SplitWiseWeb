@@ -312,6 +312,12 @@ footer.footer {
     transform: translate(0, 40px) !important;
 }
 
+.dropdownLi{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
 .expenseMemberPill {
     display: flex;
     align-items: center;

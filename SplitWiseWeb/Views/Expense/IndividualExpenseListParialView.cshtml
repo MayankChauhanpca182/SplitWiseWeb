@@ -7,6 +7,15 @@
     <table class="table text-nowrap">
         <thead class="position-sticky top-0 z-1">
             <tr>
+                <th scope="col" class="col-1">
+                    <span class="text-clr-grey text-dark-emphasis">Date</span>
+                    <a class="btn p-0 sortBtn" data-column="date" data-order="asc" title="Asc">
+                        <i class="bi bi-arrow-up"></i>
+                    </a>
+                    <a class="btn p-0 sortBtn" data-column="date" data-order="desc" title="Desc">
+                        <i class="bi bi-arrow-down"></i>
+                    </a>
+                </th>
                 <th scope="col" class="col">
                     <span class="text-clr-grey text-dark-emphasis">Title</span>
                     <button class="btn p-0 sortBtn" data-column="title" data-order="asc" title="Asc">
@@ -19,20 +28,11 @@
                 <th scope="col" class="col">
                     <span class="text-clr-grey text-dark-emphasis">Paid By</span>
                 </th>
-                <th scope="col" class="col-3">
-                    <span class="text-clr-grey text-dark-emphasis" style="max-width: 500px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Members</span>
+                <th scope="col" class="">
+                    <span class="text-clr-grey text-dark-emphasis">Members</span>
                 </th>
                 <th scope="col" class="col">
                     <span class="text-clr-grey text-dark-emphasis">Expense</span>
-                </th>
-                <th scope="col" class="col-1 text-center">
-                    <span class="text-clr-grey text-dark-emphasis">Date</span>
-                    <a class="btn p-0 sortBtn" data-column="date" data-order="asc" title="Asc">
-                        <i class="bi bi-arrow-up"></i>
-                    </a>
-                    <a class="btn p-0 sortBtn" data-column="date" data-order="desc" title="Desc">
-                        <i class="bi bi-arrow-down"></i>
-                    </a>
                 </th>
                 <th scope="col" class="col-1 text-center">
                     <span class="text-clr-grey text-dark-emphasis">Actions</span>
@@ -44,19 +44,27 @@
             {
                 <tr>
                     <td>
+                        <span>@expense.PaidDate.ToString("dd-MM-yyyy")</span>
+                    </td>
+                    <td>
                         <span class="text-dark">@expense.Title</span>
                     </td>
                     <td>
                         <span>@(expense.PaidById == currentUserId ? "You" : expense.PaidByName)</span>
                     </td>
-                    <td style="max-width: 500px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    @* <td style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                         <span title="@(string.Join(", ", expense.MemberNames))">@(string.Join(", ", expense.MemberNames))</span>
+                    </td> *@
+                    <td style="max-width: 75px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        <span class="d-flex gap-1" title="@(string.Join(", ", expense.Members.Select(m => $"{m.FirstName} {m.LastName}")))">
+                            @foreach(User member in expense.Members)
+                            {
+                                <img src=@(member.ProfileImagePath ?? "/images/Default_pfp.png") alt="" class="rounded-circle border border-dark-subtle object-fit-cover" width="30px" height="30px">                                
+                            }
+                        </span>
                     </td>
                     <td class="@(expense.NetAmount == 0 ? "text-dark" : (expense.NetAmount > 0 ? "text-success" : "text-danger"))">
                         @(expense.NetAmount == 0 ? $"Expense is settled" : (expense.NetAmount > 0 ? $"You are owed ₹{expense.NetAmount.ToString("N2")}" : $"{expense.PaidByName} owes you ₹{((-1)*expense.NetAmount).ToString("N2")}"))
-                    </td>
-                    <td class="text-center">
-                        <span>@expense.PaidDate.ToString("dd-MM-yyyy")</span>
                     </td>
                     <td class="text-center">
                         <a asp-action="ViewIndividualExpense" asp-controller="Expense" asp-route-expenseId="@expense.Id" class="btn border-0" title="View">

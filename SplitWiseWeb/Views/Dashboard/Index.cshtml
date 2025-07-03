@@ -67,6 +67,9 @@
         <table class="table text-nowrap">
             <thead class="position-sticky top-0 z-1">
                 <tr>
+                    <th scope="col" class="col-1">
+                        <span class="text-clr-grey text-dark-emphasis">Date</span>
+                    </th>
                     <th scope="col" class="col">
                         <span class="text-clr-grey text-dark-emphasis">Title</span>
                     </th>
@@ -79,15 +82,15 @@
                     <th scope="col" class="col">
                         <span class="text-clr-grey text-dark-emphasis">Expense</span>
                     </th>
-                    <th scope="col" class="col-1 text-center">
-                        <span class="text-clr-grey text-dark-emphasis">Date</span>
-                    </th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (ExpenseVM expense in Model.RecentExpenses)
                 {
                     <tr>
+                        <td>
+                            <span>@expense.PaidDate.ToString("dd-MM-yyyy")</span>
+                        </td>
                         <td>
                             @if(expense.GroupId != null && expense.GroupId > 0)
                             {
@@ -109,10 +112,7 @@
                             <span>@(expense.PaidById == currentUserId ? "You" : expense.PaidByName)</span>
                         </td>
                         <td class="@(expense.NetAmount < 0 ? "text-danger" : "text-success")">
-                            @(expense.NetAmount == 0 ? $"Settled" : (expense.NetAmount > 0 ? $"₹{expense.NetAmount}" : $"₹{(-1)*expense.NetAmount}"))
-                        </td>
-                        <td class="text-center">
-                            <span>@expense.PaidDate.ToString("dd-MM-yyyy")</span>
+                            @(expense.NetAmount == 0 ? $"Expense is settled" : (expense.NetAmount > 0 ? $"You are owed ₹{expense.NetAmount.ToString("N2")}" : $"{expense.PaidByName} owes you ₹{((-1)*expense.NetAmount).ToString("N2")}"))
                         </td>
                     </tr>
                 }

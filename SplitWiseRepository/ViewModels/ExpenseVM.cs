@@ -31,6 +31,7 @@ public class ExpenseVM
     [StringLength(1000)]
     public string Note { get; set; }
 
+    [Required(ErrorMessage = ValidationMessages.PaidByRequired)]
     public int PaidById { get; set; }
 
     [Required(ErrorMessage = ValidationMessages.PaymentDateRequired)]
@@ -49,6 +50,7 @@ public class ExpenseVM
     public decimal NetAmount { get; set; } = 0;
     public bool IsViewOnly { get; set; } = false;
     public string PaidByName { get; set; }
+    public List<User> Members { get; set; } = new List<User>();
     public List<string> MemberNames { get; set; } = new List<string>();
     public List<GroupVM> GroupList { get; set; } = new List<GroupVM>();
     public string AttachmentPath { get; set; }

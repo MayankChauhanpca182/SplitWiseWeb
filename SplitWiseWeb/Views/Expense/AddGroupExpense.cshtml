@@ -23,7 +23,7 @@
             <div class="btn-group w-100 border border-secondary-subtle">
                 <span class="d-flex align-items-center py-3 ps-2">Group: </span>
                 <div class="groupPillDiv d-flex gap-2 overflow-x-auto w-100 p-2">
-                    @if(Model.GroupId > 0)
+                    @if (Model.GroupId > 0)
                     {
                         <span class="expenseMemberPill" id="groupPill-@Model.GroupDetails.Id">
                             <img src=@(Model.GroupDetails.ImagePath ?? "/images/default_group_img.png")>
@@ -36,18 +36,22 @@
                     data-bs-toggle="dropdown" aria-expanded="false" @(Model.GroupId > 0 ? "disabled" : "")>
                     <span class="visually-hidden">User list</span>
                 </button>
-                <ul class="dropdownList dropdown-menu w-100">
-                    @foreach (GroupVM group in Model.GroupList)
-                    {
-                        <li class="d-flex align-items-center gap-2 px-2 py-1 cursor-pointer" onclick='changeGroup(@Html.Raw(Json.Serialize(group)))'>
-                            <span class="d-flex align-items-center gap-2">
-                                <img src=@(group.ImagePath ?? "/images/Default_pfp.png") alt=""
-                                    class="rounded-circle border border-dark-subtle object-fit-cover" width="25px"
-                                    height="25px">
-                                <span>@group.Name</span>
-                            </span>
-                        </li>
-                    }
+                <ul class="dropdownList dropdown-menu w-100 px-2">
+                    <input type="text" class="dropdownSearch searchBox form-control border-secondary-subtle rounded-0 my-1" placeholder="Search">
+                    <div id="groupsDropdown">
+                        @foreach (GroupVM group in Model.GroupList)
+                        {
+                            <li class="dropdownLi py-1 cursor-pointer"
+                                onclick='changeGroup(@Html.Raw(Json.Serialize(group)))'>
+                                <span class="d-flex align-items-center gap-2">
+                                    <img src=@(group.ImagePath ?? "/images/Default_pfp.png") alt=""
+                                        class="rounded-circle border border-dark-subtle object-fit-cover" width="25px"
+                                        height="25px">
+                                    <span class="name">@group.Name</span>
+                                </span>
+                            </li>
+                        }
+                    </div>
                 </ul>
             </div>
         </div>
@@ -72,21 +76,24 @@
                     data-bs-toggle="dropdown" aria-expanded="false">
                     <span class="visually-hidden">User list</span>
                 </button>
-                <ul class="dropdownList dropdown-menu w-100" id="friendsDropdown">
-                    @foreach (FriendVM user in Model.Friends)
-                    {
-                        <li class="d-flex align-items-center gap-2 px-2">
-                            <input class="userCkb form-check-input m-0" type="checkbox" id="userCkb-@user.UserId"
-                                @(Model.ExpenseShares.Any(es => es.UserId == user.UserId) ? "checked" : "")
-                                data-user='@(Html.Raw(Json.Serialize(user)))'>
-                            <label for="userCkb-@user.UserId" class="d-flex align-items-center gap-2">
-                                <img src=@(user.ProfileImagePath ?? "/images/Default_pfp.png") alt=""
-                                    class="rounded-circle border border-dark-subtle object-fit-cover" width="25px"
-                                    height="25px">
-                                <span>@user.Name</span>
-                            </label>
-                        </li>
-                    }
+                <ul class="dropdownList dropdown-menu w-100 px-2">
+                    <input type="text" class="dropdownSearch searchBox form-control border-secondary-subtle rounded-0 my-1" placeholder="Search">
+                    <div id="friendsDropdown">
+                        @foreach (FriendVM user in Model.Friends)
+                        {
+                            <li class="dropdownLi">
+                                <input class="userCkb form-check-input m-0" type="checkbox" id="userCkb-@user.UserId"
+                                    @(Model.ExpenseShares.Any(es => es.UserId == user.UserId) ? "checked" : "")
+                                    data-user='@(Html.Raw(Json.Serialize(user)))'>
+                                <label for="userCkb-@user.UserId" class="d-flex align-items-center gap-2">
+                                    <img src=@(user.ProfileImagePath ?? "/images/Default_pfp.png") alt=""
+                                        class="rounded-circle border border-dark-subtle object-fit-cover" width="25px"
+                                        height="25px">
+                                    <span class="name">@user.Name</span>
+                                </label>
+                            </li>
+                        }
+                    </div>
                 </ul>
             </div>
         </div>
@@ -100,7 +107,8 @@
             </div>
             <!-- Amount -->
             <div class="form-floating col">
-                <input asp-for="@Model.Amount" type="text" class="form-control" onblur="setAmountAsPerSplitType(), validateAmounts()">
+                <input asp-for="@Model.Amount" type="text" class="form-control"
+                    onblur="setAmountAsPerSplitType(), validateAmounts()">
                 <label asp-for="@Model.Amount">Amount</label>
                 <span class="text-danger" asp-validation-for="@Model.Amount"></span>
             </div>
@@ -137,8 +145,9 @@
                     <label asp-for="@Model.CategoryId">Category</label>
                     <span class="text-danger" asp-validation-for="@Model.CategoryId"></span>
                 </div>
-                <img src=@(Model.CategoryId > 0 ? (Model.Categories.Where(c => c.Id == Model.CategoryId).Select(c => c.CategoryImagePath).First()?? "/defaultcategory/other.png") : Model.Categories.Select(c => c.CategoryImagePath).First()) alt="" id="categoryImage"
-                    class="my-auto" width="50px" height="50px">
+                <img src=@(Model.CategoryId > 0 ? (Model.Categories.Where(c => c.Id == Model.CategoryId).Select(c =>
+                                         c.CategoryImagePath).First() ?? "/defaultcategory/other.png") : Model.Categories.Select(c =>
+                                         c.CategoryImagePath).First()) alt="" id="categoryImage" class="my-auto" width="50px" height="50px">
             </div>
         </div>
 
@@ -188,14 +197,14 @@
             </div>
             <div class="col"></div>
         </div>
-        
+
         <div class="d-flex gap-2">
             <!-- View Attachment -->
             @if (!string.IsNullOrEmpty(Model.AttachmentPath))
             {
                 <div class="d-flex align-items-center">
                     <a asp-action="View" asp-controller="File" asp-route-filePath="@Model.AttachmentPath"
-                        class="btn btn-primary">View Attachment</a>
+                        class="no-loader btn btn-primary" target="_blank">View Attachment</a>
                 </div>
             }
 
@@ -209,7 +218,7 @@
                 </div>
             }
         </div>
-        
+
         @if (!Model.IsViewOnly)
         {
             <!-- Submit buttons -->
@@ -255,7 +264,7 @@
     </script>
 
     <script>
-        if('@Model.IsViewOnly' === "True"){
+        if ('@Model.IsViewOnly' === "True") {
             $("#addExpenseForm").find("input, button, textarea, select").prop("disabled", true);
             $(".amount").prop("disabled", true);
         }
@@ -264,44 +273,44 @@
     @* Store img path in const *@
     <script>
         const categoryImages = {
-            @foreach (Category cat in Model.Categories)
+                    @foreach (Category cat in Model.Categories)
             {
-            @:@cat.Id: "@cat.CategoryImagePath",
+                            @:@cat.Id: "@cat.CategoryImagePath",
             }
-            };
+                    };
     </script>
 
     @* Store currency symboles in array *@
     <script>
         const currencySymboles = {
-            @foreach (Currency currency in Model.Currencies)
+                    @foreach (Currency currency in Model.Currencies)
             {
-            @:@currency.Id: "@currency.Symbole",
+                            @:@currency.Id: "@currency.Symbole",
             }
-            };
+                    };
 
-        
+
         // Change symbole on currency change
-        $("#currencySelect").on("change", function(){
+        $("#currencySelect").on("change", function () {
             let currencyId = $(this).val();
             currencySymbole = currencySymboles[currencyId];
             setAmountAsPerSplitType();
         });
     </script>
-    
+
     <script>
         // Add current members to array
         {
-                    @foreach (ExpenseShareVM share in Model.ExpenseShares)
+                            @foreach (ExpenseShareVM share in Model.ExpenseShares)
                 {
                     <text>
                         members.push({
                             UserId: @share.UserId,
                         ShareAmount: @share.ShareAmount
-                                    });
+                                                    });
                     </text>
             }
-                }
+                        }
     </script>
 
     @* Validate selected file *@
@@ -428,7 +437,7 @@
                 case '@SplitType.ByShare':
                     $("#remainingBalanceDiv").hide();
                     $(".amount, #remainigBalance").removeClass("text-danger");
-                        isValid = true;
+                    isValid = true;
                     break;
             }
         }
@@ -456,7 +465,7 @@
 
             // Add into expense share div
             let div = `
-                        <div class="expenseShare" id="expenseShare-${user.userId}"><span><img src=${user.profileImagePath ?? "/images/Default_pfp.png"}>${user.name}</span><span><input type="text" class="amount form-control" id="amount-${user.userId}" value="0"><span class="expenseShareTypeSymbole">${currencySymbole}</span></span></div>`;
+                                <div class="expenseShare" id="expenseShare-${user.userId}"><span><img src=${user.profileImagePath ?? "/images/Default_pfp.png"}>${user.name}</span><span><input type="text" class="amount form-control" id="amount-${user.userId}" value="0"><span class="expenseShareTypeSymbole">${currencySymbole}</span></span></div>`;
             $("#expenseShareDiv").append(div);
         }
 
@@ -659,20 +668,19 @@
                 }
             });
         });
-    
+
     </script>
 
     @* Change group *@
     <script>
         // Change group
-        function changeGroup(group){
+        function changeGroup(group) {
             $.ajax({
                 url: "/Group/GroupMembersJson",
                 type: "GET",
                 data: { groupId: group.id },
                 success: function (response) {
                     if (!response.statusCode) {
-                        console.log(response);
                         addGroupPill(group);
                         addMembers(response);
                     }
@@ -683,35 +691,35 @@
             });
         }
 
-        function addGroupPill(group){
+        function addGroupPill(group) {
             // Clear lists
             $(".memberPillDiv").empty();
             $("#paidBySelect").empty();
             $("#expenseShareDiv").empty();
 
             let pill = `<span class="expenseMemberPill" id="groupPill-${group.id}">
-                        <img src=${group.imagePath ?? "/images/default_group_img.png"}>
-                        <span>${group.name}</span>
-                    </span>`;
+                                <img src=${group.imagePath ?? "/images/default_group_img.png"}>
+                                <span>${group.name}</span>
+                            </span>`;
             $(".groupPillDiv").html(pill);
 
             // Set group id in hidden field
             $("#GroupId").val(group.id);
         }
 
-        function addMembers(groupmembers){
+        function addMembers(groupmembers) {
             $("#friendsDropdown").empty();
-            $.each(groupmembers, function(index, member){
-                let memberLi = `<li class="d-flex align-items-center gap-2 px-2">
-                            <input class="userCkb form-check-input m-0" type="checkbox" id="userCkb-${member.id}"
-                                data-user='${JSON.stringify(member)}'>
-                            <label for="userCkb-${member.id}" class="d-flex align-items-center gap-2">
-                                <img src=${member.profileImagePath ?? "/images/Default_pfp.png"} alt=""
-                                    class="rounded-circle border border-dark-subtle object-fit-cover" width="25px"
-                                    height="25px">
-                                <span>${member.name}</span>
-                            </label>
-                        </li>`;
+            $.each(groupmembers, function (index, member) {
+                let memberLi = `<li class="dropdownLi">
+                                    <input class="userCkb form-check-input m-0" type="checkbox" id="userCkb-${member.userId}"
+                                        data-user='${JSON.stringify(member)}'>
+                                    <label for="userCkb-${member.id}" class="d-flex align-items-center gap-2">
+                                        <img src=${member.profileImagePath ?? "/images/Default_pfp.png"} alt=""
+                                            class="rounded-circle border border-dark-subtle object-fit-cover" width="25px"
+                                            height="25px">
+                                        <span class="name">${member.name}</span>
+                                    </label>
+                                </li>`;
                 $("#friendsDropdown").append(memberLi);
             });
         }

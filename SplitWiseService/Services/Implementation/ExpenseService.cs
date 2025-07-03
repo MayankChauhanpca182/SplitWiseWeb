@@ -362,7 +362,7 @@ public class ExpenseService : IExpenseService
         int currentUserId = _userService.LoggedInUserId();
         string searchString = string.IsNullOrEmpty(filter.SearchString) ? "" : filter.SearchString.Replace(@"\s+", "").ToLower();
 
-        Func<IQueryable<Expense>, IOrderedQueryable<Expense>> orderBy = q => q.OrderBy(e => e.Id);
+        Func<IQueryable<Expense>, IOrderedQueryable<Expense>> orderBy = q => q.OrderByDescending(e => e.PaidDate).ThenByDescending(e => e.UpdatedAt);
         if (!string.IsNullOrEmpty(filter.SortColumn))
         {
             switch (filter.SortColumn)
@@ -371,7 +371,7 @@ public class ExpenseService : IExpenseService
                     orderBy = filter.SortOrder == "asc" ? q => q.OrderBy(e => e.Title) : q => q.OrderByDescending(e => e.Title);
                     break;
                 case "date":
-                    orderBy = filter.SortOrder == "asc" ? q => q.OrderBy(e => e.PaidDate) : q => q.OrderByDescending(e => e.PaidDate);
+                    orderBy = filter.SortOrder == "asc" ? q => q.OrderBy(e => e.PaidDate).ThenBy(e => e.UpdatedAt) : q => q.OrderByDescending(e => e.PaidDate).ThenByDescending(e => e.UpdatedAt);
                     break;
                 default:
                     break;
@@ -410,6 +410,7 @@ public class ExpenseService : IExpenseService
             PaidDate = e.PaidDate,
             PaidById = e.PaidById,
             PaidByName = e.PaidByUser.FirstName + " " + e.PaidByUser.LastName,
+            Members = e.ExpenseShares.Where(es => es.DeletedAt == null).Select(es => es.User).ToList(),
             MemberNames = e.ExpenseShares.Where(es => es.DeletedAt == null).Select(es => es.User.FirstName + " " + es.User.LastName).ToList(),
             NetAmount = (e.PaidById == currentUserId ? e.Amount : 0) - e.ExpenseShares.Where(es => es.UserId == currentUserId).Sum(es => es.ShareAmount)
         }).ToList();

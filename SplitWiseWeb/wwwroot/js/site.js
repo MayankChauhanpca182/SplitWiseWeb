@@ -36,7 +36,7 @@ $(document).ready(function () {
     $("#loader").show();
   });
 
-  $(document).on("click", "a", function () {
+  $(document).on("click", "a:not(.no-loader)", function () {
     $("#loader").show();
   });
 
@@ -122,3 +122,21 @@ function formatToINR(amount) {
   return formatedAmount.replace("₹", "");
 }
 
+// Search in dropdown
+$(document).on("input", ".dropdownSearch", function () {
+  let searchBox = $(this);
+  let searchStr = searchBox.val().toLowerCase().replace(/\s/g, "");
+  searchBox.parent().find("li").hide();
+
+  if (searchStr === "") {
+    searchBox.parent().find("li").show();
+  }
+  else{
+    $(".dropdownList span.name").each(function(){
+      let name = $(this).text().toLowerCase().replace(/\s/g, "");
+      if(name.includes(searchStr)){
+        $(this).closest(".dropdownLi").show();
+      }
+    });
+  }
+});

@@ -114,7 +114,7 @@ public class AuthController : Controller
     }
 
     // POST ForgotPassword
-    [Route("forgotpassword")]
+    [Route("forgot-password")]
     [HttpPost]
     public async Task<IActionResult> ForgotPassword(LoginVM loginVM)
     {
