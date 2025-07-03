@@ -188,9 +188,9 @@ public class GroupService : IGroupService
             select new
             {
                 GroupId = g.Key,
-                NetAmount = g.Sum(x => x.e.PaidById == currentUserId ? x.es.ShareAmount : -x.es.ShareAmount)
+                Expense = g.Sum(x => x.e.PaidById == currentUserId ? x.es.ShareAmount : -x.es.ShareAmount)
             }
-        ).ToDictionaryAsync(x => x.GroupId, x => x.NetAmount);
+        ).ToDictionaryAsync(x => x.GroupId, x => x.Expense);
 
         PaginatedListVM<GroupVM> paginatedList = new PaginatedListVM<GroupVM>();
         paginatedList.List = paginatedItems.Items.Select(g =>
@@ -279,9 +279,9 @@ public class GroupService : IGroupService
             select new
             {
                 UserId = g.Key,
-                NetAmount = g.Sum(x => x.e.PaidById == currentUserId ? x.es.ShareAmount : -x.es.ShareAmount)
+                Expense = g.Sum(x => x.e.PaidById == currentUserId ? x.es.ShareAmount : -x.es.ShareAmount)
             }
-        ).ToDictionaryAsync(x => x.UserId, x => x.NetAmount);
+        ).ToDictionaryAsync(x => x.UserId, x => x.Expense);
 
         return paginatedItems.Items.Select(gm =>
         {
@@ -295,7 +295,7 @@ public class GroupService : IGroupService
                 Name = $"{gm.User.FirstName} {gm.User.LastName}",
                 EmailAddress = gm.User.EmailAddress,
                 ProfileImagePath = gm.User.ProfileImagePath,
-                NetAmount = netAmount
+                Expense = netAmount
             };
         }).ToList();
     }
@@ -375,9 +375,9 @@ public class GroupService : IGroupService
                 select new
                 {
                     UserId = g.Key,
-                    NetAmount = g.Sum(x => x.e.PaidById == groupMember.UserId ? x.es.ShareAmount : -x.es.ShareAmount)
+                    Expense = g.Sum(x => x.e.PaidById == groupMember.UserId ? x.es.ShareAmount : -x.es.ShareAmount)
                 }
-            ).ToDictionaryAsync(x => x.UserId, x => x.NetAmount);
+            ).ToDictionaryAsync(x => x.UserId, x => x.Expense);
 
             if (!netAmounts.All(a => a.Value == 0))
             {

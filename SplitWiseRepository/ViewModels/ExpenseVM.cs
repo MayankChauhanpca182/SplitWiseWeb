@@ -47,7 +47,7 @@ public class ExpenseVM
     public List<FriendVM> Friends { get; set; } = new List<FriendVM>();
     public List<ExpenseShareVM> ExpenseShares { get; set; } = new List<ExpenseShareVM>();
 
-    public decimal NetAmount { get; set; } = 0;
+    public decimal Expense { get; set; } = 0;
     public bool IsViewOnly { get; set; } = false;
     public string PaidByName { get; set; }
     public List<User> Members { get; set; } = new List<User>();

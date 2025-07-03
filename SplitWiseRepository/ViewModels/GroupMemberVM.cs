@@ -8,5 +8,5 @@ public class GroupMemberVM
     public string Name { get; set; }
     public string EmailAddress { get; set; }
     public string ProfileImagePath { get; set; }
-    public decimal NetAmount { get; set; } = 0;
+    public decimal Expense { get; set; } = 0;
 }

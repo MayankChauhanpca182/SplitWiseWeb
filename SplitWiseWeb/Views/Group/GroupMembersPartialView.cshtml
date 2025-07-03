@@ -23,8 +23,8 @@
                 @if (user.UserId != currentUserId)
                 {
                     <div class="d-flex gap-2">
-                        <span class="@(user.NetAmount < 0 ? "text-danger" : "text-success")">
-                            @(user.NetAmount == 0 ? $"Expense is settled" : (user.NetAmount > 0 ? $"You lent ₹{user.NetAmount.ToString("N2")} to {user.Name}" : $"You borrowed ₹{((-1)*user.NetAmount).ToString("N2")} from {user.Name}"))
+                        <span class="@(user.Expense < 0 ? "text-danger" : "text-success")">
+                            @(user.Expense == 0 ? $"Expense is settled" : (user.Expense > 0 ? $"You lent ₹{user.Expense.ToString("N2")} to {user.Name}" : $"You borrowed ₹{((-1)*user.Expense).ToString("N2")} from {user.Name}"))
                         </span>
                     </div>
                 }

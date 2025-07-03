@@ -459,9 +459,9 @@ public class FriendService : IFriendService
             select new
             {
                 FriendUserId = g.Key,
-                NetAmount = g.Sum(x => x.e.PaidById == currentUserId ? x.es.ShareAmount : -x.es.ShareAmount)
+                Expense = g.Sum(x => x.e.PaidById == currentUserId ? x.es.ShareAmount : -x.es.ShareAmount)
             }
-        ).ToDictionaryAsync(x => x.FriendUserId, x => x.NetAmount);
+        ).ToDictionaryAsync(x => x.FriendUserId, x => x.Expense);
 
         // Set paginatet data to viewmodel
         PaginatedListVM<FriendVM> paginatedList = new PaginatedListVM<FriendVM>();
@@ -477,7 +477,7 @@ public class FriendService : IFriendService
                 Name = $"{friendUser.FirstName} {friendUser.LastName}",
                 EmailAddress = friendUser.EmailAddress,
                 ProfileImagePath = friendUser.ProfileImagePath,
-                NetAmount = netAmount
+                Expense = netAmount
             };
         }).ToList();
 
@@ -579,7 +579,7 @@ public class FriendService : IFriendService
         }
         List<string> columns = new List<string>
         {
-            "Name", "EmailAddress", "NetAmount"
+            "Name", "EmailAddress", "Expense"
         };
         return ExcelExportHelper.ExportToExcel(paginatedList.List, columns, "Friends");
     }

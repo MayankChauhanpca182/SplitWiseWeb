@@ -66,8 +66,8 @@
                             }
                         </span>
                     </td>
-                    <td class="@(expense.NetAmount == 0 ? "text-dark" : (expense.NetAmount > 0 ? "text-success" : "text-danger"))">
-                        @(expense.NetAmount == 0 ? $"Expense is settled" : (expense.NetAmount > 0 ? $"You are owed ₹{expense.NetAmount.ToString("N2")}" : $"You owe {expense.PaidByName} ₹{((-1)*expense.NetAmount).ToString("N2")}"))
+                    <td class="@(expense.Expense == 0 ? "text-dark" : (expense.Expense > 0 ? "text-success" : "text-danger"))">
+                        @(expense.Expense == 0 ? $"Expense is settled" : (expense.Expense > 0 ? $"You are owed ₹{expense.Expense.ToString("N2")}" : $"You owe {expense.PaidByName} ₹{((-1)*expense.Expense).ToString("N2")}"))
                     </td>
                     <td class="text-center">
                         <a asp-action="ViewGroupExpense" asp-controller="Expense" asp-route-expenseId="@expense.Id" class="btn border-0" title="View">

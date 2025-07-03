@@ -422,7 +422,7 @@ public class ExpenseService : IExpenseService
             PaidByName = e.PaidByUser.FirstName + " " + e.PaidByUser.LastName,
             Members = e.ExpenseShares.Where(es => es.DeletedAt == null).Select(es => es.User).ToList(),
             MemberNames = e.ExpenseShares.Where(es => es.DeletedAt == null).Select(es => es.User.FirstName + " " + es.User.LastName).ToList(),
-            NetAmount = (e.PaidById == currentUserId ? e.Amount : 0) - e.ExpenseShares.Where(es => es.UserId == currentUserId).Sum(es => es.ShareAmount)
+            Expense = (e.PaidById == currentUserId ? e.Amount : 0) - e.ExpenseShares.Where(es => es.UserId == currentUserId).Sum(es => es.ShareAmount)
         }).ToList();
 
         paginatedList.Page.SetPagination(paginatedItems.TotalRecords, filter.PageSize, filter.PageNumber);

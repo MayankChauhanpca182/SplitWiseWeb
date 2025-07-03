@@ -111,8 +111,8 @@
                         <td>
                             <span>@(expense.PaidById == currentUserId ? "You" : expense.PaidByName)</span>
                         </td>
-                        <td class="@(expense.NetAmount < 0 ? "text-danger" : "text-success")">
-                            @(expense.NetAmount == 0 ? $"Expense is settled" : (expense.NetAmount > 0 ? $"You are owed ₹{expense.NetAmount.ToString("N2")}" : $"You owe {expense.PaidByName} ₹{((-1)*expense.NetAmount).ToString("N2")}"))
+                        <td class="@(expense.Expense < 0 ? "text-danger" : "text-success")">
+                            @(expense.Expense == 0 ? $"Expense is settled" : (expense.Expense > 0 ? $"You are owed ₹{expense.Expense.ToString("N2")}" : $"You owe {expense.PaidByName} ₹{((-1)*expense.Expense).ToString("N2")}"))
                         </td>
                     </tr>
                 }
