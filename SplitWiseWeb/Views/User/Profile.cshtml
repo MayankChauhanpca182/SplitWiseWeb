@@ -4,70 +4,68 @@
 }
 
 <breadcrumb></breadcrumb>
-<div class="pb-3">
-    <form asp-action="Update" asp-controller="User" id="profileForm" class="loaderForm d-flex flex-column"
-        style="max-width: 500px;" enctype="multipart/form-data">
-        <input asp-for="@Model.CurrencyId" hidden>
+<form asp-action="Update" asp-controller="User" id="profileForm" class="loaderForm d-flex flex-column"
+    style="max-width: 500px;" enctype="multipart/form-data">
+    <input asp-for="@Model.CurrencyId" hidden>
 
-        <!-- Image -->
-        <input asp-for="@Model.ProfileImage" accept="image/png, image/jpg, image/jpeg" hidden>
+    <!-- Image -->
+    <input asp-for="@Model.ProfileImage" accept="image/png, image/jpg, image/jpeg" hidden>
 
-        <label for="ProfileImage" class="cursor-pointer" title="Click to select an image" style="width: 100px;">
-            <img src=@(Model.ProfileImagePath ?? "/images/Default_pfp.png") alt="" id="previewImage"
-                class="rounded-circle border border-dark-subtle object-fit-cover" width="100px" height="100px">
-        </label>
-        <span class="text-danger" asp-validation-for="@Model.ProfileImage"></span>
+    <label for="ProfileImage" class="cursor-pointer" title="Click to select an image" style="width: 100px;">
+        <img src=@(Model.ProfileImagePath ?? "/images/Default_pfp.png") alt="" id="previewImage"
+            class="rounded-circle border border-dark-subtle object-fit-cover" width="100px" height="100px">
+    </label>
+    <span class="text-danger" asp-validation-for="@Model.ProfileImage"></span>
 
-        <p class="mt-4 mb-0"><strong>Email:</strong> @Model.EmailAddress</p>
+    <p class="mt-4 mb-0"><strong>Email:</strong> @Model.EmailAddress</p>
 
-        <!-- First Name -->
-        <div class="form-floating mt-4 rounded-2 shadow-sm">
-            <input asp-for=@Model.FirstName class="form-control border-secondary-subtle"
-                id="inputFirstName" placeholder="First Name">
-            <label asp-for="@Model.FirstName">First Name</label>
-        </div>
-        <span class="text-danger" asp-validation-for="@Model.FirstName"></span>
+    <!-- First Name -->
+    <div class="form-floating mt-4 rounded-2 shadow-sm">
+        <input asp-for=@Model.FirstName class="form-control border-secondary-subtle" id="inputFirstName"
+            placeholder="First Name">
+        <label asp-for="@Model.FirstName">First Name</label>
+    </div>
+    <span class="text-danger" asp-validation-for="@Model.FirstName"></span>
 
-        <!-- Last Name -->
-        <div class="form-floating mt-4 rounded-2 shadow-sm">
-            <input asp-for=@Model.LastName class="form-control border-secondary-subtle" id="inputLastName"
-                placeholder="Last Name">
-            <label asp-for="@Model.LastName">Last Name</label>
-        </div>
-        <span class="text-danger" asp-validation-for="@Model.LastName"></span>
+    <!-- Last Name -->
+    <div class="form-floating mt-4 rounded-2 shadow-sm">
+        <input asp-for=@Model.LastName class="form-control border-secondary-subtle" id="inputLastName"
+            placeholder="Last Name">
+        <label asp-for="@Model.LastName">Last Name</label>
+    </div>
+    <span class="text-danger" asp-validation-for="@Model.LastName"></span>
 
-        <!-- Address -->
-        <div class="form-floating mt-4 rounded-2 shadow-sm">
-            <textarea asp-for=@Model.Address class="form-control border-secondary-subtle" placeholder="Address"
-                rows="3"></textarea>
-            <label asp-for="@Model.Address">Address</label>
-        </div>
+    <!-- Address -->
+    <div class="form-floating mt-4 rounded-2 shadow-sm">
+        <textarea asp-for=@Model.Address class="form-control border-secondary-subtle" placeholder="Address"
+            rows="3"></textarea>
+        <label asp-for="@Model.Address">Address</label>
+    </div>
 
-        <!-- Birthdate -->
-        <div class="form-floating mt-4 rounded-2 shadow-sm">
-            <input asp-for=@Model.Birthdate type="date" class="form-control rounded-2 border-secondary-subtle">
-            <label asp-for="@Model.Birthdate">Date of Birth</label>
-        </div>
-        <span class="text-danger" asp-validation-for="@Model.Birthdate"></span>
+    <!-- Birthdate -->
+    <div class="form-floating mt-4 rounded-2 shadow-sm">
+        <input asp-for=@Model.Birthdate type="date" class="form-control rounded-2 border-secondary-subtle">
+        <label asp-for="@Model.Birthdate">Date of Birth</label>
+    </div>
+    <span class="text-danger" asp-validation-for="@Model.Birthdate"></span>
 
-        <!-- Currency -->
-        <div class="form-floating mt-4 rounded-2 shadow-sm">
-            <select asp-for="@Model.CurrencyId" class="form-select rounded-2 border-secondary-subtle" disabled>
-                @foreach (Currency currency in Model.Currencies)
-                {
-                    <option value="@currency.Id">@currency.Name</option>
-                }
-            </select>
-            <label asp-for="@Model.CurrencyId">Currency</label>
-        </div>
-        <span class="text-danger" asp-validation-for="@Model.CurrencyId"></span>
+    <!-- Currency -->
+    <div class="form-floating mt-4 rounded-2 shadow-sm">
+        <select asp-for="@Model.CurrencyId" class="form-select rounded-2 border-secondary-subtle" disabled>
+            @foreach (Currency currency in Model.Currencies)
+            {
+                <option value="@currency.Id">@currency.Name</option>
+            }
+        </select>
+        <label asp-for="@Model.CurrencyId">Currency</label>
+    </div>
+    <span class="text-danger" asp-validation-for="@Model.CurrencyId"></span>
 
-        <div class="d-flex align-items-center gap-3 mt-4">
-            <button type="submit" class="btn btn-primary w-auto shadow">Update</button>
-            <a asp-action="Index" asp-controller="Dashboard" class="btn btn-secondary w-auto shadow">Cancel</a>
-        </div>
-    </form>
-</div>
+    <div class="d-flex align-items-center gap-3 mt-4">
+        <button type="submit" class="btn btn-primary w-auto shadow">Update</button>
+        <a asp-action="Index" asp-controller="Dashboard" class="btn btn-secondary w-auto shadow">Cancel</a>
+    </div>
+</form>
 
 @section Scripts {
     <script>
