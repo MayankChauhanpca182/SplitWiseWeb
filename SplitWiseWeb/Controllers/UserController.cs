@@ -9,6 +9,7 @@ using SplitWiseService.Services.Interface;
 
 namespace SplitWiseWeb.Controllers;
 
+[Authorize]
 public class UserController : Controller
 {
     private readonly IUserService _userService;
@@ -22,6 +23,7 @@ public class UserController : Controller
 
     #region Register
     // GET Register
+    [AllowAnonymous]
     [Route("register")]
     public IActionResult Register()
     {
@@ -29,6 +31,7 @@ public class UserController : Controller
     }
 
     // POST Register
+    [AllowAnonymous]
     [HttpPost]
     [Route("register")]
     public async Task<IActionResult> Register(RegisterUserVM registerUserVM)

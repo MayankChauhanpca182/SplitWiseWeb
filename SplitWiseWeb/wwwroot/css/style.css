@@ -30,7 +30,7 @@
 
 .btn-secondary {
     --bs-btn-color: var(--clr-primary) !important;
-    --bs-btn-bg: v#ffffff !important;
+    --bs-btn-bg: #ffffff !important;
     --bs-btn-border-color: var(--clr-primary) !important;
     --bs-btn-hover-color: var(--clr-primary-dark) !important;
     --bs-btn-hover-bg: var(--clr-light-grey) !important;
@@ -39,6 +39,11 @@
     --bs-btn-active-color: var(--clr-primary-dark) !important;
     --bs-btn-active-bg: var(--clr-light-grey) !important;
     --bs-btn-active-border-color: var(--clr-primary-dark) !important;
+    font-weight: 500;
+    border-radius: 0;
+}
+
+.btn-danger {
     font-weight: 500;
     border-radius: 0;
 }

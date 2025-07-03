@@ -364,7 +364,7 @@ public class ExpenseService : IExpenseService
     public async Task<PaginatedListVM<ExpenseVM>> ExpenseList(FilterVM filter, bool isAllExpense = false, bool isGroupExpenses = false, int groupId = 0)
     {
         int currentUserId = _userService.LoggedInUserId();
-        string searchString = string.IsNullOrEmpty(filter.SearchString) ? "" : filter.SearchString.Replace(@"\s+", "").ToLower();
+        string searchString = string.IsNullOrEmpty(filter.SearchString) ? "" : filter.SearchString.Replace(" ", "").ToLower();
 
         Func<IQueryable<Expense>, IOrderedQueryable<Expense>> orderBy = q => q.OrderByDescending(e => e.PaidDate).ThenByDescending(e => e.UpdatedAt);
         if (!string.IsNullOrEmpty(filter.SortColumn))
@@ -387,13 +387,18 @@ public class ExpenseService : IExpenseService
                             && e.DeletedAt == null
                             && (isAllExpense ? true : (isGroupExpenses ? e.GroupId != null : e.GroupId == null))
                             && (groupId == 0 || e.GroupId == groupId)
-                            && (string.IsNullOrEmpty(searchString) || e.Title.ToLower().Contains(searchString)),
+                            && (string.IsNullOrEmpty(searchString)
+                                || e.Title.ToLower().Contains(searchString)
+                                || e.PaidByUser.FirstName.ToLower().Contains(searchString)
+                                || e.PaidByUser.LastName.ToLower().Contains(searchString)
+                                || (e.PaidByUser.FirstName + e.PaidByUser.LastName).ToLower().Contains(searchString)),
             orderBy: orderBy,
             includes: new List<System.Linq.Expressions.Expression<Func<Expense, object>>>
             {
                 e => e.ExpenseShares,
                 e => e.PaidByUser,
-                e => e.Group
+                e => e.Group,
+                e => e.PaidByUser
             },
             thenIncludes: new List<Func<IQueryable<Expense>, IQueryable<Expense>>>
             {
@@ -441,6 +446,8 @@ public class ExpenseService : IExpenseService
             }
             else
             {
+                // Delte attachment
+                FileHelper.DeleteFile(expense.AttachmentPath);
                 expense.AttachmentName = null;
                 expense.AttachmentPath = null;
 
@@ -462,4 +469,5 @@ public class ExpenseService : IExpenseService
         }
 
     }
+
 }

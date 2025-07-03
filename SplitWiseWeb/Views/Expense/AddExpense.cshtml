@@ -34,7 +34,7 @@
                 </div>
                 <button type="button"
                     class="btn dropdown-toggle dropdown-toggle-split border-secondary-subtle rounded-0"
-                    data-bs-toggle="dropdown" aria-expanded="false">
+                    data-bs-toggle="dropdown" aria-expanded="false" onclick="emptySearchBox()">
                     <span class="visually-hidden">User list</span>
                 </button>
                 <ul class="dropdownList dropdown-menu w-100 px-2">
@@ -162,28 +162,31 @@
         </div>
 
 
-        <!-- View Attachment -->
-        @if (!string.IsNullOrEmpty(Model.AttachmentPath))
-        {
-            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2" id="viewAttachmentDiv">
+        <!-- Attachment -->
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <div>
+                @if (!Model.IsViewOnly)
+                {
+                    <label class="btn btn-primary" asp-for="@Model.Attachment">@(string.IsNullOrEmpty(Model.AttachmentName)
+                                            ? "Upload" : "Update")
+                        Attachment</label>
+                    <input asp-for=@Model.Attachment class="form-control rounded-2 border-secondary-subtle" hidden>
+                }
+                <span id="previewText">@Model.AttachmentName</span>
+            </div>
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
                 <div>
                     <a asp-action="View" asp-controller="File" asp-route-filePath="@Model.AttachmentPath"
-                        class="no-loader attachmentBtn btn btn-primary me-2" target="_blank">View Attachment</a>
-                    <span id="attachmentName">@Model.AttachmentName</span>
+                        class="no-loader btn btn-secondary me-2" id="viewAttachment" target="_blank"
+                        style="@(string.IsNullOrEmpty(Model.AttachmentPath) ? "display: none;" : "")">View</a>
                 </div>
-                <button type="button" class="no-loader attachmentBtn btn btn-secondary me-2" target="_blank" onclick="removeAttachment(@Model.Id)">Remove Attachment</button>
+                @if (!string.IsNullOrEmpty(Model.AttachmentName) && !Model.IsViewOnly)
+                {
+                    <button type="button" class="no-loader btn btn-danger me-2" id="removeAttachmentBtn" target="_blank"
+                        onclick="removeAttachment(@Model.Id)">Remove</button>
+                }
             </div>
-        }
-
-        <!-- Upload Attachment -->
-        @if (!Model.IsViewOnly)
-        {
-            <div class="d-flex align-items-center gap-2">
-                <label class="attachmentBtn btn btn-primary" asp-for="@Model.Attachment">Upload Attachment</label>
-                <input asp-for=@Model.Attachment class="form-control rounded-2 border-secondary-subtle" hidden>
-                <span id="previewText"></span>
-            </div>
-        }
+        </div>
 
         @if (!Model.IsViewOnly)
         {
@@ -213,7 +216,7 @@
                 </div>
             }
         </div>
-        <div id="remainingBalanceDiv">
+        <div id="remainingBalanceDiv" style="@(Model.SplitTypeEnum == SplitType.Equally ? "display: none;" : "")">
             <span class="fs-6 fw-semibold">Remaining balance: </span>
             <span class="fs-6 fw-semibold" id="remainigBalance">0 ₹</span>
         </div>
@@ -239,21 +242,21 @@
     @* Store img path in const *@
     <script>
         const categoryImages = {
-        @foreach (Category cat in Model.Categories)
+                                                @foreach (Category cat in Model.Categories)
             {
-                    @:@cat.Id: "@cat.CategoryImagePath",
+                                                                                                    @:@cat.Id: "@cat.CategoryImagePath",
             }
-            };
+                                                    };
     </script>
 
     @* Store currency symboles in array *@
     <script>
         const currencySymboles = {
-        @foreach (Currency currency in Model.Currencies)
+                                                @foreach (Currency currency in Model.Currencies)
             {
-            @:@currency.Id: "@currency.Symbole",
+                                                                                            @:@currency.Id: "@currency.Symbole",
             }
-        };
+                                                };
 
 
         // Change symbole on currency change
@@ -267,16 +270,16 @@
     <script>
         // Add current members to array
         {
-                @foreach (ExpenseShareVM share in Model.ExpenseShares)
+                                                        @foreach (ExpenseShareVM share in Model.ExpenseShares)
                 {
                     <text>
                         members.push({
                             UserId: @share.UserId,
                         ShareAmount: @share.ShareAmount
-                });
+                                                                                                });
                     </text>
             }
-        }
+                                                }
     </script>
 
     @* Validate selected file *@
@@ -294,6 +297,10 @@
                         return;
                     }
                     else {
+                        // Create url for viewing the file
+                        let url = URL.createObjectURL(file);
+                        $("#viewAttachment").attr("href", url);
+                        $("#viewAttachment").show();
                         // Show preview text
                         $('#previewText').text(file.name);
                     }
@@ -366,15 +373,9 @@
             switch (splitType) {
                 case '@SplitType.Equally':
                     $("#remainigBalance").text(formatToINR(amount - splitTotal) + currencySymbole);
-                    $("#remainingBalanceDiv").show();
-                    if (splitTotal > amount) {
-                        $(".amount, #remainigBalance").addClass("text-danger");
-                        isValid = false;
-                    }
-                    else {
-                        $(".amount, #remainigBalance").removeClass("text-danger");
-                        isValid = true;
-                    }
+                    $("#remainingBalanceDiv").hide();
+                    $(".amount, #remainigBalance").removeClass("text-danger");
+                    isValid = true;
                     break;
                 case '@SplitType.Unequally':
                     $("#remainigBalance").text(formatToINR(amount - splitTotal) + currencySymbole);
@@ -428,8 +429,7 @@
             $("#paidBySelect").append(newOption);
 
             // Add into expense share div
-            let div = `
-                                                <div class="expenseShare" id="expenseShare-${user.userId}"><span><img src=${user.profileImagePath ?? "/images/Default_pfp.png"}>${user.name}</span><span><input type="text" class="amount form-control" id="amount-${user.userId}" value="0"><span class="expenseShareTypeSymbole">${currencySymbole}</span></span></div>`;
+            let div = `<div class="expenseShare" id="expenseShare-${user.userId}"><span><img src=${user.profileImagePath ?? "/images/Default_pfp.png"}>${user.name}</span><span><input type="text" class="amount form-control" id="amount-${user.userId}" value="0"><span class="expenseShareTypeSymbole">${currencySymbole}</span></span></div>`;
             $("#expenseShareDiv").append(div);
         }
 
@@ -639,7 +639,14 @@
 
     @* Remove attachment *@
     <script>
-        function removeAttachment(expenseId){
+        function removeAttachment(expenseId) {
+            $("#confirmationModalTitle").text(`Remove attachment`);
+            $("#confirmationModalBody").text(`Are you sure you want to remove attachment?`);
+            $("#confirmationModalYesBtn").attr("onclick", `removeAttachmentConfirm(${expenseId})`);
+            $("#confirmationModal").modal("show");
+        }
+
+        function removeAttachmentConfirm(expenseId) {
             $.ajax({
                 url: "/Expense/RemoveAttachment",
                 type: "POST",
@@ -650,7 +657,11 @@
                             toastr.error(response.message);
                         }
                         else {
-                            $("#viewAttachmentDiv").remove();
+                            $("#confirmationModal").modal("hide");
+                            $("#removeAttachmentBtn").remove();
+                            $("#viewAttachment").hide();
+                            $("#previewText").text("");
+                            $("#viewAttachment").attr("href", "#");
                             toastr.success(response.message);
                         }
                     }

@@ -20,13 +20,6 @@
 
         <p class="mt-4 mb-0"><strong>Email:</strong> @Model.EmailAddress</p>
 
-        <!-- Title -->
-        @* <div class="form-floating col">
-            <input asp-for="@Model.Title" type="text" class="form-control" placeholder="Title">
-            <label asp-for="@Model.Title">Title</label>
-            <span class="text-danger" asp-validation-for="@Model.Title"></span>
-        </div> *@
-
         <!-- First Name -->
         <div class="form-floating mt-4 rounded-2 shadow-sm">
             <input asp-for=@Model.FirstName class="form-control border-secondary-subtle"
@@ -53,7 +46,7 @@
         <!-- Birthdate -->
         <div class="form-floating mt-4 rounded-2 shadow-sm">
             <input asp-for=@Model.Birthdate type="date" class="form-control rounded-2 border-secondary-subtle">
-            <label asp-for="@Model.Birthdate">date of Birth</label>
+            <label asp-for="@Model.Birthdate">Date of Birth</label>
         </div>
         <span class="text-danger" asp-validation-for="@Model.Birthdate"></span>
 

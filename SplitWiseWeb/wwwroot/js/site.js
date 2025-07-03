@@ -11,13 +11,13 @@ $(document).ajaxComplete(function () {
 });
 
 // Apply validation on input change globally
-$(document).on(
-  "keyup change",
-  "form input:not([type=checkbox]):not([type=radio]), form select, form textarea",
-  function () {
-    $(this).valid();
-  }
-);
+// $(document).on(
+//   "keyup change",
+//   "form input:not([type=checkbox]):not([type=radio]), form select, form textarea",
+//   function () {
+//     $(this).valid();
+//   }
+// );
 
 // Prevent submission if validation fails
 $(document).on("submit", "form", function (e) {
@@ -27,7 +27,7 @@ $(document).on("submit", "form", function (e) {
 });
 
 // Loading Spinner
-$("#loader").show();
+// $("#loader").show();
 
 $(document).ready(function () {
   $("#loader").hide();
@@ -140,3 +140,8 @@ $(document).on("input", ".dropdownSearch", function () {
     });
   }
 });
+
+// Empty searchbox on dropdown open
+function emptySearchBox(){
+  $(".dropdownSearch").val("").trigger("input");
+}
