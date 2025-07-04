@@ -97,4 +97,7 @@ public static class NotificationMessages
     // Expense
     public const string AttachmentRemoved = "Attachment has been removed successfully.";
 
+    // Settlement
+    public const string SettlementSuccess = "Expense has been settled successfully.";
+
 }

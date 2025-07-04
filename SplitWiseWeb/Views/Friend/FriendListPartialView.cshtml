@@ -25,7 +25,7 @@
                 <th scope="col" class="col">
                     <span class="text-clr-grey text-dark-emphasis">Expense</span>
                 </th>
-                <th scope="col" class="col-1 text-center">
+                <th scope="col" class="col-1 text-end">
                     <span class="text-clr-grey text-dark-emphasis">Actions</span>
                 </th>
             </tr>
@@ -44,7 +44,7 @@
                         class="@(friend.Expense < 0 ? "text-danger" : "text-success")">
                         @(friend.Expense == 0 ? $"Expense is settled" : (friend.Expense > 0 ? $"You are owed ₹{friend.Expense.ToString("N2")}" : $"Owes you ₹{((-1)*friend.Expense).ToString("N2")}"))
                     </td>
-                    <td class="text-center">
+                    <td class="text-end">
                         @if (Model.IsDeletedData)
                         {
                             <a class="btn border-0" title="Send Friend Request" onclick="sendRequest('@friend.EmailAddress')">
@@ -53,9 +53,12 @@
                         }
                         else
                         {
-                            <a asp-controller="Settlement" asp-action="Index" asp-route-friendUserId="@friend.UserId" class="btn btn-navbar"title="Settle Up">
-                                <i class="bi bi-credit-card"></i>
-                            </a>
+                            @if(friend.Expense < 0)
+                            {
+                                <a asp-controller="Settlement" asp-action="Index" asp-route-friendUserId="@friend.UserId" class="btn btn-navbar"title="Settle Up">
+                                    <i class="bi bi-credit-card"></i>
+                                </a>
+                            }
                             <button type="button" class="btn border-0" title="Remove Friend"
                                 onclick="removeFriend(@friend.FriendId, '@friend.Name')">
                                 <i class="bi bi-person-x-fill text-danger"></i>

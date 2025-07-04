@@ -1,59 +1,54 @@
 @model SettlementListVM
-@{
-    ViewData["Title"] = "Settlement";
-}
 
-<breadcrumb></breadcrumb>
-<h3 class="bg-white mb-3 p-3 text-dark-emphasis shadow">Settle Up</h3>
-
-<div class="settleList d-flex flex-column gap-3">
-    <div class="settleListItem d-flex justify-content-between align-items-center gap-2 p-2 bg-white"
-        onclick="settlementModal()">
+<div class="settleList d-flex flex-column gap-3 p-3">
+    <div
+        class="settleListItem d-flex justify-content-between align-items-center gap-2 p-2 bg-white border border-secondary-subtle">
         <div class="d-flex align-items-center gap-2">
             <img src=@(Model.CurrentUser.ProfileImagePath ?? "/images/Default_pfp.png") alt=""
                 class="rounded-circle border border-dark-subtle object-fit-cover" width="40px" height="40px">
-            <span>All expenses</span>
+            <div class="d-flex flex-column fw-semibold">
+                <span>Settle all expenses</span>
+                <span class="text-danger">₹@(Model.TotalAmount.ToString("N2"))</span>
+            </div>
         </div>
-        <span class="px-2 text-danger">₹@(((-1) * Model.TotalAmount).ToString("N2"))</span>
+        <button type="button" class="btn btn-primary"
+            onclick="fetchSettlementModal(@Model.TotalAmount, 0, @Model.Friend.UserId, true)">Settle Up</button>
     </div>
+
+    <p class="mb-0 fw-semibold">Or, settle a specific group expenses</p>
 
     @if (Model.Friend.Expense != 0)
     {
-        <div class="settleListItem d-flex justify-content-between align-items-center gap-2 p-2 bg-white"
-            onclick="settlementModal()">
+        <div
+            class="settleListItem d-flex justify-content-between align-items-center gap-2 p-2 bg-white border border-secondary-subtle">
             <div class="d-flex align-items-center gap-2">
                 <img src=@(Model.Friend.ProfileImagePath ?? "/images/Default_pfp.png") alt=""
                     class="rounded-circle border border-dark-subtle object-fit-cover" width="40px" height="40px">
-                <span>All individual expenses</span>
+                <div class="d-flex flex-column fw-semibold">
+                    <span>Individual expenses</span>
+                    <span class="text-danger">₹@(Model.Friend.Expense.ToString("N2"))</span>
+                </div>
             </div>
-            <span class="px-2 text-danger">₹@(((-1) * Model.Friend.Expense).ToString("N2"))</span>
+            <button type="button" class="btn btn-primary"
+                onclick="fetchSettlementModal(@Model.Friend.Expense, 0, @Model.Friend.UserId, false)">Settle Up</button>
         </div>
     }
 
     @foreach (GroupVM group in Model.Groups)
     {
-        <div class="settleListItem d-flex justify-content-between align-items-center gap-2 p-2 bg-white"
-            onclick="settlementModal()">
+        <div
+            class="settleListItem d-flex justify-content-between align-items-center gap-2 p-2 bg-white border border-secondary-subtle">
             <div class="d-flex align-items-center gap-2">
                 <img src=@(group.ImagePath ?? "/images/default_group_img.png") alt=""
                     class="rounded-circle border border-dark-subtle object-fit-cover" width="40px" height="40px">
-                <span>@group.Name</span>
+                <div class="d-flex flex-column fw-semibold">
+                    <span>@group.Name</span>
+                    <span class="text-danger">₹@(group.Expense.ToString("N2"))</span>
+                </div>
             </div>
-            <span class="px-2 text-danger">₹@(((-1) * group.Expense).ToString("N2"))</span>
+            <button type="button" class="btn btn-primary"
+                onclick="fetchSettlementModal(@group.Expense, @group.Id, @Model.Friend.UserId, false)">Settle
+                Up</button>
         </div>
     }
-
 </div>
-
-
-
-
-
-@section Scripts {
-    <script>
-        // Open settlement modal
-        function settlementModal() {
-            console.log("settleed");
-        }
-    </script>
-}

@@ -60,7 +60,7 @@
                             }
                         </span>
                     </td>
-                    <td class="@(expense.Expense == 0 ? "text-dark" : (expense.Expense > 0 ? "text-success" : "text-danger"))">
+                    <td class="@(expense.Expense < 0 ? "text-danger" : "text-success")">
                         @(expense.Expense == 0 ? $"Expense is settled" : (expense.Expense > 0 ? $"You are owed ₹{expense.Expense.ToString("N2")}" : $"You owe {expense.PaidByName} ₹{((-1)*expense.Expense).ToString("N2")}"))
                     </td>
                     <td class="text-center">
@@ -83,7 +83,7 @@
 else
 {
     <!-- Pagination -->
-    <div class="pagination d-flex flex-column flex-sm-row justify-content-end align-items-sm-center mt-3 px-1 pb-3">
+    <div class="pagination d-flex flex-column flex-sm-row justify-content-start align-items-sm-center mt-3 px-1 pb-3">
         <div class="d-flex align-items-center">
             <span class="mx-1">Items Per page: </span>
             <select class="form-select w-auto mx-1" id="individualExpensePageSize" onchange="getIndividualExpenseList(1)"

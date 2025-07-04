@@ -1,0 +1,97 @@
+@model SettlementVM
+
+<div class="modal-header">
+    <h1 class="modal-title fs-5">Record payment with <span class="text-purple">@Model.PaidToUser.FirstName
+            @Model.PaidToUser.LastName</span></h1>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<form asp-action="AddSettlement" asp-controller="Settlement" id="settlementForm" class="d-flex flex-column"
+    enctype="multipart/form-data">
+    <div class="modal-body">
+        <input asp-for="@Model.GroupId" hidden>
+        <input asp-for="@Model.PaidById" hidden>
+        <input asp-for="@Model.PaidToId" hidden>
+        <input asp-for="@Model.CurrencyId" hidden>
+        <input asp-for="@Model.SettleAll" hidden>
+
+        <!-- Amount -->
+        @if (Model.SettleAll)
+        {
+            <input asp-for="@Model.Amount" hidden>
+            <div class="form-floating rounded-0">
+                <input value=@Model.Amount class="form-control border-secondary-subtle rounded-0" max="@Model.Amount" disabled>
+                <label asp-for="@Model.Amount">Amount</label>
+                <span class="text-danger" asp-validation-for="@Model.Amount"></span>
+            </div>
+        }
+        else
+        {
+            <div class="form-floating rounded-0">
+                <input asp-for=@Model.Amount class="form-control border-secondary-subtle rounded-0" max="@Model.Amount">
+                <label asp-for="@Model.Amount">Amount</label>
+                <span class="text-danger" asp-validation-for="@Model.Amount"></span>
+            </div>
+        }
+
+        <!-- Currency -->
+        <div class="form-floating mt-4 shadow-sm">
+            <select asp-for="@Model.CurrencyId" class="form-select border-secondary-subtle rounded-0" disabled>
+                @foreach (Currency currency in Model.Currencies)
+                {
+                    <option value="@currency.Id">@currency.Name</option>
+                }
+            </select>
+            <label asp-for="@Model.CurrencyId">Currency</label>
+        </div>
+        <span class="text-danger" asp-validation-for="@Model.CurrencyId"></span>
+
+        <!-- Note -->
+        <div class="form-floating mt-4">
+            <textarea asp-for=@Model.Note class="form-control border-secondary-subtle rounded-0" placeholder="Note"
+                rows="3" style="height: 85px"></textarea>
+            <label asp-for="@Model.Note" class="col-form-label fw-semibold">Note</label>
+        </div>
+
+        <!-- Attachment -->
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-4">
+            <div>
+                <label class="btn btn-primary" asp-for="@Model.Attachment">Upload Attachment</label>
+                <input asp-for=@Model.Attachment class="form-control rounded-2 border-secondary-subtle" hidden>
+                <span id="previewText"></span>
+            </div>
+            <a href="#" class="no-loader btn btn-secondary me-2" id="viewAttachment" target="_blank"
+                style="display: none;">View</a>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Save</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+    </div>
+</form>
+
+<script>
+    $(document).ready(function () {
+        $('#Attachment').on('change', function () {
+            const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
+            const file = this.files[0];
+
+            if (file) {
+                if (!validTypes.includes(file.type)) {
+                    toastr.error("Only following image types are allowed: jpeg, jpg, png, pdf");
+                    $(this).val("");
+                    $('#previewText').text("");
+                    return;
+                }
+                else {
+                    // Create url for viewing the file
+                    let url = URL.createObjectURL(file);
+                    $("#viewAttachment").attr("href", url);
+                    $("#viewAttachment").show();
+                    // Show preview text
+                    $('#previewText').text(file.name);
+                }
+            }
+        });
+    });
+</script>

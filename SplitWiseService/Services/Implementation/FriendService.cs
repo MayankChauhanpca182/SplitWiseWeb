@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using SplitWiseRepository.Constants;
+using SplitWiseRepository.Migrations;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.Repositories.Interface;
 using SplitWiseRepository.ViewModels;
@@ -62,6 +63,20 @@ public class FriendService : IFriendService
             };
             await _friendRequestRepository.Add(newFriendRequest);
         }
+    }
+
+    public async Task<Friend> GetFriend(int user1Id, int user2Id)
+    {
+        Friend friend = await _friendRepository.Get(
+            predicate: f => f.DeletedAt == null
+                    && ((f.Friend1 == user1Id && f.Friend2 == user2Id) || (f.Friend2 == user1Id && f.Friend1 == user2Id)),
+            includes: new List<Expression<Func<Friend, object>>>
+            {
+                f => f.Friend1UserNavigation,
+                f => f.Friend2UserNavigation
+            }
+        );
+        return friend;
     }
 
     public async Task<ResponseVM> CheckExisitngFrindship(string email)

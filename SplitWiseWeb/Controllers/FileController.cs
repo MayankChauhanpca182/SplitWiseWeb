@@ -29,7 +29,6 @@ public class FileController : Controller
 
         // Build the absolute path
         string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", filePath.TrimStart('/'));
-
         if (!System.IO.File.Exists(fullPath))
         {
             return NotFound();
@@ -37,10 +36,7 @@ public class FileController : Controller
 
         string contentType = GetContentType(fullPath);
 
-        // Read file bytes
         byte[] fileBytes = System.IO.File.ReadAllBytes(fullPath);
-
-        // Return file to be viewed in browser
         return File(fileBytes, contentType);
     }
 

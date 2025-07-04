@@ -1,0 +1,93 @@
+.fall-item {
+
+    position: absolute;
+
+    will-change: transform;
+
+    pointer-events: none;
+
+    animation: fall 5s linear forwards;
+
+    z-index: 9999;
+}
+
+.heart {
+
+    width: 20px;
+
+    height: 20px;
+
+    background-color: red;
+
+    transform: rotate(45deg);
+
+}
+
+.heart::before,
+
+.heart::after {
+
+    content: '';
+
+    position: absolute;
+
+    width: 20px;
+
+    height: 20px;
+
+    background-color: red;
+
+    border-radius: 50%;
+
+}
+
+.heart::before {
+
+    top: -10px;
+
+    left: 0;
+
+}
+
+.heart::after {
+
+    left: -10px;
+
+    top: 0;
+
+}
+
+.ribbon {
+
+    width: 6px;
+
+    height: 40px;
+
+    background-color: #f39c12;
+
+    transform: rotate(45deg);
+
+    opacity: 0.8;
+
+}
+
+.money {
+
+    font-size: 1.4rem;
+
+    color: green;
+
+}
+
+@keyframes fall {
+
+    to {
+
+        transform: translateY(100vh) rotate(360deg);
+        /* transform: translateY(50vh) rotate(360deg); */
+
+        opacity: 0;
+
+    }
+
+}

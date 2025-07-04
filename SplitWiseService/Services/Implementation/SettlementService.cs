@@ -1,9 +1,12 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Microsoft.Extensions.DependencyInjection;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.Repositories.Interface;
 using SplitWiseRepository.ViewModels;
+using SplitWiseService.Constants;
+using SplitWiseService.Helpers;
 using SplitWiseService.Services.Interface;
 
 namespace SplitWiseService.Services.Implementation;
@@ -12,17 +15,22 @@ public class SettlementService : ISettlementService
 {
     private readonly IGenericRepository<Friend> _friendRepository;
     private readonly IGenericRepository<Expense> _expenseRepository;
+    private readonly IGenericRepository<ExpenseShare> _expenseShareRepository;
     private readonly IGenericRepository<Group> _groupRepository;
-    private readonly IGroupService _groupService;
+    private readonly IGenericRepository<Payment> _paymentRepository;
+    private readonly ITransactionRepository _transaction;
     private readonly IUserService _userService;
 
-    public SettlementService(IGroupService groupService, IUserService userService, IGenericRepository<Friend> friendRepository, IGenericRepository<Expense> expenseRepository, IGenericRepository<Group> groupRepository)
+    public SettlementService(IUserService userService, IGenericRepository<Friend> friendRepository, IGenericRepository<Expense> expenseRepository, IGenericRepository<Group> groupRepository, ITransactionRepository transaction, IGenericRepository<Payment> paymentRepository, IGenericRepository<ExpenseShare> expenseShareRepository)
     {
-        _groupService = groupService;
         _userService = userService;
         _friendRepository = friendRepository;
         _expenseRepository = expenseRepository;
         _groupRepository = groupRepository;
+        _transaction = transaction;
+        _paymentRepository = paymentRepository;
+        _expenseShareRepository = expenseShareRepository;
+
     }
 
     public async Task<SettlementListVM> GetList(int friendUserId)
@@ -50,12 +58,12 @@ public class SettlementService : ISettlementService
             from e in _expenseRepository.Query()
             where e.DeletedAt == null && (e.GroupId != null ? groupIds.Contains((int)e.GroupId) : false)
             from es in e.ExpenseShares
-            where e.PaidById == currentUser.Id || es.UserId == currentUser.Id
+            where e.PaidById == friendUserId && es.UserId == currentUser.Id
             group new { e, es } by (int)e.GroupId into g
             select new
             {
                 GroupId = g.Key,
-                Expense = g.Sum(x => x.e.PaidById == currentUser.Id ? x.es.ShareAmount : -x.es.ShareAmount)
+                Expense = g.Sum(x => x.es.ShareAmount)
             }
         ).ToDictionaryAsync(x => x.GroupId, x => x.Expense);
 
@@ -73,7 +81,7 @@ public class SettlementService : ISettlementService
                 NoticeBoard = g.NoticeBoard,
                 Expense = netAmount
             };
-        }).Where(g => g.Expense < 0).ToList();
+        }).Where(g => g.Expense > 0).ToList();
 
         // Fetch friend
         Friend friend = await _friendRepository.Get(
@@ -91,13 +99,12 @@ public class SettlementService : ISettlementService
             from e in _expenseRepository.Query()
             where e.DeletedAt == null && e.GroupId == null
             from es in e.ExpenseShares
-            where es.DeletedAt == null && ((e.PaidById == currentUser.Id && es.UserId == friendUserId)
-                                        || (es.UserId == currentUser.Id && e.PaidById == friendUserId))
-            group new { e, es } by (e.PaidById == currentUser.Id ? es.UserId : e.PaidById) into g
+            where es.DeletedAt == null && e.PaidById == friendUserId && es.UserId == currentUser.Id
+            group new { e, es } by e.PaidById into g
             select new
             {
                 FriendUserId = g.Key,
-                Expense = g.Sum(x => x.e.PaidById == currentUser.Id ? x.es.ShareAmount : -x.es.ShareAmount)
+                Expense = g.Sum(x => x.es.ShareAmount)
             }
         ).Select(x => x.Expense).FirstOrDefaultAsync();
 
@@ -110,7 +117,7 @@ public class SettlementService : ISettlementService
             UserId = friendUser.Id,
             Name = $"{friendUser.FirstName} {friendUser.LastName}",
             ProfileImagePath = friendUser.ProfileImagePath,
-            Expense = netAmount < 0 ? netAmount : 0
+            Expense = netAmount
         };
 
         // Set total
@@ -119,5 +126,108 @@ public class SettlementService : ISettlementService
         return settlementList;
     }
 
-    
+    public async Task<ResponseVM> AddSettlement(SettlementVM settlement)
+    {
+        try
+        {
+            // Begin transaction
+            await _transaction.Begin();
+            ResponseVM response = new ResponseVM();
+
+            // Current user id
+            User currentUser = await _userService.LoggedInUser();
+
+            // Record payment
+            Payment payment = new Payment
+            {
+                PaidById = settlement.PaidById,
+                PaidToId = settlement.PaidToId,
+                CurrencyId = settlement.CurrencyId,
+                Amount = settlement.Amount,
+                CreatedById = currentUser.Id,
+                UpdatedById = currentUser.Id,
+                UpdatedAt = DateTime.Now
+            };
+
+            if (settlement.Attachment != null)
+            {
+                payment.AttachmentPath = FileHelper.UploadFile(settlement.Attachment);
+                payment.AttachmentName = settlement.Attachment.FileName;
+            }
+            await _paymentRepository.Add(payment);
+
+            // Update ExpenseShares
+            if (settlement.SettleAll)
+            {
+                // Fetch all expense shares
+                List<ExpenseShare> expenseShares = await _expenseShareRepository.List(
+                    predicate: es => es.DeletedAt == null && es.UserId == currentUser.Id && es.Expense.PaidById == settlement.PaidToId,
+                    includes: new List<Expression<Func<ExpenseShare, object>>>
+                    {
+                        es => es.Expense
+                    }
+                );
+
+                foreach (ExpenseShare share in expenseShares)
+                {
+                    share.ShareAmount = 0;
+                    share.UpdatedAt = DateTime.Now;
+                    share.UpdatedById = currentUser.Id;
+                    await _expenseShareRepository.Update(share);
+                }
+            }
+            else
+            {
+                decimal remaingAmount = settlement.Amount;
+
+                // Fetch expense share list
+                List<ExpenseShare> expenseShares = await _expenseShareRepository.List(
+                    predicate: es => es.DeletedAt == null && es.UserId == currentUser.Id && es.Expense.PaidById == settlement.PaidToId
+                                && (settlement.GroupId == 0 ? es.Expense.GroupId == null : es.Expense.GroupId == settlement.GroupId),
+                    includes: new List<Expression<Func<ExpenseShare, object>>>
+                    {
+                        es => es.Expense
+                    }
+                );
+
+                foreach (ExpenseShare share in expenseShares)
+                {
+                    if (remaingAmount >= share.ShareAmount)
+                    {
+                        remaingAmount -= share.ShareAmount;
+                        share.ShareAmount = 0;
+                    }
+                    else
+                    {
+                        share.ShareAmount -= remaingAmount;
+                        remaingAmount = 0;
+                    }
+                    share.UpdatedAt = DateTime.Now;
+                    share.UpdatedById = currentUser.Id;
+                    await _expenseShareRepository.Update(share);
+
+                    if (remaingAmount == 0)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            // Send mail
+
+            response.Success = true;
+            response.Message = NotificationMessages.SettlementSuccess;
+
+            // Commit transaction
+            await _transaction.Commit();
+            return response;
+        }
+        catch
+        {
+            // Rollback transaction
+            await _transaction.Rollback();
+            throw;
+        }
+    }
+
 }
