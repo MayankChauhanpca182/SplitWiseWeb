@@ -199,7 +199,7 @@ public class ExpenseService : IExpenseService
     {
         User currentUser = await _userService.LoggedInUser();
 
-        List<ExpenseShare> existingShares = await _expenseShareRepository.List(es => es.ExpenseId == expense.Id);
+        List<ExpenseShare> existingShares = await _expenseShareRepository.List(es => es.DeletedAt == null && es.ExpenseId == expense.Id);
 
         HashSet<int> updatedUserIds = updatedShares.Select(es => es.UserId).ToHashSet();
 
@@ -383,7 +383,7 @@ public class ExpenseService : IExpenseService
         }
 
         PaginatedItemsVM<Expense> paginatedItems = await _expenseRepository.PaginatedList(
-            predicate: e => (e.PaidById == currentUserId || e.ExpenseShares.Any(es => es.UserId == currentUserId))
+            predicate: e => (e.PaidById == currentUserId || e.ExpenseShares.Any(es => es.DeletedAt == null && es.UserId == currentUserId))
                             && e.DeletedAt == null
                             && (isAllExpense ? true : (isGroupExpenses ? e.GroupId != null : e.GroupId == null))
                             && (groupId == 0 || e.GroupId == groupId)
@@ -422,7 +422,7 @@ public class ExpenseService : IExpenseService
             PaidByName = e.PaidByUser.FirstName + " " + e.PaidByUser.LastName,
             Members = e.ExpenseShares.Where(es => es.DeletedAt == null).Select(es => es.User).ToList(),
             MemberNames = e.ExpenseShares.Where(es => es.DeletedAt == null).Select(es => es.User.FirstName + " " + es.User.LastName).ToList(),
-            Expense = (e.PaidById == currentUserId ? e.Amount : 0) - e.ExpenseShares.Where(es => es.UserId == currentUserId).Sum(es => es.ShareAmount)
+            Expense = (e.PaidById == currentUserId ? e.Amount : 0) - e.ExpenseShares.Where(es => es.DeletedAt == null && es.UserId == currentUserId).Sum(es => es.ShareAmount)
         }).ToList();
 
         paginatedList.Page.SetPagination(paginatedItems.TotalRecords, filter.PageSize, filter.PageNumber);

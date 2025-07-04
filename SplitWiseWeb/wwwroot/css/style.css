@@ -421,3 +421,9 @@ footer.footer {
 }
 
 
+/* Settlement */
+.settleListItem{
+    /* height: 60px; */
+    width: 700px;
+    cursor: pointer;
+}

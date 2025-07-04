@@ -210,7 +210,7 @@ public class FriendService : IFriendService
     {
         int currentUserId = _userService.LoggedInUserId();
 
-        filter.SearchString = string.IsNullOrEmpty(filter.SearchString) ? "" : filter.SearchString.Replace(@"\s+", "").ToLower();
+        filter.SearchString = string.IsNullOrEmpty(filter.SearchString) ? "" : filter.SearchString.Replace(" ", "").ToLower();
 
         Func<IQueryable<FriendRequest>, IOrderedQueryable<FriendRequest>> orderBy = q => q.OrderBy(fr => fr.Id);
         if (!string.IsNullOrEmpty(filter.SortColumn))
@@ -384,7 +384,7 @@ public class FriendService : IFriendService
     public async Task<PaginatedListVM<FriendVM>> FriendList(FilterVM filter, int groupId = 0)
     {
         int currentUserId = _userService.LoggedInUserId();
-        filter.SearchString = string.IsNullOrEmpty(filter.SearchString) ? "" : filter.SearchString.Replace(@"\s+", "").ToLower();
+        filter.SearchString = string.IsNullOrEmpty(filter.SearchString) ? "" : filter.SearchString.Replace(" ", "").ToLower();
 
         // Order filter
         Func<IQueryable<Friend>, IOrderedQueryable<Friend>> orderBy = q => q.OrderBy(f => f.Id);
@@ -453,8 +453,8 @@ public class FriendService : IFriendService
             from e in _expenseRepository.Query()
             where e.DeletedAt == null
             from es in e.ExpenseShares
-            where (e.PaidById == currentUserId && friendUserIds.Contains(es.UserId))
-            || (es.UserId == currentUserId && friendUserIds.Contains(e.PaidById))
+            where es.DeletedAt == null && ((e.PaidById == currentUserId && friendUserIds.Contains(es.UserId))
+            || (es.UserId == currentUserId && friendUserIds.Contains(e.PaidById)))
             group new { e, es } by (e.PaidById == currentUserId ? es.UserId : e.PaidById) into g
             select new
             {
