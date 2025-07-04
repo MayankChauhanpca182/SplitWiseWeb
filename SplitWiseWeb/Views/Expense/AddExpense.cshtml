@@ -243,15 +243,21 @@
     @* Store img path in const *@
     <script>
         const categoryImages = {
-            @foreach (Category cat in Model.Categories){@:@cat.Id: "@cat.CategoryImagePath",}
+            @foreach (Category cat in Model.Categories)
+            {
+            @:@cat.Id: "@cat.CategoryImagePath",
+            }
             };
     </script>
 
     @* Store currency symboles in array *@
     <script>
         const currencySymboles = {
-            @foreach (Currency currency in Model.Currencies){@:@currency.Id: "@currency.Symbole",}
-        };
+            @foreach (Currency currency in Model.Currencies)
+            {
+            @:@currency.Id: "@currency.Symbole",
+            }
+            };
 
 
         // Change symbole on currency change
@@ -265,8 +271,11 @@
     <script>
         // Add current members to array
         {
-            @foreach (ExpenseShareVM share in Model.ExpenseShares){<text>members.push({UserId: @share.UserId, ShareAmount: @share.ShareAmount});</text>}
-        }
+                    @foreach (ExpenseShareVM share in Model.ExpenseShares)
+                {
+                    <text>members.push({UserId: @share.UserId, ShareAmount: @share.ShareAmount});</text>
+            }
+                }
     </script>
 
     @* Validate selected file *@
