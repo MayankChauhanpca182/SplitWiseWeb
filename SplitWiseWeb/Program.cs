@@ -55,6 +55,7 @@ builder.Services.AddScoped<IGroupService, GroupService>();
 builder.Services.AddScoped<ICommonService, CommonService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IExpenseService, ExpenseService>();
+builder.Services.AddScoped<ISettlementService, SettlementService>();
 
 builder.Services.AddControllersWithViews();
 
