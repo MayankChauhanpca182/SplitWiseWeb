@@ -12,7 +12,7 @@ using SplitWiseRepository.Models;
 namespace SplitWiseRepository.Migrations
 {
     [DbContext(typeof(SplitWiseDbContext))]
-    [Migration("20250704050535_Add_Table_Payments")]
+    [Migration("20250704051100_Add_Table_Payments")]
     partial class Add_Table_Payments
     {
         /// <inheritdoc />
@@ -482,6 +482,61 @@ namespace SplitWiseRepository.Migrations
                     b.ToTable("PasswordResetTokens");
                 });
 
+            modelBuilder.Entity("SplitWiseRepository.Models.Payment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("AttachmentName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AttachmentPath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreatedById")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CurrencyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("DeletedById")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PaidById")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PaidToId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UpdatedById")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CurrencyId");
+
+                    b.HasIndex("PaidById");
+
+                    b.HasIndex("PaidToId");
+
+                    b.ToTable("Payments");
+                });
+
             modelBuilder.Entity("SplitWiseRepository.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -737,6 +792,33 @@ namespace SplitWiseRepository.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("SplitWiseRepository.Models.Payment", b =>
+                {
+                    b.HasOne("SplitWiseRepository.Models.Currency", "Currency")
+                        .WithMany()
+                        .HasForeignKey("CurrencyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SplitWiseRepository.Models.User", "PaidByUser")
+                        .WithMany()
+                        .HasForeignKey("PaidById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SplitWiseRepository.Models.User", "PaidToUser")
+                        .WithMany()
+                        .HasForeignKey("PaidToId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Currency");
+
+                    b.Navigation("PaidByUser");
+
+                    b.Navigation("PaidToUser");
                 });
 
             modelBuilder.Entity("SplitWiseRepository.Models.Expense", b =>
