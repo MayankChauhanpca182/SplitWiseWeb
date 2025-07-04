@@ -12,5 +12,5 @@ public static class ValidationRegex
     public const string NameRegex = @"^[A-Za-z]+$";
 
     // Group Name
-    public const string GroupNameRegex = @"^[A-Za-z0-9]+$";
+    public const string GroupNameRegex = @"^[A-Za-z0-9-]+$";
 }

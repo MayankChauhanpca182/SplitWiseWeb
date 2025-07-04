@@ -150,7 +150,7 @@ public class GroupService : IGroupService
         int currentUserId = _userService.LoggedInUserId();
         string searchString = string.IsNullOrEmpty(filter.SearchString) ? "" : filter.SearchString.Replace(" ", "").ToLower();
 
-        Func<IQueryable<Group>, IOrderedQueryable<Group>> orderBy = q => q.OrderBy(g => g.Id);
+        Func<IQueryable<Group>, IOrderedQueryable<Group>> orderBy = q => q.OrderByDescending(g => g.Id);
         if (!string.IsNullOrEmpty(filter.SortColumn))
         {
             switch (filter.SortColumn)
@@ -183,7 +183,7 @@ public class GroupService : IGroupService
             from e in _expenseRepository.Query()
             where e.DeletedAt == null && (e.GroupId != null ? groupIds.Contains((int)e.GroupId) : false)
             from es in e.ExpenseShares
-            where e.PaidById == currentUserId || es.UserId == currentUserId
+            where es.DeletedAt == null && (e.PaidById == currentUserId || es.UserId == currentUserId) && e.PaidById != es.UserId
             group new { e, es } by (int)e.GroupId into g
             select new
             {

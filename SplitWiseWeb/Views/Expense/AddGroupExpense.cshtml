@@ -180,7 +180,7 @@
             <!-- Split type -->
             <div class="form-floating col">
                 <select asp-for="@Model.SplitTypeEnum" class="form-select" id="splitTypeSelect"
-                    onchange="setAmountAsPerSplitType()">
+                    onchange="setAmountAsPerSplitType(), setDefaultSplitValues()">
                     <option value="@SplitType.Equally">@SplitType.Equally.ToString()</option>
                     <option value="@SplitType.Unequally">@SplitType.Unequally.ToString()</option>
                     <option value="@SplitType.ByShare">By Share</option>
@@ -455,8 +455,7 @@
             $("#paidBySelect").append(newOption);
 
             // Add into expense share div
-            let div = `
-                                    <div class="expenseShare" id="expenseShare-${user.userId}"><span><img src=${user.profileImagePath ?? "/images/Default_pfp.png"}>${user.name}</span><span><input type="text" class="amount form-control" id="amount-${user.userId}" value="0"><span class="expenseShareTypeSymbole">${currencySymbole}</span></span></div>`;
+            let div = `<div class="expenseShare" id="expenseShare-${user.userId}"><span><img src=${user.profileImagePath ?? "/images/Default_pfp.png"}>${user.name}</span><span><input type="text" class="amount form-control" id="amount-${user.userId}" value="0"><span class="expenseShareTypeSymbole">${currencySymbole}</span></span></div>`;
             $("#expenseShareDiv").append(div);
         }
 
@@ -495,6 +494,26 @@
 
     @* Change split type *@
     <script>
+        // Set default split values
+        function setDefaultSplitValues() {
+            let expenseAmount = parseFloat($("#Amount").val().replace(/,/g, ""));
+            let splitType = $("#splitTypeSelect").val();
+            switch (splitType) {
+                case '@SplitType.Equally':
+                    $(".amount").prop("disabled", true).val(expenseAmount / members.length).trigger("input").trigger("blur");
+                    break;
+                case '@SplitType.Unequally':
+                    $(".amount").prop("disabled", false).val(0).trigger("input").trigger("blur");
+                    break;
+                case '@SplitType.ByShare':
+                    $(".amount").prop("disabled", false).val(1).trigger("input").trigger("blur");
+                    break;
+                case '@SplitType.ByPercentage':
+                    $(".amount").prop("disabled", false).val(100 / members.length).trigger("input").trigger("blur");
+                    break;
+            }
+        }
+        
         // Set change split type
         function setAmountAsPerSplitType() {
             let expenseAmount = parseFloat($("#Amount").val().replace(/,/g, ""));
