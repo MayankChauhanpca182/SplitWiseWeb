@@ -86,6 +86,8 @@
                             toastr.success(response.message);
                             getSettlementList('@Model.Id');
                             settlementSuccess();
+                            // Settled up image
+                            setSettledUpImage();
                         }
                         else if (response.success == false) {
                             toastr.error(response.message);
@@ -100,5 +102,13 @@
                 }
             });
         });
+
+        // Set settled up image
+        function setSettledUpImage(){
+            $("#settleUpModalTitle").html(`Recorded payment with <span class="text-purple">@Model.FirstName
+            @Model.LastName</span>`);
+            let image = `<img src="/images/settled-up.png" class="mx-auto my-5" alt="" width="300px" height="300px">`;
+            $("#settlementForm").replaceWith(image);
+        }
     </script>
 }
