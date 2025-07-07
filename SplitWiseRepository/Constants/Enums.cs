@@ -18,3 +18,14 @@ public enum SplitType
     ByShare = 2,
     ByPercentage = 3
 }
+
+public enum ActivityType
+{
+    GroupCreated = 0,
+    GroupUpdated = 1,
+    MemberAdded = 2,
+    MemberRemoved = 3,
+    GroupExpenseAdded = 4,
+    GroupExpenseUpdated = 5,
+    Paid = 6
+}

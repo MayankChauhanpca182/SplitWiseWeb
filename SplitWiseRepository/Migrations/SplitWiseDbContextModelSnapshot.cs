@@ -66,7 +66,7 @@ namespace SplitWiseRepository.Migrations
 
                     b.HasIndex("GroupId");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("SplitWiseRepository.Models.Currency", b =>
@@ -92,7 +92,7 @@ namespace SplitWiseRepository.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Currencies");
+                    b.ToTable("Currencies", (string)null);
                 });
 
             modelBuilder.Entity("SplitWiseRepository.Models.ExceptionLog", b =>
@@ -137,7 +137,7 @@ namespace SplitWiseRepository.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ExceptionLogs");
+                    b.ToTable("ExceptionLogs", (string)null);
                 });
 
             modelBuilder.Entity("SplitWiseRepository.Models.Expense", b =>
@@ -212,7 +212,7 @@ namespace SplitWiseRepository.Migrations
 
                     b.HasIndex("PaidById");
 
-                    b.ToTable("Expenses");
+                    b.ToTable("Expenses", (string)null);
                 });
 
             modelBuilder.Entity("SplitWiseRepository.Models.ExpenseShare", b =>
@@ -256,7 +256,7 @@ namespace SplitWiseRepository.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ExpenseShares");
+                    b.ToTable("ExpenseShares", (string)null);
                 });
 
             modelBuilder.Entity("SplitWiseRepository.Models.Friend", b =>
@@ -302,7 +302,7 @@ namespace SplitWiseRepository.Migrations
 
                     b.HasIndex("FriendRequestId");
 
-                    b.ToTable("Friends");
+                    b.ToTable("Friends", (string)null);
                 });
 
             modelBuilder.Entity("SplitWiseRepository.Models.FriendRequest", b =>
@@ -351,7 +351,7 @@ namespace SplitWiseRepository.Migrations
 
                     b.HasIndex("RequesterId");
 
-                    b.ToTable("FriendRequests");
+                    b.ToTable("FriendRequests", (string)null);
                 });
 
             modelBuilder.Entity("SplitWiseRepository.Models.Group", b =>
@@ -403,52 +403,7 @@ namespace SplitWiseRepository.Migrations
 
                     b.HasIndex("CurrencyId");
 
-                    b.ToTable("Groups");
-                });
-
-            modelBuilder.Entity("SplitWiseRepository.Models.GroupActivity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Activity")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("CreatedById")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("DeletedById")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("GroupId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("UpdatedById")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GroupId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("GroupActivities");
+                    b.ToTable("Groups", (string)null);
                 });
 
             modelBuilder.Entity("SplitWiseRepository.Models.GroupMember", b =>
@@ -489,7 +444,7 @@ namespace SplitWiseRepository.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("GroupMembers");
+                    b.ToTable("GroupMembers", (string)null);
                 });
 
             modelBuilder.Entity("SplitWiseRepository.Models.PasswordResetToken", b =>
@@ -521,7 +476,7 @@ namespace SplitWiseRepository.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("PasswordResetTokens");
+                    b.ToTable("PasswordResetTokens", (string)null);
                 });
 
             modelBuilder.Entity("SplitWiseRepository.Models.Payment", b =>
@@ -576,7 +531,7 @@ namespace SplitWiseRepository.Migrations
 
                     b.HasIndex("PaidToId");
 
-                    b.ToTable("Payments");
+                    b.ToTable("Payments", (string)null);
                 });
 
             modelBuilder.Entity("SplitWiseRepository.Models.User", b =>
@@ -650,47 +605,7 @@ namespace SplitWiseRepository.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("SplitWiseRepository.Models.UserActivity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Activity")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("CreatedById")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("DeletedById")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("UpdatedById")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserActivities");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("SplitWiseRepository.Models.UserReferral", b =>
@@ -723,7 +638,7 @@ namespace SplitWiseRepository.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserReferrals");
+                    b.ToTable("UserReferrals", (string)null);
                 });
 
             modelBuilder.Entity("SplitWiseRepository.Models.Category", b =>
@@ -846,23 +761,6 @@ namespace SplitWiseRepository.Migrations
                     b.Navigation("Currency");
                 });
 
-            modelBuilder.Entity("SplitWiseRepository.Models.GroupActivity", b =>
-                {
-                    b.HasOne("SplitWiseRepository.Models.Group", "Group")
-                        .WithMany()
-                        .HasForeignKey("GroupId");
-
-                    b.HasOne("SplitWiseRepository.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Group");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("SplitWiseRepository.Models.GroupMember", b =>
                 {
                     b.HasOne("SplitWiseRepository.Models.Group", "Group")
@@ -918,17 +816,6 @@ namespace SplitWiseRepository.Migrations
                     b.Navigation("PaidByUser");
 
                     b.Navigation("PaidToUser");
-                });
-
-            modelBuilder.Entity("SplitWiseRepository.Models.UserActivity", b =>
-                {
-                    b.HasOne("SplitWiseRepository.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("SplitWiseRepository.Models.Expense", b =>
