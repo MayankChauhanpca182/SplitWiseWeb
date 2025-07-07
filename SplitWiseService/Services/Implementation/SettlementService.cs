@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Microsoft.Extensions.DependencyInjection;
+using SplitWiseRepository.Constants;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.Repositories.Interface;
 using SplitWiseRepository.ViewModels;
@@ -20,8 +21,9 @@ public class SettlementService : ISettlementService
     private readonly IGenericRepository<Payment> _paymentRepository;
     private readonly ITransactionRepository _transaction;
     private readonly IUserService _userService;
+    private readonly IActivityService _activityService;
 
-    public SettlementService(IUserService userService, IGenericRepository<Friend> friendRepository, IGenericRepository<Expense> expenseRepository, IGenericRepository<Group> groupRepository, ITransactionRepository transaction, IGenericRepository<Payment> paymentRepository, IGenericRepository<ExpenseShare> expenseShareRepository)
+    public SettlementService(IUserService userService, IGenericRepository<Friend> friendRepository, IGenericRepository<Expense> expenseRepository, IGenericRepository<Group> groupRepository, ITransactionRepository transaction, IGenericRepository<Payment> paymentRepository, IGenericRepository<ExpenseShare> expenseShareRepository, IActivityService activityService)
     {
         _userService = userService;
         _friendRepository = friendRepository;
@@ -30,7 +32,7 @@ public class SettlementService : ISettlementService
         _transaction = transaction;
         _paymentRepository = paymentRepository;
         _expenseShareRepository = expenseShareRepository;
-
+        _activityService = activityService;
     }
 
     public async Task<SettlementListVM> GetList(int friendUserId)
@@ -155,6 +157,12 @@ public class SettlementService : ISettlementService
                 payment.AttachmentName = settlement.Attachment.FileName;
             }
             await _paymentRepository.Add(payment);
+
+            if (settlement.GroupId > 0)
+            {
+                // Add group activity
+                await _activityService.AddGroupActivity(ActivityType.MemberRemoved, groupId: settlement.GroupId, performedOnId: settlement.PaidToId);
+            }
 
             // Update ExpenseShares
             if (settlement.SettleAll)

@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using SplitWiseRepository.Constants;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.Repositories.Interface;
 using SplitWiseRepository.ViewModels;
@@ -17,8 +18,9 @@ public class GroupService : IGroupService
     private readonly ITransactionRepository _transaction;
     private readonly IUserService _userService;
     private readonly IEmailService _emailService;
+    private readonly IActivityService _activityService;
 
-    public GroupService(IGenericRepository<Group> groupRepository, ITransactionRepository transaction, IUserService userService, IGenericRepository<GroupMember> groupMemberRepository, IEmailService emailService, IGenericRepository<Expense> expenseRepository)
+    public GroupService(IGenericRepository<Group> groupRepository, ITransactionRepository transaction, IUserService userService, IGenericRepository<GroupMember> groupMemberRepository, IEmailService emailService, IGenericRepository<Expense> expenseRepository, IActivityService activityService)
     {
         _groupRepository = groupRepository;
         _transaction = transaction;
@@ -26,6 +28,7 @@ public class GroupService : IGroupService
         _groupMemberRepository = groupMemberRepository;
         _emailService = emailService;
         _expenseRepository = expenseRepository;
+        _activityService = activityService;
     }
 
     private async Task AddMember(int groupId, int userId)
@@ -107,6 +110,9 @@ public class GroupService : IGroupService
                     exisitngGroup.UpdatedAt = DateTime.Now;
                     exisitngGroup.UpdatedById = currentUser.Id;
                     await _groupRepository.Update(exisitngGroup);
+
+                    // Add group activity
+                    await _activityService.AddGroupActivity(ActivityType.GroupUpdated, groupId: exisitngGroup.Id);
                 }
             }
             else
@@ -127,6 +133,9 @@ public class GroupService : IGroupService
                     newGroup.ImagePath = ImageHelper.UploadImage(newGroupVm.Image);
                 }
                 await _groupRepository.Add(newGroup);
+                // Add group activity
+                await _activityService.AddGroupActivity(ActivityType.GroupCreated, groupId: newGroup.Id);
+
                 await AddMember(newGroup.Id, currentUser.Id);
             }
 
@@ -236,10 +245,11 @@ public class GroupService : IGroupService
                 group.DeletedById = currentUserId;
                 await _groupRepository.Update(group);
 
-                // Delete all group members
-
                 response.Success = true;
                 response.Message = NotificationMessages.Deleted.Replace("{0}", "Group");
+
+                // Add group activity
+                await _activityService.AddGroupActivity(ActivityType.GroupDeleted, groupId: group.Id);
             }
 
             // Commit transaction
@@ -327,6 +337,9 @@ public class GroupService : IGroupService
             User currentUser = await _userService.LoggedInUser();
             await AddMember(groupId, userId);
 
+            // Add group activity
+            await _activityService.AddGroupActivity(ActivityType.MemberAdded, groupId: group.Id, performedOnId: userId);
+
             // Send email
             await _emailService.AddedToGroupEmail(user.FirstName, $"{currentUser.FirstName} {currentUser.LastName}", group.Name, user.EmailAddress);
 
@@ -398,7 +411,7 @@ public class GroupService : IGroupService
                     {
                     g => g.GroupMembers
                     }
-                    );
+                );
 
                 // Delete group if no members
                 if (!group.GroupMembers.Any(gm => gm.DeletedAt == null))
@@ -423,6 +436,9 @@ public class GroupService : IGroupService
                         await _emailService.RemovedFromGroupEmail(user.FirstName, $"{currentUser.FirstName} {currentUser.LastName}", group.Name, user.EmailAddress);
                     }
                 }
+
+                // Add group activity
+                await _activityService.AddGroupActivity(ActivityType.MemberRemoved, groupId: group.Id, performedOnId: groupMember.UserId);
             }
 
             // Commit transaction

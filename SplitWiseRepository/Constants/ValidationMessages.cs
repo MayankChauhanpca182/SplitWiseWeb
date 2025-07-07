@@ -49,7 +49,7 @@ public static class ValidationMessages
     // Group
     public const string GroupName = "Group Name is required.";
     public const string GroupNameLength = "Group Name can not exceed 50 characters.";
-    public const string ValidGroupName = "Group Name can not contain spaces.";
+    public const string ValidGroupName = "Group Name must contain only letters and numbers.";
 
 
     // Expense

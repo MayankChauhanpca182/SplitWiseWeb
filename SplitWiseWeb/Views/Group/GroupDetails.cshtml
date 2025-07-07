@@ -29,7 +29,7 @@
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="group-activity-tab" data-bs-toggle="pill" data-bs-target="#group-activity"
                 type="button" role="tab" aria-controls="group-activity" aria-selected="false"
-                onclick="">Activity</button>
+                onclick="fetchGroupActivities()">Activity</button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="group-members-tab" data-bs-toggle="pill" data-bs-target="#group-members"
@@ -187,7 +187,7 @@
 
     </script>
 
-    @* Group Expenses *@
+    @* Group expenses *@
     <script>
         sortColumn = "";
         sortOrder = "";
@@ -242,5 +242,31 @@
             sortOrder = $(this).data("order");
             getGroupExpenseList(1);
         });
+    </script>
+
+    @* Group activities *@
+    <script>
+        // Fetch group activities
+        function fetchGroupActivities() {
+            $.ajax({
+                url: "/Activity/GroupActivities",
+                type: "GET",
+                data: { groupId: '@Model.Id' },
+                success: function (response) {
+                    if (!response.statusCode) {
+                        if (response.success == false) {
+                            toastr.error(response.message);
+                        }
+                        else {
+                            @* $("#group-members").html(response); *@
+                            console.log(response);
+                        }
+                    }
+                },
+                error: function () {
+                    toastr.error("Internal server error.");
+                }
+            });
+        }
     </script>
 }

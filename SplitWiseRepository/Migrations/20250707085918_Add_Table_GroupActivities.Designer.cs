@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SplitWiseRepository.Models;
 
@@ -11,9 +12,11 @@ using SplitWiseRepository.Models;
 namespace SplitWiseRepository.Migrations
 {
     [DbContext(typeof(SplitWiseDbContext))]
-    partial class SplitWiseDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250707085918_Add_Table_GroupActivities")]
+    partial class Add_Table_GroupActivities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -435,9 +438,6 @@ namespace SplitWiseRepository.Migrations
                     b.Property<int?>("GroupId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("PaymentId")
-                        .HasColumnType("int");
-
                     b.Property<int>("PerformedById")
                         .HasColumnType("int");
 
@@ -455,8 +455,6 @@ namespace SplitWiseRepository.Migrations
                     b.HasIndex("ExpenseId");
 
                     b.HasIndex("GroupId");
-
-                    b.HasIndex("PaymentId");
 
                     b.HasIndex("PerformedById");
 
@@ -830,10 +828,6 @@ namespace SplitWiseRepository.Migrations
                         .WithMany()
                         .HasForeignKey("GroupId");
 
-                    b.HasOne("SplitWiseRepository.Models.Payment", "Payment")
-                        .WithMany()
-                        .HasForeignKey("PaymentId");
-
                     b.HasOne("SplitWiseRepository.Models.User", "PerformedByUser")
                         .WithMany()
                         .HasForeignKey("PerformedById")
@@ -847,8 +841,6 @@ namespace SplitWiseRepository.Migrations
                     b.Navigation("Expense");
 
                     b.Navigation("Group");
-
-                    b.Navigation("Payment");
 
                     b.Navigation("PerformedByUser");
 

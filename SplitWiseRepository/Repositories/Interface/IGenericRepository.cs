@@ -15,6 +15,7 @@ public interface IGenericRepository<T> where T : class
 
     public Task<List<T>> List(
         Expression<Func<T, bool>> predicate = null,
+        Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
         List<Expression<Func<T, object>>> includes = null,
         List<Func<IQueryable<T>, IQueryable<T>>> thenIncludes = null
     );

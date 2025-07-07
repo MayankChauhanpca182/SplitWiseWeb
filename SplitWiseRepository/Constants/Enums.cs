@@ -23,9 +23,10 @@ public enum ActivityType
 {
     GroupCreated = 0,
     GroupUpdated = 1,
-    MemberAdded = 2,
-    MemberRemoved = 3,
-    GroupExpenseAdded = 4,
-    GroupExpenseUpdated = 5,
-    Paid = 6
+    GroupDeleted = 2,
+    MemberAdded = 3,
+    MemberRemoved = 4,
+    GroupExpenseAdded = 5,
+    GroupExpenseUpdated = 6,
+    Paid = 7
 }

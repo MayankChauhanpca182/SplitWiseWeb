@@ -22,8 +22,9 @@ public class ExpenseService : IExpenseService
     private readonly IUserService _userService;
     private readonly IFriendService _friendService;
     private readonly IEmailService _emailService;
+    private readonly IActivityService _activityService;
 
-    public ExpenseService(IGenericRepository<Expense> expenseRepository, ICategoryService categoryService, ICommonService commonService, IGroupService groupService, IUserService userService, IFriendService friendService, ITransactionRepository transaction, IGenericRepository<ExpenseShare> expenseShareRepository, IEmailService emailService)
+    public ExpenseService(IGenericRepository<Expense> expenseRepository, ICategoryService categoryService, ICommonService commonService, IGroupService groupService, IUserService userService, IFriendService friendService, ITransactionRepository transaction, IGenericRepository<ExpenseShare> expenseShareRepository, IEmailService emailService, IActivityService activityService)
     {
         _expenseRepository = expenseRepository;
         _categoryService = categoryService;
@@ -34,6 +35,7 @@ public class ExpenseService : IExpenseService
         _transaction = transaction;
         _expenseShareRepository = expenseShareRepository;
         _emailService = emailService;
+        _activityService = activityService;
     }
 
     public async Task<ExpenseVM> GetIndividualExpense(int expenseId = 0)
@@ -316,6 +318,12 @@ public class ExpenseService : IExpenseService
                 // Add expense splits
                 await UpdateExpenseShare(expense, newExpense.ExpenseShares, newExpense.SplitTypeEnum, isNew: true);
 
+                if (newExpense.GroupId != null)
+                {
+                    // Add group activity
+                    await _activityService.AddGroupActivity(ActivityType.GroupExpenseAdded, groupId: (int)newExpense.GroupId, expenseId: newExpense.Id);
+                }
+
                 response.Success = true;
                 response.Message = NotificationMessages.Saved.Replace("{0}", "Expense");
             }
@@ -329,7 +337,7 @@ public class ExpenseService : IExpenseService
                 existingExpense.PaidDate = newExpense.PaidDate;
                 existingExpense.ExpenseCategoryId = newExpense.CategoryId;
                 existingExpense.CurrencyId = newExpense.CurrencyId;
-                existingExpense.SplitType = isSplitEqually ? newExpense.SplitTypeEnum : SplitWiseRepository.Constants.SplitType.Unequally;
+                existingExpense.SplitType = isSplitEqually ? newExpense.SplitTypeEnum : SplitType.Unequally;
                 existingExpense.Note = newExpense.Note;
                 existingExpense.UpdatedAt = DateTime.Now;
                 existingExpense.UpdatedById = currentUser.Id;
@@ -341,6 +349,11 @@ public class ExpenseService : IExpenseService
                 }
 
                 await _expenseRepository.Update(existingExpense);
+                if (existingExpense.GroupId != null)
+                {
+                    // Add group activity
+                    await _activityService.AddGroupActivity(ActivityType.GroupExpenseUpdated, groupId: (int)existingExpense.GroupId, expenseId: existingExpense.Id);
+                }
 
                 // Add expense splits
                 await UpdateExpenseShare(existingExpense, newExpense.ExpenseShares, newExpense.SplitTypeEnum, isNew: false);
