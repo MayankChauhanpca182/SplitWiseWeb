@@ -7,15 +7,15 @@ public class Payment : AuditFields
     public int Id { get; set; }
     public int PaidById { get; set; }
     [ForeignKey("PaidById")]
-    public User PaidByUser { get; set; }
+    public virtual User PaidByUser { get; set; }
 
     public int PaidToId { get; set; }
     [ForeignKey("PaidToId")]
-    public User PaidToUser { get; set; }
+    public virtual User PaidToUser { get; set; }
 
     public int CurrencyId { get; set; }
     [ForeignKey("CurrencyId")]
-    public Currency Currency { get; set; }
+    public virtual Currency Currency { get; set; }
 
     public decimal Amount { get; set; }
 
