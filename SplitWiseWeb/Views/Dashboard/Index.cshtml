@@ -108,13 +108,13 @@
                                 }
                                 else
                                 {
-                                    <a asp-action="ViewIndividualExpense" asp-controller="Expense" asp-route-expenseId="@expense.Id">
+                                    <a asp-action="ViewNonGroupExpense" asp-controller="Expense" asp-route-expenseId="@expense.Id">
                                         <span class="text-dark">@expense.Title</span>
                                     </a>
                                 }
                             </td>
                             <td>
-                                <span>@(expense.GroupId != null && expense.GroupId > 0 ? "Group" : "Individual")</span>
+                                <span>@(expense.GroupId != null && expense.GroupId > 0 ? "Group" : "Non-Group")</span>
                             </td>
                             <td>
                                 <span>@(expense.PaidById == currentUserId ? "You" : expense.PaidByName)</span>

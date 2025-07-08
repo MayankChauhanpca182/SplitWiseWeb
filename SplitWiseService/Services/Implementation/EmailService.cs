@@ -160,8 +160,8 @@ public class EmailService : IEmailService
         }
         else
         {
-            fileText = GetEmailTemplate(EmailTemplates.AddIndividualExpense);
-            subject = EmailSubjects.AddIndividualExpense;
+            fileText = GetEmailTemplate(EmailTemplates.AddNonGroupExpense);
+            subject = EmailSubjects.AddNonGroupExpense;
         }
 
         string emailBody = fileText.Replace("{recieverName}", recieverName).Replace("{senderName}", senderName).Replace("{splittype}", splitType).Replace("{amount}", amount).Replace("{shareamount}", shareAmount).Replace("{owe}", oweVariable).Replace("{expenseName}", expenseName);
@@ -182,8 +182,8 @@ public class EmailService : IEmailService
         }
         else
         {
-            fileText = GetEmailTemplate(EmailTemplates.UpdateIndividualExpense);
-            subject = EmailSubjects.UpdateIndividualExpense;
+            fileText = GetEmailTemplate(EmailTemplates.UpdateNonGroupExpense);
+            subject = EmailSubjects.UpdateNonGroupExpense;
         }
 
         string emailBody = fileText.Replace("{recieverName}", recieverName).Replace("{senderName}", senderName).Replace("{splittype}", splitType).Replace("{amount}", amount).Replace("{shareamount}", shareAmount).Replace("{owe}", oweVariable).Replace("{expenseName}", expenseName);

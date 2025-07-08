@@ -13,8 +13,8 @@ public static class EmailTemplates
     public const string FriendRemoved = "FriendRemoved.html";
     public const string AddedToGroup = "AddedToGroup.html";
     public const string RemovedFromGroup = "RemovedFromGroup.html";
-    public const string AddIndividualExpense = "AddIndividualExpense.html";
-    public const string UpdateIndividualExpense = "UpdateIndividualExpense.html";
+    public const string AddNonGroupExpense = "AddNonGroupExpense.html";
+    public const string UpdateNonGroupExpense = "UpdateNonGroupExpense.html";
     public const string AddGroupExpense = "AddGroupExpense.html";
     public const string UpdateGroupExpense = "UpdateGroupExpense.html";
     public const string PaymentRecorded = "PaymentRecorded.html";
@@ -33,8 +33,8 @@ public static class EmailSubjects
     public const string FriendRemoved = "You have been removed from a friend list.";
     public const string AddedToGroup = "You have been added to a group.";
     public const string RemovedFromGroup = "You have been removed from a group.";
-    public const string AddIndividualExpense = "Individual expense has been added.";
-    public const string UpdateIndividualExpense = "Individual expense has been updated.";
+    public const string AddNonGroupExpense = "NonGroup expense has been added.";
+    public const string UpdateNonGroupExpense = "NonGroup expense has been updated.";
     public const string AddGroupExpense = "Group expense has been added.";
     public const string UpdateGroupExpense = "Group expense has been updated.";
     public const string PaymentRecorded = "A payment has been recorded with you.";

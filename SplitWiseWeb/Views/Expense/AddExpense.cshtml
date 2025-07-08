@@ -586,7 +586,7 @@
                 success: function (response) {
                     if (!response.statusCode) {
                         if (response.success) {
-                            window.location = "/individual-expenses";
+                            window.location = "/non-group-expenses";
                         } else {
                             toastr.error(response.message);
                         }
@@ -666,7 +666,7 @@
                 success: function (response) {
                     if (!response.statusCode) {
                         if (response.success) {
-                            window.location = "/individual-expenses";
+                            window.location = "/non-group-expenses";
                         } else {
                             toastr.error(response.message);
                         }

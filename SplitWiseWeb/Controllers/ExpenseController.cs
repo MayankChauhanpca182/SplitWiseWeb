@@ -18,11 +18,11 @@ public class ExpenseController : Controller
 
     // GET Index
     [Breadcrumb("Non-Group Expenses")]
-    [Route("individual-expenses")]
+    [Route("non-group-expenses")]
     public IActionResult Index()
     {
         ViewData["ActiveLink"] = "Non-Group";
-        return View("IndividialExpenses");
+        return View("NonGroupExpenses");
     }
 
     // GET GroupExpenses
@@ -34,12 +34,12 @@ public class ExpenseController : Controller
         return View();
     }
 
-    // GET AddIndividualExpense
+    // GET AddNonGroupExpense
     [Breadcrumb("Expense")]
-    [Route("individual-expenses/add")]
-    public async Task<IActionResult> AddIndividualExpense(int expenseId)
+    [Route("non-group-expenses/add")]
+    public async Task<IActionResult> AddNonGroupExpense(int expenseId)
     {
-        ExpenseVM expense = await _expenseService.GetIndividualExpense(expenseId);
+        ExpenseVM expense = await _expenseService.GetNonGroupExpense(expenseId);
         ViewData["ActiveLink"] = "Non-Group";
         return View("AddExpense", expense);
     }
@@ -54,12 +54,12 @@ public class ExpenseController : Controller
         return View("AddGroupExpense", expense);
     }
 
-    // GET ViewIndividualExpense
+    // GET ViewNonGroupExpense
     [Breadcrumb("View")]
-    [Route("individual-expenses/view")]
-    public async Task<IActionResult> ViewIndividualExpense(int expenseId)
+    [Route("non-group-expenses/view")]
+    public async Task<IActionResult> ViewNonGroupExpense(int expenseId)
     {
-        ExpenseVM expense = await _expenseService.GetIndividualExpense(expenseId);
+        ExpenseVM expense = await _expenseService.GetNonGroupExpense(expenseId);
         expense.IsViewOnly = true;
         ViewData["ActiveLink"] = "Non-Group";
         return View("AddExpense", expense);
@@ -93,12 +93,12 @@ public class ExpenseController : Controller
         return Json(response);
     }
 
-    // POST IndividualExpenseList
+    // POST NonGroupExpenseList
     [HttpPost]
-    public async Task<IActionResult> IndividualExpenseList(FilterVM filter)
+    public async Task<IActionResult> NonGroupExpenseList(FilterVM filter)
     {
         PaginatedListVM<ExpenseVM> expenses = await _expenseService.ExpenseList(filter);
-        return PartialView("IndividualExpenseListParialView", expenses);
+        return PartialView("NonGroupExpenseListParialView", expenses);
     }
 
     // POST GroupExpenseList

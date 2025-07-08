@@ -39,7 +39,7 @@ public class ExpenseService : IExpenseService
         _activityService = activityService;
     }
 
-    public async Task<ExpenseVM> GetIndividualExpense(int expenseId = 0)
+    public async Task<ExpenseVM> GetNonGroupExpense(int expenseId = 0)
     {
         ExpenseVM expenseVM = new ExpenseVM();
         User currentUser = await _userService.LoggedInUser();
