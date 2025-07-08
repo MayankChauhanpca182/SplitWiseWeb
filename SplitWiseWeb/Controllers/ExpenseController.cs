@@ -1,5 +1,4 @@
 using System.Text.Json;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SmartBreadcrumbs.Attributes;
@@ -18,11 +17,11 @@ public class ExpenseController : Controller
     }
 
     // GET Index
-    [Breadcrumb("Individual Expenses")]
+    [Breadcrumb("Non-Group Expenses")]
     [Route("individual-expenses")]
     public IActionResult Index()
     {
-        ViewData["ActiveLink"] = "Individual Expenses";
+        ViewData["ActiveLink"] = "Non-Group";
         return View("IndividialExpenses");
     }
 
@@ -36,17 +35,17 @@ public class ExpenseController : Controller
     }
 
     // GET AddIndividualExpense
-    [Breadcrumb("Details")]
+    [Breadcrumb("Expense")]
     [Route("individual-expenses/add")]
     public async Task<IActionResult> AddIndividualExpense(int expenseId)
     {
         ExpenseVM expense = await _expenseService.GetIndividualExpense(expenseId);
-        ViewData["ActiveLink"] = "Individual Expenses";
+        ViewData["ActiveLink"] = "Non-Group";
         return View("AddExpense", expense);
     }
 
     // GET AddGroupExpense
-    [Breadcrumb("Details", FromAction = "GroupExpenses")]
+    [Breadcrumb("Expense", FromAction = "GroupDetails", FromController = typeof(GroupController))]
     [Route("group-expenses/add")]
     public async Task<IActionResult> AddGroupExpense(int expenseId, int groupId)
     {
@@ -62,7 +61,7 @@ public class ExpenseController : Controller
     {
         ExpenseVM expense = await _expenseService.GetIndividualExpense(expenseId);
         expense.IsViewOnly = true;
-        ViewData["ActiveLink"] = "Individual Expenses";
+        ViewData["ActiveLink"] = "Non-Group";
         return View("AddExpense", expense);
     }
 
@@ -73,7 +72,7 @@ public class ExpenseController : Controller
     {
         ExpenseVM expense = await _expenseService.GetGroupExpense(expenseId);
         expense.IsViewOnly = true;
-        ViewData["ActiveLink"] = "Group Expenses";
+        ViewData["ActiveLink"] = "Groups";
         return View("AddGroupExpense", expense);
     }
 

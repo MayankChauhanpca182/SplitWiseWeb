@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml.Drawing.Chart.ChartEx;
+using Org.BouncyCastle.Asn1.Esf;
 using SplitWiseRepository.Constants;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.Repositories.Interface;
@@ -407,7 +408,7 @@ public class ExpenseService : IExpenseService
                                 || (e.PaidByUser.FirstName + e.PaidByUser.LastName).ToLower().Contains(searchString)
                                 || (isGroupExpenses && e.Group.Name.ToLower().Contains(searchString))),
             orderBy: orderBy,
-            includes: new List<System.Linq.Expressions.Expression<Func<Expense, object>>>
+            includes: new List<Expression<Func<Expense, object>>>
             {
                 e => e.ExpenseShares,
                 e => e.PaidByUser,
@@ -435,7 +436,9 @@ public class ExpenseService : IExpenseService
             PaidByName = e.PaidByUser.FirstName + " " + e.PaidByUser.LastName,
             Members = e.ExpenseShares.Where(es => es.DeletedAt == null).Select(es => es.User).ToList(),
             MemberNames = e.ExpenseShares.Where(es => es.DeletedAt == null).Select(es => es.User.FirstName + " " + es.User.LastName).ToList(),
-            Expense = (e.PaidById == currentUserId ? e.Amount : 0) - e.ExpenseShares.Where(es => es.DeletedAt == null && es.UserId == currentUserId).Sum(es => es.ShareAmount)
+            Expense = e.PaidById == currentUserId
+                    ? e.ExpenseShares.Where(es => es.DeletedAt == null && es.UserId != currentUserId).Sum(es => es.ShareAmount) 
+                    : (-1)*e.ExpenseShares.Where(es => es.DeletedAt == null && es.UserId == currentUserId).Sum(es => es.ShareAmount)
         }).ToList();
 
         paginatedList.Page.SetPagination(paginatedItems.TotalRecords, filter.PageSize, filter.PageNumber);

@@ -327,7 +327,7 @@ footer.footer {
 /* Group */
 .groupNoticeBoard{
     background-color: #1caf9a !important;
-    color: white;
+    color: white !important;
     font-weight: 700;
     font-family: cursive;
     padding: 50px;

@@ -72,7 +72,7 @@ public class GroupController : Controller
     }
 
     // GET GroupDetails
-    [Route("group-details/{groupId}")]
+    [Route("group-details")]
     [Breadcrumb("Group Details", FromAction = "Index")]
     public async Task<IActionResult> GroupDetails(int groupId)
     {

@@ -62,6 +62,8 @@ public class GroupService : IGroupService
 
     public async Task<GroupVM> GetGroup(int groupId)
     {
+        int currentUserId = _userService.LoggedInUserId();
+
         GroupVM groupVM = new GroupVM();
         Group group = await _groupRepository.Get(g => g.Id == groupId && g.DeletedAt == null);
         if (group != null)
@@ -73,6 +75,21 @@ public class GroupService : IGroupService
             groupVM.CurrencyId = group.CurrencyId;
             groupVM.IsSimplifiedPayments = group.IsSimplifiedPayments;
         }
+
+        // Calculate net amount
+        groupVM.Expense = await (
+            from e in _expenseRepository.Query()
+            where e.DeletedAt == null && e.GroupId == groupId
+            from es in e.ExpenseShares
+            where es.DeletedAt == null && (e.PaidById == currentUserId || es.UserId == currentUserId) && e.PaidById != es.UserId
+            group new { e, es } by e.GroupId into g
+            select new
+            {
+                GroupId = g.Key,
+                Expense = g.Sum(x => x.e.PaidById == currentUserId ? x.es.ShareAmount : -x.es.ShareAmount)
+            }
+        ).Select(x => x.Expense).FirstOrDefaultAsync();
+
         return groupVM;
     }
 

@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Org.BouncyCastle.Crypto.Engines;
 using SplitWiseRepository.Constants;
 using SplitWiseRepository.Models;
@@ -54,20 +55,18 @@ public class DashboardService : IDashboardService
             predicate: ur => ur.ReferredFromUserId == currentUser.Id
         );
 
-        // Groups
-        dashboard.GroupsCount = await _groupRepository.Count(
-            predicate: g => g.DeletedAt == null && g.GroupMembers.Any(gm => gm.UserId == currentUser.Id && gm.DeletedAt == null),
-            includes: new List<Expression<Func<Group, object>>>
-            {
-                g => g.GroupMembers
-            }
-        );
-        // dashboard.TotalGroupExpense = await TotalGroupExpense();
-        dashboard.TotalGroupExpense = await NetGroupExpense();
+        // Net expense
+        dashboard.NetGroupExpense = await NetGroupExpense();
+        dashboard.NetNonGroupExpense = await NetNonGroupExpense();
+        dashboard.NetExpense = dashboard.NetGroupExpense + dashboard.NetNonGroupExpense;
+
+        // Total paid
+        dashboard.TotalPaid = await TotalPaid();
+
+        // Total settled
+        dashboard.TotalSettled = await TotalSettled();
 
         // Recent expenses
-        dashboard.TotalExpense = await NetBalance();
-
         FilterVM filter = new FilterVM
         {
             SortColumn = "date",
@@ -77,62 +76,47 @@ public class DashboardService : IDashboardService
         dashboard.RecentExpenses = expenses.List.ToList();
 
         // Recent payments
-        dashboard.Payments = await GetPayments();
+        dashboard.RecentPayments = await GetPayments();
 
         return dashboard;
-    }
-
-    private async Task<decimal> NetBalance()
-    {
-        int currentUserId = _userService.LoggedInUserId();
-
-        decimal youAreOwed = await _expenseShareRepository.Sum(
-            selector: es => es.ShareAmount,
-            predicate: es => es.DeletedAt == null && ((es.Expense.PaidById == currentUserId && es.UserId != currentUserId) || (es.Expense.PaidById != currentUserId && es.UserId == currentUserId)),
-            includes: new List<Expression<Func<ExpenseShare, object>>>
-            {
-                es => es.Expense
-            }
-        );
-
-        decimal youOweOthers = await _expenseShareRepository.Sum(
-            selector: es => es.ShareAmount,
-            predicate: es => es.DeletedAt == null && es.Expense.PaidById != currentUserId && es.UserId == currentUserId,
-            includes: new List<Expression<Func<ExpenseShare, object>>>
-            {
-                es => es.Expense
-            }
-        );
-
-        return youAreOwed - youOweOthers;
-    }
-
-    private async Task<decimal> TotalGroupExpense()
-    {
-        int currentUserId = _userService.LoggedInUserId();
-
-        decimal total = await _expenseShareRepository.Sum(
-            selector: es => es.ShareAmount,
-            predicate: es => es.DeletedAt == null && es.UserId == currentUserId
-                    && es.Expense.DeletedAt == null
-                    && es.Expense.GroupId != null,
-            includes: new List<Expression<Func<ExpenseShare, object>>>
-            {
-                es => es.Expense
-            }
-        );
-        return total;
     }
 
     private async Task<decimal> NetGroupExpense()
     {
         int currentUserId = _userService.LoggedInUserId();
 
-        List<GroupVM> list = _groupService.GroupList(new FilterVM { PageNumber = 0, PageSize = 0 }).Result.List.ToList();
+        decimal netAmount = await _expenseShareRepository.Sum(
+            selector: es => es.Expense.PaidById == currentUserId ? es.ShareAmount : -es.ShareAmount,
+            predicate: es => es.DeletedAt == null
+                        && es.Expense.DeletedAt == null && es.Expense.GroupId != null
+                        && es.UserId != es.Expense.PaidById
+                        && (es.Expense.PaidById == currentUserId || es.UserId == currentUserId),
+            includes: new List<Expression<Func<ExpenseShare, object>>>
+            {
+                    es => es.Expense
+            }
+        );
 
-        decimal total = list.Sum(g => g.Expense);
+        return netAmount;
+    }
 
-        return total;
+    private async Task<decimal> NetNonGroupExpense()
+    {
+        int currentUserId = _userService.LoggedInUserId();
+
+        decimal netAmount = await _expenseShareRepository.Sum(
+            selector: es => es.Expense.PaidById == currentUserId ? es.ShareAmount : -es.ShareAmount,
+            predicate: es => es.DeletedAt == null
+                        && es.Expense.DeletedAt == null && es.Expense.GroupId == null
+                        && es.UserId != es.Expense.PaidById
+                        && (es.Expense.PaidById == currentUserId || es.UserId == currentUserId),
+            includes: new List<Expression<Func<ExpenseShare, object>>>
+            {
+                    es => es.Expense
+            }
+        );
+
+        return netAmount;
     }
 
     private async Task<List<Payment>> GetPayments()
@@ -141,15 +125,39 @@ public class DashboardService : IDashboardService
 
         PaginatedItemsVM<Payment> payments = await _paymentRepository.PaginatedList(
             predicate: p => p.DeletedAt == null && (p.PaidById == currentUserId || p.PaidToId == currentUserId),
-            orderBy: p => p.OrderByDescending(p => p.CreatedAt),
+            orderBy: p => p.OrderByDescending(p => p.Id),
             includes: new List<Expression<Func<Payment, object>>>
             {
                 p => p.PaidByUser,
-                p => p.PaidByUser
+                p => p.PaidToUser
             },
             pageNumber: 1,
             pageSize: 5
         );
         return payments.Items.ToList();
+    }
+
+    private async Task<decimal> TotalPaid()
+    {
+        int currentUserId = _userService.LoggedInUserId();
+
+        decimal totalSpent = await _expenseRepository.Sum(
+            selector: e => e.Amount,
+            predicate: e => e.DeletedAt == null && e.PaidById == currentUserId
+        );
+
+        return totalSpent;
+    }
+
+    private async Task<decimal> TotalSettled()
+    {
+        int currentUserId = _userService.LoggedInUserId();
+
+        decimal totalPaid = await _paymentRepository.Sum(
+            selector: p => p.Amount,
+            predicate: p => p.PaidById == currentUserId
+        );
+
+        return totalPaid;
     }
 }
