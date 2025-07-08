@@ -22,8 +22,9 @@ public class SettlementService : ISettlementService
     private readonly ITransactionRepository _transaction;
     private readonly IUserService _userService;
     private readonly IActivityService _activityService;
+    private readonly IEmailService _emailService;
 
-    public SettlementService(IUserService userService, IGenericRepository<Friend> friendRepository, IGenericRepository<Expense> expenseRepository, IGenericRepository<Group> groupRepository, ITransactionRepository transaction, IGenericRepository<Payment> paymentRepository, IGenericRepository<ExpenseShare> expenseShareRepository, IActivityService activityService)
+    public SettlementService(IUserService userService, IGenericRepository<Friend> friendRepository, IGenericRepository<Expense> expenseRepository, IGenericRepository<Group> groupRepository, ITransactionRepository transaction, IGenericRepository<Payment> paymentRepository, IGenericRepository<ExpenseShare> expenseShareRepository, IActivityService activityService, IEmailService emailService)
     {
         _userService = userService;
         _friendRepository = friendRepository;
@@ -33,6 +34,7 @@ public class SettlementService : ISettlementService
         _paymentRepository = paymentRepository;
         _expenseShareRepository = expenseShareRepository;
         _activityService = activityService;
+        _emailService = emailService;
     }
 
     public async Task<SettlementListVM> GetList(int friendUserId)
@@ -158,6 +160,10 @@ public class SettlementService : ISettlementService
             }
             await _paymentRepository.Add(payment);
 
+            // Send email
+            User paidToUser = await _userService.GetById(payment.PaidToId);
+            await _emailService.PaymentRecorded($"{currentUser.FirstName} {currentUser.LastName}", $"{paidToUser.FirstName} {paidToUser.LastName}", settlement.Amount.ToString("N2"), paidToUser.EmailAddress);
+
             if (settlement.GroupId > 0)
             {
                 // Add group activity
@@ -176,7 +182,7 @@ public class SettlementService : ISettlementService
                     }
                 );
 
-                foreach (ExpenseShare share in expenseShares)
+                foreach (ExpenseShare share in expenseShares.Where(es => es.ShareAmount > 0))
                 {
                     share.ShareAmount = 0;
                     share.UpdatedAt = DateTime.Now;
@@ -198,7 +204,7 @@ public class SettlementService : ISettlementService
                     }
                 );
 
-                foreach (ExpenseShare share in expenseShares)
+                foreach (ExpenseShare share in expenseShares.Where(es => es.ShareAmount > 0))
                 {
                     if (remaingAmount >= share.ShareAmount)
                     {

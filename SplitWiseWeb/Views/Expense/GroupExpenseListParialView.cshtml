@@ -69,7 +69,13 @@
                     <td class="@(expense.Expense < 0 ? "text-danger" : "text-success")">
                         @(expense.Expense == 0 ? $"Expense is settled" : (expense.Expense > 0 ? $"You are owed ₹{expense.Expense.ToString("N2")}" : $"You owe {expense.PaidByName} ₹{((-1)*expense.Expense).ToString("N2")}"))
                     </td>
-                    <td class="text-center">
+                    <td class="text-end">
+                        @if(expense.Expense < 0)
+                        {
+                            <a asp-controller="Settlement" asp-action="Index" asp-route-friendUserId="@expense.PaidById" class="btn border-0" title="Settle Up">
+                                <i class="bi bi-credit-card"></i>
+                            </a>
+                        }
                         <a asp-action="ViewGroupExpense" asp-controller="Expense" asp-route-expenseId="@expense.Id" class="btn border-0" title="View">
                             <i class="bi bi-file-earmark-fill"></i>
                         </a>

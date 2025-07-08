@@ -17,6 +17,7 @@ public static class EmailTemplates
     public const string UpdateIndividualExpense = "UpdateIndividualExpense.html";
     public const string AddGroupExpense = "AddGroupExpense.html";
     public const string UpdateGroupExpense = "UpdateGroupExpense.html";
+    public const string PaymentRecorded = "PaymentRecorded.html";
 }
 
 public static class EmailSubjects
@@ -36,5 +37,6 @@ public static class EmailSubjects
     public const string UpdateIndividualExpense = "Individual expense has been updated.";
     public const string AddGroupExpense = "Group expense has been added.";
     public const string UpdateGroupExpense = "Group expense has been updated.";
+    public const string PaymentRecorded = "A payment has been recorded with you.";
 }
 

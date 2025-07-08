@@ -321,7 +321,7 @@ public class ExpenseService : IExpenseService
                 if (newExpense.GroupId != null)
                 {
                     // Add group activity
-                    await _activityService.AddGroupActivity(ActivityType.GroupExpenseAdded, groupId: (int)newExpense.GroupId, expenseId: newExpense.Id);
+                    await _activityService.AddGroupActivity(ActivityType.GroupExpenseAdded, groupId: (int)newExpense.GroupId, expenseId: expense.Id);
                 }
 
                 response.Success = true;

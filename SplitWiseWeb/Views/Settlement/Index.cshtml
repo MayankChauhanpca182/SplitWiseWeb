@@ -4,28 +4,29 @@
 }
 
 <breadcrumb></breadcrumb>
-<h3 class="bg-white mb-3 p-3 text-dark-emphasis shadow">
-    Settle up with <span class="text-purple">@($"{Model.FirstName} {Model.LastName}")</span>
+<h3 class="d-flex flex-wrap justify-content-between bg-white mb-3 p-3 text-dark-emphasis shadow">
+    <span>
+        Settle up with <span class="text-primary">@($"{Model.FirstName} {Model.LastName}")</span>
+    </span>
+    <a asp-action="Index" asp-controller="Friend" class="btn btn-secondary">Back</a>
 </h3>
 
-<div class="bg-white" id="settlementListOuter">
-    
-</div>
+<div class="bg-white" id="settlementListOuter"></div>
 
 
 @section Scripts {
     <script>
-        $(document).ready(function(){
+        $(document).ready(function () {
             getSettlementList('@Model.Id');
         });
 
         // Settlement list
-        function getSettlementList(friendUserId){
+        function getSettlementList(friendUserId) {
             $("#settlementListOuter").empty();
             $.ajax({
                 url: "/Settlement/SettlementList",
                 type: "GET",
-                data: { friendUserId},
+                data: { friendUserId },
                 success: function (response) {
                     if (!response.statusCode) {
                         if (response.success == false) {
@@ -66,8 +67,7 @@
         $(document).on("submit", "#settlementForm", function (e) {
             e.preventDefault();
 
-            if(!parseFloat($("#Amount").val()))
-            {
+            if (!parseFloat($("#Amount").val())) {
                 toastr.error("Enter amount greater then zero.");
                 return;
             }
@@ -104,10 +104,10 @@
         });
 
         // Set settled up image
-        function setSettledUpImage(){
+        function setSettledUpImage() {
             $("#settleUpModalTitle").html(`Recorded payment with <span class="text-purple">@Model.FirstName
-            @Model.LastName</span>`);
-            let image = `<img src="/images/settled-up.png" class="mx-auto my-5" alt="" width="300px" height="300px">`;
+                @Model.LastName</span>`);
+            let image = `<img src="/images/settled-up.png" class="mx-auto my-5" alt="" width="200px" height="200px">`;
             $("#settlementForm").replaceWith(image);
         }
     </script>

@@ -59,13 +59,14 @@ public class ActivityService : IActivityService
         List<ActivityVM> activityList = groupActivities.Select(ge =>
         {
             string performedByUserName = ge.PerformedByUser.Id == currentUserId ? "You" : $"{ge.PerformedByUser.FirstName} {ge.PerformedByUser.LastName}";
+
             string performedOnUserName = string.Empty;
             if (ge.PerformedOnUser != null)
             {
                 performedOnUserName = ge.PerformedOnUser.Id == currentUserId ? "You" : $"{ge.PerformedOnUser.FirstName} {ge.PerformedOnUser.LastName}";
             }
-            string activityMessage = string.Empty;
 
+            string activityMessage = string.Empty;
             switch (ge.ActivityType)
             {
                 case ActivityType.GroupCreated:
@@ -122,6 +123,7 @@ public class ActivityService : IActivityService
                 CreatedAt = ge.CreatedAt
             };
         }).ToList();
+        
         return activityList;
     }
 

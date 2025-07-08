@@ -191,4 +191,13 @@ public class EmailService : IEmailService
         return;
     }
 
+    public async Task PaymentRecorded(string senderName, string recieverName, string amount, string email)
+    {
+        string fileText = GetEmailTemplate(EmailTemplates.PaymentRecorded);
+
+        string emailBody = fileText.Replace("{recieverName}", recieverName).Replace("{senderName}", senderName).Replace("{amount}", amount);
+        await Send(email, EmailSubjects.PaymentRecorded, emailBody);
+        return;
+    }
+
 }

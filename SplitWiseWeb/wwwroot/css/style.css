@@ -324,8 +324,16 @@ footer.footer {
     font-size: 11px;
 }
 
-/* Expense */
+/* Group */
+.groupNoticeBoard{
+    background-color: #1caf9a !important;
+    color: white;
+    font-weight: 700;
+    font-family: cursive;
+    padding: 50px;
+}
 
+/* Expense */
 .dropdownList {
     transform: translate(0, 40px) !important;
 }
