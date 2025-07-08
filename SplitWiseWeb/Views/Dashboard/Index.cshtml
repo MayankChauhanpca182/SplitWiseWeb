@@ -61,66 +61,132 @@
     </a>
 </div>
 
-<div class="bg-white p-3">
-    <p class="fw-semibold fs-5 text-dark-emphasis">Recent Expenses</p>
-    <div class="table-responsive bg-white">
-        <table class="table text-nowrap">
-            <thead class="position-sticky top-0 z-1">
-                <tr>
-                    <th scope="col" class="col-1">
-                        <span class="text-clr-grey text-dark-emphasis">Date</span>
-                    </th>
-                    <th scope="col" class="col">
-                        <span class="text-clr-grey text-dark-emphasis">Title</span>
-                    </th>
-                    <th scope="col" class="col">
-                        <span class="text-clr-grey text-dark-emphasis">Type</span>
-                    </th>
-                    <th scope="col" class="col">
-                        <span class="text-clr-grey text-dark-emphasis">Paid By</span>
-                    </th>
-                    <th scope="col" class="col">
-                        <span class="text-clr-grey text-dark-emphasis">Expense</span>
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (ExpenseVM expense in Model.RecentExpenses)
-                {
+<div class="row m-0 gap-2">
+    <div class="bg-white p-3 col">
+        <p class="fw-semibold fs-5 text-dark-emphasis">Recent Expenses</p>
+        <div class="table-responsive bg-white">
+            <table class="table text-nowrap">
+                <thead class="position-sticky top-0 z-1">
                     <tr>
-                        <td>
-                            <span>@expense.PaidDate.ToString("dd-MM-yyyy")</span>
-                        </td>
-                        <td>
-                            @if(expense.GroupId != null && expense.GroupId > 0)
-                            {
-                                <a asp-action="ViewGroupExpense" asp-controller="Expense" asp-route-expenseId="@expense.Id">
-                                    <span class="text-dark">@expense.Title</span>
-                                </a>
-                            }
-                            else
-                            {
-                                <a asp-action="ViewIndividualExpense" asp-controller="Expense" asp-route-expenseId="@expense.Id">
-                                    <span class="text-dark">@expense.Title</span>
-                                </a>
-                            }
-                        </td>
-                        <td>
-                            <span>@(expense.GroupId != null && expense.GroupId > 0 ? "Group" : "Individual")</span>
-                        </td>
-                        <td>
-                            <span>@(expense.PaidById == currentUserId ? "You" : expense.PaidByName)</span>
-                        </td>
-                        <td class="@(expense.Expense < 0 ? "text-danger" : "text-success")">
-                            @(expense.Expense == 0 ? $"Expense is settled" : (expense.Expense > 0 ? $"You are owed ₹{expense.Expense.ToString("N2")}" : $"You owe {expense.PaidByName} ₹{((-1)*expense.Expense).ToString("N2")}"))
-                        </td>
+                        <th scope="col" class="col-1">
+                            <span class="text-clr-grey text-dark-emphasis">Date</span>
+                        </th>
+                        <th scope="col" class="col">
+                            <span class="text-clr-grey text-dark-emphasis">Title</span>
+                        </th>
+                        <th scope="col" class="col">
+                            <span class="text-clr-grey text-dark-emphasis">Type</span>
+                        </th>
+                        <th scope="col" class="col">
+                            <span class="text-clr-grey text-dark-emphasis">Paid By</span>
+                        </th>
+                        <th scope="col" class="col">
+                            <span class="text-clr-grey text-dark-emphasis">Expense</span>
+                        </th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (ExpenseVM expense in Model.RecentExpenses)
+                    {
+                        <tr>
+                            <td>
+                                <span>@expense.PaidDate.ToString("dd-MM-yyyy")</span>
+                            </td>
+                            <td>
+                                @if(expense.GroupId != null && expense.GroupId > 0)
+                                {
+                                    <a asp-action="ViewGroupExpense" asp-controller="Expense" asp-route-expenseId="@expense.Id">
+                                        <span class="text-dark">@expense.Title</span>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a asp-action="ViewIndividualExpense" asp-controller="Expense" asp-route-expenseId="@expense.Id">
+                                        <span class="text-dark">@expense.Title</span>
+                                    </a>
+                                }
+                            </td>
+                            <td>
+                                <span>@(expense.GroupId != null && expense.GroupId > 0 ? "Group" : "Individual")</span>
+                            </td>
+                            <td>
+                                <span>@(expense.PaidById == currentUserId ? "You" : expense.PaidByName)</span>
+                            </td>
+                            <td class="@(expense.Expense < 0 ? "text-danger" : "text-success")">
+                                @(expense.Expense == 0 ? $"Expense is settled" : (expense.Expense > 0 ? $"You are owed ₹{expense.Expense.ToString("N2")}" : $"You owe {expense.PaidByName} ₹{((-1)*expense.Expense).ToString("N2")}"))
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        @if (Model.RecentExpenses.Count() == 0)
+        {
+            <p class="p-4 text-center">No recent expenses found</p>
+        }
     </div>
-    @if (Model.RecentExpenses.Count() == 0)
-    {
-        <p class="p-4 text-center">No recent expenses found</p>
-    }
+
+    <div class="bg-white p-3 col">
+        <p class="fw-semibold fs-5 text-dark-emphasis">Recent Payments</p>
+        <div class="table-responsive bg-white">
+            <table class="table text-nowrap">
+                <thead class="position-sticky top-0 z-1">
+                    <tr>
+                        <th scope="col" class="col-1">
+                            <span class="text-clr-grey text-dark-emphasis">Date</span>
+                        </th>
+                        <th scope="col" class="col">
+                            <span class="text-clr-grey text-dark-emphasis">Title</span>
+                        </th>
+                        <th scope="col" class="col">
+                            <span class="text-clr-grey text-dark-emphasis">Type</span>
+                        </th>
+                        <th scope="col" class="col">
+                            <span class="text-clr-grey text-dark-emphasis">Paid By</span>
+                        </th>
+                        <th scope="col" class="col">
+                            <span class="text-clr-grey text-dark-emphasis">Expense</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (ExpenseVM expense in Model.RecentExpenses)
+                    {
+                        <tr>
+                            <td>
+                                <span>@expense.PaidDate.ToString("dd-MM-yyyy")</span>
+                            </td>
+                            <td>
+                                @if(expense.GroupId != null && expense.GroupId > 0)
+                                {
+                                    <a asp-action="ViewGroupExpense" asp-controller="Expense" asp-route-expenseId="@expense.Id">
+                                        <span class="text-dark">@expense.Title</span>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a asp-action="ViewIndividualExpense" asp-controller="Expense" asp-route-expenseId="@expense.Id">
+                                        <span class="text-dark">@expense.Title</span>
+                                    </a>
+                                }
+                            </td>
+                            <td>
+                                <span>@(expense.GroupId != null && expense.GroupId > 0 ? "Group" : "Individual")</span>
+                            </td>
+                            <td>
+                                <span>@(expense.PaidById == currentUserId ? "You" : expense.PaidByName)</span>
+                            </td>
+                            <td class="@(expense.Expense < 0 ? "text-danger" : "text-success")">
+                                @(expense.Expense == 0 ? $"Expense is settled" : (expense.Expense > 0 ? $"You are owed ₹{expense.Expense.ToString("N2")}" : $"You owe {expense.PaidByName} ₹{((-1)*expense.Expense).ToString("N2")}"))
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        @if (Model.RecentExpenses.Count() == 0)
+        {
+            <p class="p-4 text-center">No recent expenses found</p>
+        }
+    </div>
 </div>

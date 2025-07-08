@@ -1,3 +1,5 @@
+using SplitWiseRepository.Models;
+
 namespace SplitWiseRepository.ViewModels;
 
 public class DashboardVM
@@ -13,4 +15,5 @@ public class DashboardVM
 
     public decimal TotalExpense { get; set; } = 0;
     public List<ExpenseVM> RecentExpenses { get; set; } = new List<ExpenseVM>();
+    public List<Payment> Payments { get; set; } = new List<Payment>();
 }
