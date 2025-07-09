@@ -66,6 +66,12 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
             query = query.Where(predicate);
         }
 
+        //Order By
+        if (orderBy != null)
+        {
+            query = orderBy(query);
+        }
+
         // Apply Includes (First-level navigation properties)
         if (includes != null)
         {

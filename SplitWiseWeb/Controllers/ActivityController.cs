@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using SplitWiseRepository.Models;
 using SplitWiseRepository.ViewModels;
 using SplitWiseService.Services.Interface;
 
@@ -17,8 +18,7 @@ public class ActivityController : Controller
     // GET GroupActivities
     public async Task<IActionResult> GroupActivities(int groupId)
     {
-        List<ActivityVM> activities = await _activityService.GroupActivityList(groupId);
-        return Json(activities);
+        List<GroupActivity> activities = await _activityService.GroupActivityList(groupId);
+        return PartialView("ActivityList", activities);
     }
-
 }

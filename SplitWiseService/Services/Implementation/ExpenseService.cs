@@ -1,7 +1,5 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using OfficeOpenXml.Drawing.Chart.ChartEx;
-using Org.BouncyCastle.Asn1.Esf;
 using SplitWiseRepository.Constants;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.Repositories.Interface;
@@ -324,6 +322,11 @@ public class ExpenseService : IExpenseService
                     // Add group activity
                     await _activityService.AddGroupActivity(ActivityType.GroupExpenseAdded, groupId: (int)newExpense.GroupId, expenseId: expense.Id);
                 }
+                else
+                {
+                    // Add activity
+                    await _activityService.AddGroupActivity(ActivityType.ExpenseAdded, expenseId: expense.Id);
+                }
 
                 response.Success = true;
                 response.Message = NotificationMessages.Saved.Replace("{0}", "Expense");
@@ -355,9 +358,14 @@ public class ExpenseService : IExpenseService
                     // Add group activity
                     await _activityService.AddGroupActivity(ActivityType.GroupExpenseUpdated, groupId: (int)existingExpense.GroupId, expenseId: existingExpense.Id);
                 }
+                else
+                {
+                    // Add activity
+                    await _activityService.AddGroupActivity(ActivityType.ExpenseUpdated, expenseId: existingExpense.Id);
+                }
 
                 // Add expense splits
-                await UpdateExpenseShare(existingExpense, newExpense.ExpenseShares, newExpense.SplitTypeEnum, isNew: false);
+                    await UpdateExpenseShare(existingExpense, newExpense.ExpenseShares, newExpense.SplitTypeEnum, isNew: false);
 
                 response.Success = true;
                 response.Message = NotificationMessages.Updated.Replace("{0}", "Expense");

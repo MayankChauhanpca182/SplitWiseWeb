@@ -446,16 +446,20 @@ public class GroupService : IGroupService
                     if (user.Id == currentUser.Id)
                     {
                         response.Message = NotificationMessages.LeaveGroup.Replace("{0}", group.Name);
+
+                        // Add group activity
+                        await _activityService.AddGroupActivity(ActivityType.LeaveGroup, groupId: group.Id);
                     }
                     else
                     {
                         // Send email
                         await _emailService.RemovedFromGroupEmail(user.FirstName, $"{currentUser.FirstName} {currentUser.LastName}", group.Name, user.EmailAddress);
+                        
+                        // Add group activity
+                        await _activityService.AddGroupActivity(ActivityType.MemberRemoved, groupId: group.Id, performedOnId: groupMember.UserId);
                     }
                 }
 
-                // Add group activity
-                await _activityService.AddGroupActivity(ActivityType.MemberRemoved, groupId: group.Id, performedOnId: groupMember.UserId);
             }
 
             // Commit transaction

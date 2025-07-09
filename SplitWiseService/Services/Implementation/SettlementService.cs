@@ -1,7 +1,5 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
-using Microsoft.Extensions.DependencyInjection;
 using SplitWiseRepository.Constants;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.Repositories.Interface;
@@ -167,7 +165,12 @@ public class SettlementService : ISettlementService
             if (settlement.GroupId > 0)
             {
                 // Add group activity
-                await _activityService.AddGroupActivity(ActivityType.MemberRemoved, groupId: settlement.GroupId, performedOnId: settlement.PaidToId);
+                await _activityService.AddGroupActivity(ActivityType.GroupPaymenent, groupId: settlement.GroupId, performedOnId: settlement.PaidToId, paymentId: payment.Id);
+            }
+            else
+            {
+                // Add activity
+                await _activityService.AddGroupActivity(ActivityType.NonGroupPaymenent, performedOnId: settlement.PaidToId, paymentId: payment.Id);
             }
 
             // Update ExpenseShares

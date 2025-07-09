@@ -1,0 +1,90 @@
+@using SplitWiseRepository.Constants
+@model List<GroupActivity>
+
+@foreach (GroupActivity activity in Model)
+{
+    <div class="d-flex align-items-center gap-2 my-1">
+        <span>@activity.CreatedAt.ToString("dd-MM-yyyy") - @activity.CreatedAt.ToString("HH:mm:ss") : </span>
+        <span>
+            <img src="@(activity.PerformedByUser.ProfileImagePath ?? "/images/Default_pfp.png")" alt=""
+                class="rounded-circle" width="25px">
+            <strong>@(activity.PerformedByUser.FirstName + " " + activity.PerformedByUser.LastName)</strong>
+
+            @switch (activity.ActivityType)
+            {
+                case ActivityType.GroupCreated:
+                    <span>created the group</span>
+                    <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt="" class="rounded-circle"
+                        width="25px">
+                    <strong>@activity.Group.Name</strong>
+                    break;
+                case ActivityType.GroupUpdated:
+                    <span>updated the group</span>
+                    <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt="" class="rounded-circle"
+                        width="25px">
+                    <strong>@activity.Group.Name</strong>
+                    break;
+                case ActivityType.GroupDeleted:
+                    <span>deleted the group</span>
+                    <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt="" class="rounded-circle"
+                        width="25px">
+                    <strong>@activity.Group.Name</strong>
+                    break;
+                case ActivityType.MemberAdded:
+                    <span>added</span>
+                    <img src="@(activity.PerformedOnUser.ProfileImagePath ?? "/images/Default_pfp.png")" alt=""
+                        class="rounded-circle" width="25px">
+                    <strong>@(activity.PerformedOnUser.FirstName + " " + activity.PerformedOnUser.LastName)</strong>
+                    <span>to the group</span>
+                    <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt="" class="rounded-circle"
+                        width="25px">
+                    <strong>@activity.Group.Name</strong>
+                    break;
+                case ActivityType.MemberRemoved:
+                    <span>removed</span>
+                    <img src="@(activity.PerformedOnUser.ProfileImagePath ?? "/images/Default_pfp.png")" alt=""
+                        class="rounded-circle" width="25px">
+                    <strong>@(activity.PerformedOnUser.FirstName + " " + activity.PerformedOnUser.LastName)</strong>
+                    <span>from the group</span>
+                    <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt="" class="rounded-circle"
+                        width="25px">
+                    <strong>@activity.Group.Name</strong>
+                    break;
+                case ActivityType.GroupExpenseAdded:
+                    <span>added expense</span>
+                    <strong>@(activity.Expense.Title)</strong>
+                    <span>in the group</span>
+                    <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt="" class="rounded-circle"
+                        width="25px">
+                    <strong>@activity.Group.Name</strong>
+                    break;
+                case ActivityType.GroupExpenseUpdated:
+                    <span>updated expense</span>
+                    <strong>@(activity.Expense.Title)</strong>
+                    <span>in the group</span>
+                    <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt="" class="rounded-circle"
+                        width="25px">
+                    <strong>@activity.Group.Name</strong>
+                    break;
+                case ActivityType.LeaveGroup:
+                    <span>left the group</span>
+                    <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt="" class="rounded-circle"
+                        width="25px">
+                    <strong>@activity.Group.Name</strong>
+                    break;
+                case ActivityType.GroupPaymenent:
+                    <span>paid</span>
+                    <strong>₹@activity.Payment.Amount.ToString("N2")</strong>
+                    <span>to</span>
+                    <img src="@(activity.PerformedOnUser.ProfileImagePath ?? "/images/Default_pfp.png")" alt=""
+                        class="rounded-circle" width="25px">
+                    <strong>@(activity.PerformedOnUser.FirstName + " " + activity.PerformedOnUser.LastName)</strong>
+                    <span>in the group</span>
+                    <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt="" class="rounded-circle"
+                        width="25px">
+                    <strong>@activity.Group.Name</strong>
+                    break;
+            }
+        </span>
+    </div>
+}

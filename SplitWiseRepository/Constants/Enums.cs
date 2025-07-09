@@ -28,5 +28,9 @@ public enum ActivityType
     MemberRemoved = 4,
     GroupExpenseAdded = 5,
     GroupExpenseUpdated = 6,
-    Paid = 7
+    GroupPaymenent = 7,
+    NonGroupPaymenent = 8,
+    LeaveGroup = 9,
+    ExpenseAdded = 10,
+    ExpenseUpdated = 11
 }

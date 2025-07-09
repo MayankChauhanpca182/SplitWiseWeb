@@ -59,8 +59,9 @@
             </div>
             <div id="groupExpensesOuter" class="listOuter bg-white"></div>
         </div>
-        <div class="tab-pane fade" id="group-activity" role="tabpanel" aria-labelledby="group-activity-tab">This group
-            has no activity.</div>
+        <div class="tab-pane fade" id="group-activity" role="tabpanel" aria-labelledby="group-activity-tab">
+            This group has no activity.
+        </div>
         <div class="tab-pane fade" id="group-settleup" role="tabpanel" aria-labelledby="group-settleup-tab">Expense has
             settled.</div>
         <div class="tab-pane fade" id="group-members" role="tabpanel" aria-labelledby="group-members-tab"></div>
@@ -292,8 +293,7 @@
                             toastr.error(response.message);
                         }
                         else {
-                            @* $("#group-members").html(response); *@
-                                console.log(response);
+                            $("#group-activity").html(response);
                         }
                     }
                 },

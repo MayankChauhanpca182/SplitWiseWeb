@@ -337,6 +337,11 @@ footer.footer {
     padding: 40px;
 }
 
+#group-activity{
+    max-height: calc(100vh - 372px);
+    overflow-y: auto;
+}
+
 /* Expense */
 .dropdownList {
     transform: translate(0, 40px) !important;
