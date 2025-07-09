@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.ViewModels;
@@ -176,6 +176,7 @@ public class AuthController : Controller
         return View("500");
     }
 
+    [AllowAnonymous]
     public IActionResult HandleExceptionWithToaster(string message)
     {
         TempData["ToastError"] = message;

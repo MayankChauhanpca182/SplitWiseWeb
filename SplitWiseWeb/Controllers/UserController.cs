@@ -47,6 +47,7 @@ public class UserController : Controller
     }
 
     // POST ResendLinkModal
+    [AllowAnonymous]
     [HttpPost]
     public IActionResult ResendLinkModal(string email)
     {
@@ -54,6 +55,7 @@ public class UserController : Controller
     }
 
     // POST ResendLink
+    [AllowAnonymous]
     [HttpPost]
     public async Task<IActionResult> ResendLink(string email)
     {

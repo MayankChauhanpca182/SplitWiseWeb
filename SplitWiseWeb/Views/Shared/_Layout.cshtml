@@ -145,13 +145,11 @@
                     <div class="floating-menu">
                         <button class="main-btn" title="Add Expense"><i class="bi bi-cash"></i></button>
                         <div class="submenu">
-                            <a asp-action="AddGroupExpense" asp-controller="Expense" class="sub-btn"
-                                title="Add Group Expense">
-                                <i class="fa-solid fa-users"></i>
-                            </a>
-                            <a asp-action="AddNonGroupExpense" title="Add Non-Group Expense" class="sub-btn"
-                                asp-controller="Expense">
+                            <a asp-action="AddNonGroupExpense" asp-controller="Expense" class="sub-btn" title="Add Non-Group Expense">
                                 <i class="bi bi-person-fill"></i>
+                            </a>
+                            <a asp-action="AddGroupExpense" asp-controller="Expense" class="sub-btn" title="Add Group Expense">
+                                <i class="fa-solid fa-users"></i>
                             </a>
                         </div>
                     </div>
