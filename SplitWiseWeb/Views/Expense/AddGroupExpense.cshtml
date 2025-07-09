@@ -246,7 +246,7 @@
                 </div>
             }
         </div>
-        <div id="remainingBalanceDiv">
+        <div id="remainingBalanceDiv" style="@(Model.SplitTypeEnum == SplitType.Equally ? "display: none;" : "")">
             <span class="fs-6 fw-semibold">Remaining balance: </span>
             <span class="fs-6 fw-semibold" id="remainigBalance">0 ₹</span>
         </div>
