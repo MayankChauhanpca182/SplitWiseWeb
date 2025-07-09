@@ -100,7 +100,7 @@
                     </a>
                     <a asp-action="Index" asp-controller="Group"
                         class="navItems d-flex align-items-center gap-3 @((ViewData["ActiveLink"] as string) == "Groups" ? "active" : "")">
-                        <i class="bi bi-diagram-3-fill"></i>
+                        <i class="fa-solid fa-users"></i>
                         Groups
                     </a>
                     <a asp-action="Index" asp-controller="Expense"
@@ -146,7 +146,9 @@
                         <button class="main-btn" title="Add Expense"><i class="bi bi-cash"></i></button>
                         <div class="submenu">
                             <a asp-action="AddGroupExpense" asp-controller="Expense" class="sub-btn"
-                                title="Add Group Expense"><i class="bi bi-people-fill"></i></a>
+                                title="Add Group Expense">
+                                <i class="fa-solid fa-users"></i>
+                            </a>
                             <a asp-action="AddNonGroupExpense" title="Add Non-Group Expense" class="sub-btn"
                                 asp-controller="Expense">
                                 <i class="bi bi-person-fill"></i>

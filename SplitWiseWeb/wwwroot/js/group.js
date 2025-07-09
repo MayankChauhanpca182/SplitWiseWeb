@@ -41,7 +41,7 @@ $(document).on("submit", "#groupForm", function (e) {
                             getGroupList(1);
                             break;
                         case "/group-details":
-                            location.reload();
+                            fetchGroupName();
                             break;
                     };
                 }

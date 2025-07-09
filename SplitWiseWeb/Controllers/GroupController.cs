@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SmartBreadcrumbs.Attributes;
@@ -133,5 +134,20 @@ public class GroupController : Controller
             return Json(new ResponseVM { Success = false, Message = NotificationMessages.CanNotExportEmptyList.Replace("{0}", "groups") });
         }
         return File(fileData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Groups.xlsx");
+    }
+
+    // GET GroupSettleUps
+    public async Task<IActionResult> GroupSettleUps(int groupId)
+    {
+        List<GroupMemberVM> members = await _groupService.GetMembers(groupId);
+        members = members.Where(m => m.Expense < 0).ToList();
+        return PartialView("GroupSettlementsPartialView", members);
+    }
+
+    // GET GroupName
+    public async Task<IActionResult> GroupName(int groupId)
+    {
+        GroupVM group = await _groupService.GetGroup(groupId);
+        return PartialView("GroupNamePartialView", group);
     }
 }

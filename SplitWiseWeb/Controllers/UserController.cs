@@ -148,7 +148,7 @@ public class UserController : Controller
 
     #region Profile
     // GET Profile
-    [Breadcrumb("Profile", FromAction = "Index", FromController = typeof(DashboardController))]
+    [Breadcrumb("My Profile", FromAction = "Index", FromController = typeof(DashboardController))]
     [Route("profile")]
     public async Task<IActionResult> Profile()
     {

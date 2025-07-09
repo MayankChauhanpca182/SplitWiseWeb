@@ -17,7 +17,11 @@
     </label>
     <span class="text-danger" asp-validation-for="@Model.ProfileImage"></span>
 
-    <p class="mt-4 mb-0"><strong>Email:</strong> @Model.EmailAddress</p>
+    <!-- Email -->
+    <div class="form-floating mt-4 rounded-2 shadow-sm">
+        <input asp-for=@Model.EmailAddress class="form-control border-secondary-subtle"placeholder="First Name" readonly disabled>
+        <label asp-for="@Model.EmailAddress">Email</label>
+    </div>
 
     <!-- First Name -->
     <div class="form-floating mt-4 rounded-2 shadow-sm">

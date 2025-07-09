@@ -122,6 +122,10 @@ th, td{
     display: none;
 }
 
+.w-125px{
+    width: 125px !important;
+}
+
 /* Global */
 body {
     font-family: "Roboto", sans-serif;

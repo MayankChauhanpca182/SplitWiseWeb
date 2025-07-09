@@ -8,7 +8,7 @@
     <span>
         Settle up with <span class="text-primary">@($"{Model.FirstName} {Model.LastName}")</span>
     </span>
-    <a asp-action="Index" asp-controller="Friend" class="btn btn-secondary">Back</a>
+    <button type="button" class="btn btn-secondary back-btn">Back</button>
 </h3>
 
 <div class="bg-white" id="settlementListOuter"></div>
@@ -58,12 +58,12 @@
                 },
                 error: function () {
                     $("#regularModal").modal("hide");
-                    toastr.error('@(NotificationMessages.InternalServerError)');
+                    toastr.error("Internal server error.");
                 },
             });
         }
 
-        // Save form
+        // Save settlement form
         $(document).on("submit", "#settlementForm", function (e) {
             e.preventDefault();
 
@@ -98,7 +98,7 @@
                     }
                 },
                 error: function (xhr, status, error) {
-                    toastr.error('@NotificationMessages.InternalServerError');
+                    toastr.error("Internal server error.");
                 }
             });
         });
@@ -106,8 +106,8 @@
         // Set settled up image
         function setSettledUpImage() {
             $("#settleUpModalTitle").html(`Recorded payment with <span class="text-purple">@Model.FirstName
-                @Model.LastName</span>`);
-            let image = `<img src="/images/settled-up.png" class="mx-auto my-5" alt="" width="200px" height="200px">`;
+                        @Model.LastName</span>`);
+            let image = `<img src="/images/settled-up.png" class="mx-auto my-4" alt="" width="150px" height="150px">`;
             $("#settlementForm").replaceWith(image);
         }
     </script>

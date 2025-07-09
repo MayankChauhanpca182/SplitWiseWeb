@@ -131,10 +131,10 @@ $(document).on("input", ".dropdownSearch", function () {
   if (searchStr === "") {
     searchBox.parent().find("li").show();
   }
-  else{
-    $(".dropdownList span.name").each(function(){
+  else {
+    $(".dropdownList span.name").each(function () {
       let name = $(this).text().toLowerCase().replace(/\s/g, "");
-      if(name.includes(searchStr)){
+      if (name.includes(searchStr)) {
         $(this).closest(".dropdownLi").show();
       }
     });
@@ -142,6 +142,16 @@ $(document).on("input", ".dropdownSearch", function () {
 });
 
 // Empty searchbox on dropdown open
-function emptySearchBox(){
+function emptySearchBox() {
   $(".dropdownSearch").val("").trigger("input");
 }
+
+// Back button click
+$(document).on("click", ".back-btn", function () {
+  if (document.referrer) {
+    window.history.back();
+  }
+  else {
+    window.location.href = "/";
+  }
+});

@@ -7,7 +7,7 @@
 <breadcrumb></breadcrumb>
 <h3 class="d-flex justify-content-between align-items-center bg-white mb-3 p-3 text-dark-emphasis shadow">
     <span>@(Model.IsViewOnly ? "View" : (Model.Id == 0 ? "Add" : "Edit")) Expense</span>
-    <a asp-action="Index" asp-controller="Group" class="btn btn-secondary">Back</a>
+    <button type="button" class="btn btn-secondary back-btn">Back</button>
 </h3>
 <div class="d-flex flex-column flex-lg-row gap-2">
     <form asp-action="SaveExpense" asp-controller="Expense" id="addExpenseForm"
@@ -223,7 +223,7 @@
             <!-- Submit buttons -->
             <div>
                 <button type="submit" class="btn btn-primary">Save</button>
-                <a asp-action="GroupExpenses" asp-controller="Expense" class="btn btn-secondary">Cancel</a>
+                <button type="button" class="btn btn-secondary back-btn">Cancel</button>
             </div>
         }
     </form>

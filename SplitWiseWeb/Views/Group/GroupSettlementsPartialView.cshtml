@@ -1,0 +1,40 @@
+@model List<GroupMemberVM>
+
+
+@if (Model.Count() == 0)
+{
+    <div class="d-flex flex-column align-items-center p-4 gap-3">
+        <img src="/images/checked.png" alt="" width="100px" height="100px">
+        <span class="text-primary fs-3 fw-semibold">You are all settled up</span>
+    </div>
+}
+else
+{
+    <div class="d-flex flex-column gap-3">
+        @foreach (GroupMemberVM user in Model)
+        {
+            <div class="d-flex justify-content-between align-items-center gap-3">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 w-100">
+                    <div class="d-flex align-items-center gap-2">
+                        <img src=@(user.ProfileImagePath ?? "/images/Default_pfp.png") alt=""
+                            class="rounded-circle border border-dark-subtle object-fit-cover" width="50px" height="50px">
+                        <div class="d-flex flex-column">
+                            <span class="text-nowrap">
+                                @user.Name
+                            </span>
+                            <span class="text-nowrap">
+                                @user.EmailAddress
+                            </span>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <span class="@(user.Expense < 0 ? "text-danger" : "text-success")">
+                            @(user.Expense == 0 ? $"Expense is settled" : (user.Expense > 0 ? $"You lent ₹{user.Expense.ToString("N2")} to {user.Name}" : $"You borrowed ₹{((-1)*user.Expense).ToString("N2")} from {user.Name}"))
+                        </span>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-primary text-nowrap" onclick="fetchSettlementModal('@((-1)*(user.Expense))', @user.GroupId, @user.UserId, false)">Settle Up</button>
+            </div>
+        }
+    </div>
+}
