@@ -60,7 +60,11 @@
             <div id="groupExpensesOuter" class="listOuter bg-white"></div>
         </div>
         <div class="tab-pane fade" id="group-activity" role="tabpanel" aria-labelledby="group-activity-tab">
-            This group has no activity.
+            <div class="mb-3">
+                <input type="text" class="activitySearch searchBox form-control border-secondary-subtle rounded-0 my-1"
+                    placeholder="Search">
+            </div>
+            <div id="group-activity-outer" class="listOuter"></div>
         </div>
         <div class="tab-pane fade" id="group-settleup" role="tabpanel" aria-labelledby="group-settleup-tab">Expense has
             settled.</div>
@@ -293,7 +297,7 @@
                             toastr.error(response.message);
                         }
                         else {
-                            $("#group-activity").html(response);
+                            $("#group-activity-outer").html(response);
                         }
                     }
                 },
@@ -384,7 +388,7 @@
                         }
                     }
                 },
-                error: function (xhr, status, error) {
+                error: function () {
                     toastr.error("Internal server error.");
                 }
             });

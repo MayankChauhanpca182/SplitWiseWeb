@@ -165,12 +165,12 @@ public class SettlementService : ISettlementService
             if (settlement.GroupId > 0)
             {
                 // Add group activity
-                await _activityService.AddGroupActivity(ActivityType.GroupPaymenent, groupId: settlement.GroupId, performedOnId: settlement.PaidToId, paymentId: payment.Id);
+                await _activityService.AddActivity(ActivityType.GroupPaymenent, groupId: settlement.GroupId, performedOnId: settlement.PaidToId, paymentId: payment.Id);
             }
             else
             {
                 // Add activity
-                await _activityService.AddGroupActivity(ActivityType.NonGroupPaymenent, performedOnId: settlement.PaidToId, paymentId: payment.Id);
+                await _activityService.AddActivity(ActivityType.NonGroupPaymenent, performedOnId: settlement.PaidToId, paymentId: payment.Id);
             }
 
             // Update ExpenseShares

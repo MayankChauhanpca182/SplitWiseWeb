@@ -8,12 +8,14 @@
     --clr-grey: #b0b0b0;
     --clr-dark-gray: #4a4a4a;
     --clr-purple: #5145DC;
+    --clr-blue: #285bc9;
+    --clr-orange: #ffb235;
 
     --clr-teal: #1caf9a;
     --clr-teal-dark: #1a9e8a;
     --clr-blue-gray: #364150;
     --clr-dark-cyan-green: #2a5b61;
-    --clr-bittersweet-shimmer: #cb5a5e;
+    --clr-bittersweet-shimmer: #e45257;
 }
 
 /* Button */
@@ -68,12 +70,20 @@
     color: var(--clr-primary-dark) !important;
 }
 
-.text-danger{
+.text-danger {
     color: var(--clr-bittersweet-shimmer) !important;
 }
 
-.text-purple{
+.text-purple {
     color: var(--clr-purple);
+}
+
+.text-blue {
+    color: var(--clr-blue);
+}
+
+.text-orange {
+    color: var(--clr-orange);
 }
 
 .bg-primary {
@@ -104,7 +114,8 @@ textarea {
     resize: none;
 }
 
-th, td{
+th,
+td {
     vertical-align: middle;
 }
 
@@ -122,8 +133,17 @@ th, td{
     display: none;
 }
 
-.w-125px{
+.w-125px {
     width: 125px !important;
+}
+
+.img-20px{
+    width: 20px;
+    height: 20px;
+}
+
+.form-switch .form-check-input:focus {
+    --bs-form-switch-bg: url(data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%231cc29f'/%3e%3c/svg%3e) !important;
 }
 
 /* Global */
@@ -191,7 +211,8 @@ button {
     box-shadow: none !important;
 }
 
-input, select,
+input,
+select,
 textarea {
     border-radius: 0;
     border-color: #c4c8cb !important;
@@ -329,7 +350,7 @@ footer.footer {
 }
 
 /* Group */
-.groupNoticeBoard{
+.groupNoticeBoard {
     background-color: #1caf9a !important;
     color: white !important;
     font-weight: 700;
@@ -337,17 +358,12 @@ footer.footer {
     padding: 40px;
 }
 
-#group-activity{
-    max-height: calc(100vh - 372px);
-    overflow-y: auto;
-}
-
 /* Expense */
 .dropdownList {
     transform: translate(0, 40px) !important;
 }
 
-.dropdownLi{
+.dropdownLi {
     display: flex;
     align-items: center;
     gap: 5px;
@@ -372,7 +388,7 @@ footer.footer {
     object-fit: cover;
 }
 
-#expenseShareDiv{
+#expenseShareDiv {
     max-height: 500px;
     overflow-y: auto;
 }
@@ -402,7 +418,7 @@ footer.footer {
     max-width: 100px;
 }
 
-.attachmentBtn{
+.attachmentBtn {
     width: 200px;
 }
 
@@ -414,7 +430,7 @@ footer.footer {
 
 
 /* Dashboard */
-.dashboardCards{
+.dashboardCards {
     color: darkslategrey;
     height: 150px;
     display: flex;
@@ -434,22 +450,40 @@ footer.footer {
     justify-content: center;
 }
 
-.friendCard{
+.friendCard {
     background-color: #EDF3FF;
 }
 
-.groupCard{
+.groupCard {
     background-color: #f8f3e7;
 }
 
-.expenseCard{
+.expenseCard {
     background-color: #EBF8F3;
 }
 
 
 /* Settlement */
-.settleListItem{
+.settleListItem {
     /* height: 60px; */
     width: 700px;
     cursor: pointer;
+}
+
+/* Activity */
+#group-activity-outer {
+    max-height: calc(100vh - 426px);
+    overflow-y: auto;
+}
+
+#user-activity-outer {
+    max-height: calc(100vh - 353px);
+    overflow-y: auto;
+}
+
+.actvityItem {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin: 5px 0px;
 }

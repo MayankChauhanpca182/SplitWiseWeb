@@ -42,6 +42,7 @@ $(document).on("submit", "#groupForm", function (e) {
                             break;
                         case "/group-details":
                             fetchGroupName();
+                            fetchGroupActivities();
                             break;
                     };
                 }
@@ -53,7 +54,7 @@ $(document).on("submit", "#groupForm", function (e) {
                 }
             }
         },
-        error: function (xhr, status, error) {
+        error: function () {
             toastr.error("Internal server error.");
         }
     });

@@ -8,21 +8,20 @@ namespace SplitWiseService.Services.Implementation;
 
 public class ActivityService : IActivityService
 {
-    // private readonly IGenericRepository<UserActivity> _userActivityService;
-    private readonly IGenericRepository<GroupActivity> _groupActivityRepository;
+    private readonly IGenericRepository<Activity> _activityRepository;
     private readonly IUserService _userService;
 
-    public ActivityService(IGenericRepository<GroupActivity> groupActivityRepository, IUserService userService)
+    public ActivityService(IGenericRepository<Activity> activityRepository, IUserService userService)
     {
-        _groupActivityRepository = groupActivityRepository;
+        _activityRepository = activityRepository;
         _userService = userService;
     }
 
-    public async Task AddGroupActivity(ActivityType activityType, int? groupId = null, int? expenseId = null, int? paymentId = null, int? performedOnId = null)
+    public async Task AddActivity(ActivityType activityType, int? groupId = null, int? expenseId = null, int? paymentId = null, int? performedOnId = null)
     {
         int currentUserId = _userService.LoggedInUserId();
 
-        GroupActivity groupActivity = new GroupActivity
+        Activity activity = new Activity
         {
             ActivityType = activityType,
             PerformedById = currentUserId,
@@ -35,28 +34,46 @@ public class ActivityService : IActivityService
             UpdatedById = currentUserId
         };
 
-        await _groupActivityRepository.Add(groupActivity);
+        await _activityRepository.Add(activity);
         return;
     }
 
-    public async Task<List<GroupActivity>> GroupActivityList(int groupId)
+    public async Task<List<Activity>> GroupActivityList(int groupId)
     {
-        int currentUserId = _userService.LoggedInUserId();
-
-        List<GroupActivity> groupActivities = await _groupActivityRepository.List(
-            predicate: ge => ge.DeletedAt == null && ge.GroupId == groupId,
-            orderBy: ge => ge.OrderByDescending(ge => ge.CreatedAt),
-            includes: new List<System.Linq.Expressions.Expression<Func<GroupActivity, object>>>
+        List<Activity> groupActivities = await _activityRepository.List(
+            predicate: a => a.DeletedAt == null && a.GroupId == groupId,
+            orderBy: a => a.OrderByDescending(a => a.CreatedAt),
+            includes: new List<System.Linq.Expressions.Expression<Func<Activity, object>>>
             {
-                ge => ge.Group,
-                ge => ge. PerformedByUser,
-                ge => ge. PerformedOnUser,
-                ge => ge.Expense,
-                ge => ge.Payment
+                a => a.Group,
+                a => a.PerformedByUser,
+                a => a.PerformedOnUser,
+                a => a.Expense,
+                a => a.Payment
             }
         );
 
         return groupActivities;
+    }
+
+    public async Task<List<Activity>> UserActivityList()
+    {
+        int currentUserId = _userService.LoggedInUserId();
+
+        List<Activity> userActivities = await _activityRepository.List(
+            predicate: a => a.DeletedAt == null && (a.PerformedById == currentUserId || a.PerformedOnId == currentUserId),
+            orderBy: a => a.OrderByDescending(a => a.CreatedAt),
+            includes: new List<System.Linq.Expressions.Expression<Func<Activity, object>>>
+            {
+                a => a.Group,
+                a => a.PerformedByUser,
+                a => a.PerformedOnUser,
+                a => a.Expense,
+                a => a.Payment
+            }
+        );
+
+        return userActivities;
     }
 
 }

@@ -42,7 +42,7 @@ $(document).on("submit", "#addFriendRequestForm", function (e) {
                 }
             }
         },
-        error: function (xhr, status, error) {
+        error: function () {
             toastr.error("Internal server error.");
         },
     });
@@ -68,7 +68,7 @@ $(document).on("submit", "#sendReferralForm", function (e) {
                 }
             }
         },
-        error: function (xhr, status, error) {
+        error: function () {
             toastr.error("Internal server error.");
         },
     });

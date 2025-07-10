@@ -135,6 +135,11 @@
                             </div>
                         </div>
                     </div>
+                    <a asp-action="Index" asp-controller="Activity"
+                        class="navItems d-flex align-items-center gap-3 @((ViewData["ActiveLink"] as string) == "Activities" ? "active" : "")">
+                        <i class="bi bi-person-fill"></i>
+                        Activities
+                    </a>
                 </div>
             </aside>
             <!-- Sidebar end -->

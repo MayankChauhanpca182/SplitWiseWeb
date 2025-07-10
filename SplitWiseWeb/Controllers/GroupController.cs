@@ -117,7 +117,7 @@ public class GroupController : Controller
     {
         ResponseVM response = await _groupService.RemoveGroupMembers(groupMemberId);
         int currentUserId = _userService.LoggedInUserId();
-        if (groupMemberId == currentUserId && response.Success)
+        if (response.EntityId == currentUserId && response.Success)
         {
             TempData["successMessage"] = response.Message;
         }

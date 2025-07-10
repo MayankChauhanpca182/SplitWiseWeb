@@ -1,10 +1,9 @@
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using SplitWiseRepository.Constants;
 
 namespace SplitWiseRepository.Models;
 
-public class GroupActivity : AuditFields
+public class Activity : AuditFields
 {
     public int Id { get; set; }
 

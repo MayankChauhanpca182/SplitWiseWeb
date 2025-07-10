@@ -101,13 +101,13 @@
                                 @if(expense.GroupId != null && expense.GroupId > 0)
                                 {
                                     <a asp-action="ViewGroupExpense" asp-controller="Expense" asp-route-expenseId="@expense.Id">
-                                        <span class="text-dark">@expense.Title</span>
+                                        <span class="text-dark"><u><i>@expense.Title</i></u></span>
                                     </a>
                                 }
                                 else
                                 {
                                     <a asp-action="ViewNonGroupExpense" asp-controller="Expense" asp-route-expenseId="@expense.Id">
-                                        <span class="text-dark">@expense.Title</span>
+                                        <span class="text-dark"><u><i>@expense.Title</i></u></span>
                                     </a>
                                 }
                             </td>

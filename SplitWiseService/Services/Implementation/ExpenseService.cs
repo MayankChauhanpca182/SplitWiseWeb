@@ -320,12 +320,12 @@ public class ExpenseService : IExpenseService
                 if (newExpense.GroupId != null)
                 {
                     // Add group activity
-                    await _activityService.AddGroupActivity(ActivityType.GroupExpenseAdded, groupId: (int)newExpense.GroupId, expenseId: expense.Id);
+                    await _activityService.AddActivity(ActivityType.GroupExpenseAdded, groupId: (int)newExpense.GroupId, expenseId: expense.Id);
                 }
                 else
                 {
                     // Add activity
-                    await _activityService.AddGroupActivity(ActivityType.ExpenseAdded, expenseId: expense.Id);
+                    await _activityService.AddActivity(ActivityType.ExpenseAdded, expenseId: expense.Id);
                 }
 
                 response.Success = true;
@@ -356,12 +356,12 @@ public class ExpenseService : IExpenseService
                 if (existingExpense.GroupId != null)
                 {
                     // Add group activity
-                    await _activityService.AddGroupActivity(ActivityType.GroupExpenseUpdated, groupId: (int)existingExpense.GroupId, expenseId: existingExpense.Id);
+                    await _activityService.AddActivity(ActivityType.GroupExpenseUpdated, groupId: (int)existingExpense.GroupId, expenseId: existingExpense.Id);
                 }
                 else
                 {
                     // Add activity
-                    await _activityService.AddGroupActivity(ActivityType.ExpenseUpdated, expenseId: existingExpense.Id);
+                    await _activityService.AddActivity(ActivityType.ExpenseUpdated, expenseId: existingExpense.Id);
                 }
 
                 // Add expense splits

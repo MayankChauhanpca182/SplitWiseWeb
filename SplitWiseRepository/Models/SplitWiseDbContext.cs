@@ -25,6 +25,5 @@ public class SplitWiseDbContext : DbContext
     public virtual DbSet<Expense> Expenses { get; set; }
     public virtual DbSet<ExpenseShare> ExpenseShares { get; set; }
     public virtual DbSet<Payment> Payments { get; set; }
-    // public virtual DbSet<UserActivity> UserActivities { get; set; }
-    public virtual DbSet<GroupActivity> GroupActivities { get; set; }
+    public virtual DbSet<Activity> Activities { get; set; }
 }

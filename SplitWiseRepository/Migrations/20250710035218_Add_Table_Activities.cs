@@ -6,13 +6,13 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SplitWiseRepository.Migrations
 {
     /// <inheritdoc />
-    public partial class Add_Table_GroupActivities : Migration
+    public partial class Add_Table_Activities : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "GroupActivities",
+                name: "Activities",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -22,6 +22,7 @@ namespace SplitWiseRepository.Migrations
                     PerformedOnId = table.Column<int>(type: "int", nullable: true),
                     GroupId = table.Column<int>(type: "int", nullable: true),
                     ExpenseId = table.Column<int>(type: "int", nullable: true),
+                    PaymentId = table.Column<int>(type: "int", nullable: true),
                     CreatedById = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedById = table.Column<int>(type: "int", nullable: false),
@@ -31,48 +32,58 @@ namespace SplitWiseRepository.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GroupActivities", x => x.Id);
+                    table.PrimaryKey("PK_Activities", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_GroupActivities_Expenses_ExpenseId",
+                        name: "FK_Activities_Expenses_ExpenseId",
                         column: x => x.ExpenseId,
                         principalTable: "Expenses",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_GroupActivities_Groups_GroupId",
+                        name: "FK_Activities_Groups_GroupId",
                         column: x => x.GroupId,
                         principalTable: "Groups",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_GroupActivities_Users_PerformedById",
+                        name: "FK_Activities_Payments_PaymentId",
+                        column: x => x.PaymentId,
+                        principalTable: "Payments",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Activities_Users_PerformedById",
                         column: x => x.PerformedById,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_GroupActivities_Users_PerformedOnId",
+                        name: "FK_Activities_Users_PerformedOnId",
                         column: x => x.PerformedOnId,
                         principalTable: "Users",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_GroupActivities_ExpenseId",
-                table: "GroupActivities",
+                name: "IX_Activities_ExpenseId",
+                table: "Activities",
                 column: "ExpenseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GroupActivities_GroupId",
-                table: "GroupActivities",
+                name: "IX_Activities_GroupId",
+                table: "Activities",
                 column: "GroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GroupActivities_PerformedById",
-                table: "GroupActivities",
+                name: "IX_Activities_PaymentId",
+                table: "Activities",
+                column: "PaymentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Activities_PerformedById",
+                table: "Activities",
                 column: "PerformedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GroupActivities_PerformedOnId",
-                table: "GroupActivities",
+                name: "IX_Activities_PerformedOnId",
+                table: "Activities",
                 column: "PerformedOnId");
         }
 
@@ -80,7 +91,7 @@ namespace SplitWiseRepository.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "GroupActivities");
+                name: "Activities");
         }
     }
 }
