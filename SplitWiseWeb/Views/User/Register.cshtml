@@ -114,7 +114,6 @@
                 data: { email },
                 success: function (response) {
                     if (!response.statusCode) {
-                        console.log(response)
                         $("#regularModalContent").html(response);
                         $("#regularModal").modal("show");
                     }

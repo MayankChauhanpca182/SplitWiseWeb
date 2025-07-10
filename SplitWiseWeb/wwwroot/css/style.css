@@ -142,10 +142,6 @@ td {
     height: 20px;
 }
 
-.form-switch .form-check-input:focus {
-    --bs-form-switch-bg: url(data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%231cc29f'/%3e%3c/svg%3e) !important;
-}
-
 /* Global */
 body {
     font-family: "Roboto", sans-serif;
@@ -472,18 +468,26 @@ footer.footer {
 
 /* Activity */
 #group-activity-outer {
-    max-height: calc(100vh - 426px);
+    max-height: calc(100vh - 456px);
     overflow-y: auto;
 }
 
 #user-activity-outer {
-    max-height: calc(100vh - 353px);
+    max-height: calc(100vh - 378px);
     overflow-y: auto;
 }
 
 .actvityItem {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 5px;
     margin: 5px 0px;
+}
+
+.activityDivider{
+    text-align: center;
+    color: var(--clr-grey);
+    font-style: italic;
+    font-weight: 700;
 }

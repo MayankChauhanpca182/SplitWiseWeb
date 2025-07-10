@@ -439,7 +439,6 @@
     <script>
         // Add member
         function addMember(user) {
-            console.log(user)
             // Add to array
             members.push({
                 UserId: user.userId,
@@ -717,7 +716,6 @@
                 data: { groupId: group.id },
                 success: function (response) {
                     if (!response.statusCode) {
-                        console.log(response);
                         addGroupPill(group);
                         addMembers(response);
                     }

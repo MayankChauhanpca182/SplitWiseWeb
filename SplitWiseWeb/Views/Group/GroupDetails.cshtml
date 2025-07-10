@@ -27,7 +27,7 @@
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="group-activity-tab" data-bs-toggle="pill" data-bs-target="#group-activity"
                 type="button" role="tab" aria-controls="group-activity" aria-selected="false"
-                onclick="fetchGroupActivities()">Activities</button>
+                onclick="fetchActivities()">Activities</button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="group-settleup-tab" data-bs-toggle="pill" data-bs-target="#group-settleup"
@@ -45,6 +45,7 @@
                 aria-selected="true">Notice Board</button>
         </li>
     </ul>
+
     <div class="tab-content" id="pills-tabContent">
         <div class="tab-pane fade show active" id="group-expenses" role="tabpanel" aria-labelledby="group-expenses-tab">
             <div class="d-flex flex-wrap justify-content-between gap-3 mb-3">
@@ -59,16 +60,16 @@
             </div>
             <div id="groupExpensesOuter" class="listOuter bg-white"></div>
         </div>
+
         <div class="tab-pane fade" id="group-activity" role="tabpanel" aria-labelledby="group-activity-tab">
-            <div class="mb-3">
-                <input type="text" class="activitySearch searchBox form-control border-secondary-subtle rounded-0 my-1"
-                    placeholder="Search">
-            </div>
+            <partial name="../Activity/ActivityFilterPartialView" />
             <div id="group-activity-outer" class="listOuter"></div>
         </div>
-        <div class="tab-pane fade" id="group-settleup" role="tabpanel" aria-labelledby="group-settleup-tab">Expense has
-            settled.</div>
+
+        <div class="tab-pane fade" id="group-settleup" role="tabpanel" aria-labelledby="group-settleup-tab"></div>
+
         <div class="tab-pane fade" id="group-members" role="tabpanel" aria-labelledby="group-members-tab"></div>
+
         <div class="tab-pane fade" id="group-noticeboard" role="tabpanel" aria-labelledby="group-noticeboard-tab">
             <div class="input-group mt-4 rounded-0">
                 <textarea asp-for=@Model.NoticeBoard
@@ -284,25 +285,54 @@
     </script>
 
     @* Group activities *@
+    <script src="/js/activity.js"></script>
     <script>
-        // Fetch group activities
-        function fetchGroupActivities() {
+        // Fetch activities
+        function fetchActivities() {
+            clearTimeout(searchTimeout);
+            searchTimeout = null;
+
+            let filter = {
+                SearchString: $("#activitySearch").val(),
+                FromDate: $("#fromDate").val(),
+                ToDate: $("#toDate").val()
+            };
+
+            if(!(!filter.FromDate && !filter.ToDate) && !(filter.FromDate && filter.ToDate))
+            {
+                return;
+            }
+            else if (filter.FromDate && filter.ToDate) {
+                if (filter.FromDate > filter.ToDate) {
+                    toastr.error("From Date should be greater then To Date.")
+                    $("#toDate").val("");
+                    return;
+                }
+            }
+
             $.ajax({
-                url: "/Activity/GroupActivities",
-                type: "GET",
-                data: { groupId: '@Model.Id' },
+                url: "/Activity/ActivityList",
+                type: "POST",
+                data: { filter, groupId: '@Model.Id' },
                 success: function (response) {
                     if (!response.statusCode) {
                         if (response.success == false) {
                             toastr.error(response.message);
                         }
                         else {
-                            $("#group-activity-outer").html(response);
+                            switch (window.location.pathname) {
+                                case "/user-activities":
+                                    $("#user-activity-outer").html(response);
+                                    break;
+                                case "/group-details":
+                                    $("#group-activity-outer").html(response);
+                                    break;
+                            };
                         }
                     }
                 },
                 error: function () {
-                    toastr.error("Internal server error.");
+                    toastr.error("Internal server error");
                 }
             });
         }

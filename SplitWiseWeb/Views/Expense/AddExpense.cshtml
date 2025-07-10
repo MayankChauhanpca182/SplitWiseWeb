@@ -375,7 +375,6 @@
                     break;
                 case '@SplitType.Unequally':
                     $("#remainigBalance").text(formatToINR(amount - splitTotal) + currencySymbole);
-                    console.log(formatToINR(amount - splitTotal))
                     $("#remainingBalanceDiv").show();
                     if (splitTotal > amount) {
                         $(".amount, #remainigBalance").addClass("text-danger");

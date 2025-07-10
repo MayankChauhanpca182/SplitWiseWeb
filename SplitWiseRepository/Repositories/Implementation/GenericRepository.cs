@@ -140,7 +140,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         paginatedItems.TotalRecords = await query.CountAsync();
 
         // Apply pagination
-        if (pageSize != null && pageSize > 0 && pageNumber != null && pageNumber > 0)
+        if (pageSize > 0 && pageNumber > 0)
         {
             paginatedItems.Items = await query.Skip((int)((pageNumber - 1) * pageSize)).Take((int)pageSize).ToListAsync();
         }

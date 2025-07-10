@@ -1,7 +1,9 @@
+using System.Threading.Tasks;
 using SplitWiseRepository.Constants;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.Repositories.Interface;
 using SplitWiseRepository.ViewModels;
+using SplitWiseService.Helpers;
 using SplitWiseService.Services.Interface;
 
 namespace SplitWiseService.Services.Implementation;
@@ -74,6 +76,52 @@ public class ActivityService : IActivityService
         );
 
         return userActivities;
+    }
+
+    public async Task<List<Activity>> ActivityList(FilterVM filter, int? groupId = null)
+    {
+        int currentUserId = _userService.LoggedInUserId();
+        string searchString = string.IsNullOrEmpty(filter.SearchString) ? string.Empty : filter.SearchString.Replace(" ", "").ToLower();
+
+        bool isSearchYou = "you".Contains(searchString);
+
+        if (!filter.FromDate.HasValue)
+        {
+            filter.FromDate = DateHelper.FirstDayOfMonth(DateTime.Now);
+        }
+
+        if (!filter.ToDate.HasValue)
+        {
+            filter.ToDate = DateHelper.LastDayOfMonth((DateTime)filter.FromDate);
+        }
+        
+        PaginatedItemsVM<Activity> userActivities = await _activityRepository.PaginatedList(
+            predicate: a => a.DeletedAt == null
+                            && (groupId != null ? a.GroupId == groupId : (a.PerformedById == currentUserId || a.PerformedOnId == currentUserId))
+                            && a.CreatedAt >= filter.FromDate
+                            && a.CreatedAt <= filter.ToDate
+                            && (string.IsNullOrEmpty(searchString)
+                                || (isSearchYou && (a.PerformedById == currentUserId || a.PerformedOnId == currentUserId))
+                                || a.PerformedOnUser.FirstName.ToLower().Contains(searchString)
+                                || a.PerformedOnUser.LastName.ToLower().Contains(searchString)
+                                || a.Group.Name.ToLower().Contains(searchString)
+                                || a.Expense.Title.ToLower().Contains(searchString)
+                                || a.Expense.Amount.ToString().Contains(searchString)
+                                || a.Payment.Amount.ToString().Contains(searchString)
+                            ),
+            orderBy: a => a.OrderByDescending(a => a.CreatedAt),
+            includes: new List<System.Linq.Expressions.Expression<Func<Activity, object>>>
+            {
+                a => a.Group,
+                a => a.PerformedByUser,
+                a => a.PerformedOnUser,
+                a => a.Expense,
+                a => a.Payment
+            }
+        );
+
+        return userActivities.Items.ToList();
+
     }
 
 }

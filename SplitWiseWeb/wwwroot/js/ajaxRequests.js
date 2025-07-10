@@ -85,7 +85,6 @@ function exportDataAjax(filter, url, fileName) {
         },
         success: function (data, status, xhr) {
             if (data.success === false) {
-                console.log(data)
                 toastr.error(data.message);
             } else {
                 let filename = `${fileName}_${new Date().getTime()}.xlsx`;

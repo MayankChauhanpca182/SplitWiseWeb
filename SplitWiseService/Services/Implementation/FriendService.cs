@@ -225,7 +225,7 @@ public class FriendService : IFriendService
     {
         int currentUserId = _userService.LoggedInUserId();
 
-        filter.SearchString = string.IsNullOrEmpty(filter.SearchString) ? "" : filter.SearchString.Replace(" ", "").ToLower();
+        filter.SearchString = string.IsNullOrEmpty(filter.SearchString) ? string.Empty : filter.SearchString.Replace(" ", "").ToLower();
 
         Func<IQueryable<FriendRequest>, IOrderedQueryable<FriendRequest>> orderBy = q => q.OrderBy(fr => fr.Id);
         if (!string.IsNullOrEmpty(filter.SortColumn))
@@ -399,7 +399,7 @@ public class FriendService : IFriendService
     public async Task<PaginatedListVM<FriendVM>> FriendList(FilterVM filter, int groupId = 0)
     {
         int currentUserId = _userService.LoggedInUserId();
-        filter.SearchString = string.IsNullOrEmpty(filter.SearchString) ? "" : filter.SearchString.Replace(" ", "").ToLower();
+        filter.SearchString = string.IsNullOrEmpty(filter.SearchString) ? string.Empty : filter.SearchString.Replace(" ", "").ToLower();
 
         // Order filter
         Func<IQueryable<Friend>, IOrderedQueryable<Friend>> orderBy = q => q.OrderBy(f => f.Id);

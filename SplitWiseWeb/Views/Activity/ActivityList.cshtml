@@ -2,6 +2,8 @@
 @model List<Activity>
 @{
     int currentUserId = int.Parse(User.FindFirst("id")?.Value);
+    string date = string.Empty;
+    bool isGroupActivity = Model.All(a => a.GroupId != null);
 }
 
 @if (Model.Count() == 0)
@@ -12,12 +14,22 @@ else
 {
     @foreach (Activity activity in Model)
     {
-        string performedByUserName = activity.PerformedById == currentUserId
-        ? "You"
-        : activity.PerformedByUser.FirstName + " " + activity.PerformedByUser.LastName;
+        string performedByUserName = activity.PerformedById == currentUserId ? "You" : activity.PerformedByUser.FirstName + " "
+        + activity.PerformedByUser.LastName;
+
+        @if (date != activity.CreatedAt.ToString("dd-MM-yyyy"))
+        {
+            date = activity.CreatedAt.ToString("dd-MM-yyyy");
+            <p class="activityDivider">
+                <span>---------------------</span>
+                <span>@activity.CreatedAt.ToString("dd"),</span>
+                <span>@activity.CreatedAt.ToString("MMMM")</span>
+                <span>@activity.CreatedAt.ToString("yyyy")</span>
+                <span>---------------------</span>
+            </p>
+        }
 
         <div class="actvityItem">
-
             @switch (activity.ActivityType)
             {
                 case ActivityType.GroupCreated:
@@ -45,7 +57,7 @@ else
                     break;
             }
 
-            <span>@activity.CreatedAt.ToString("dd-MM-yyyy"), @activity.CreatedAt.ToString("HH:mm:ss") : </span>
+            <span>@activity.CreatedAt.ToString("HH:mm:ss") : </span>
             <span>
                 <img src="@(activity.PerformedByUser.ProfileImagePath ?? "/images/Default_pfp.png")" alt=""
                     class="img-20px img-20px rounded-circle">
@@ -54,23 +66,37 @@ else
                 @switch (activity.ActivityType)
                 {
                     case ActivityType.GroupCreated:
-                        <span>created the group</span>
-                        <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt="" class="img-20px rounded-circle"
-                           >
-                        <strong>@activity.Group.Name.</strong>
+                        if (isGroupActivity)
+                        {
+                            <span>created this group.</span>
+                        }
+                        else
+                        {
+                            <span>created the group</span>
+                            <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt=""
+                                class="img-20px rounded-circle">
+                            <strong>@activity.Group.Name.</strong>
+                        }
                         break;
 
                     case ActivityType.GroupUpdated:
-                        <span>updated the group</span>
-                        <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt="" class="img-20px rounded-circle"
-                           >
-                        <strong>@activity.Group.Name.</strong>
+                        if (isGroupActivity)
+                        {
+                            <span>updated this group.</span>
+                        }
+                        else
+                        {
+                            <span>updated the group</span>
+                            <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt=""
+                                class="img-20px rounded-circle">
+                            <strong>@activity.Group.Name.</strong>
+                        }
                         break;
 
                     case ActivityType.GroupDeleted:
                         <span>deleted the group</span>
-                        <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt="" class="img-20px rounded-circle"
-                           >
+                        <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt=""
+                            class="img-20px rounded-circle">
                         <strong>@activity.Group.Name.</strong>
                         break;
 
@@ -79,10 +105,17 @@ else
                         <img src="@(activity.PerformedOnUser.ProfileImagePath ?? "/images/Default_pfp.png")" alt=""
                             class="img-20px rounded-circle">
                         <strong>@(activity.PerformedOnUser.FirstName + " " + activity.PerformedOnUser.LastName)</strong>
-                        <span>to the group</span>
-                        <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt="" class="img-20px rounded-circle"
-                           >
-                        <strong>@activity.Group.Name.</strong>
+                        if (isGroupActivity)
+                        {
+                            <span>to this group.</span>
+                        }
+                        else
+                        {
+                            <span>to the group</span>
+                            <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt=""
+                                class="img-20px rounded-circle">
+                            <strong>@activity.Group.Name.</strong>
+                        }
                         break;
 
                     case ActivityType.MemberRemoved:
@@ -90,10 +123,17 @@ else
                         <img src="@(activity.PerformedOnUser.ProfileImagePath ?? "/images/Default_pfp.png")" alt=""
                             class="img-20px rounded-circle">
                         <strong>@(activity.PerformedOnUser.FirstName + " " + activity.PerformedOnUser.LastName)</strong>
-                        <span>from the group</span>
-                        <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt="" class="img-20px rounded-circle"
-                           >
-                        <strong>@activity.Group.Name.</strong>
+                        if (isGroupActivity)
+                        {
+                            <span>from this group.</span>
+                        }
+                        else
+                        {
+                            <span>from the group</span>
+                            <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt=""
+                                class="img-20px rounded-circle">
+                            <strong>@activity.Group.Name.</strong>
+                        }
                         break;
 
                     case ActivityType.GroupExpenseAdded:
@@ -101,27 +141,48 @@ else
                         <strong>@(activity.Expense.Title)</strong>
                         <span>of</span>
                         <strong>₹@(activity.Expense.Amount.ToString("N2"))</strong>
-                        <span>in the group</span>
-                        <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt="" class="img-20px rounded-circle"
-                           >
-                        <strong>@activity.Group.Name.</strong>
+                        if (isGroupActivity)
+                        {
+                            <span>in this group.</span>
+                        }
+                        else
+                        {
+                            <span>in the group</span>
+                            <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt=""
+                                class="img-20px rounded-circle">
+                            <strong>@activity.Group.Name.</strong>
+                        }
                         break;
                     case ActivityType.GroupExpenseUpdated:
                         <span>updated an expense</span>
                         <strong>@(activity.Expense.Title)</strong>
                         <span>of</span>
                         <strong>₹@(activity.Expense.Amount.ToString("N2"))</strong>
-                        <span>in the group</span>
-                        <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt="" class="img-20px rounded-circle"
-                           >
-                        <strong>@activity.Group.Name.</strong>
+                        if (isGroupActivity)
+                        {
+                            <span>in this group.</span>
+                        }
+                        else
+                        {
+                            <span>in the group</span>
+                            <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt=""
+                                class="img-20px rounded-circle">
+                            <strong>@activity.Group.Name.</strong>
+                        }
                         break;
 
                     case ActivityType.LeaveGroup:
-                        <span>left the group</span>
-                        <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt="" class="img-20px rounded-circle"
-                           >
-                        <strong>@activity.Group.Name.</strong>
+                        if (isGroupActivity)
+                        {
+                            <span>left the group.</span>
+                        }
+                        else
+                        {
+                            <span>left the group</span>
+                            <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt=""
+                                class="img-20px rounded-circle">
+                            <strong>@activity.Group.Name.</strong>
+                        }
                         break;
 
                     case ActivityType.GroupPaymenent:
@@ -131,10 +192,17 @@ else
                         <img src="@(activity.PerformedOnUser.ProfileImagePath ?? "/images/Default_pfp.png")" alt=""
                             class="img-20px rounded-circle">
                         <strong>@(activity.PerformedOnUser.FirstName + " " + activity.PerformedOnUser.LastName)</strong>
-                        <span>in the group</span>
-                        <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt="" class="img-20px rounded-circle"
-                           >
-                        <strong>@activity.Group.Name.</strong>
+                        if (isGroupActivity)
+                        {
+                            <span>in this group.</span>
+                        }
+                        else
+                        {
+                            <span>in the group</span>
+                            <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt=""
+                                class="img-20px rounded-circle">
+                            <strong>@activity.Group.Name.</strong>
+                        }
                         break;
 
                     case ActivityType.NonGroupPaymenent:
@@ -164,24 +232,3 @@ else
         </div>
     }
 }
-
-<script>
-    setTimeout(function () {
-        $(document).on("input", ".activitySearch", function () {
-            $(".actvityItem").hide();
-
-            let searchStr = $(this).val().toLowerCase().replace(/\s/g, "");
-            if (searchStr === "") {
-                $(".actvityItem").show();
-            }
-            else {
-                $(".actvityItem").each(function () {
-                    let text = $(this).text().toLowerCase().replace(/\s/g, "");
-                    if (text.includes(searchStr)) {
-                        $(this).show();
-                    }
-                });
-            }
-        });
-    }, 500);
-</script>

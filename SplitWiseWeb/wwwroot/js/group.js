@@ -42,7 +42,7 @@ $(document).on("submit", "#groupForm", function (e) {
                             break;
                         case "/group-details":
                             fetchGroupName();
-                            fetchGroupActivities();
+                            fetchActivities();
                             break;
                     };
                 }

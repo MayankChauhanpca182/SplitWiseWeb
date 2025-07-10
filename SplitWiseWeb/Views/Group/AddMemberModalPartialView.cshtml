@@ -92,12 +92,12 @@
                         toastr.success(response.message);
                         getFriendList(1);
                         fetchGroupMembers();
-                        fetchGroupActivities();
+                        fetchActivities();
                     }
                 }
             },
             error: function () {
-                toastr.error('@NotificationMessages.InternalServerError');
+                toastr.error("Internal server error.");
             }
         });
     }
