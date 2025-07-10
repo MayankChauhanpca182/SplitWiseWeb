@@ -3,7 +3,7 @@
 @{
     int currentUserId = int.Parse(User.FindFirst("id")?.Value);
     string date = string.Empty;
-    bool isGroupActivity = Model.All(a => a.GroupId != null);
+    bool isGroupActivity = !Model.Any(a => a.GroupId == null);
 }
 
 @if (Model.Count() == 0)
