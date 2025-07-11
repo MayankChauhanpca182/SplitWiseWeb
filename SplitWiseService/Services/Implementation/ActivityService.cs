@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using SplitWiseRepository.Constants;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.Repositories.Interface;
@@ -85,16 +84,6 @@ public class ActivityService : IActivityService
 
         bool isSearchYou = "you".Contains(searchString);
 
-        if (!filter.FromDate.HasValue)
-        {
-            filter.FromDate = DateHelper.FirstDayOfMonth(DateTime.Now);
-        }
-
-        if (!filter.ToDate.HasValue)
-        {
-            filter.ToDate = DateHelper.LastDayOfMonth((DateTime)filter.FromDate);
-        }
-        
         PaginatedItemsVM<Activity> userActivities = await _activityRepository.PaginatedList(
             predicate: a => a.DeletedAt == null
                             && (groupId != null ? a.GroupId == groupId : (a.PerformedById == currentUserId || a.PerformedOnId == currentUserId))
@@ -124,4 +113,31 @@ public class ActivityService : IActivityService
 
     }
 
+    public async Task<ActivityFilterVM> GetActivityFilter(int? groupId = null)
+    {
+        int currentUserId = _userService.LoggedInUserId();
+        ActivityFilterVM activityFilter = new ActivityFilterVM();
+        activityFilter.FirstDay = DateHelper.FirstDayOfMonth(DateTime.Now);
+        activityFilter.LastDay = DateHelper.LastDayOfMonth(DateTime.Now);
+
+        // First activity
+        Activity firstActivity = await _activityRepository.FirstOrLast(
+            isFirstElement: true,
+            predicate: a => a.DeletedAt == null
+                        && (groupId != null ? a.GroupId == groupId : (a.PerformedById == currentUserId || a.PerformedOnId == currentUserId)),
+            orderBy: a => a.OrderBy(a => a.CreatedAt)
+        );
+
+        // Last activity
+        Activity lastActivity = await _activityRepository.FirstOrLast(
+            isFirstElement: false,
+            predicate: a => a.DeletedAt == null
+                        && (groupId != null ? a.GroupId == groupId : (a.PerformedById == currentUserId || a.PerformedOnId == currentUserId)),
+            orderBy: a => a.OrderBy(a => a.CreatedAt)
+        );
+
+        activityFilter.MinDate = firstActivity.CreatedAt;
+        activityFilter.MaxDate = lastActivity.CreatedAt;
+        return activityFilter;
+    }
 }

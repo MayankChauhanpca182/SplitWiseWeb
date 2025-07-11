@@ -14,12 +14,14 @@ public class GroupController : Controller
     private readonly IGroupService _groupService;
     private readonly ICommonService _commonService;
     private readonly IUserService _userService;
+    private readonly IActivityService _activityService;
 
-    public GroupController(IGroupService groupService, ICommonService commonService, IUserService userService)
+    public GroupController(IGroupService groupService, ICommonService commonService, IUserService userService, IActivityService activityService)
     {
         _groupService = groupService;
         _commonService = commonService;
         _userService = userService;
+        _activityService = activityService;
     }
 
     [Breadcrumb("Groups")]
@@ -79,6 +81,7 @@ public class GroupController : Controller
     {
         GroupVM group = await _groupService.GetGroup(groupId);
         group.Members = await _groupService.GetMembers(groupId);
+        group.ActivityFilter = await _activityService.GetActivityFilter(groupId);
         ViewData["ActiveLink"] = "Groups";
         return View("GroupDetails", group);
     }

@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using SmartBreadcrumbs.Attributes;
 using SplitWiseRepository.Models;
@@ -19,10 +18,11 @@ public class ActivityController : Controller
     // GET UserActivities
     [Breadcrumb("User Activities")]
     [Route("user-activities")]
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
+        ActivityFilterVM activityFilter = await _activityService.GetActivityFilter();
         ViewData["ActiveLink"] = "Activities";
-        return View();
+        return View(activityFilter);
     }
 
     // POST ActivityList
@@ -31,11 +31,4 @@ public class ActivityController : Controller
         List<Activity> activities = await  _activityService.ActivityList(filter, groupId);
         return PartialView("ActivityList", activities);
     }
-
-    // GET GroupActivities
-    // public async Task<IActionResult> GroupActivities(int groupId)
-    // {
-    //     List<Activity> activities = await _activityService.GroupActivityList(groupId);
-    //     return PartialView("ActivityList", activities);
-    // }
 }

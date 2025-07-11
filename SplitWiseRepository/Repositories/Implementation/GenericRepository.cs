@@ -241,4 +241,57 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
 
         return await query.SumAsync(selector);
     }
+
+    public async Task<T> FirstOrLast(
+        bool isFirstElement,
+        Expression<Func<T, bool>> predicate = null,
+        Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
+        List<Expression<Func<T, object>>> includes = null,
+        List<Func<IQueryable<T>, IQueryable<T>>> thenIncludes = null,
+        IQueryable<T> sourceQuery = null
+    )
+    {
+        IQueryable<T> query = sourceQuery ?? _dbSet;
+
+        //Apply Filters
+        if (predicate != null)
+        {
+            query = query.Where(predicate);
+        }
+
+        //Order By
+        if (orderBy != null)
+        {
+            query = orderBy(query);
+        }
+
+        // Apply Includes (First-level navigation properties)
+        if (includes != null)
+        {
+            foreach (Expression<Func<T, object>> include in includes)
+            {
+                query = query.Include(include);
+            }
+        }
+
+        // Apply ThenIncludes (Deeper navigation properties)
+        if (thenIncludes != null)
+        {
+            foreach (var thenInclude in thenIncludes)
+            {
+                query = thenInclude(query);
+            }
+        }
+
+        // Return first or last element
+        if (isFirstElement)
+        {
+            return await query.FirstOrDefaultAsync();
+        }
+        else
+        {
+            return await query.LastOrDefaultAsync();
+        }
+
+    }
 }

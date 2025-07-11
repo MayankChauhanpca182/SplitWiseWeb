@@ -1,8 +1,5 @@
-@using SplitWiseService.Helpers
-@{
-    DateTime firstDay = DateHelper.FirstDayOfMonth(DateTime.Now);
-    DateTime lastDay = DateHelper.LastDayOfMonth(DateTime.Now);
-}
+@model ActivityFilterVM
+
 <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
     <div class="d-flex align-items-center gap-3">
         <div class="form-floating">
@@ -13,11 +10,11 @@
     </div>
     <div class="d-flex align-items-center gap-3">
         <div class="form-floating">
-            <input type="date" class="form-control border-secondary-subtle rounded-0" id="fromDate" value="@firstDay.ToString("yyyy-MM-dd")">
+            <input type="date" class="form-control border-secondary-subtle rounded-0" id="fromDate" value="@Model.FirstDay.ToString("yyyy-MM-dd")" min="@Model.MinDate.ToString("yyyy-MM-dd")" max="@Model.MaxDate.ToString("yyyy-MM-dd")">
             <label for="fromDate">From Date</label>
         </div>
         <div class="form-floating">
-            <input type="date" class="form-control border-secondary-subtle rounded-0" id="toDate" value="@lastDay.ToString("yyyy-MM-dd")">
+            <input type="date" class="form-control border-secondary-subtle rounded-0" id="toDate" value="@Model.LastDay.ToString("yyyy-MM-dd")" min="@Model.MinDate.ToString("yyyy-MM-dd")" max="@Model.MaxDate.ToString("yyyy-MM-dd")">
             <label for="toDate">To Date</label>
         </div>
     </div>

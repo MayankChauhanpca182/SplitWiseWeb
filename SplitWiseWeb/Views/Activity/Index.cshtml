@@ -1,3 +1,4 @@
+@model ActivityFilterVM
 @{
     ViewData["Title"] = "User Activities";
 }
@@ -6,7 +7,7 @@
 <h3 class="bg-white mb-3 p-3 text-dark-emphasis shadow">User Activities</h3>
 
 <div class="bg-white p-3">
-    <partial name="ActivityFilterPartialView"/>
+    <partial name="ActivityFilterPartialView" model="@Model"/>
     <div id="user-activity-outer" class="listOuter"></div>
 </div>
 

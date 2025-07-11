@@ -26,13 +26,13 @@ public class ExpenseController : Controller
     }
 
     // GET GroupExpenses
-    [Breadcrumb("Group Expenses", FromController = typeof(DashboardController))]
-    [Route("group-expenses")]
-    public IActionResult GroupExpenses()
-    {
-        ViewData["ActiveLink"] = "Group Expenses";
-        return View();
-    }
+    // [Breadcrumb("Group Expenses", FromController = typeof(DashboardController))]
+    // [Route("group-expenses")]
+    // public IActionResult GroupExpenses()
+    // {
+    //     ViewData["ActiveLink"] = "Group Expenses";
+    //     return View();
+    // }
 
     // GET AddNonGroupExpense
     [Breadcrumb("Expense")]
@@ -66,7 +66,7 @@ public class ExpenseController : Controller
     }
 
     // GET ViewGroupExpense
-    [Breadcrumb("View", FromAction = "GroupExpenses")]
+    [Breadcrumb("View", FromAction = "GroupDetails", FromController = typeof(GroupController))]
     [Route("group-expenses/view")]
     public async Task<IActionResult> ViewGroupExpense(int expenseId)
     {
