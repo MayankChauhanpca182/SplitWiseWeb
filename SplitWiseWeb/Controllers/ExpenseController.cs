@@ -25,15 +25,6 @@ public class ExpenseController : Controller
         return View("NonGroupExpenses");
     }
 
-    // GET GroupExpenses
-    // [Breadcrumb("Group Expenses", FromController = typeof(DashboardController))]
-    // [Route("group-expenses")]
-    // public IActionResult GroupExpenses()
-    // {
-    //     ViewData["ActiveLink"] = "Group Expenses";
-    //     return View();
-    // }
-
     // GET AddNonGroupExpense
     [Breadcrumb("Expense")]
     [Route("non-group-expenses/add")]
@@ -45,7 +36,7 @@ public class ExpenseController : Controller
     }
 
     // GET AddGroupExpense
-    [Breadcrumb("Expense", FromAction = "GroupDetails", FromController = typeof(GroupController))]
+    [Breadcrumb("Expense", FromAction = "Index", FromController = typeof(GroupController))]
     [Route("group-expenses/add")]
     public async Task<IActionResult> AddGroupExpense(int expenseId, int groupId)
     {

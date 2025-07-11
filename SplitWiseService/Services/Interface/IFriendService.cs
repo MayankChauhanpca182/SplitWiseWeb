@@ -5,7 +5,7 @@ namespace SplitWiseService.Services.Interface;
 
 public interface IFriendService
 {
-    public Task<Friend> GetFriend(int user1Id, int user2Id);
+    public Task<Friend> GetFriend(int friendUserId);
     public Task<ResponseVM> CheckExisitngFrindship(string email);
     public Task<ResponseVM> SendRequest(string emailAddress);
     public Task<ResponseVM> SendReferral(FriendRequestVM request);
@@ -16,4 +16,5 @@ public interface IFriendService
     public Task<ResponseVM> RemoveFriend(int friendId);
     public Task UpdateReferrals(User newUser);
     public Task<byte[]> ExportFriends(FilterVM filter);
+    public Task<FriendVM> FriendDetails(int friendUserId);
 }

@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SplitWiseRepository.Constants;
-using SplitWiseRepository.Migrations;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.Repositories.Interface;
 using SplitWiseRepository.ViewModels;
@@ -65,11 +65,13 @@ public class FriendService : IFriendService
         }
     }
 
-    public async Task<Friend> GetFriend(int user1Id, int user2Id)
+    public async Task<Friend> GetFriend(int friendUserId)
     {
+        int currentUserId = _userService.LoggedInUserId();
+
         Friend friend = await _friendRepository.Get(
             predicate: f => f.DeletedAt == null
-                    && ((f.Friend1 == user1Id && f.Friend2 == user2Id) || (f.Friend2 == user1Id && f.Friend1 == user2Id)),
+                    && ((f.Friend1 == currentUserId && f.Friend2 == friendUserId) || (f.Friend2 == currentUserId && f.Friend1 == friendUserId)),
             includes: new List<Expression<Func<Friend, object>>>
             {
                 f => f.Friend1UserNavigation,
@@ -247,7 +249,7 @@ public class FriendService : IFriendService
             predicate: fr => fr.ReceiverId == currentUserId
             && fr.Status == FeriendRequestStatus.Requested
             && (string.IsNullOrEmpty(filter.SearchString)
-                ||(fr.RequesterId == currentUserId
+                || (fr.RequesterId == currentUserId
                     ? (fr.ReceiverUserNavigation.FirstName.ToLower().Contains(filter.SearchString)
                         || fr.ReceiverUserNavigation.LastName.ToLower().Contains(filter.SearchString)
                         || fr.ReceiverUserNavigation.EmailAddress.ToLower().Contains(filter.SearchString))
@@ -599,4 +601,34 @@ public class FriendService : IFriendService
         return ExcelExportHelper.ExportToExcel(paginatedList.List, columns, "Friends");
     }
 
+    public async Task<FriendVM> FriendDetails(int friendUserId)
+    {
+        int currentUserId = _userService.LoggedInUserId();
+
+        Friend friend = await GetFriend(friendUserId);
+        User friendUser = friend.Friend1 == currentUserId ? friend.Friend2UserNavigation : friend.Friend1UserNavigation;
+
+        FriendVM friendVM = new FriendVM()
+        {
+            FriendId = friend.Id,
+            UserId = friendUser.Id,
+            Name = friendUser.FirstName + " " + friendUser.LastName,
+            EmailAddress = friendUser.EmailAddress,
+            ProfileImagePath = friendUser.ProfileImagePath
+        };
+
+        // Fetch expense
+        friendVM.Expense = await _expenseShareRepository.Sum(
+            selector: es => es.Expense.PaidById == currentUserId ? es.ShareAmount : -es.ShareAmount,
+            predicate: es => es.DeletedAt == null && es.Expense.DeletedAt == null
+                            && ((es.Expense.PaidById == currentUserId && es.UserId == friendUserId)
+                                || (es.Expense.PaidById == friendUserId && es.UserId == currentUserId)),
+            includes: new List<Expression<Func<ExpenseShare, object>>>
+            {
+                es => es.Expense
+            }
+        );
+
+        return friendVM;
+    }
 }

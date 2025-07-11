@@ -424,7 +424,6 @@ footer.footer {
     }
 }
 
-
 /* Dashboard */
 .dashboardCards {
     color: darkslategrey;
@@ -461,13 +460,11 @@ footer.footer {
 
 /* Settlement */
 .settleListItem {
-    /* height: 60px; */
     width: 700px;
-    cursor: pointer;
 }
 
 /* Activity */
-#group-activity-outer {
+#group-activity-outer, #friend-activity-outer {
     max-height: calc(100vh - 456px);
     overflow-y: auto;
 }

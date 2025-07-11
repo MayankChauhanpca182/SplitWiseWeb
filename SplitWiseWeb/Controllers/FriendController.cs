@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using AspNetCoreGeneratedDocument;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SmartBreadcrumbs.Attributes;
@@ -148,5 +149,15 @@ public class FriendController : Controller
     {
         PaginatedListVM<FriendVM> paginatedList = await _friendService.FriendList(filter, groupId);
         return PartialView("FriendListForGroupPartialView", paginatedList);
+    }
+
+    // GET FriendDetails
+    [Breadcrumb("Friend Details", FromAction = "Index")]
+    [Route("friend-details/{friendUserId}")]
+    public async Task<IActionResult> FriendDetails(int friendUserId)
+    {
+        ViewData["ActiveLink"] = "Friends";
+        FriendVM friend = await _friendService.FriendDetails(friendUserId);
+        return View(friend);
     }
 }

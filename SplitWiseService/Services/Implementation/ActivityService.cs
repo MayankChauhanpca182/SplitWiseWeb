@@ -88,7 +88,7 @@ public class ActivityService : IActivityService
             predicate: a => a.DeletedAt == null
                             && (groupId != null ? a.GroupId == groupId : (a.PerformedById == currentUserId || a.PerformedOnId == currentUserId))
                             && a.CreatedAt >= filter.FromDate
-                            && a.CreatedAt <= filter.ToDate
+                            && a.CreatedAt < filter.ToDate.AddDays(1)
                             && (string.IsNullOrEmpty(searchString)
                                 || (isSearchYou && (a.PerformedById == currentUserId || a.PerformedOnId == currentUserId))
                                 || a.PerformedOnUser.FirstName.ToLower().Contains(searchString)

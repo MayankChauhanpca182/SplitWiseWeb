@@ -30,7 +30,7 @@ public class SettlementController : Controller
     public async Task<IActionResult> Index(int friendUserId)
     {
         int currentUserId = _userService.LoggedInUserId();
-        Friend friend = await _friendService.GetFriend(currentUserId, friendUserId);
+        Friend friend = await _friendService.GetFriend(friendUserId);
         User friendUser = friend.Friend1 == currentUserId ? friend.Friend2UserNavigation : friend.Friend1UserNavigation;
         return View(friendUser);
     }
