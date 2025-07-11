@@ -62,7 +62,7 @@
         </div>
 
         <div class="tab-pane fade" id="group-activity" role="tabpanel" aria-labelledby="group-activity-tab">
-            <partial name="../Activity/ActivityFilterPartialView" model="@Model.ActivityFilter"/>
+            <partial name="../Activity/ActivityFilterPartialView" model="@Model.ActivityFilter" />
             <div id="group-activity-outer" class="listOuter"></div>
         </div>
 
@@ -298,8 +298,7 @@
                 ToDate: $("#toDate").val()
             };
 
-            if(!(!filter.FromDate && !filter.ToDate) && !(filter.FromDate && filter.ToDate))
-            {
+            if (!(!filter.FromDate && !filter.ToDate) && !(filter.FromDate && filter.ToDate)) {
                 return;
             }
             else if (filter.FromDate && filter.ToDate) {
@@ -320,14 +319,7 @@
                             toastr.error(response.message);
                         }
                         else {
-                            switch (window.location.pathname) {
-                                case "/user-activities":
-                                    $("#user-activity-outer").html(response);
-                                    break;
-                                case "/group-details":
-                                    $("#group-activity-outer").html(response);
-                                    break;
-                            };
+                            $("#group-activity-outer").html(response);
                         }
                     }
                 },

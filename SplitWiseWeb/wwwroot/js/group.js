@@ -35,12 +35,13 @@ $(document).on("submit", "#groupForm", function (e) {
                 if (response.success) {
                     toastr.success(response.message);
                     $("#regularModal").modal("hide");
-                    switch(window.location.pathname)
+                    let path = window.location.pathname;
+                    switch (true)
                     {
-                        case "/groups":
+                        case path === "/groups":
                             getGroupList(1);
                             break;
-                        case "/group-details":
+                        case /^\/group-details\/[^/]+$/.test(path):
                             fetchGroupName();
                             fetchActivities();
                             break;

@@ -75,10 +75,14 @@ public class GroupController : Controller
     }
 
     // GET GroupDetails
-    [Route("group-details")]
     [Breadcrumb("Group Details", FromAction = "Index")]
+    [Route("group-details/{groupId}")]
     public async Task<IActionResult> GroupDetails(int groupId)
     {
+        var test = new SmartBreadcrumbs.Nodes.MvcControllerBreadcrumbNode("", "")
+        {
+            
+        };
         GroupVM group = await _groupService.GetGroup(groupId);
         group.Members = await _groupService.GetMembers(groupId);
         group.ActivityFilter = await _activityService.GetActivityFilter(groupId);
