@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using SplitWiseRepository.Constants;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.Repositories.Interface;
@@ -21,8 +22,9 @@ public class FriendService : IFriendService
     private readonly IGenericRepository<ExpenseShare> _expenseShareRepository;
     private readonly IUserService _userService;
     private readonly IEmailService _emailService;
+    private readonly IActivityService _activityService;
 
-    public FriendService(IUserService userService, IEmailService emailService, IGenericRepository<FriendRequest> friendRequestRepository, ITransactionRepository transaction, IGenericRepository<UserReferral> userReferralRepository, IGenericRepository<Friend> friendRepository, IGenericRepository<Expense> expenseRepository, IGenericRepository<ExpenseShare> expenseShareRepository)
+    public FriendService(IUserService userService, IEmailService emailService, IGenericRepository<FriendRequest> friendRequestRepository, ITransactionRepository transaction, IGenericRepository<UserReferral> userReferralRepository, IGenericRepository<Friend> friendRepository, IGenericRepository<Expense> expenseRepository, IGenericRepository<ExpenseShare> expenseShareRepository, IActivityService activityService)
     {
         _userService = userService;
         _emailService = emailService;
@@ -32,6 +34,7 @@ public class FriendService : IFriendService
         _friendRepository = friendRepository;
         _expenseRepository = expenseRepository;
         _expenseShareRepository = expenseShareRepository;
+        _activityService = activityService;
     }
 
     private async Task AddFriendRequest(int requesterId, int? receiverId = null, int? referralId = null)
@@ -629,6 +632,10 @@ public class FriendService : IFriendService
             }
         );
 
+        // Activity filter
+        friendVM.ActivityFilter = await _activityService.GetActivityFilter(friendUserId = friendVM.UserId);
+
         return friendVM;
     }
+
 }

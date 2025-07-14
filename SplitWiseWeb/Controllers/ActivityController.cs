@@ -26,9 +26,9 @@ public class ActivityController : Controller
     }
 
     // POST ActivityList
-    public async Task<IActionResult> ActivityList(FilterVM filter, int? groupId = null)
+    public async Task<IActionResult> ActivityList(FilterVM filter, int? groupId = null, int? friendUserId = null)
     {
-        List<Activity> activities = await  _activityService.ActivityList(filter, groupId);
+        List<Activity> activities = await  _activityService.ActivityList(filter, groupId, friendUserId);
         return PartialView("ActivityList", activities);
     }
 }

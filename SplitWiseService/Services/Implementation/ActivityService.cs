@@ -77,20 +77,24 @@ public class ActivityService : IActivityService
         return userActivities;
     }
 
-    public async Task<List<Activity>> ActivityList(FilterVM filter, int? groupId = null)
+    public async Task<List<Activity>> ActivityList(FilterVM filter, int? groupId = null, int? friendUserId = null)
     {
         int currentUserId = _userService.LoggedInUserId();
         string searchString = string.IsNullOrEmpty(filter.SearchString) ? string.Empty : filter.SearchString.Replace(" ", "").ToLower();
 
-        bool isSearchYou = "you".Contains(searchString);
+        bool isSearchTextYou = "you".Contains(searchString);
 
         PaginatedItemsVM<Activity> userActivities = await _activityRepository.PaginatedList(
             predicate: a => a.DeletedAt == null
-                            && (groupId != null ? a.GroupId == groupId : (a.PerformedById == currentUserId || a.PerformedOnId == currentUserId))
+                             && (groupId != null
+                                ? a.GroupId == groupId
+                                : (friendUserId == null
+                                    ? a.PerformedById == currentUserId || a.PerformedOnId == currentUserId
+                                    : ((a.PerformedById == currentUserId && a.PerformedOnId == friendUserId) || (a.PerformedById == friendUserId && a.PerformedOnId == currentUserId))))
                             && a.CreatedAt >= filter.FromDate
                             && a.CreatedAt < filter.ToDate.AddDays(1)
                             && (string.IsNullOrEmpty(searchString)
-                                || (isSearchYou && (a.PerformedById == currentUserId || a.PerformedOnId == currentUserId))
+                                || (isSearchTextYou && (a.PerformedById == currentUserId || a.PerformedOnId == currentUserId))
                                 || a.PerformedOnUser.FirstName.ToLower().Contains(searchString)
                                 || a.PerformedOnUser.LastName.ToLower().Contains(searchString)
                                 || a.Group.Name.ToLower().Contains(searchString)
@@ -110,10 +114,9 @@ public class ActivityService : IActivityService
         );
 
         return userActivities.Items.ToList();
-
     }
 
-    public async Task<ActivityFilterVM> GetActivityFilter(int? groupId = null)
+    public async Task<ActivityFilterVM> GetActivityFilter(int? groupId = null, int? friendUserId = null)
     {
         int currentUserId = _userService.LoggedInUserId();
         ActivityFilterVM activityFilter = new ActivityFilterVM();
@@ -124,7 +127,11 @@ public class ActivityService : IActivityService
         Activity firstActivity = await _activityRepository.FirstOrLast(
             isFirstElement: true,
             predicate: a => a.DeletedAt == null
-                        && (groupId != null ? a.GroupId == groupId : (a.PerformedById == currentUserId || a.PerformedOnId == currentUserId)),
+                        && (groupId != null
+                            ? a.GroupId == groupId
+                            : (friendUserId == null
+                                ? a.PerformedById == currentUserId || a.PerformedOnId == currentUserId
+                                : ((a.PerformedById == currentUserId && a.PerformedOnId == friendUserId) || (a.PerformedById == friendUserId && a.PerformedOnId == currentUserId)))),
             orderBy: a => a.OrderBy(a => a.CreatedAt)
         );
 
@@ -132,12 +139,17 @@ public class ActivityService : IActivityService
         Activity lastActivity = await _activityRepository.FirstOrLast(
             isFirstElement: false,
             predicate: a => a.DeletedAt == null
-                        && (groupId != null ? a.GroupId == groupId : (a.PerformedById == currentUserId || a.PerformedOnId == currentUserId)),
+                        && (groupId != null
+                            ? a.GroupId == groupId
+                            : (friendUserId == null
+                                ? a.PerformedById == currentUserId || a.PerformedOnId == currentUserId
+                                : ((a.PerformedById == currentUserId && a.PerformedOnId == friendUserId) || (a.PerformedById == friendUserId && a.PerformedOnId == currentUserId)))),
             orderBy: a => a.OrderBy(a => a.CreatedAt)
         );
 
-        activityFilter.MinDate = firstActivity.CreatedAt;
-        activityFilter.MaxDate = lastActivity.CreatedAt;
+        activityFilter.MinDate = firstActivity != null ? firstActivity.CreatedAt : DateTime.Now;
+        activityFilter.MaxDate = lastActivity != null ? lastActivity.CreatedAt : DateTime.Now;
         return activityFilter;
     }
+
 }

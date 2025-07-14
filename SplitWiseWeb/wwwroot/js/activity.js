@@ -12,14 +12,14 @@ $(document).ready(function () {
 });
 
 $("#fromDate").blur(function () {
-    $("#toDate").attr("min", $(this).val());
+    // $("#toDate").attr("min", $(this).val());
     if (checkValidDate($(this))) {
         fetchActivities();
     }
 });
 
 $("#toDate").blur(function () {
-    $("#fromDate").attr("max", $(this).val());
+    // $("#fromDate").attr("max", $(this).val());
     if (checkValidDate($(this))) {
         fetchActivities();
     }

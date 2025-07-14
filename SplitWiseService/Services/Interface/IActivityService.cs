@@ -9,6 +9,6 @@ public interface IActivityService
     public Task AddActivity(ActivityType activityType, int? groupId = null, int? expenseId = null, int? paymentId = null, int? performedOnId = null);
     public Task<List<Activity>> GroupActivityList(int groupId);
     public Task<List<Activity>> UserActivityList();
-    public Task<List<Activity>> ActivityList(FilterVM filter, int? groupId = null);
-    public Task<ActivityFilterVM> GetActivityFilter(int? groupId = null);
+    public Task<List<Activity>> ActivityList(FilterVM filter, int? groupId = null, int? friendUserId = null);
+    public Task<ActivityFilterVM> GetActivityFilter(int? groupId = null, int? friendUserId = null);
 }

@@ -298,7 +298,7 @@
                 ToDate: $("#toDate").val()
             };
 
-            if (!(!filter.FromDate && !filter.ToDate) && !(filter.FromDate && filter.ToDate)) {
+            if ((!filter.FromDate || !filter.ToDate) && !(filter.FromDate && filter.ToDate)) {
                 return;
             }
             else if (filter.FromDate && filter.ToDate) {

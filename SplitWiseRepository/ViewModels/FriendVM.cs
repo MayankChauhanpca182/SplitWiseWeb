@@ -8,4 +8,6 @@ public class FriendVM
     public string EmailAddress { get; set; }
     public string ProfileImagePath { get; set; }
     public decimal Expense { get; set; } = 0;
+
+    public ActivityFilterVM ActivityFilter { get; set; } = new ActivityFilterVM();
 }
