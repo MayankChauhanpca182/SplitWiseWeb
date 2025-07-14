@@ -13,6 +13,9 @@ public class ExpenseShare : AuditFields
     [ForeignKey("UserId")]
     public virtual User User { get; set; }
 
-    [Column(TypeName ="decimal(10,2)")]
+    [Column(TypeName = "decimal(10,2)")]
     public decimal ShareAmount { get; set; } = 0;
+
+    [Column(TypeName = "decimal(10,2)")]
+    public decimal SettledAmount { get; set; } = 0;
 }
