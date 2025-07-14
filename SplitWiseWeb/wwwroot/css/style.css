@@ -137,7 +137,7 @@ td {
     width: 125px !important;
 }
 
-.img-20px{
+.img-20px {
     width: 20px;
     height: 20px;
 }
@@ -156,6 +156,15 @@ body {
 
 a {
     text-decoration: none;
+}
+
+.custom-form-floating>.form-control {
+    min-height: unset;
+    height: 50px !important;
+}
+
+.custom-form-floating>.form-control:not(:placeholder-shown)~label {
+    padding: 12px 9px !important;
 }
 
 
@@ -365,7 +374,8 @@ footer.footer {
     gap: 5px;
 }
 
-#friendsDropdown, #groupsDropdown{
+#friendsDropdown,
+#groupsDropdown {
     max-height: 125px;
     overflow-y: auto;
 }
@@ -469,7 +479,8 @@ footer.footer {
 }
 
 /* Activity */
-#group-activity-outer, #friend-activity-outer {
+#group-activity-outer,
+#friend-activity-outer {
     max-height: calc(100vh - 456px);
     overflow-y: auto;
 }
@@ -487,7 +498,7 @@ footer.footer {
     margin: 5px 0px;
 }
 
-.activityDivider{
+.activityDivider {
     text-align: center;
     color: var(--clr-grey);
     font-style: italic;

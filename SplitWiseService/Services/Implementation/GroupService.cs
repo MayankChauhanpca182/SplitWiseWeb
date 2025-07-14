@@ -375,7 +375,7 @@ public class GroupService : IGroupService
         }
     }
 
-    public async Task<ResponseVM> RemoveGroupMembers(int groupMemberId)
+    public async Task<ResponseVM> RemoveGroupMember(int groupMemberId)
     {
         try
         {

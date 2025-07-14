@@ -118,7 +118,7 @@ public class GroupController : Controller
     [HttpPost]
     public async Task<IActionResult> RemoveGroupMembers(int groupMemberId)
     {
-        ResponseVM response = await _groupService.RemoveGroupMembers(groupMemberId);
+        ResponseVM response = await _groupService.RemoveGroupMember(groupMemberId);
         int currentUserId = _userService.LoggedInUserId();
         if (response.EntityId == currentUserId && response.Success)
         {

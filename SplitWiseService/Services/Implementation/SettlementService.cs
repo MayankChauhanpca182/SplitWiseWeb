@@ -187,7 +187,8 @@ public class SettlementService : ISettlementService
 
                 foreach (ExpenseShare share in expenseShares.Where(es => es.ShareAmount > 0))
                 {
-                    share.ShareAmount = 0;
+                    // share.ShareAmount = 0;
+                    share.SettledAmount = share.ShareAmount;
                     share.UpdatedAt = DateTime.Now;
                     share.UpdatedById = currentUser.Id;
                     await _expenseShareRepository.Update(share);
@@ -199,7 +200,9 @@ public class SettlementService : ISettlementService
 
                 // Fetch expense share list
                 List<ExpenseShare> expenseShares = await _expenseShareRepository.List(
-                    predicate: es => es.DeletedAt == null && es.UserId == currentUser.Id && es.Expense.PaidById == settlement.PaidToId
+                    predicate: es => es.DeletedAt == null
+                                && ((es.UserId == currentUser.Id && es.Expense.PaidById == settlement.PaidToId && es.SettledAmount >= 0)
+                                    || (es.UserId == settlement.PaidToId && es.Expense.PaidById == currentUser.Id && es.SettledAmount < 0))
                                 && (settlement.GroupId == 0 ? es.Expense.GroupId == null : es.Expense.GroupId == settlement.GroupId),
                     includes: new List<Expression<Func<ExpenseShare, object>>>
                     {
@@ -209,14 +212,17 @@ public class SettlementService : ISettlementService
 
                 foreach (ExpenseShare share in expenseShares.Where(es => es.ShareAmount > 0))
                 {
-                    if (remaingAmount >= share.ShareAmount)
+                    decimal netAmount = share.ShareAmount - share.SettledAmount;
+                    if (remaingAmount >= netAmount)
                     {
-                        remaingAmount -= share.ShareAmount;
-                        share.ShareAmount = 0;
+                        share.SettledAmount += netAmount;
+                        remaingAmount -= netAmount;
+                        // share.ShareAmount = 0;
                     }
                     else
                     {
-                        share.ShareAmount -= remaingAmount;
+                        // share.ShareAmount -= remaingAmount;
+                        share.ShareAmount += remaingAmount;
                         remaingAmount = 0;
                     }
                     share.UpdatedAt = DateTime.Now;
