@@ -365,6 +365,11 @@ footer.footer {
     gap: 5px;
 }
 
+#friendsDropdown, #groupsDropdown{
+    max-height: 125px;
+    overflow-y: auto;
+}
+
 .expenseMemberPill {
     display: flex;
     align-items: center;
