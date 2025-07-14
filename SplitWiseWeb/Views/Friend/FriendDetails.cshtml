@@ -36,12 +36,28 @@
                 type="button" role="tab" aria-controls="friend-activity" aria-selected="false"
                 onclick="fetchActivities()">Activities</button>
         </li>
+
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="friend-transactions-tab" data-bs-toggle="pill" data-bs-target="#friend-transactions"
+                type="button" role="tab" aria-controls="friend-transactions" aria-selected="true"
+                onclick="fetchFriendTransactions()">Transactions</button>
+        </li>
     </ul>
 
     <div class="tab-content" id="pills-tabContent">
         <div class="tab-pane fade show active" id="friend-activity" role="tabpanel" aria-labelledby="friend-activity-tab">
             <partial name="../Activity/ActivityFilterPartialView" model="@Model.ActivityFilter" />
             <div id="friend-activity-outer" class="listOuter"></div>
+        </div>
+
+        <div class="tab-pane fade" id="friend-transactions" role="tabpanel" aria-labelledby="friend-transactions-tab">
+            <div class="d-flex flex-wrap justify-content-between gap-3 mb-3">
+                <div class="d-flex align-items-center gap-2">
+                    <input type="text" class="searchBox form-control border-secondary-subtle rounded-0"
+                        id="transactionListSearch" placeholder="Search by Expense">
+                </div>
+            </div>
+            <div id="transactionListOuter" class="listOuter bg-white"></div>
         </div>
     </div>
 </div>
@@ -91,5 +107,58 @@
                 }
             });
         }
+    </script>
+
+    @* Transaction list *@
+    <script>
+        sortColumn = "";
+        sortOrder = "";
+
+        $("#transactionListSearch").on("input", function () {
+            if (searchTimeout === null) {
+                searchTimeout = setTimeout(function () {
+                    fetchFriendTransactions(1);
+                }, 500);
+            }
+        });
+
+        function fetchFriendTransactions(currentPage = 1) {
+            clearTimeout(searchTimeout);
+            searchTimeout = null;
+
+            let filter = {
+                PageNumber: currentPage,
+                PageSize: $("#transactionListPageSize").val(),
+                SearchString: $("#transactionListSearch").val(),
+                SortColumn: sortColumn,
+                SortOrder: sortOrder
+            };
+
+            $.ajax({
+                url: "/Payment/FriendPaymentList",
+                type: "POST",
+                data: { filter, friendUserId: '@Model.UserId' },
+                success: function (response) {
+                    if (!response.statusCode) {
+                        if (response.success == false) {
+                            toastr.error(response.message);
+                        }
+                        else {
+                            $("#transactionListOuter").html(response);
+                        }
+                    }
+                },
+                error: function () {
+                    toastr.error("Internal server error.");
+                }
+            });
+        }
+
+        // Handle sorting
+        $(document).on("click", ".sortBtn", function () {
+            sortColumn = $(this).data("column");
+            sortOrder = $(this).data("order");
+            fetchFriendTransactions(1);
+        });
     </script>
 }
