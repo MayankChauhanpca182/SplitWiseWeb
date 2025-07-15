@@ -221,7 +221,8 @@ public class ExpenseService : IExpenseService
                 {
                     Title = "System Generated",
                     Amount = share.SettledAmount,
-                    PaidById = expense.PaidById,
+                    GroupId = expense.GroupId,
+                    PaidById = share.UserId,
                     PaidDate = DateTime.Now,
                     ExpenseCategoryId = expense.ExpenseCategoryId,
                     CurrencyId = expense.CurrencyId,
@@ -237,7 +238,7 @@ public class ExpenseService : IExpenseService
                 ExpenseShare systemExpenseShare = new ExpenseShare
                 {
                     ExpenseId = systemExpense.Id,
-                    UserId = share.UserId,
+                    UserId = expense.PaidById,
                     ShareAmount = share.SettledAmount,
                     CreatedById = currentUser.Id,
                     UpdatedById = currentUser.Id,
@@ -272,7 +273,7 @@ public class ExpenseService : IExpenseService
             ExpenseShare existingShare = existingShares.FirstOrDefault(es => es.UserId == share.UserId);
             if (existingShare != null)
             {
-                if (existingShare.UserId == oldPaidById)
+                if (existingShare.UserId == oldPaidById  && oldPaidById != expense.PaidById)
                 {
                     existingShare.SettledAmount = (-1) * amountToBeSettle;
                 }
@@ -493,8 +494,9 @@ public class ExpenseService : IExpenseService
             Members = e.ExpenseShares.Where(es => es.DeletedAt == null).Select(es => es.User).ToList(),
             MemberNames = e.ExpenseShares.Where(es => es.DeletedAt == null).Select(es => es.User.FirstName + " " + es.User.LastName).ToList(),
             Expense = e.PaidById == currentUserId
-                    ? e.ExpenseShares.Where(es => es.DeletedAt == null && es.UserId != currentUserId).Sum(es => es.ShareAmount)
-                    : (-1) * e.ExpenseShares.Where(es => es.DeletedAt == null && es.UserId == currentUserId).Sum(es => es.ShareAmount)
+                    ? e.ExpenseShares.Where(es => es.DeletedAt == null && es.UserId != currentUserId).Sum(es => es.ShareAmount - es.SettledAmount)
+                    : (-1) * e.ExpenseShares.Where(es => es.DeletedAt == null && es.UserId == currentUserId).Sum(es => es.ShareAmount - es.SettledAmount),
+            IsSystemGenerated = e.IsSystemGenerated
         }).ToList();
 
         paginatedList.Page.SetPagination(paginatedItems.TotalRecords, filter.PageSize, filter.PageNumber);

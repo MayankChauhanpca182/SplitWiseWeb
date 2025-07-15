@@ -11,7 +11,6 @@ public class Expense : AuditFields
     [ForeignKey("GroupId")]
     public virtual Group Group { get; set; }
 
-
     [Required]
     [MaxLength(100)]
     public string Title { get; set; }

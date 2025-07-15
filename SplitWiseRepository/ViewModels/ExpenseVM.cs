@@ -54,4 +54,5 @@ public class ExpenseVM
     public List<GroupVM> GroupList { get; set; } = new List<GroupVM>();
     public string AttachmentPath { get; set; } = string.Empty;
     public string AttachmentName { get; set; } = string.Empty;
+    public bool IsSystemGenerated { get; set; } = false;
 }

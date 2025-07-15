@@ -86,7 +86,7 @@ public class DashboardService : IDashboardService
         int currentUserId = _userService.LoggedInUserId();
 
         decimal netAmount = await _expenseShareRepository.Sum(
-            selector: es => es.Expense.PaidById == currentUserId ? es.ShareAmount : -es.ShareAmount,
+            selector: es => es.Expense.PaidById == currentUserId ? (es.ShareAmount - es.SettledAmount) : -(es.ShareAmount - es.SettledAmount),
             predicate: es => es.DeletedAt == null
                         && es.Expense.DeletedAt == null && es.Expense.GroupId != null
                         && es.UserId != es.Expense.PaidById
@@ -105,7 +105,7 @@ public class DashboardService : IDashboardService
         int currentUserId = _userService.LoggedInUserId();
 
         decimal netAmount = await _expenseShareRepository.Sum(
-            selector: es => es.Expense.PaidById == currentUserId ? es.ShareAmount : -es.ShareAmount,
+            selector: es => es.Expense.PaidById == currentUserId ? (es.ShareAmount - es.SettledAmount) : -(es.ShareAmount - es.SettledAmount),
             predicate: es => es.DeletedAt == null
                         && es.Expense.DeletedAt == null && es.Expense.GroupId == null
                         && es.UserId != es.Expense.PaidById

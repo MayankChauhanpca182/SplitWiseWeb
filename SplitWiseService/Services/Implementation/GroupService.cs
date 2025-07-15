@@ -86,7 +86,7 @@ public class GroupService : IGroupService
             select new
             {
                 GroupId = g.Key,
-                Expense = g.Sum(x => x.e.PaidById == currentUserId ? x.es.ShareAmount : -x.es.ShareAmount)
+                Expense = g.Sum(x => x.e.PaidById == currentUserId ? (x.es.ShareAmount - x.es.SettledAmount) : -(x.es.ShareAmount - x.es.SettledAmount))
             }
         ).Select(x => x.Expense).FirstOrDefaultAsync();
 
@@ -214,7 +214,7 @@ public class GroupService : IGroupService
             select new
             {
                 GroupId = g.Key,
-                Expense = g.Sum(x => x.e.PaidById == currentUserId ? x.es.ShareAmount : -x.es.ShareAmount)
+                Expense = g.Sum(x => x.e.PaidById == currentUserId ? (x.es.ShareAmount - x.es.SettledAmount) : -(x.es.ShareAmount - x.es.SettledAmount))
             }
         ).ToDictionaryAsync(x => x.GroupId, x => x.Expense);
 
@@ -306,7 +306,7 @@ public class GroupService : IGroupService
             select new
             {
                 UserId = g.Key,
-                Expense = g.Sum(x => x.e.PaidById == currentUserId ? x.es.ShareAmount : -x.es.ShareAmount)
+                Expense = g.Sum(x => x.e.PaidById == currentUserId ? (x.es.ShareAmount - x.es.SettledAmount) : -(x.es.ShareAmount - x.es.SettledAmount))
             }
         ).ToDictionaryAsync(x => x.UserId, x => x.Expense);
 
@@ -405,7 +405,7 @@ public class GroupService : IGroupService
                 select new
                 {
                     UserId = g.Key,
-                    Expense = g.Sum(x => x.e.PaidById == groupMember.UserId ? x.es.ShareAmount : -x.es.ShareAmount)
+                    Expense = g.Sum(x => x.e.PaidById == groupMember.UserId ? (x.es.ShareAmount - x.es.SettledAmount) : -(x.es.ShareAmount - x.es.SettledAmount))
                 }
             ).ToDictionaryAsync(x => x.UserId, x => x.Expense);
 

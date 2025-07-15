@@ -479,7 +479,7 @@ public class FriendService : IFriendService
             select new
             {
                 FriendUserId = g.Key,
-                Expense = g.Sum(x => x.e.PaidById == currentUserId ? x.es.ShareAmount : -x.es.ShareAmount)
+                Expense = g.Sum(x => x.e.PaidById == currentUserId ? (x.es.ShareAmount - x.es.SettledAmount) : -(x.es.ShareAmount - x.es.SettledAmount))
             }
         ).ToDictionaryAsync(x => x.FriendUserId, x => x.Expense);
 
@@ -523,7 +523,7 @@ public class FriendService : IFriendService
 
             // Calculate net amount
             decimal netAmount = await _expenseShareRepository.Sum(
-                selector: es => es.Expense.PaidById == currentUser.Id ? es.ShareAmount : -es.ShareAmount,
+                selector: es => es.Expense.PaidById == currentUser.Id ? (es.ShareAmount - es.SettledAmount) : -(es.ShareAmount - es.SettledAmount),
                 predicate: es => es.DeletedAt == null && es.Expense.DeletedAt == null
                             && ((es.UserId == currentUser.Id && es.Expense.PaidById == otherUserId)
                                 || (es.Expense.PaidById == currentUser.Id && es.UserId == otherUserId)),
@@ -622,7 +622,7 @@ public class FriendService : IFriendService
 
         // Fetch expense
         friendVM.Expense = await _expenseShareRepository.Sum(
-            selector: es => es.Expense.PaidById == currentUserId ? es.ShareAmount : -es.ShareAmount,
+            selector: es => es.Expense.PaidById == currentUserId ? (es.ShareAmount - es.SettledAmount) : -(es.ShareAmount - es.SettledAmount),
             predicate: es => es.DeletedAt == null && es.Expense.DeletedAt == null
                             && ((es.Expense.PaidById == currentUserId && es.UserId == friendUserId)
                                 || (es.Expense.PaidById == friendUserId && es.UserId == currentUserId)),

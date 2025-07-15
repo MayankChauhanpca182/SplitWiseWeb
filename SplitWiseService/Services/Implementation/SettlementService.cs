@@ -60,12 +60,14 @@ public class SettlementService : ISettlementService
             from e in _expenseRepository.Query()
             where e.DeletedAt == null && (e.GroupId != null ? groupIds.Contains((int)e.GroupId) : false)
             from es in e.ExpenseShares
-            where e.PaidById == friendUserId && es.UserId == currentUser.Id
+            where es.DeletedAt == null 
+                && ((e.PaidById == friendUserId && es.UserId == currentUser.Id && (es.ShareAmount - es.SettledAmount) > 0) 
+                    || (e.PaidById == currentUser.Id && es.UserId == friendUserId && (es.ShareAmount - es.SettledAmount) < 0))
             group new { e, es } by (int)e.GroupId into g
             select new
             {
                 GroupId = g.Key,
-                Expense = g.Sum(x => x.es.ShareAmount)
+                Expense = g.Sum(x => x.es.ShareAmount - x.es.SettledAmount)
             }
         ).ToDictionaryAsync(x => x.GroupId, x => x.Expense);
 
@@ -101,7 +103,9 @@ public class SettlementService : ISettlementService
             from e in _expenseRepository.Query()
             where e.DeletedAt == null && e.GroupId == null
             from es in e.ExpenseShares
-            where es.DeletedAt == null && e.PaidById == friendUserId && es.UserId == currentUser.Id
+            where es.DeletedAt == null
+                && ((e.PaidById == friendUserId && es.UserId == currentUser.Id && (es.ShareAmount - es.SettledAmount) > 0) 
+                    || (e.PaidById == currentUser.Id && es.UserId == friendUserId && (es.ShareAmount - es.SettledAmount) < 0))
             group new { e, es } by e.PaidById into g
             select new
             {
@@ -178,7 +182,10 @@ public class SettlementService : ISettlementService
             {
                 // Fetch all expense shares
                 List<ExpenseShare> expenseShares = await _expenseShareRepository.List(
-                    predicate: es => es.DeletedAt == null && es.UserId == currentUser.Id && es.Expense.PaidById == settlement.PaidToId,
+                    predicate: es => es.DeletedAt == null
+                                && es.UserId == currentUser.Id && es.Expense.PaidById == settlement.PaidToId
+                                && ((es.Expense.PaidById == settlement.PaidById && es.UserId == currentUser.Id && (es.ShareAmount - es.SettledAmount) > 0)
+                                    || (es.Expense.PaidById == currentUser.Id && es.UserId == settlement.PaidById && (es.ShareAmount - es.SettledAmount) < 0)),
                     includes: new List<Expression<Func<ExpenseShare, object>>>
                     {
                         es => es.Expense
@@ -201,8 +208,8 @@ public class SettlementService : ISettlementService
                 // Fetch expense share list
                 List<ExpenseShare> expenseShares = await _expenseShareRepository.List(
                     predicate: es => es.DeletedAt == null
-                                && ((es.UserId == currentUser.Id && es.Expense.PaidById == settlement.PaidToId && es.SettledAmount >= 0)
-                                    || (es.UserId == settlement.PaidToId && es.Expense.PaidById == currentUser.Id && es.SettledAmount < 0))
+                                && ((es.UserId == currentUser.Id && es.Expense.PaidById == settlement.PaidToId && (es.ShareAmount - es.SettledAmount) > 0)
+                                    || (es.UserId == settlement.PaidToId && es.Expense.PaidById == currentUser.Id && (es.ShareAmount - es.SettledAmount) < 0))
                                 && (settlement.GroupId == 0 ? es.Expense.GroupId == null : es.Expense.GroupId == settlement.GroupId),
                     includes: new List<Expression<Func<ExpenseShare, object>>>
                     {
@@ -222,7 +229,7 @@ public class SettlementService : ISettlementService
                     else
                     {
                         // share.ShareAmount -= remaingAmount;
-                        share.ShareAmount += remaingAmount;
+                        share.SettledAmount += remaingAmount;
                         remaingAmount = 0;
                     }
                     share.UpdatedAt = DateTime.Now;
