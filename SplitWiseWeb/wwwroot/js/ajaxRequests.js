@@ -75,11 +75,11 @@ $(document).on("submit", "#sendReferralForm", function (e) {
 });
 
 // Export to excel
-function exportDataAjax(filter, url, fileName) {
+function exportDataAjax(filter, url, fileName, groupId = null, friendUserId = null) {
     $.ajax({
         url: url,
         type: "POST",
-        data: { filter },
+        data: { filter, groupId, friendUserId },
         xhrFields: {
             responseType: 'blob'
         },

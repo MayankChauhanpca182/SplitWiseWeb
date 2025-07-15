@@ -19,6 +19,7 @@
             </div>
         </div>
         <div class="d-flex gap-2">
+            <button class="btn btn-secondary w-125px" type="button" onclick="exportNonGroupExpenses()">Export</button>
             <a asp-action="AddNonGroupExpense" asp-controller="Expense" class="btn btn-primary w-125px"
                 type="button">Add Expense</a>
         </div>
@@ -84,5 +85,17 @@
             sortOrder = $(this).data("order");
             getNonGroupExpenseList(1);
         });
+    </script>
+
+    @* Export non group expenses *@
+    <script>
+        function exportNonGroupExpenses() {
+            let filter = {
+                SearchString: $("#nonGroupExpenseListSearch").val(),
+                IsSystemGenerated: $("#systemExpensesCkb").prop("checked")
+            };
+
+            exportDataAjax(filter, "/Expense/ExportNonGroupExpenses", "Non_Group_Expenses");
+        }
     </script>
 }

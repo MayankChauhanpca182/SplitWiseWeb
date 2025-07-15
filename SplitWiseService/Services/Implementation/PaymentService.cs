@@ -60,4 +60,29 @@ public class PaymentService : IPaymentService
         return paginatedList;
     }
 
+    public async Task<byte[]> ExportPayments(FilterVM filter, int friendUserId = 0)
+    {
+        filter.PageNumber = 0;
+        filter.PageSize = 0;
+        PaginatedListVM<Payment> paginatedList = await FriendPaymentList(filter, friendUserId: friendUserId);
+        if (!paginatedList.List.Any())
+        {
+            return null;
+        }
+
+        List<PaymentVM> payments = paginatedList.List.Select(p => new PaymentVM
+        {
+            Date = p.CreatedAt.ToString("dd-MM-yyyy"),
+            Time = p.CreatedAt.ToString("HH:mm:ss"),
+            PaidBy = p.PaidByUser.FirstName + " " + p.PaidByUser.LastName,
+            PaidTo = p.PaidToUser.FirstName + " " + p.PaidToUser.LastName,
+            Amount = p.Amount.ToString("N2")
+        }).ToList();
+
+        List<string> columns = new List<string>
+        {
+            "Date", "Time", "PaidBy", "PaidTo", "Amount"
+        };
+        return ExcelExportHelper.ExportToExcel(payments, columns, "Payments");
+    }
 }

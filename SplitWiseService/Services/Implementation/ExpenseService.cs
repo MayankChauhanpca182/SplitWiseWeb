@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Crypto.Engines;
 using SplitWiseRepository.Constants;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.Repositories.Interface;
@@ -273,7 +274,7 @@ public class ExpenseService : IExpenseService
             ExpenseShare existingShare = existingShares.FirstOrDefault(es => es.UserId == share.UserId);
             if (existingShare != null)
             {
-                if (existingShare.UserId == oldPaidById  && oldPaidById != expense.PaidById)
+                if (existingShare.UserId == oldPaidById && oldPaidById != expense.PaidById)
                 {
                     existingShare.SettledAmount = (-1) * amountToBeSettle;
                 }
@@ -436,6 +437,7 @@ public class ExpenseService : IExpenseService
     {
         int currentUserId = _userService.LoggedInUserId();
         string searchString = string.IsNullOrEmpty(filter.SearchString) ? "" : filter.SearchString.Replace(" ", "").ToLower();
+        bool isGroupExpenses = groupId > 0;
 
         Func<IQueryable<Expense>, IOrderedQueryable<Expense>> orderBy = q => q.OrderByDescending(e => e.PaidDate).ThenByDescending(e => e.UpdatedAt);
         if (!string.IsNullOrEmpty(filter.SortColumn))
@@ -457,10 +459,11 @@ public class ExpenseService : IExpenseService
             predicate: e => (e.PaidById == currentUserId || e.ExpenseShares.Any(es => es.DeletedAt == null && es.UserId == currentUserId))
                             && e.DeletedAt == null
                             && (!filter.IsSystemGenerated ? !e.IsSystemGenerated : true)
-                            && (isAllExpense ? true : (groupId == 0 || e.GroupId == groupId))
+                            && (isAllExpense ? true : (isGroupExpenses ? e.GroupId != null : e.GroupId == null))
+                            && (groupId == 0 || e.GroupId == groupId)
                             && (friendUserId == 0
-                                ? true 
-                                :(e.PaidById == currentUserId && e.ExpenseShares.Any(es => es.DeletedAt == null && es.UserId == friendUserId))
+                                ? true
+                                : (e.PaidById == currentUserId && e.ExpenseShares.Any(es => es.DeletedAt == null && es.UserId == friendUserId))
                                     || (e.PaidById == friendUserId && e.ExpenseShares.Any(es => es.DeletedAt == null && es.UserId == currentUserId))
                                     || (e.ExpenseShares.Any(es => es.DeletedAt == null && es.UserId == currentUserId) && e.ExpenseShares.Any(es => es.DeletedAt == null && es.UserId == friendUserId))
                                 )
@@ -492,13 +495,14 @@ public class ExpenseService : IExpenseService
         {
             Id = e.Id,
             GroupId = e.GroupId,
-            GroupDetails = e.GroupId != null ? new GroupVM{Name = e.Group.Name } : new GroupVM(),
+            GroupDetails = e.GroupId != null ? new GroupVM { Name = e.Group.Name } : new GroupVM{Name = "-"},
             Title = e.Title,
             PaidDate = e.PaidDate,
             PaidById = e.PaidById,
             PaidByName = e.PaidByUser.FirstName + " " + e.PaidByUser.LastName,
             Members = e.ExpenseShares.Where(es => es.DeletedAt == null).Select(es => es.User).ToList(),
             MemberNames = e.ExpenseShares.Where(es => es.DeletedAt == null).Select(es => es.User.FirstName + " " + es.User.LastName).ToList(),
+            Amount = e.Amount.ToString("N2"),
             Expense = e.PaidById == currentUserId
                     ? e.ExpenseShares.Where(es => es.DeletedAt == null && es.UserId != currentUserId).Sum(es => es.ShareAmount - es.SettledAmount)
                     : (-1) * e.ExpenseShares.Where(es => es.DeletedAt == null && es.UserId == currentUserId).Sum(es => es.ShareAmount - es.SettledAmount),
@@ -553,4 +557,19 @@ public class ExpenseService : IExpenseService
 
     }
 
+    public async Task<byte[]> ExportExpenses(FilterVM filter, bool isAllExpense = false, int groupId = 0, int friendUserId = 0)
+    {
+        filter.PageNumber = 0;
+        filter.PageSize = 0;
+        PaginatedListVM<ExpenseVM> paginatedList = await ExpenseList(filter, isAllExpense: isAllExpense, groupId: groupId, friendUserId: friendUserId);
+        if (!paginatedList.List.Any())
+        {
+            return null;
+        }
+        List<string> columns = new List<string>
+        {
+            "PaidDate", "Title", "Amount", "Expense"
+        };
+        return ExcelExportHelper.ExportToExcel(paginatedList.List, columns, "Expenses");
+    }
 }
