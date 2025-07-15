@@ -223,7 +223,7 @@ public class ExpenseService : IExpenseService
                     Amount = share.SettledAmount,
                     GroupId = expense.GroupId,
                     PaidById = share.UserId,
-                    PaidDate = DateTime.Now,
+                    PaidDate = DateTime.Today,
                     ExpenseCategoryId = expense.ExpenseCategoryId,
                     CurrencyId = expense.CurrencyId,
                     SplitType = SplitType.Equally,
@@ -432,7 +432,7 @@ public class ExpenseService : IExpenseService
         }
     }
 
-    public async Task<PaginatedListVM<ExpenseVM>> ExpenseList(FilterVM filter, bool isAllExpense = false, bool isGroupExpenses = false, int groupId = 0)
+    public async Task<PaginatedListVM<ExpenseVM>> ExpenseList(FilterVM filter, bool isAllExpense = false, int groupId = 0, int friendUserId = 0)
     {
         int currentUserId = _userService.LoggedInUserId();
         string searchString = string.IsNullOrEmpty(filter.SearchString) ? "" : filter.SearchString.Replace(" ", "").ToLower();
@@ -456,14 +456,20 @@ public class ExpenseService : IExpenseService
         PaginatedItemsVM<Expense> paginatedItems = await _expenseRepository.PaginatedList(
             predicate: e => (e.PaidById == currentUserId || e.ExpenseShares.Any(es => es.DeletedAt == null && es.UserId == currentUserId))
                             && e.DeletedAt == null
-                            && (isAllExpense ? true : (isGroupExpenses ? e.GroupId != null : e.GroupId == null))
-                            && (groupId == 0 || e.GroupId == groupId)
+                            && (!filter.IsSystemGenerated ? !e.IsSystemGenerated : true)
+                            && (isAllExpense ? true : (groupId == 0 || e.GroupId == groupId))
+                            && (friendUserId == 0
+                                ? true 
+                                :(e.PaidById == currentUserId && e.ExpenseShares.Any(es => es.DeletedAt == null && es.UserId == friendUserId))
+                                    || (e.PaidById == friendUserId && e.ExpenseShares.Any(es => es.DeletedAt == null && es.UserId == currentUserId))
+                                    || (e.ExpenseShares.Any(es => es.DeletedAt == null && es.UserId == currentUserId) && e.ExpenseShares.Any(es => es.DeletedAt == null && es.UserId == friendUserId))
+                                )
                             && (string.IsNullOrEmpty(searchString)
                                 || e.Title.ToLower().Contains(searchString)
                                 || e.PaidByUser.FirstName.ToLower().Contains(searchString)
                                 || e.PaidByUser.LastName.ToLower().Contains(searchString)
                                 || (e.PaidByUser.FirstName + e.PaidByUser.LastName).ToLower().Contains(searchString)
-                                || (isGroupExpenses && e.Group.Name.ToLower().Contains(searchString))),
+                                || (e.GroupId != null && e.Group.Name.ToLower().Contains(searchString))),
             orderBy: orderBy,
             includes: new List<Expression<Func<Expense, object>>>
             {
@@ -486,7 +492,6 @@ public class ExpenseService : IExpenseService
         {
             Id = e.Id,
             GroupId = e.GroupId,
-            GroupDetails = isGroupExpenses ? new GroupVM { Name = e.Group.Name } : new GroupVM(),
             Title = e.Title,
             PaidDate = e.PaidDate,
             PaidById = e.PaidById,

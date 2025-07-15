@@ -12,4 +12,5 @@ public class FilterVM
     public bool IsDeleted { get; set; } = false;
     public DateTime FromDate { get; set; }
     public DateTime ToDate { get; set; }
+    public bool IsSystemGenerated { get; set; } = false;
 }

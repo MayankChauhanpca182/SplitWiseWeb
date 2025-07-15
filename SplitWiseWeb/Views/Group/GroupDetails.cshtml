@@ -52,6 +52,13 @@
                 <div class="d-flex align-items-center gap-2">
                     <input type="text" class="searchBox form-control border-secondary-subtle rounded-0"
                         id="groupExpenseListSearch" placeholder="Search">
+                    <div class="form-check">
+                        <input class="form-check-input border border-secondary-subtle" type="checkbox" value=""
+                            id="systemExpensesCkb" onchange="getGroupExpenseList(1)">
+                        <label class="form-check-label text-nowrap" for="systemExpensesCkb">
+                            Show system expenses
+                        </label>
+                    </div>
                 </div>
                 <div class="d-flex gap-2">
                     <a asp-action="AddGroupExpense" asp-controller="Expense" asp-route-groupId="@Model.Id"
@@ -253,7 +260,8 @@
                 PageSize: $("#groupExpensePageSize").val(),
                 SearchString: $("#groupExpenseListSearch").val(),
                 SortColumn: sortColumn,
-                SortOrder: sortOrder
+                SortOrder: sortOrder,
+                IsSystemGenerated: $("#systemExpensesCkb").prop("checked")
             };
 
             $.ajax({

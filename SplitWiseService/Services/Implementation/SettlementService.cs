@@ -194,7 +194,6 @@ public class SettlementService : ISettlementService
 
                 foreach (ExpenseShare share in expenseShares.Where(es => es.ShareAmount > 0))
                 {
-                    // share.ShareAmount = 0;
                     share.SettledAmount = share.ShareAmount;
                     share.UpdatedAt = DateTime.Now;
                     share.UpdatedById = currentUser.Id;
@@ -224,11 +223,9 @@ public class SettlementService : ISettlementService
                     {
                         share.SettledAmount += netAmount;
                         remaingAmount -= netAmount;
-                        // share.ShareAmount = 0;
                     }
                     else
                     {
-                        // share.ShareAmount -= remaingAmount;
                         share.SettledAmount += remaingAmount;
                         remaingAmount = 0;
                     }

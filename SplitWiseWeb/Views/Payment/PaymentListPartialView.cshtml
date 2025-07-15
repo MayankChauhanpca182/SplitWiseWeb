@@ -17,7 +17,7 @@
                     </button>
                 </th>
                 <th scope="col" class="col">
-                    <span class="text-clr-grey text-dark-emphasis">Expense</span>
+                    <span class="text-clr-grey text-dark-emphasis">Details</span>
                     <button class="btn p-0 sortBtn" data-column="amount" data-order="asc" title="Asc">
                         <i class="bi bi-arrow-up"></i>
                     </button>
@@ -32,9 +32,10 @@
             {
                 string paidByName = payment.PaidById == currentUserId ? "You" : $"{payment.PaidByUser.FirstName} {payment.PaidByUser.LastName}";
                 string paidToName = payment.PaidToId == currentUserId ? "You" : $"{payment.PaidToUser.FirstName} {payment.PaidToUser.LastName}";
+
                 <tr>
                     <td>
-                        <span>@payment.CreatedAt.ToString("dd-MM-yyyy")</span>
+                        <span>@payment.CreatedAt.ToString("dd-MM-yyyy"), @payment.CreatedAt.ToString("HH:mm:ss")</span>
                     </td>
                     <td>
                         <span><strong>@paidByName</strong></span>

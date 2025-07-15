@@ -154,7 +154,11 @@
                             </td>
                             <td>
                                 <span>
-                                    @($"{paidByName} paid ₹{payment.Amount.ToString("N2")} to {paidToName}.")
+                                    <span><strong>@paidByName</strong></span>
+                                    <span>paid</span>
+                                    <span><strong>₹@payment.Amount.ToString("N2")</strong></span>
+                                    <span>to</span>
+                                    <span><strong>@paidToName</strong></span>
                                 </span>
                             </td>
                         </tr>

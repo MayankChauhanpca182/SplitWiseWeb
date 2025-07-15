@@ -301,6 +301,7 @@ aside.navigation .navItems:hover {
 aside.navigation .navItems.active {
     color: var(--clr-dark-gray);
     background-color: var(--clr-mint) !important;
+    font-weight: 500 !important;
 }
 
 .navigatinAccordion .accordion-button {
