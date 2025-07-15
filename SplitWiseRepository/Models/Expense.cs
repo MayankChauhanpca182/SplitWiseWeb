@@ -40,6 +40,7 @@ public class Expense : AuditFields
     public string AttachmentPath { get; set; }
 
     public string AttachmentName { get; set; }
+    public bool IsSystemGenerated { get; set; } = false;
     
 
     public virtual ICollection<ExpenseShare> ExpenseShares { get; set; }

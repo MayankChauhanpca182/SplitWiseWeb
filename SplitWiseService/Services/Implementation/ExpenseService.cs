@@ -217,7 +217,33 @@ public class ExpenseService : IExpenseService
             if (share.SettledAmount != 0)
             {
                 // Add system generated expense
+                Expense systemExpense = new Expense
+                {
+                    Title = "System Generated",
+                    Amount = share.SettledAmount,
+                    PaidById = expense.PaidById,
+                    PaidDate = DateTime.Now,
+                    ExpenseCategoryId = expense.ExpenseCategoryId,
+                    CurrencyId = expense.CurrencyId,
+                    SplitType = SplitType.Equally,
+                    IsSystemGenerated = true,
+                    CreatedById = currentUser.Id,
+                    UpdatedById = currentUser.Id,
+                    UpdatedAt = DateTime.Now
+                };
+                await _expenseRepository.Add(systemExpense);
 
+                // Add expense share
+                ExpenseShare systemExpenseShare = new ExpenseShare
+                {
+                    ExpenseId = systemExpense.Id,
+                    UserId = share.UserId,
+                    ShareAmount = share.SettledAmount,
+                    CreatedById = currentUser.Id,
+                    UpdatedById = currentUser.Id,
+                    UpdatedAt = DateTime.Now
+                };
+                await _expenseShareRepository.Add(systemExpenseShare);
             }
         }
 
