@@ -27,7 +27,7 @@ $(document).on("submit", "form", function (e) {
 });
 
 // Loading Spinner
-// $("#loader").show();
+$("#loader").show();
 
 $(document).ready(function () {
   $("#loader").hide();

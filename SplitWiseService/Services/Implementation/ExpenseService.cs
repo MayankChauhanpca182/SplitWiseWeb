@@ -492,6 +492,7 @@ public class ExpenseService : IExpenseService
         {
             Id = e.Id,
             GroupId = e.GroupId,
+            GroupDetails = e.GroupId != null ? new GroupVM{Name = e.Group.Name } : new GroupVM(),
             Title = e.Title,
             PaidDate = e.PaidDate,
             PaidById = e.PaidById,

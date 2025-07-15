@@ -592,6 +592,8 @@ public class FriendService : IFriendService
 
     public async Task<byte[]> ExportFriends(FilterVM filter)
     {
+        filter.PageNumber = 0;
+        filter.PageSize = 0;
         PaginatedListVM<FriendVM> paginatedList = await FriendList(filter);
         if (!paginatedList.List.Any())
         {

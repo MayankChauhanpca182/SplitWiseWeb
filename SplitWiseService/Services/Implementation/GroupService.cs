@@ -477,6 +477,8 @@ public class GroupService : IGroupService
 
     public async Task<byte[]> ExportGroups(FilterVM filter)
     {
+        filter.PageNumber = 0;
+        filter.PageSize = 0;
         PaginatedListVM<GroupVM> paginatedList = await GroupList(filter);
         if (!paginatedList.List.Any())
         {
