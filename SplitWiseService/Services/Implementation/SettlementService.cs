@@ -166,14 +166,13 @@ public class SettlementService : ISettlementService
             User paidToUser = await _userService.GetById(payment.PaidToId);
             await _emailService.PaymentRecorded($"{currentUser.FirstName} {currentUser.LastName}", $"{paidToUser.FirstName} {paidToUser.LastName}", settlement.Amount.ToString("N2"), paidToUser.EmailAddress);
 
+            // Add activity
             if (settlement.GroupId > 0)
             {
-                // Add group activity
                 await _activityService.AddActivity(ActivityType.GroupPaymenent, groupId: settlement.GroupId, performedOnId: settlement.PaidToId, paymentId: payment.Id);
             }
             else
             {
-                // Add activity
                 await _activityService.AddActivity(ActivityType.NonGroupPaymenent, performedOnId: settlement.PaidToId, paymentId: payment.Id);
             }
 

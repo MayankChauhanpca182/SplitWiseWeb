@@ -56,4 +56,18 @@
             });
         }
     </script>
+
+    @* Export activity *@
+    <script>
+        // Export activities
+        function exportActivities() {
+            let filter = {
+                SearchString: $("#activitySearch").val(),
+                FromDate: $("#fromDate").val(),
+                ToDate: $("#toDate").val()
+            };
+
+            exportDataAjax(filter, "/Activity/ExportActivity", "UserActivities");
+        }
+    </script>
 }

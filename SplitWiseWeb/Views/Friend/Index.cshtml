@@ -18,7 +18,7 @@
         </div>
     </div>
     <div class="d-flex gap-2 align-items-center">
-        <button class="btn btn-secondary w-125px" type="button" onclick="exportFriends()">Export</button>
+        <button class="btn btn-primary w-125px" type="button" onclick="exportFriends()">Export</button>
         <button class="btn btn-primary w-125px" type="button" onclick="fetchAddFriendModal()">Add Friend</button>
     </div>
 </div>
@@ -118,15 +118,14 @@
                 type: "POST",
                 data: { friendId },
                 success: function (response) {
+                    $("#confirmationModal").modal("hide");
                     if (!response.statusCode) {
                         if (response.success == true) {
                             toastr.success(response.message);
-                            $("#confirmationModal").modal("hide");
                             getFriendList(1);
                         }
                         else {
                             toastr.error(response.message);
-                            $("#confirmationModal").modal("hide");
                         }
                     }
                 },

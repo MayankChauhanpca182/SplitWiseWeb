@@ -103,10 +103,10 @@
                 type: "POST",
                 data: { id },
                 success: function (response) {
+                    $("#confirmationModal").modal("hide");
                     if (!response.statusCode) {
                         if (response.success == true) {
                             toastr.success(response.message);
-                            $("#confirmationModal").modal("hide");
                             getFriendRequestList(1);
                         }
                         else {

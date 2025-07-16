@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.Repositories.Interface;
 using SplitWiseService.Services.Interface;
@@ -38,7 +39,7 @@ public class ExceptionLogService : IExceptionLogService
     private int? GetUserId(HttpContext context)
     {
         Claim userIdClaim = context.User?.FindFirst("id");
-        if (int.TryParse(userIdClaim?.Value, out var userId))
+        if (int.TryParse(userIdClaim?.Value, out int userId))
         {
             return userId;
         }
@@ -47,18 +48,18 @@ public class ExceptionLogService : IExceptionLogService
 
     private int? GetGroupId(HttpContext context)
     {
-        if (context.Request.Query.TryGetValue("groupId", out var groupId))
+        if (context.Request.Query.TryGetValue("groupId", out StringValues groupId))
         {
-            return int.TryParse(groupId, out var id) ? id : (int?)null;
+            return int.TryParse(groupId, out int id) ? id : null;
         }
         return null;
     }
 
     private int? GetExpenseId(HttpContext context)
     {
-        if (context.Request.Query.TryGetValue("expenseId", out var expenseId))
+        if (context.Request.Query.TryGetValue("expenseId", out StringValues expenseId))
         {
-            return int.TryParse(expenseId, out var id) ? id : (int?)null;
+            return int.TryParse(expenseId, out int id) ? id : null;
         }
         return null;
     }

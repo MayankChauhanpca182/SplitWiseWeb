@@ -11,7 +11,11 @@ public interface IGenericRepository<T> where T : class
         List<Func<IQueryable<T>, IQueryable<T>>> thenIncludes = null
     );
 
-    public Task<bool> Any(Expression<Func<T, bool>> predicate = null);
+    public Task<bool> Any(
+        Expression<Func<T, bool>> predicate = null,
+        List<Expression<Func<T, object>>> includes = null,
+        List<Func<IQueryable<T>, IQueryable<T>>> thenIncludes = null
+    );
 
     public Task<List<T>> List(
         Expression<Func<T, bool>> predicate = null,

@@ -63,7 +63,7 @@
                         id="transactionListSearch" placeholder="Search by expense amount">
                 </div>
                 <div class="d-flex gap-2">
-                    <button class="btn btn-secondary w-125px" type="button" onclick="exportTransactions()">Export</button>
+                    <button class="btn btn-primary w-125px" type="button" onclick="exportTransactions()">Export</button>
                 </div>
             </div>
             <div id="transactionListOuter" class="listOuter bg-white"></div>
@@ -83,7 +83,7 @@
                     </div>
                 </div>
                 <div class="d-flex gap-2">
-                    <button class="btn btn-secondary w-125px" type="button" onclick="exportFriendExpenses()">Export</button>
+                    <button class="btn btn-primary w-125px" type="button" onclick="exportFriendExpenses()">Export</button>
                 </div>
             </div>
             <div id="friendExpensesOuter" class="listOuter bg-white"></div>
@@ -259,7 +259,7 @@
         }
     </script>
 
-    @* Export friend expenses *@
+    @* Export friend transactions *@
     <script>
         function exportTransactions() {
             let filter = {
@@ -269,6 +269,20 @@
             };
 
             exportDataAjax(filter, "/Payment/ExportPayments", `Payments_with_${'@Model.Name'}`, 0, '@Model.UserId');
+        }
+    </script>
+
+    @* Export friend activity *@
+    <script>
+        // Export friend activities
+        function exportActivities() {
+            let filter = {
+                SearchString: $("#activitySearch").val(),
+                FromDate: $("#fromDate").val(),
+                ToDate: $("#toDate").val()
+            };
+
+            exportDataAjax(filter, "/Activity/ExportActivity", `Activities_with_${'@Model.Name'}`, null, '@Model.UserId');
         }
     </script>
 }

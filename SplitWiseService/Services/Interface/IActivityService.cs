@@ -11,4 +11,5 @@ public interface IActivityService
     public Task<List<Activity>> UserActivityList();
     public Task<List<Activity>> ActivityList(FilterVM filter, int? groupId = null, int? friendUserId = null);
     public Task<ActivityFilterVM> GetActivityFilter(int? groupId = null, int? friendUserId = null);
+    public Task<byte[]> ExportActivity(FilterVM filter, int? groupId = null, int? friendUserId = null);
 }

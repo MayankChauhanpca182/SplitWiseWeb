@@ -11,15 +11,7 @@ $(document).ready(function () {
     fetchActivities();
 });
 
-$("#fromDate").blur(function () {
-    // $("#toDate").attr("min", $(this).val());
-    if (checkValidDate($(this))) {
-        fetchActivities();
-    }
-});
-
-$("#toDate").blur(function () {
-    // $("#fromDate").attr("max", $(this).val());
+$("#fromDate, #toDate").blur(function () {
     if (checkValidDate($(this))) {
         fetchActivities();
     }
@@ -30,22 +22,19 @@ function checkValidDate(element) {
     let max = $(element).attr("max");
     let date = $(element).val();
 
-    console.log("min", min, "max", max);
-    console.log("date", date);
-
-    if (date) {
-        if (date < min) {
-            toastr.error(`Minimum allowed date is ${convertToDateFormate(min)}.`);
-            $(element).val("");
-            return false;
-        }
-        else if (date > max) {
-            toastr.error(`Maximum allowed date is ${convertToDateFormate(max)}.`);
-            $(element).val("");
-            return false;
-        }
+    if (date < min) {
+        toastr.error(`Minimum allowed date is ${convertToDateFormate(min)}.`);
+        $(element).val(min);
+        return false;
     }
-    return true;
+    else if (date > max) {
+        toastr.error(`Maximum allowed date is ${convertToDateFormate(max)}.`);
+        $(element).val(max);
+        return false;
+    }
+    else{
+        return true;
+    }
 }
 
 function convertToDateFormate(dateStr) {

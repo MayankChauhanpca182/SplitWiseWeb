@@ -13,17 +13,6 @@ public static class ExcelExportHelper
         using ExcelPackage package = new ExcelPackage();
         ExcelWorksheet worksheet = package.Workbook.Worksheets.Add(sheetName);
 
-        // Add filter details
-        string searchString = string.IsNullOrEmpty(filter.SearchString) ? string.Empty : filter.SearchString.Replace(" ", "").ToLower();
-
-        string filterDetail = "Result was filtered "
-                            + (filter.FromDate.HasValue && filter.ToDate.HasValue ? $"from {filter.FromDate?.ToString("dd-MM-yyyy")} to {filter.ToDate?.ToString("dd-MM-yyyy")}" : "")
-                            + (string.IsNullOrEmpty(searchString) ? "without search query." : $"with search query {searchString}");
-
-        // Add to excel
-        worksheet.Cells[1, 1, 1, 50].Merge = true;
-        worksheet.Cells[1, 1].Value = filterDetail;
-
         Type type = typeof(T);
 
         // Get properties with ExcelColumnAttribute
@@ -31,6 +20,17 @@ public static class ExcelExportHelper
                 .GetProperties(BindingFlags.Public | BindingFlags.Instance)
                 .Where(p => p.GetCustomAttribute<ExcelColumnAttribute>() != null)
                 .ToList();
+
+        // Add filter details
+        string searchString = string.IsNullOrEmpty(filter.SearchString) ? string.Empty : filter.SearchString.Replace(" ", "").ToLower();
+
+        string filterDetail = "Result was filtered"
+                            + (filter.FromDate.HasValue && filter.ToDate.HasValue ? $" from {filter.FromDate?.ToString("dd-MM-yyyy")} to {filter.ToDate?.ToString("dd-MM-yyyy")}" : "")
+                            + (string.IsNullOrEmpty(searchString) ? " without search query." : $" with search query {searchString}");
+
+        // Add to excel
+        worksheet.Cells[1, 1, 1, propsWithAttribute.Count].Merge = true;
+        worksheet.Cells[1, 1].Value = filterDetail;
 
         // Add headers
         for (int col = 0; col < propsWithAttribute.Count; col++)

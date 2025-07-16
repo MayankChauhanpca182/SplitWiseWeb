@@ -693,12 +693,12 @@
                 type: "POST",
                 data: { expenseId },
                 success: function (response) {
+                    $("#confirmationModal").modal("hide");
                     if (!response.statusCode) {
                         if (response.success == false) {
                             toastr.error(response.message);
                         }
                         else {
-                            $("#confirmationModal").modal("hide");
                             $("#removeAttachmentBtn").remove();
                             $("#viewAttachment").hide();
                             $("#previewText").text("");

@@ -107,7 +107,7 @@ function exportDataAjax(filter, url, fileName, groupId = null, friendUserId = nu
             }
         },
         error: function () {
-            toastr.error(`No ${fileName.toLowerCase()} fround.`);
+            toastr.error(`No records fround.`);
         }
     });
 }

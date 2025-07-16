@@ -30,10 +30,10 @@ public static class NotificationMessages
     public const string EmailSentSuccessfully = "Email sent successfully.";
 
     // Reset password email
-    public const string ResetPasswordEmailSuccess = "Reset Password Link has been sent successfully.";
+    public const string ResetPasswordEmailSuccess = "Reset password link has been sent successfully.";
     public const string WrongResetPasswordLink = "It seems like Reset Password link has been either tampered or wrong.";
-    public const string ConsumedResetPasswordLink = "Reset Password link has been consumed already.";
-    public const string ExpiredResetPasswordLink = "Reset Password link has been expired. Kindly, reset password again.";
+    public const string ConsumedResetPasswordLink = "Reset password link has been consumed already.";
+    public const string ExpiredResetPasswordLink = "Reset password link has been expired. Kindly, reset password again.";
 
     // Validation
     public const string Invalid = "Invalid {0}.";
@@ -93,6 +93,7 @@ public static class NotificationMessages
     public const string MemberAddedToGroup = "{0} has been successfully added to {1}.";
     public const string MemberRemovedFromGroup = "{0} has been removed from {1} successfully.";
     public const string LeaveGroup = "You have been left group {0} successfully.";
+    public const string UnsettledGroup = "All expenses must be settled before deleting the group.";
 
     // Expense
     public const string AttachmentRemoved = "Attachment has been removed successfully.";

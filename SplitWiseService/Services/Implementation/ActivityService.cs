@@ -83,16 +83,17 @@ public class ActivityService : IActivityService
         string searchString = string.IsNullOrEmpty(filter.SearchString) ? string.Empty : filter.SearchString.Replace(" ", "").ToLower();
 
         bool isSearchTextYou = "you".Contains(searchString);
+        DateTime newToDate = ((DateTime)filter.ToDate).AddDays(1);
 
         PaginatedItemsVM<Activity> userActivities = await _activityRepository.PaginatedList(
             predicate: a => a.DeletedAt == null
-                             && (groupId != null
+                             && (groupId > 0
                                 ? a.GroupId == groupId
                                 : (friendUserId == null
                                     ? a.PerformedById == currentUserId || a.PerformedOnId == currentUserId
                                     : ((a.PerformedById == currentUserId && a.PerformedOnId == friendUserId) || (a.PerformedById == friendUserId && a.PerformedOnId == currentUserId))))
                             && a.CreatedAt >= filter.FromDate
-                            && a.CreatedAt < ((DateTime)filter.ToDate).AddDays(1)
+                            && a.CreatedAt < newToDate
                             && (string.IsNullOrEmpty(searchString)
                                 || (isSearchTextYou && (a.PerformedById == currentUserId || a.PerformedOnId == currentUserId))
                                 || a.PerformedOnUser.FirstName.ToLower().Contains(searchString)
@@ -152,4 +153,98 @@ public class ActivityService : IActivityService
         return activityFilter;
     }
 
+    public async Task<byte[]> ExportActivity(FilterVM filter, int? groupId = null, int? friendUserId = null)
+    {
+        filter.PageNumber = 0;
+        filter.PageSize = 0;
+        List<Activity> activitieList = await ActivityList(filter, groupId: groupId, friendUserId: friendUserId);
+
+        List<ActivityVM> activities = activitieList.Select(a =>
+        {
+            // Usernames
+            string performedByUserName = a.PerformedByUser.FirstName + " " + a.PerformedByUser.LastName;
+            string performedOnUserName = string.Empty;
+            if (a.PerformedOnUser != null)
+            {
+                performedOnUserName = a.PerformedOnUser.FirstName + " " + a.PerformedOnUser.LastName;
+            }
+
+            // Group name
+            string groupName = string.Empty;
+            if (a.Group != null)
+            {
+                groupName = a.Group.Name;
+            }
+
+            // Expense name, amount
+            string expenseName = string.Empty;
+            string expenseAmount = string.Empty;
+            if (a.Expense != null)
+            {
+                expenseName = a.Expense.Title;
+                expenseAmount = "₹" + a.Expense.Amount.ToString("N2");
+            }
+
+            // Payment
+            string paymentAmount = string.Empty;
+            if (a.Payment != null)
+            {
+                paymentAmount = "₹" + a.Payment.Amount.ToString("N2");
+            }
+
+            string message = performedByUserName;
+            switch (a.ActivityType)
+            {
+                case ActivityType.GroupCreated:
+                    message += $" created group {groupName}.";
+                    break;
+                case ActivityType.GroupUpdated:
+                    message += $" updated group {groupName}.";
+                    break;
+                case ActivityType.GroupDeleted:
+                    message += $" deleted group {groupName}.";
+                    break;
+                case ActivityType.MemberAdded:
+                    message += $" added {performedOnUserName} to the group {groupName}.";
+                    break;
+                case ActivityType.MemberRemoved:
+                    message += $" removed {performedOnUserName} from the group {groupName}.";
+                    break;
+                case ActivityType.LeaveGroup:
+                    message += $" left the group {groupName}.";
+                    break;
+                case ActivityType.GroupExpenseAdded:
+                    message += $" added an expense {expenseName} of {expenseAmount} in the group {groupName}.";
+                    break;
+                case ActivityType.GroupExpenseUpdated:
+                    message += $" updated an expense {expenseName} of {expenseAmount} in the group {groupName}.";
+                    break;
+                case ActivityType.GroupPaymenent:
+                    message += $" paid {paymentAmount} to {performedOnUserName} in the group {groupName}.";
+                    break;
+                case ActivityType.NonGroupPaymenent:
+                    message += $" paid {paymentAmount} to {performedOnUserName}.";
+                    break;
+                case ActivityType.ExpenseAdded:
+                    message += $" added an expense {expenseName} of {expenseAmount}.";
+                    break;
+                case ActivityType.ExpenseUpdated:
+                    message += $" updated an expense {expenseName} of {expenseAmount}.";
+                    break;
+            }
+
+            return new ActivityVM()
+            {
+                Date = a.CreatedAt.ToString("dd-MM-yyyy"),
+                Time = a.CreatedAt.ToString("HH:mm:ss"),
+                ActivityMessage = message
+            };
+        }).ToList();
+
+        if (!activities.Any())
+        {
+            return null;
+        }
+        return ExcelExportHelper.ExportToExcel(activities, filter, "Activities");
+    }
 }

@@ -631,7 +631,7 @@ public class FriendService : IFriendService
         );
 
         // Activity filter
-        friendVM.ActivityFilter = await _activityService.GetActivityFilter(friendUserId = friendVM.UserId);
+        friendVM.ActivityFilter = await _activityService.GetActivityFilter(friendUserId: friendVM.UserId);
 
         return friendVM;
     }
