@@ -438,6 +438,8 @@
         function exportGroupExpenses() {
             let filter = {
                 SearchString: $("#groupExpenseListSearch").val(),
+                SortColumn: sortColumn,
+                SortOrder: sortOrder,
                 IsSystemGenerated: $("#systemExpensesCkb").prop("checked")
             };
 

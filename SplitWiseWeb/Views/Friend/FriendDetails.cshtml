@@ -250,6 +250,8 @@
         function exportFriendExpenses() {
             let filter = {
                 SearchString: $("#friendExpenseListSearch").val(),
+                SortColumn: sortColumn,
+                SortOrder: sortOrder,
                 IsSystemGenerated: $("#systemExpensesCkb").prop("checked")
             };
 
@@ -261,7 +263,9 @@
     <script>
         function exportTransactions() {
             let filter = {
-                SearchString: $("#transactionListSearch").val()
+                SearchString: $("#transactionListSearch").val(),
+                SortColumn: sortColumn,
+                SortOrder: sortOrder
             };
 
             exportDataAjax(filter, "/Payment/ExportPayments", `Payments_with_${'@Model.Name'}`, 0, '@Model.UserId');

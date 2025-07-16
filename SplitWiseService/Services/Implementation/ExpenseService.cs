@@ -566,10 +566,6 @@ public class ExpenseService : IExpenseService
         {
             return null;
         }
-        List<string> columns = new List<string>
-        {
-            "PaidDate", "Title", "Amount", "Expense"
-        };
-        return ExcelExportHelper.ExportToExcel(paginatedList.List, columns, "Expenses");
+        return ExcelExportHelper.ExportToExcel(paginatedList.List.ToList(), filter, "Expenses");
     }
 }

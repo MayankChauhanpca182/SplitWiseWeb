@@ -92,6 +92,8 @@
         function exportNonGroupExpenses() {
             let filter = {
                 SearchString: $("#nonGroupExpenseListSearch").val(),
+                SortColumn: sortColumn,
+                SortOrder: sortOrder,
                 IsSystemGenerated: $("#systemExpensesCkb").prop("checked")
             };
 

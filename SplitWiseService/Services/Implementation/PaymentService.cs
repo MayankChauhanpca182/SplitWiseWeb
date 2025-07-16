@@ -79,10 +79,6 @@ public class PaymentService : IPaymentService
             Amount = p.Amount.ToString("N2")
         }).ToList();
 
-        List<string> columns = new List<string>
-        {
-            "Date", "Time", "PaidBy", "PaidTo", "Amount"
-        };
-        return ExcelExportHelper.ExportToExcel(payments, columns, "Payments");
+        return ExcelExportHelper.ExportToExcel(payments, filter, "Payments");
     }
 }

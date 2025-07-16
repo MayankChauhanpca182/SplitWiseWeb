@@ -71,6 +71,7 @@ public class UserController : Controller
     #region Reset Password
     // GET ResetPassword
     [Route("reset-password")]
+    [AllowAnonymous]
     public async Task<IActionResult> ResetPassword(string? token = null)
     {
         if (string.IsNullOrEmpty(token))
@@ -90,6 +91,7 @@ public class UserController : Controller
     }
 
     // POST ResetPassword
+    [AllowAnonymous]
     [HttpPost]
     [Route("reset-password")]
     public async Task<IActionResult> ResetPassword(PasswordResetVM passwordReset)

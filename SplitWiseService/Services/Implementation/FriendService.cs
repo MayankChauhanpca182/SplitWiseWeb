@@ -599,11 +599,7 @@ public class FriendService : IFriendService
         {
             return null;
         }
-        List<string> columns = new List<string>
-        {
-            "Name", "EmailAddress", "Expense"
-        };
-        return ExcelExportHelper.ExportToExcel(paginatedList.List, columns, "Friends");
+        return ExcelExportHelper.ExportToExcel(paginatedList.List.ToList(), filter, "Friends");
     }
 
     public async Task<FriendVM> FriendDetails(int friendUserId)

@@ -10,7 +10,7 @@ public class FilterVM
     public string SortColumn { get; set; } = string.Empty;
     public string SortOrder { get; set; } = DefaultValues.SortOrder;
     public bool IsDeleted { get; set; } = false;
-    public DateTime FromDate { get; set; }
-    public DateTime ToDate { get; set; }
+    public DateTime? FromDate { get; set; }
+    public DateTime? ToDate { get; set; }
     public bool IsSystemGenerated { get; set; } = false;
 }

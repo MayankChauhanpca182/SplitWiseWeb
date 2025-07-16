@@ -13,6 +13,7 @@ public class GroupVM
     [Required(ErrorMessage = ValidationMessages.GroupName)]
     [StringLength(50, ErrorMessage = ValidationMessages.FirstNameLength)]
     [RegularExpression(ValidationRegex.GroupNameRegex, ErrorMessage = ValidationMessages.ValidGroupName)]
+    [ExcelColumn("Name")]
     public string Name { get; set; }
 
     [ImageType]
@@ -20,10 +21,12 @@ public class GroupVM
     public string ImagePath { get; set; }
 
     [StringLength(2000)]
+    [ExcelColumn("Notice")]
     public string NoticeBoard { get; set; }
     public int CurrencyId { get; set; } = DefaultValues.CurrencyId;
     public bool IsSimplifiedPayments { get; set; } = false;
 
+    [ExcelColumn("Expense")]
     public decimal Expense { get; set; } = 0;
     public bool IsSettled { get; set; }
 

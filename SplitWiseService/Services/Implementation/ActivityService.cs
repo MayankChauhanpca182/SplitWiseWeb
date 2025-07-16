@@ -92,7 +92,7 @@ public class ActivityService : IActivityService
                                     ? a.PerformedById == currentUserId || a.PerformedOnId == currentUserId
                                     : ((a.PerformedById == currentUserId && a.PerformedOnId == friendUserId) || (a.PerformedById == friendUserId && a.PerformedOnId == currentUserId))))
                             && a.CreatedAt >= filter.FromDate
-                            && a.CreatedAt < filter.ToDate.AddDays(1)
+                            && a.CreatedAt < ((DateTime)filter.ToDate).AddDays(1)
                             && (string.IsNullOrEmpty(searchString)
                                 || (isSearchTextYou && (a.PerformedById == currentUserId || a.PerformedOnId == currentUserId))
                                 || a.PerformedOnUser.FirstName.ToLower().Contains(searchString)

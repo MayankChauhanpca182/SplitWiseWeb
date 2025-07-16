@@ -1,59 +1,55 @@
 using System.ComponentModel;
 using System.Reflection;
 using OfficeOpenXml;
+using SplitWiseRepository.Attributes;
+using SplitWiseRepository.ViewModels;
 
 namespace SplitWiseService.Helpers;
 
 public static class ExcelExportHelper
 {
-    public static byte[] ExportToExcel<T>(IEnumerable<T> data, List<string> columns, string sheetName = "Sheet1")
+    public static byte[] ExportToExcel<T>(List<T> data, FilterVM filter, string sheetName = "Sheet1")
     {
         using ExcelPackage package = new ExcelPackage();
         ExcelWorksheet worksheet = package.Workbook.Worksheets.Add(sheetName);
 
-        // Get properties of the view model
-        PropertyInfo[] properties = typeof(T).GetProperties();
+        // Add filter details
+        string searchString = string.IsNullOrEmpty(filter.SearchString) ? string.Empty : filter.SearchString.Replace(" ", "").ToLower();
+
+        string filterDetail = "Result was filtered "
+                            + (filter.FromDate.HasValue && filter.ToDate.HasValue ? $"from {filter.FromDate?.ToString("dd-MM-yyyy")} to {filter.ToDate?.ToString("dd-MM-yyyy")}" : "")
+                            + (string.IsNullOrEmpty(searchString) ? "without search query." : $"with search query {searchString}");
+
+        // Add to excel
+        worksheet.Cells[1, 1, 1, 50].Merge = true;
+        worksheet.Cells[1, 1].Value = filterDetail;
+
+        Type type = typeof(T);
+
+        // Get properties with ExcelColumnAttribute
+        List<PropertyInfo> propsWithAttribute = type
+                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Where(p => p.GetCustomAttribute<ExcelColumnAttribute>() != null)
+                .ToList();
 
         // Add headers
-        int col = 0;
-        for (int i = 0; i < properties.Length; i++)
+        for (int col = 0; col < propsWithAttribute.Count; col++)
         {
-            if (columns.Contains(properties[i].Name))
-            {
-                string displayName = properties[i].GetCustomAttribute<DisplayNameAttribute>()?.DisplayName ?? properties[i].Name;
-                worksheet.Cells[1, col + 1].Value = displayName;
-                worksheet.Cells[1, col + 1].Style.Font.Bold = true;
-                col++;
-            }
+            ExcelColumnAttribute attr = propsWithAttribute[col].GetCustomAttribute<ExcelColumnAttribute>();
+            string columnName = attr?.ColumnName ?? propsWithAttribute[col].Name;
+            worksheet.Cells[3, col + 1].Value = columnName;
+            worksheet.Cells[3, col + 1].Style.Font.Bold = true;
         }
 
-        // Add data
-        int row = 2;
-        foreach (T item in data)
+        // Add rows
+        for (int row = 0; row < data.Count(); row++)
         {
-            col = 0;
-            for (int i = 0; i < properties.Length; i++)
+            T item = data[row];
+            for (int col = 0; col < propsWithAttribute.Count; col++)
             {
-                if (columns.Contains(properties[i].Name))
-                {
-
-                    object value = properties[i].GetValue(item);
-                    worksheet.Cells[row, col + 1].Value = value;
-
-                    // Format specific types
-                    if (properties[i].PropertyType == typeof(DateTime) || properties[i].PropertyType == typeof(DateTime?))
-                    {
-                        worksheet.Cells[row, col + 1].Style.Numberformat.Format = "yyyy-mm-dd";
-                    }
-                    else if (properties[i].PropertyType == typeof(decimal) || properties[i].PropertyType == typeof(decimal?))
-                    {
-                        worksheet.Cells[row, col + 1].Style.Numberformat.Format = "#,##0.00";
-                    }
-                    
-                    col++;
-                }
+                object value = propsWithAttribute[col].GetValue(item);
+                worksheet.Cells[row + 4, col + 1].Value = value;
             }
-            row++;
         }
 
         // Auto-fit columns

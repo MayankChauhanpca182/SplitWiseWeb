@@ -150,6 +150,8 @@
         function exportFriends() {
             let filter = {
                 SearchString: $("#friendSearch").val(),
+                SortColumn: sortColumn,
+                SortOrder: sortOrder,
                 IsDeleted: $("#deletedFriendsChk").prop("checked")
             };
             let fileName = filter.IsDeleted ? "Removed friends" : "Friends";

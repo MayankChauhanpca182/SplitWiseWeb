@@ -484,11 +484,7 @@ public class GroupService : IGroupService
         {
             return null;
         }
-        List<string> columns = new List<string>
-        {
-            "Name", "Noticeboard", "IsSimplifiedPayments", "Expense"
-        };
-        return ExcelExportHelper.ExportToExcel(paginatedList.List, columns, "Groups");
+        return ExcelExportHelper.ExportToExcel(paginatedList.List.ToList(), filter, "Groups");
     }
 
 }

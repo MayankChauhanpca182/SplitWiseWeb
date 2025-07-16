@@ -14,9 +14,11 @@ public class ExpenseVM
 
     [Required(ErrorMessage = ValidationMessages.ExpenseTitleRequired)]
     [StringLength(100, ErrorMessage = ValidationMessages.ExpenseTitleRequired)]
+    [ExcelColumn("Name")]
     public string Title { get; set; }
 
     [Required(ErrorMessage = ValidationMessages.ExpenseAmountRequired)]
+    [ExcelColumn("Amount")]
     public string Amount { get; set; } = "0";
 
     public int CategoryId { get; set; }
@@ -36,6 +38,7 @@ public class ExpenseVM
     [Required(ErrorMessage = ValidationMessages.PaymentDateRequired)]
     [DataType(DataType.Date)]
     [NoFutureDate(ErrorMessage = ValidationMessages.NoFuturePaymentDate)]
+    [ExcelColumn("Date")]
     public DateTime PaidDate { get; set; } = DateTime.Today;
 
     [Required(ErrorMessage = ValidationMessages.SplitTypeRequired)]
@@ -46,6 +49,7 @@ public class ExpenseVM
     public List<FriendVM> Friends { get; set; } = new List<FriendVM>();
     public List<ExpenseShareVM> ExpenseShares { get; set; } = new List<ExpenseShareVM>();
 
+    [ExcelColumn("Expense")]
     public decimal Expense { get; set; } = 0;
     public bool IsViewOnly { get; set; } = false;
     public string PaidByName { get; set; }
