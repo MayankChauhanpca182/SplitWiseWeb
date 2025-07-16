@@ -13,7 +13,7 @@ function fetchAddGroupModal(groupId = 0) {
         },
         error: function () {
             $("#regularModal").modal("hide");
-            toastr.error("Internal server error.");
+            toastr.error(SERVER_ERR);
         },
     });
 }
@@ -56,7 +56,7 @@ $(document).on("submit", "#groupForm", function (e) {
             }
         },
         error: function () {
-            toastr.error("Internal server error.");
+            toastr.error(SERVER_ERR);
         }
     });
 });

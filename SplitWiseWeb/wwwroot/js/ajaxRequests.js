@@ -17,7 +17,7 @@ function fetchAddFriendModal() {
         },
         error: function () {
             $("#regularModal").modal("hide");
-            toastr.error("Internal server error.");
+            toastr.error(SERVER_ERR);
         },
     });
 }
@@ -43,7 +43,7 @@ $(document).on("submit", "#addFriendRequestForm", function (e) {
             }
         },
         error: function () {
-            toastr.error("Internal server error.");
+            toastr.error(SERVER_ERR);
         },
     });
 });
@@ -69,7 +69,7 @@ $(document).on("submit", "#sendReferralForm", function (e) {
             }
         },
         error: function () {
-            toastr.error("Internal server error.");
+            toastr.error(SERVER_ERR);
         },
     });
 });

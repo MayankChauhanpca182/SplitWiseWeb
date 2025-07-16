@@ -1,4 +1,14 @@
-﻿// Reinitialize the jquery validation
+﻿// Global variables
+const SERVER_ERR = "Internal server error."
+
+// Prevent bfcache for chrome
+window.addEventListener('pageshow', function (event) {
+  if (event.persisted) {
+    $("#loader").hide();
+  }
+});
+
+// Reinitialize the jquery validation
 function reinitializeValidation() {
   $("form").each(function () {
     $.validator.unobtrusive.parse($(this));
@@ -9,15 +19,6 @@ function reinitializeValidation() {
 $(document).ajaxComplete(function () {
   reinitializeValidation();
 });
-
-// Apply validation on input change globally
-// $(document).on(
-//   "keyup change",
-//   "form input:not([type=checkbox]):not([type=radio]), form select, form textarea",
-//   function () {
-//     $(this).valid();
-//   }
-// );
 
 // Prevent submission if validation fails
 $(document).on("submit", "form", function (e) {
