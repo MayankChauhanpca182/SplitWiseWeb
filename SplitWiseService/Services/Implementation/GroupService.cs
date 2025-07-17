@@ -1,4 +1,6 @@
+using System.Drawing.Printing;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SplitWiseRepository.Constants;
 using SplitWiseRepository.Migrations;
@@ -32,6 +34,44 @@ public class GroupService : IGroupService
         _expenseRepository = expenseRepository;
         _activityService = activityService;
         _expenseShareRepository = expenseShareRepository;
+    }
+
+    private async Task<decimal> GetUserExpense(int groupId, int userId)
+    {
+        return await _expenseShareRepository.Sum(
+            selector: es => es.Expense.PaidById == userId ? (es.ShareAmount - es.SettledAmount) : -(es.ShareAmount - es.SettledAmount),
+            predicate: es => es.DeletedAt == null && es.Expense.DeletedAt == null && es.Expense.GroupId == groupId
+                    && es.Expense.PaidById != es.UserId
+                    && (es.Expense.PaidById == userId || es.UserId == userId),
+            includes: new List<Expression<Func<ExpenseShare, object>>>
+            {
+                es => es.Expense
+            }
+        );
+    }
+    
+    private async Task<bool> IsGroupSettled(int groupId)
+    {
+        bool isSettled = true;
+
+        List<GroupMember> members = await _groupMemberRepository.List(
+            predicate: gm => gm.DeletedAt == null && gm.GroupId == groupId
+        );
+
+        List<int> memberUserIds = members.Select(gm => gm.UserId).ToList();
+
+        foreach (int userId in memberUserIds)
+        {
+            decimal netAmount = await GetUserExpense(groupId, userId);
+
+            if (netAmount != 0)
+            {
+                isSettled = false;
+                break;
+            }
+        }
+
+        return isSettled;
     }
 
     private async Task AddMember(int groupId, int userId)
@@ -80,18 +120,7 @@ public class GroupService : IGroupService
         }
 
         // Calculate net amount
-        groupVM.Expense = await (
-            from e in _expenseRepository.Query()
-            where e.DeletedAt == null && e.GroupId == groupId
-            from es in e.ExpenseShares
-            where es.DeletedAt == null && (e.PaidById == currentUserId || es.UserId == currentUserId) && e.PaidById != es.UserId
-            group new { e, es } by e.GroupId into g
-            select new
-            {
-                GroupId = g.Key,
-                Expense = g.Sum(x => x.e.PaidById == currentUserId ? (x.es.ShareAmount - x.es.SettledAmount) : -(x.es.ShareAmount - x.es.SettledAmount))
-            }
-        ).Select(x => x.Expense).FirstOrDefaultAsync();
+        groupVM.Expense = await GetUserExpense(groupId, currentUserId);
 
         return groupVM;
     }
@@ -258,19 +287,7 @@ public class GroupService : IGroupService
             }
             else
             {
-                // Check for settlement
-                bool isUnsettled = await _expenseShareRepository.Any(
-                    predicate: es => es.DeletedAt == null
-                            && es.Expense.GroupId == groupId
-                            && es.UserId != es.Expense.PaidById
-                            && es.ShareAmount - es.SettledAmount != 0,
-                    includes: new List<Expression<Func<ExpenseShare, object>>>
-                    {
-                        es => es.Expense
-                    }
-                );
-
-                if (isUnsettled)
+                if (!await IsGroupSettled(groupId))
                 {
                     response.Success = false;
                     response.Message = NotificationMessages.UnsettledGroup;
