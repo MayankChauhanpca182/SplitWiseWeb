@@ -474,8 +474,8 @@ public class FriendService : IFriendService
             where e.DeletedAt == null
             from es in e.ExpenseShares
             where es.DeletedAt == null && e.PaidById != es.UserId
-                && ((e.PaidById == currentUserId && friendUserIds.Contains(es.UserId) && (es.ShareAmount - es.SettledAmount) < 0)
-                    || (es.UserId == currentUserId && friendUserIds.Contains(e.PaidById) && (es.ShareAmount - es.SettledAmount) > 0))
+                && ((e.PaidById == currentUserId && friendUserIds.Contains(es.UserId))
+                    || (es.UserId == currentUserId && friendUserIds.Contains(e.PaidById)))
             group new { e, es } by (e.PaidById == currentUserId ? es.UserId : e.PaidById) into g
             select new
             {

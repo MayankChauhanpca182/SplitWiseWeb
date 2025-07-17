@@ -61,13 +61,13 @@ public class SettlementService : ISettlementService
             where e.DeletedAt == null && (e.GroupId != null ? groupIds.Contains((int)e.GroupId) : false)
             from es in e.ExpenseShares
             where es.DeletedAt == null 
-                && ((e.PaidById == friendUserId && es.UserId == currentUser.Id && (es.ShareAmount - es.SettledAmount) > 0) 
-                    || (e.PaidById == currentUser.Id && es.UserId == friendUserId && (es.ShareAmount - es.SettledAmount) < 0))
+                && ((e.PaidById == friendUserId && es.UserId == currentUser.Id) 
+                    || (e.PaidById == currentUser.Id && es.UserId == friendUserId))
             group new { e, es } by (int)e.GroupId into g
             select new
             {
                 GroupId = g.Key,
-                Expense = g.Sum(x => x.es.ShareAmount - x.es.SettledAmount)
+                Expense = g.Sum(x => x.e.PaidById == currentUser.Id ? -(x.es.ShareAmount - x.es.SettledAmount) : (x.es.ShareAmount - x.es.SettledAmount))
             }
         ).ToDictionaryAsync(x => x.GroupId, x => x.Expense);
 
@@ -102,8 +102,8 @@ public class SettlementService : ISettlementService
         decimal netAmount = await _expenseShareRepository.Sum(
             selector: es => es.Expense.PaidById == currentUser.Id ? (es.ShareAmount - es.SettledAmount) : -(es.ShareAmount - es.SettledAmount),
             predicate: es => es.DeletedAt == null && es.Expense.DeletedAt == null && es.Expense.GroupId == null 
-                    && ((es.Expense.PaidById == currentUser.Id && es.UserId == friendUserId && (es.ShareAmount - es.SettledAmount) < 0)
-                        || (es.Expense.PaidById == friendUserId && es.UserId == currentUser.Id && (es.ShareAmount - es.SettledAmount) > 0)),
+                    && ((es.Expense.PaidById == currentUser.Id && es.UserId == friendUserId)
+                        || (es.Expense.PaidById == friendUserId && es.UserId == currentUser.Id)),
             includes: new List<Expression<Func<ExpenseShare, object>>>
             {
                 es => es.Expense
@@ -197,6 +197,7 @@ public class SettlementService : ISettlementService
             }
             else
             {
+                //      200 or 100
                 decimal remaingAmount = settlement.Amount;
 
                 // Fetch expense share list
@@ -211,9 +212,15 @@ public class SettlementService : ISettlementService
                     }
                 );
 
+                // netamount = 200
+                // diff = 0
+
+
                 foreach (ExpenseShare share in expenseShares.Where(es => es.ShareAmount > 0))
                 {
+                    //                  700                 0
                     decimal netAmount = share.ShareAmount - share.SettledAmount;
+                    //  200                700
                     if (remaingAmount >= netAmount)
                     {
                         share.SettledAmount += netAmount;
@@ -221,6 +228,7 @@ public class SettlementService : ISettlementService
                     }
                     else
                     {
+                        // 200                  200
                         share.SettledAmount += remaingAmount;
                         remaingAmount = 0;
                     }

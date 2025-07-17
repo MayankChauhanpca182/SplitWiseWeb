@@ -24,6 +24,7 @@ public class GroupController : Controller
         _activityService = activityService;
     }
 
+    #region Group List
     [Breadcrumb("Groups")]
     [Route("groups")]
     public IActionResult Index()
@@ -74,6 +75,21 @@ public class GroupController : Controller
         return Json(response);
     }
 
+    // POST ExportGroups
+    [HttpPost]
+    public async Task<IActionResult> ExportGroups(FilterVM filter)
+    {
+        byte[] fileData = await _groupService.ExportGroups(filter);
+        if (fileData == null)
+        {
+            return Json(new ResponseVM { Success = false, Message = NotificationMessages.CanNotExportEmptyList.Replace("{0}", "groups") });
+        }
+        return File(fileData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Groups.xlsx");
+    }
+
+    #endregion
+
+    #region Group Details
     // GET GroupDetails
     [Breadcrumb("Group Details", FromAction = "Index")]
     [Route("group-details/{groupId}")]
@@ -127,18 +143,6 @@ public class GroupController : Controller
         return Json(response);
     }
 
-    // POST ExportGroups
-    [HttpPost]
-    public async Task<IActionResult> ExportGroups(FilterVM filter)
-    {
-        byte[] fileData = await _groupService.ExportGroups(filter);
-        if (fileData == null)
-        {
-            return Json(new ResponseVM { Success = false, Message = NotificationMessages.CanNotExportEmptyList.Replace("{0}", "groups") });
-        }
-        return File(fileData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Groups.xlsx");
-    }
-
     // GET GroupSettleUps
     public async Task<IActionResult> GroupSettleUps(int groupId)
     {
@@ -153,4 +157,6 @@ public class GroupController : Controller
         GroupVM group = await _groupService.GetGroup(groupId);
         return PartialView("GroupNamePartialView", group);
     }
+    
+    #endregion
 }

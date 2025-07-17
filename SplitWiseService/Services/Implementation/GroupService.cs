@@ -338,8 +338,9 @@ public class GroupService : IGroupService
             from e in _expenseRepository.Query()
             where e.DeletedAt == null && e.GroupId == groupId
             from es in e.ExpenseShares
-            where (e.PaidById == currentUserId && groupMemberIds.Contains(es.UserId))
-            || (es.UserId == currentUserId && groupMemberIds.Contains(e.PaidById))
+            where es.DeletedAt == null
+                && ((e.PaidById == currentUserId && groupMemberIds.Contains(es.UserId))
+                    || (es.UserId == currentUserId && groupMemberIds.Contains(e.PaidById)))
             group new { e, es } by (e.PaidById == currentUserId ? es.UserId : e.PaidById) into g
             select new
             {
