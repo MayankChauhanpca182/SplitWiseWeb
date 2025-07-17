@@ -255,7 +255,7 @@
                 IsSystemGenerated: $("#systemExpensesCkb").prop("checked")
             };
 
-            exportDataAjax(filter, "/Expense/ExportFriendExpenses", `Expenses_with_${'@Model.Name'}`, 0, '@Model.UserId');
+            exportExcelAjax(filter, "/Expense/ExportFriendExpenses", `Expenses_with_${'@Model.Name'}`, 0, '@Model.UserId');
         }
     </script>
 
@@ -268,7 +268,7 @@
                 SortOrder: sortOrder
             };
 
-            exportDataAjax(filter, "/Payment/ExportPayments", `Payments_with_${'@Model.Name'}`, 0, '@Model.UserId');
+            exportExcelAjax(filter, "/Payment/ExportPayments", `Payments_with_${'@Model.Name'}`, 0, '@Model.UserId');
         }
     </script>
 
@@ -282,7 +282,7 @@
                 ToDate: $("#toDate").val()
             };
 
-            exportDataAjax(filter, "/Activity/ExportActivity", `Activities_with_${'@Model.Name'}`, null, '@Model.UserId');
+            exportExcelAjax(filter, "/Activity/ExportActivity", `Activities_with_${'@Model.Name'}`, null, '@Model.UserId');
         }
     </script>
 }

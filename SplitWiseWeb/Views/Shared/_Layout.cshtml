@@ -94,24 +94,24 @@
             <aside class="navigation text-white bg-secondary-subtle" id="navigation">
                 <div>
                     <a asp-action="Index" asp-controller="Dashboard"
-                        class="navItems d-flex align-items-center gap-3 @((ViewData["ActiveLink"] as string) == "Dashboard" ? "active" : "")">
+                        class="navItems @((ViewData["ActiveLink"] as string) == "Dashboard" ? "active" : "")">
                         <i class="fa-solid fa-window-maximize"></i>
                         Dashboard
                     </a>
                     <a asp-action="Index" asp-controller="Group"
-                        class="navItems d-flex align-items-center gap-3 @((ViewData["ActiveLink"] as string) == "Groups" ? "active" : "")">
+                        class="navItems @((ViewData["ActiveLink"] as string) == "Groups" ? "active" : "")">
                         <i class="fa-solid fa-users"></i>
                         Groups
                     </a>
                     <a asp-action="Index" asp-controller="Expense"
-                        class="navItems d-flex align-items-center gap-3 @((ViewData["ActiveLink"] as string) == "Non-Group" ? "active" : "")">
+                        class="navItems @((ViewData["ActiveLink"] as string) == "Non-Group" ? "active" : "")">
                         <i class="bi bi-person-fill"></i>
                         Non-Group
                     </a>
                     <div class="navigatinAccordion accordion accordion-flush" id="contactsAccordion">
                         <div class="accordion-item">
                             <h2 class="accordion-header">
-                                <button class="accordion-button d-flex gap-3 bg-blue-grey text-white " type="button"
+                                <button class="accordion-button d-flex gap-2 bg-blue-grey text-white " type="button"
                                     data-bs-toggle="collapse" data-bs-target="#contacts-flush-collapseOne"
                                     aria-expanded="true" aria-controls="contacts-flush-collapseOne">
                                     <i class="bi bi-person-lines-fill"></i>
@@ -122,12 +122,12 @@
                                 data-bs-parent="#contactsAccordion">
                                 <div class="accordion-body bg-blue-grey text-white p-0">
                                     <a asp-action="Index" asp-controller="Friend"
-                                        class="navItems d-flex align-items-center gap-2 ps-4 @((ViewData["ActiveLink"] as string) == "Friends" ? "active" : "")">
+                                        class="navItems ps-4 @((ViewData["ActiveLink"] as string) == "Friends" ? "active" : "")">
                                         <i class="bi bi-people-fill"></i>
                                         Friends
                                     </a>
                                     <a asp-action="FriendRequests" asp-controller="Friend"
-                                        class="navItems d-flex align-items-center gap-2 ps-4 @((ViewData["ActiveLink"] as string) == "Friend Requests" ? "active" : "")">
+                                        class="navItems ps-4 @((ViewData["ActiveLink"] as string) == "Friend Requests" ? "active" : "")">
                                         <i class="bi bi-person-plus-fill"></i>
                                         Requests
                                     </a>
@@ -136,8 +136,8 @@
                         </div>
                     </div>
                     <a asp-action="Index" asp-controller="Activity"
-                        class="navItems d-flex align-items-center gap-3 @((ViewData["ActiveLink"] as string) == "Activities" ? "active" : "")">
-                        <i class="bi bi-person-fill"></i>
+                        class="navItems @((ViewData["ActiveLink"] as string) == "Activities" ? "active" : "")">
+                        <i class="bi bi-clock-history"></i>
                         Activities
                     </a>
                 </div>

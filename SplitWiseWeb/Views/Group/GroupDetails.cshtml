@@ -81,7 +81,7 @@
         <div class="tab-pane fade" id="group-noticeboard" role="tabpanel" aria-labelledby="group-noticeboard-tab">
             <div class="input-group mt-4 rounded-0">
                 <textarea asp-for=@Model.NoticeBoard
-                    class="groupNoticeBoard form-control border-secondary-subtle rounded-0" placeholder="Notice board"
+                    class="groupNoticeBoard form-control border-secondary-subtle rounded-0" placeholder=""
                     rows="10" disabled></textarea>
             </div>
         </div>
@@ -442,7 +442,7 @@
                 IsSystemGenerated: $("#systemExpensesCkb").prop("checked")
             };
 
-            exportDataAjax(filter, "/Expense/ExportGroupExpenses", `${'@Model.Name'}_Group_Expenses`, '@Model.Id');
+            exportExcelAjax(filter, "/Expense/ExportGroupExpenses", `${'@Model.Name'}_Group_Expenses`, '@Model.Id');
         }
     </script>
 
@@ -456,7 +456,7 @@
                 ToDate: $("#toDate").val()
             };
 
-            exportDataAjax(filter, "/Activity/ExportActivity", `Activities_of_group_${'@Model.Name'}`, '@Model.Id');
+            exportExcelAjax(filter, "/Activity/ExportActivity", `Activities_of_group_${'@Model.Name'}`, '@Model.Id');
         }
     </script>
 }

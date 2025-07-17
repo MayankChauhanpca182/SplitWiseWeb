@@ -307,8 +307,8 @@
         });
     </script>
 
+    @* Add current members to array *@
     <script>
-        // Add current members to array
         {
                 @foreach (ExpenseShareVM share in Model.ExpenseShares)
                 {
@@ -332,6 +332,10 @@
                         return;
                     }
                     else {
+                        // Create url for viewing the file
+                        let url = URL.createObjectURL(file);
+                        $("#viewAttachment").attr("href", url);
+                        $("#viewAttachment").show();
                         // Show preview text
                         $('#previewText').text(file.name);
                     }
@@ -717,6 +721,42 @@
                 }
             });
         });
+    </script>
+
+    @* Remove attachment *@
+    <script>
+        function removeAttachment(expenseId) {
+            $("#confirmationModalTitle").text(`Remove attachment`);
+            $("#confirmationModalBody").text(`Are you sure you want to remove attachment?`);
+            $("#confirmationModalYesBtn").attr("onclick", `removeAttachmentConfirm(${expenseId})`);
+            $("#confirmationModal").modal("show");
+        }
+
+        function removeAttachmentConfirm(expenseId) {
+            $.ajax({
+                url: "/Expense/RemoveAttachment",
+                type: "POST",
+                data: { expenseId },
+                success: function (response) {
+                    $("#confirmationModal").modal("hide");
+                    if (!response.statusCode) {
+                        if (response.success == false) {
+                            toastr.error(response.message);
+                        }
+                        else {
+                            $("#removeAttachmentBtn").remove();
+                            $("#viewAttachment").hide();
+                            $("#previewText").text("");
+                            $("#viewAttachment").attr("href", "#");
+                            toastr.success(response.message);
+                        }
+                    }
+                },
+                error: function () {
+                    toastr.error(SERVER_ERR);
+                }
+            });
+        }
     </script>
 
     @* Change group *@

@@ -97,7 +97,7 @@
                 IsSystemGenerated: $("#systemExpensesCkb").prop("checked")
             };
 
-            exportDataAjax(filter, "/Expense/ExportNonGroupExpenses", "Non_Group_Expenses");
+            exportExcelAjax(filter, "/Expense/ExportNonGroupExpenses", "Non_Group_Expenses");
         }
     </script>
 }

@@ -286,22 +286,19 @@ aside.navigation>div {
 }
 
 aside.navigation .navItems {
-    display: inline-block;
+    /* display: inline-block; */
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
     width: 100%;
     padding: 8px;
     color: #fff;
     font-weight: 400;
 }
 
-aside.navigation .navItems:hover {
+aside.navigation .navItems:hover, aside.navigation .navItems.active {
     color: var(--clr-dark-gray) !important;
     background-color: var(--clr-mint) !important;
-}
-
-aside.navigation .navItems.active {
-    color: var(--clr-dark-gray);
-    background-color: var(--clr-mint) !important;
-    font-weight: 500 !important;
 }
 
 .navigatinAccordion .accordion-button {

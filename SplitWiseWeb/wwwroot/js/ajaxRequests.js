@@ -75,7 +75,7 @@ $(document).on("submit", "#sendReferralForm", function (e) {
 });
 
 // Export to excel
-function exportDataAjax(filter, url, fileName, groupId = null, friendUserId = null) {
+function exportExcelAjax(filter, url, fileName, groupId = null, friendUserId = null) {
     $.ajax({
         url: url,
         type: "POST",
