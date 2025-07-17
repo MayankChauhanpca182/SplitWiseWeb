@@ -47,8 +47,7 @@
                             <li class="dropdownLi cursor-pointer" onclick='changeGroup(@Html.Raw(Json.Serialize(group)))'>
                                 <span class="d-flex align-items-center gap-2">
                                     <img src=@(group.ImagePath ?? "/images/Default_pfp.png") alt=""
-                                        class="rounded-circle border border-dark-subtle object-fit-cover" width="25px"
-                                        height="25px">
+                                        class="img-25px rounded-circle border border-dark-subtle object-fit-cover">
                                     <span class="name">@group.Name</span>
                                 </span>
                             </li>
@@ -91,8 +90,7 @@
                                     data-user='@(Html.Raw(Json.Serialize(user)))'>
                                 <label for="userCkb-@user.UserId" class="d-flex align-items-center gap-2">
                                     <img src=@(user.ProfileImagePath ?? "/images/Default_pfp.png") alt=""
-                                        class="rounded-circle border border-dark-subtle object-fit-cover" width="25px"
-                                        height="25px">
+                                        class="img-25px rounded-circle border border-dark-subtle object-fit-cover">
                                     <span class="name">@user.Name</span>
                                 </label>
                             </li>
@@ -138,9 +136,6 @@
                         {
                             <option value="@category.Id" data-image="@(category.CategoryImagePath)">
                                 <span>
-                                    <img src="@(category.CategoryImagePath)" alt=""
-                                        class="rounded-circle border border-dark-subtle object-fit-cover" width="25px"
-                                        height="25px">
                                     @category.Name
                                 </span>
                             </option>
@@ -798,16 +793,15 @@
         function addMembers(groupmembers) {
             $("#friendsDropdown").empty();
             $.each(groupmembers, function (index, member) {
-                let memberLi = `<li class="d-flex align-items-center gap-2 px-2">
-                                            <input class="userCkb form-check-input m-0" type="checkbox" id="userCkb-${member.id}"
-                                                data-user='${JSON.stringify(member)}'>
-                                            <label for="userCkb-${member.id}" class="d-flex align-items-center gap-2">
-                                                <img src=${member.profileImagePath ?? "/images/Default_pfp.png"} alt=""
-                                                    class="rounded-circle border border-dark-subtle object-fit-cover" width="25px"
-                                                    height="25px">
-                                                <span>${member.name}</span>
-                                            </label>
-                                        </li>`;
+                let memberLi = `<li class="dropdownLi">
+                                    <input class="userCkb form-check-input m-0" type="checkbox" id="userCkb-${member.id}"
+                                        data-user='${JSON.stringify(member)}'>
+                                    <label for="userCkb-${member.id}" class="d-flex align-items-center gap-2">
+                                        <img src=${member.profileImagePath ?? "/images/Default_pfp.png"} alt=""
+                                            class="img-25px rounded-circle border border-dark-subtle object-fit-cover">
+                                        <span class="name">${member.name}</span>
+                                    </label>
+                                </li>`;
                 $("#friendsDropdown").append(memberLi);
             });
         }

@@ -1,8 +1,8 @@
 @model PaginatedListVM<GroupVM>
 
-<div class="table-responsive bg-white px-2">
-    <table class="table text-nowrap">
-        <thead class="position-sticky top-0 z-1">
+<div class="table-responsive bg-white">
+    <table class="table table-striped text-nowrap">
+        <thead>
             <tr>
                 <th scope="col" class="col">
                     <span class="text-clr-grey text-dark-emphasis">Name</span>
@@ -27,8 +27,8 @@
                 <tr>
                     <td>
                         <img src="@(group.ImagePath ?? "/images/default_group_img.png")"
-                            class="object-fit-cover rounded-circle" width="40px">
-                        <span>@group.Name</span>
+                            class="img-35px object-fit-cover rounded-circle">
+                        <span class="ms-1">@group.Name</span>
                     </td>
                     <td
                         class="@(group.Expense < 0 ? "text-danger" : "text-success")">

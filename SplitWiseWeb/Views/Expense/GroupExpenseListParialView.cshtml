@@ -4,8 +4,8 @@
 }
 
 <div class="table-responsive bg-white">
-    <table class="table text-nowrap">
-        <thead class="position-sticky top-0 z-1">
+    <table class="table table-striped text-nowrap">
+        <thead>
             <tr>
                 <th scope="col" class="col-1">
                     <span class="text-clr-grey text-dark-emphasis">Date</span>
@@ -52,11 +52,11 @@
                     <td>
                         <span>@expense.PaidByName</span>
                     </td>
-                    <td style="max-width: 75px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    <td>
                         <span class="d-flex gap-1" title="@(string.Join(", ", expense.Members.Select(m => $"{m.FirstName} {m.LastName}")))">
                             @foreach(User member in expense.Members)
                             {
-                                <img src=@(member.ProfileImagePath ?? "/images/Default_pfp.png") alt="" class="rounded-circle border border-dark-subtle object-fit-cover" width="30px" height="30px">                                
+                                <img src=@(member.ProfileImagePath ?? "/images/Default_pfp.png") alt="" class="img-30px rounded-circle border border-dark-subtle object-fit-cover">                                
                             }
                         </span>
                     </td>

@@ -1,8 +1,8 @@
 @model PaginatedListVM<FriendRequestVM>
 
-<div class="table-responsive bg-white px-2">
-    <table class="table text-nowrap">
-        <thead class="position-sticky top-0 z-1">
+<div class="table-responsive bg-white">
+    <table class="table table-striped text-nowrap">
+        <thead>
             <tr>
                 <th scope="col" class="col">
                     <span class="text-clr-grey text-dark-emphasis">Name</span>
@@ -32,8 +32,7 @@
             {
                 <tr>
                     <td>
-                        <img src="@(request.ProfileImagePath ?? "/images/Default_pfp.png")"
-                            class="object-fit-cover rounded-circle" width="40px">
+                        <img src="@(request.ProfileImagePath ?? "/images/Default_pfp.png")" class="img-40px object-fit-cover rounded-circle">
                         <span>@request.Name</span>
                     </td>
                     <td><span class="my-auto">@request.Email</span></td>

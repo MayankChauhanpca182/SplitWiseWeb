@@ -77,7 +77,7 @@ public class ExpenseController : Controller
     public async Task<IActionResult> AddGroupExpense(int expenseId, int groupId)
     {
         ExpenseVM expense = await _expenseService.GetGroupExpense(expenseId, groupId);
-        ViewData["ActiveLink"] = "Group Expenses";
+        ViewData["ActiveLink"] = "Groups";
         return View("AddGroupExpense", expense);
     }
 

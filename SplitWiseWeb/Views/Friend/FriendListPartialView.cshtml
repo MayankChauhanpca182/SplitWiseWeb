@@ -1,8 +1,8 @@
 @model PaginatedListVM<FriendVM>
 
-<div class="table-responsive bg-white px-2">
-    <table class="table text-nowrap">
-        <thead class="position-sticky top-0 z-1">
+<div class="table-responsive bg-white">
+    <table class="table table-striped text-nowrap">
+        <thead>
             <tr>
                 <th scope="col" class="col-3">
                     <span class="text-clr-grey text-dark-emphasis">Name</span>
@@ -34,10 +34,9 @@
             @foreach (FriendVM friend in Model.List)
             {
                 <tr>
-                    <td class="d-flex align-items-center gap-2">
-                        <img src="@(friend.ProfileImagePath ?? "/images/Default_pfp.png")"
-                            class="object-fit-cover rounded-circle border border-secondary-subtle" width="40px">
-                        <span>@friend.Name</span>
+                    <td>
+                        <img src="@(friend.ProfileImagePath ?? "/images/Default_pfp.png")" class="img-40px object-fit-cover rounded-circle border border-secondary-subtle">
+                        <span class="ms-1">@friend.Name</span>
                     </td>
                     <td >@friend.EmailAddress</td>
                     <td

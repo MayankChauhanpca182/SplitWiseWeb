@@ -114,9 +114,16 @@ textarea {
     resize: none;
 }
 
-th,
-td {
+.table-striped>tbody>tr:nth-of-type(odd)>* {
+    --bs-table-bg-type: #0000000c;
+}
+
+th, td {
     vertical-align: middle;
+    max-width: 300px !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* Tool Tip */
@@ -140,6 +147,36 @@ td {
 .img-20px {
     width: 20px;
     height: 20px;
+}
+
+.img-25px {
+    width: 25px;
+    height: 25px;
+}
+
+.img-30px {
+    width: 30px;
+    height: 30px;
+}
+
+.img-35px {
+    width: 35px;
+    height: 35px;
+}
+
+.img-40px {
+    width: 40px;
+    height: 40px;
+}
+
+.img-50px {
+    width: 50px;
+    height: 50px;
+}
+
+.img-70px {
+    width: 70px;
+    height: 70px;
 }
 
 /* Global */
@@ -370,6 +407,7 @@ footer.footer {
     display: flex;
     align-items: center;
     gap: 5px;
+    margin: 3px 0px;
 }
 
 #friendsDropdown,
@@ -490,8 +528,9 @@ footer.footer {
 
 .actvityItem {
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
+    /* flex-wrap: wrap; */
+    /* align-items: center; */
+    text-wrap: pretty;
     gap: 5px;
     margin: 5px 0px;
 }

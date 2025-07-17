@@ -50,8 +50,7 @@
                                     data-user='@(Html.Raw(Json.Serialize(user)))'>
                                 <label for="userCkb-@user.UserId" class="d-flex align-items-center gap-2">
                                     <img src=@(user.ProfileImagePath ?? "/images/Default_pfp.png") alt=""
-                                        class="rounded-circle border border-dark-subtle object-fit-cover" width="25px"
-                                        height="25px">
+                                        class="img-25px rounded-circle border border-dark-subtle object-fit-cover">
                                     <span class="name">@user.Name</span>
                                 </label>
                             </li>
@@ -97,9 +96,6 @@
                         {
                             <option value="@category.Id" data-image="@(category.CategoryImagePath)">
                                 <span>
-                                    <img src="@(category.CategoryImagePath)" alt=""
-                                        class="rounded-circle border border-dark-subtle object-fit-cover" width="25px"
-                                        height="25px">
                                     @category.Name
                                 </span>
                             </option>
