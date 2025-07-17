@@ -99,20 +99,16 @@ public class SettlementService : ISettlementService
         );
 
         // Calculate net amount
-        decimal netAmount = await (
-            from e in _expenseRepository.Query()
-            where e.DeletedAt == null && e.GroupId == null
-            from es in e.ExpenseShares
-            where es.DeletedAt == null
-                && ((e.PaidById == friendUserId && es.UserId == currentUser.Id && (es.ShareAmount - es.SettledAmount) > 0) 
-                    || (e.PaidById == currentUser.Id && es.UserId == friendUserId && (es.ShareAmount - es.SettledAmount) < 0))
-            group new { e, es } by e.PaidById into g
-            select new
+        decimal netAmount = await _expenseShareRepository.Sum(
+            selector: es => es.Expense.PaidById == currentUser.Id ? (es.ShareAmount - es.SettledAmount) : -(es.ShareAmount - es.SettledAmount),
+            predicate: es => es.DeletedAt == null && es.Expense.DeletedAt == null && es.Expense.GroupId == null 
+                    && ((es.Expense.PaidById == currentUser.Id && es.UserId == friendUserId && (es.ShareAmount - es.SettledAmount) < 0)
+                        || (es.Expense.PaidById == friendUserId && es.UserId == currentUser.Id && (es.ShareAmount - es.SettledAmount) > 0)),
+            includes: new List<Expression<Func<ExpenseShare, object>>>
             {
-                FriendUserId = g.Key,
-                Expense = g.Sum(x => x.es.ShareAmount)
+                es => es.Expense
             }
-        ).Select(x => x.Expense).FirstOrDefaultAsync();
+        );
 
         User friendUser = friend.Friend1 == currentUser.Id ? friend.Friend2UserNavigation : friend.Friend1UserNavigation;
 
@@ -123,7 +119,7 @@ public class SettlementService : ISettlementService
             UserId = friendUser.Id,
             Name = $"{friendUser.FirstName} {friendUser.LastName}",
             ProfileImagePath = friendUser.ProfileImagePath,
-            Expense = netAmount
+            Expense = netAmount < 0 ? (-1)*netAmount : 0
         };
 
         // Set total
