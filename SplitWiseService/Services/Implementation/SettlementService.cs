@@ -60,8 +60,8 @@ public class SettlementService : ISettlementService
             from e in _expenseRepository.Query()
             where e.DeletedAt == null && (e.GroupId != null ? groupIds.Contains((int)e.GroupId) : false)
             from es in e.ExpenseShares
-            where es.DeletedAt == null 
-                && ((e.PaidById == friendUserId && es.UserId == currentUser.Id) 
+            where es.DeletedAt == null
+                && ((e.PaidById == friendUserId && es.UserId == currentUser.Id)
                     || (e.PaidById == currentUser.Id && es.UserId == friendUserId))
             group new { e, es } by (int)e.GroupId into g
             select new
@@ -101,7 +101,7 @@ public class SettlementService : ISettlementService
         // Calculate net amount
         decimal netAmount = await _expenseShareRepository.Sum(
             selector: es => es.Expense.PaidById == currentUser.Id ? (es.ShareAmount - es.SettledAmount) : -(es.ShareAmount - es.SettledAmount),
-            predicate: es => es.DeletedAt == null && es.Expense.DeletedAt == null && es.Expense.GroupId == null 
+            predicate: es => es.DeletedAt == null && es.Expense.DeletedAt == null && es.Expense.GroupId == null
                     && ((es.Expense.PaidById == currentUser.Id && es.UserId == friendUserId)
                         || (es.Expense.PaidById == friendUserId && es.UserId == currentUser.Id)),
             includes: new List<Expression<Func<ExpenseShare, object>>>
@@ -119,7 +119,7 @@ public class SettlementService : ISettlementService
             UserId = friendUser.Id,
             Name = $"{friendUser.FirstName} {friendUser.LastName}",
             ProfileImagePath = friendUser.ProfileImagePath,
-            Expense = netAmount < 0 ? (-1)*netAmount : 0
+            Expense = netAmount < 0 ? (-1) * netAmount : 0
         };
 
         // Set total
@@ -178,9 +178,9 @@ public class SettlementService : ISettlementService
                 // Fetch all expense shares
                 List<ExpenseShare> expenseShares = await _expenseShareRepository.List(
                     predicate: es => es.DeletedAt == null
-                                && es.UserId == currentUser.Id && es.Expense.PaidById == settlement.PaidToId
-                                && ((es.Expense.PaidById == settlement.PaidById && es.UserId == currentUser.Id && (es.ShareAmount - es.SettledAmount) > 0)
-                                    || (es.Expense.PaidById == currentUser.Id && es.UserId == settlement.PaidById && (es.ShareAmount - es.SettledAmount) < 0)),
+                                && es.ShareAmount != es.SettledAmount
+                                && ((es.Expense.PaidById == settlement.PaidToId && es.UserId == currentUser.Id)
+                                    || (es.Expense.PaidById == currentUser.Id && es.UserId == settlement.PaidToId)),
                     includes: new List<Expression<Func<ExpenseShare, object>>>
                     {
                         es => es.Expense
@@ -197,14 +197,14 @@ public class SettlementService : ISettlementService
             }
             else
             {
-                //      200 or 100
                 decimal remaingAmount = settlement.Amount;
 
                 // Fetch expense share list
                 List<ExpenseShare> expenseShares = await _expenseShareRepository.List(
                     predicate: es => es.DeletedAt == null
-                                && ((es.UserId == currentUser.Id && es.Expense.PaidById == settlement.PaidToId && (es.ShareAmount - es.SettledAmount) > 0)
-                                    || (es.UserId == settlement.PaidToId && es.Expense.PaidById == currentUser.Id && (es.ShareAmount - es.SettledAmount) < 0))
+                                && es.ShareAmount != es.SettledAmount
+                                && ((es.UserId == currentUser.Id && es.Expense.PaidById == settlement.PaidToId)
+                                    || (es.UserId == settlement.PaidToId && es.Expense.PaidById == currentUser.Id))
                                 && (settlement.GroupId == 0 ? es.Expense.GroupId == null : es.Expense.GroupId == settlement.GroupId),
                     includes: new List<Expression<Func<ExpenseShare, object>>>
                     {
@@ -212,23 +212,33 @@ public class SettlementService : ISettlementService
                     }
                 );
 
-                // netamount = 200
-                // diff = 0
+                // Expenseshares where current user gets from friend
+                List<ExpenseShare> currentUserGets = expenseShares.Where(es => (es.Expense.PaidById == currentUser.Id && es.ShareAmount - es.SettledAmount > 0) || (es.Expense.PaidById == settlement.PaidToId && es.ShareAmount - es.SettledAmount < 0)).ToList();
 
+                remaingAmount += currentUserGets.Sum(es => es.ShareAmount > 0 ? es.ShareAmount : -es.ShareAmount);
 
-                foreach (ExpenseShare share in expenseShares.Where(es => es.ShareAmount > 0))
+                // Settle all get expenses
+                foreach (ExpenseShare share in currentUserGets)
                 {
-                    //                  700                 0
-                    decimal netAmount = share.ShareAmount - share.SettledAmount;
-                    //  200                700
-                    if (remaingAmount >= netAmount)
+                    share.SettledAmount = share.ShareAmount;
+                    share.UpdatedAt = DateTime.Now;
+                    share.UpdatedById = currentUser.Id;
+                    await _expenseShareRepository.Update(share);
+                }
+
+                // Expenseshares where current user pays from friend
+                List<ExpenseShare> currentUserPays = expenseShares.Where(es => (es.Expense.PaidById == currentUser.Id && es.ShareAmount - es.SettledAmount < 0) || (es.Expense.PaidById == settlement.PaidToId && es.ShareAmount - es.SettledAmount > 0)).ToList();
+
+                foreach (ExpenseShare share in currentUserPays)
+                {
+                    decimal net = share.ShareAmount - share.SettledAmount;
+                    if (remaingAmount >= net)
                     {
-                        share.SettledAmount += netAmount;
-                        remaingAmount -= netAmount;
+                        share.SettledAmount = share.ShareAmount;
+                        remaingAmount -= net;
                     }
                     else
                     {
-                        // 200                  200
                         share.SettledAmount += remaingAmount;
                         remaingAmount = 0;
                     }
@@ -242,8 +252,6 @@ public class SettlementService : ISettlementService
                     }
                 }
             }
-
-            // Send mail
 
             response.Success = true;
             response.Message = NotificationMessages.SettlementSuccess;
