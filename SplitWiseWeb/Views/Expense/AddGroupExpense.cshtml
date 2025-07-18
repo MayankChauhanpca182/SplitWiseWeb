@@ -324,6 +324,7 @@
                         toastr.error("Only following image types are allowed: jpeg, jpg, png, pdf");
                         $(this).val("");
                         $('#previewText').text("");
+                        $("#viewAttachment").hide();
                         return;
                     }
                     else {
@@ -368,8 +369,8 @@
 
             // Validate for max amount
             if (maxAmount && parseFloat(formatedValue) > maxAmount) {
-                // Replace with old value
-                formatedValue = oldValue;
+                // Replace with max value
+                formatedValue = maxAmount;
                 toastr.error(`The maximum allowed value is ${maxAmount}, Please enter value with in permitted range.`);
             }
 

@@ -38,15 +38,15 @@
         </li>
 
         <li class="nav-item" role="presentation">
-            <button class="nav-link" id="friend-transactions-tab" data-bs-toggle="pill" data-bs-target="#friend-transactions"
-                type="button" role="tab" aria-controls="friend-transactions" aria-selected="true"
-                onclick="fetchFriendTransactions(1)">Transactions</button>
-        </li>
-
-        <li class="nav-item" role="presentation">
             <button class="nav-link" id="friend-expenses-tab" data-bs-toggle="pill" data-bs-target="#friend-expenses"
                 type="button" role="tab" aria-controls="friend-expenses" aria-selected="true"
                 onclick="fetchFriendExpenses(1)">Expenses</button>
+        </li>
+
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="friend-transactions-tab" data-bs-toggle="pill" data-bs-target="#friend-transactions"
+                type="button" role="tab" aria-controls="friend-transactions" aria-selected="true"
+                onclick="fetchFriendTransactions(1)">Transactions</button>
         </li>
     </ul>
 
@@ -54,6 +54,26 @@
         <div class="tab-pane fade show active" id="friend-activity" role="tabpanel" aria-labelledby="friend-activity-tab">
             <partial name="../Activity/ActivityFilterPartialView" model="@Model.ActivityFilter" />
             <div id="friend-activity-outer" class="listOuter"></div>
+        </div>
+
+        <div class="tab-pane fade" id="friend-expenses" role="tabpanel" aria-labelledby="friend-expenses-tab">
+            <div class="d-flex flex-wrap justify-content-between gap-3 mb-3">
+                <div class="d-flex align-items-center gap-2">
+                    <input type="text" class="searchBox form-control border-secondary-subtle rounded-0"
+                        id="friendExpenseListSearch" placeholder="Search">
+                    <div class="form-check">
+                        <input class="form-check-input border border-secondary-subtle" type="checkbox" value=""
+                            id="systemExpensesCkb" onchange="fetchFriendExpenses(1)">
+                        <label class="form-check-label text-nowrap" for="systemExpensesCkb">
+                            Include system expenses
+                        </label>
+                    </div>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-primary w-125px" type="button" onclick="exportFriendExpenses()">Export</button>
+                </div>
+            </div>
+            <div id="friendExpensesOuter" class="listOuter bg-white"></div>
         </div>
 
         <div class="tab-pane fade" id="friend-transactions" role="tabpanel" aria-labelledby="friend-transactions-tab">
@@ -67,26 +87,6 @@
                 </div>
             </div>
             <div id="transactionListOuter" class="listOuter bg-white"></div>
-        </div>
-
-        <div class="tab-pane fade" id="friend-expenses" role="tabpanel" aria-labelledby="friend-expenses-tab">
-            <div class="d-flex flex-wrap justify-content-between gap-3 mb-3">
-                <div class="d-flex align-items-center gap-2">
-                    <input type="text" class="searchBox form-control border-secondary-subtle rounded-0"
-                        id="friendExpenseListSearch" placeholder="Search">
-                    <div class="form-check">
-                        <input class="form-check-input border border-secondary-subtle" type="checkbox" value=""
-                            id="systemExpensesCkb" onchange="fetchFriendExpenses(1)">
-                        <label class="form-check-label text-nowrap" for="systemExpensesCkb">
-                            Show system expenses
-                        </label>
-                    </div>
-                </div>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-primary w-125px" type="button" onclick="exportFriendExpenses()">Export</button>
-                </div>
-            </div>
-            <div id="friendExpensesOuter" class="listOuter bg-white"></div>
         </div>
     </div>
 </div>

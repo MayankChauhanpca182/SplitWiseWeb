@@ -82,7 +82,7 @@ public class ExpenseController : Controller
     }
 
     // GET ViewGroupExpense
-    [Breadcrumb("View", FromAction = "GroupDetails", FromController = typeof(GroupController))]
+    [Breadcrumb("Expense", FromAction = "Index", FromController = typeof(GroupController))]
     [Route("group-expenses/view")]
     public async Task<IActionResult> ViewGroupExpense(int expenseId)
     {

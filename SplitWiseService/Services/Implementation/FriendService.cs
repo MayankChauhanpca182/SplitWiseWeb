@@ -473,7 +473,7 @@ public class FriendService : IFriendService
             from e in _expenseRepository.Query()
             where e.DeletedAt == null
             from es in e.ExpenseShares
-            where es.DeletedAt == null && e.PaidById != es.UserId
+            where es.DeletedAt == null && e.PaidById != es.UserId && es.ShareAmount != es.SettledAmount
                 && ((e.PaidById == currentUserId && friendUserIds.Contains(es.UserId))
                     || (es.UserId == currentUserId && friendUserIds.Contains(e.PaidById)))
             group new { e, es } by (e.PaidById == currentUserId ? es.UserId : e.PaidById) into g
@@ -526,6 +526,7 @@ public class FriendService : IFriendService
             decimal netAmount = await _expenseShareRepository.Sum(
                 selector: es => es.Expense.PaidById == currentUser.Id ? (es.ShareAmount - es.SettledAmount) : -(es.ShareAmount - es.SettledAmount),
                 predicate: es => es.DeletedAt == null && es.Expense.DeletedAt == null
+                            && es.ShareAmount != es.SettledAmount
                             && ((es.UserId == currentUser.Id && es.Expense.PaidById == otherUserId)
                                 || (es.Expense.PaidById == currentUser.Id && es.UserId == otherUserId)),
                 includes: new List<Expression<Func<ExpenseShare, object>>>

@@ -1,3 +1,4 @@
+@using Microsoft.Extensions.Primitives
 @using SplitWiseRepository.Constants
 @model List<Activity>
 @{
@@ -14,12 +15,14 @@ else
 {
     @foreach (Activity activity in Model)
     {
-        string performedByUserName = activity.PerformedById == currentUserId ? "You" : activity.PerformedByUser.FirstName + " " + activity.PerformedByUser.LastName;
+        string performedByUserName = activity.PerformedById == currentUserId ? "You" : activity.PerformedByUser.FirstName + " "
+        + activity.PerformedByUser.LastName;
 
         string performedOnUserName = string.Empty;
         @if (activity.PerformedOnUser != null)
         {
-            performedOnUserName = activity.PerformedOnId == currentUserId ? "You" : activity.PerformedOnUser.FirstName + " " + activity.PerformedOnUser.LastName;
+            performedOnUserName = activity.PerformedOnId == currentUserId ? "You" : activity.PerformedOnUser.FirstName + " " +
+            activity.PerformedOnUser.LastName;
         }
 
         @if (date != activity.CreatedAt.ToString("dd-MM-yyyy"))

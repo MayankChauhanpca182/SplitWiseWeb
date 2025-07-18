@@ -88,11 +88,19 @@ function initializeTooltips() {
 }
 
 $(document).ready(function () {
+  $("td").each(function () {
+    let text = $(this).text();
+    $(this).attr("title", text.trim());
+  });
   initializeTooltips();
 });
 
 $(document).ajaxComplete(function () {
   $(".tooltip").remove();
+  $("td").each(function () {
+    let text = $(this).text();
+    $(this).attr("title", text.trim());
+  });
   initializeTooltips();
 });
 

@@ -448,7 +448,7 @@ public class ExpenseService : IExpenseService
                     orderBy = filter.SortOrder == "asc" ? q => q.OrderBy(e => e.Title) : q => q.OrderByDescending(e => e.Title);
                     break;
                 case "date":
-                    orderBy = filter.SortOrder == "asc" ? q => q.OrderBy(e => e.PaidDate).ThenBy(e => e.UpdatedAt) : q => q.OrderByDescending(e => e.PaidDate).ThenByDescending(e => e.UpdatedAt);
+                    orderBy = filter.SortOrder == "asc" ? q => q.OrderBy(e => e.PaidDate).ThenBy(e => e.CreatedAt) : q => q.OrderByDescending(e => e.PaidDate).ThenByDescending(e => e.CreatedAt);
                     break;
                 default:
                     break;

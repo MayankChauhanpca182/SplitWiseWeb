@@ -89,12 +89,6 @@ function exportExcelAjax(filter, url, fileName, groupId = null, friendUserId = n
             } else {
                 let filename = `${fileName}_${new Date().getTime()}.xlsx`;
 
-                let disposition = xhr.getResponseHeader('Content-Disposition');
-                if (disposition && disposition.indexOf('attachment') !== -1) {
-                    let matches = /filename="([^"]+)"/.exec(disposition);
-                    if (matches !== null && matches[1]) filename = matches[1];
-                }
-
                 let blob = new Blob([data], { type: xhr.getResponseHeader('Content-Type') });
                 let link = document.createElement('a');
                 link.href = window.URL.createObjectURL(blob);

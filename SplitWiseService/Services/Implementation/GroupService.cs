@@ -40,7 +40,9 @@ public class GroupService : IGroupService
     {
         return await _expenseShareRepository.Sum(
             selector: es => es.Expense.PaidById == userId ? (es.ShareAmount - es.SettledAmount) : -(es.ShareAmount - es.SettledAmount),
-            predicate: es => es.DeletedAt == null && es.Expense.DeletedAt == null && es.Expense.GroupId == groupId
+            predicate: es => es.DeletedAt == null
+                    && es.ShareAmount != es.SettledAmount
+                    && es.Expense.DeletedAt == null && es.Expense.GroupId == groupId
                     && es.Expense.PaidById != es.UserId
                     && (es.Expense.PaidById == userId || es.UserId == userId),
             includes: new List<Expression<Func<ExpenseShare, object>>>
@@ -241,7 +243,8 @@ public class GroupService : IGroupService
             from e in _expenseRepository.Query()
             where e.DeletedAt == null && (e.GroupId != null ? groupIds.Contains((int)e.GroupId) : false)
             from es in e.ExpenseShares
-            where es.DeletedAt == null && (e.PaidById == currentUserId || es.UserId == currentUserId) && e.PaidById != es.UserId
+            where es.DeletedAt == null && es.ShareAmount != es.SettledAmount
+            && (e.PaidById == currentUserId || es.UserId == currentUserId) && e.PaidById != es.UserId
             group new { e, es } by (int)e.GroupId into g
             select new
             {
@@ -339,6 +342,7 @@ public class GroupService : IGroupService
             where e.DeletedAt == null && e.GroupId == groupId
             from es in e.ExpenseShares
             where es.DeletedAt == null
+                && es.ShareAmount != es.SettledAmount
                 && ((e.PaidById == currentUserId && groupMemberIds.Contains(es.UserId))
                     || (es.UserId == currentUserId && groupMemberIds.Contains(e.PaidById)))
             group new { e, es } by (e.PaidById == currentUserId ? es.UserId : e.PaidById) into g

@@ -90,13 +90,13 @@ public class DashboardService : IDashboardService
             predicate: es => es.DeletedAt == null
                         && es.Expense.DeletedAt == null && es.Expense.GroupId != null
                         && es.UserId != es.Expense.PaidById
+                        && es.ShareAmount != es.SettledAmount
                         && (es.Expense.PaidById == currentUserId || es.UserId == currentUserId),
             includes: new List<Expression<Func<ExpenseShare, object>>>
             {
                     es => es.Expense
             }
         );
-
         return netAmount;
     }
 
@@ -109,13 +109,13 @@ public class DashboardService : IDashboardService
             predicate: es => es.DeletedAt == null
                         && es.Expense.DeletedAt == null && es.Expense.GroupId == null
                         && es.UserId != es.Expense.PaidById
+                        && es.ShareAmount != es.SettledAmount
                         && (es.Expense.PaidById == currentUserId || es.UserId == currentUserId),
             includes: new List<Expression<Func<ExpenseShare, object>>>
             {
                     es => es.Expense
             }
         );
-
         return netAmount;
     }
 

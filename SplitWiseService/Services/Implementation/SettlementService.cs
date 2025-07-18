@@ -61,6 +61,7 @@ public class SettlementService : ISettlementService
             where e.DeletedAt == null && (e.GroupId != null ? groupIds.Contains((int)e.GroupId) : false)
             from es in e.ExpenseShares
             where es.DeletedAt == null
+                && es.ShareAmount != es.SettledAmount
                 && ((e.PaidById == friendUserId && es.UserId == currentUser.Id)
                     || (e.PaidById == currentUser.Id && es.UserId == friendUserId))
             group new { e, es } by (int)e.GroupId into g
@@ -102,6 +103,7 @@ public class SettlementService : ISettlementService
         decimal netAmount = await _expenseShareRepository.Sum(
             selector: es => es.Expense.PaidById == currentUser.Id ? (es.ShareAmount - es.SettledAmount) : -(es.ShareAmount - es.SettledAmount),
             predicate: es => es.DeletedAt == null && es.Expense.DeletedAt == null && es.Expense.GroupId == null
+                    && es.ShareAmount != es.SettledAmount
                     && ((es.Expense.PaidById == currentUser.Id && es.UserId == friendUserId)
                         || (es.Expense.PaidById == friendUserId && es.UserId == currentUser.Id)),
             includes: new List<Expression<Func<ExpenseShare, object>>>
