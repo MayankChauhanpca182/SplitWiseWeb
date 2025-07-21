@@ -96,6 +96,8 @@ public class ActivityService : IActivityService
                             && a.CreatedAt < newToDate
                             && (string.IsNullOrEmpty(searchString)
                                 || (isSearchTextYou && (a.PerformedById == currentUserId || a.PerformedOnId == currentUserId))
+                                || a.PerformedByUser.FirstName.ToLower().Contains(searchString)
+                                || a.PerformedByUser.LastName.ToLower().Contains(searchString)
                                 || a.PerformedOnUser.FirstName.ToLower().Contains(searchString)
                                 || a.PerformedOnUser.LastName.ToLower().Contains(searchString)
                                 || a.Group.Name.ToLower().Contains(searchString)

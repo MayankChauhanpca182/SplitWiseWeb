@@ -74,31 +74,17 @@ else
                 @switch (activity.ActivityType)
                 {
                     case ActivityType.GroupCreated:
-                        if (isGroupActivity)
-                        {
-                            <span>created this group.</span>
-                        }
-                        else
-                        {
-                            <span>created the group</span>
-                            <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt=""
-                                class="img-20px rounded-circle">
-                            <strong>@activity.Group.Name.</strong>
-                        }
+                        <span>created the group</span>
+                        <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt=""
+                            class="img-20px rounded-circle">
+                        <strong>@activity.Group.Name.</strong>
                         break;
 
                     case ActivityType.GroupUpdated:
-                        if (isGroupActivity)
-                        {
-                            <span>updated this group.</span>
-                        }
-                        else
-                        {
-                            <span>updated the group</span>
-                            <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt=""
-                                class="img-20px rounded-circle">
-                            <strong>@activity.Group.Name.</strong>
-                        }
+                        <span>updated the group</span>
+                        <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt=""
+                            class="img-20px rounded-circle">
+                        <strong>@activity.Group.Name.</strong>
                         break;
 
                     case ActivityType.GroupDeleted:

@@ -101,7 +101,7 @@ function exportExcelAjax(filter, url, fileName, groupId = null, friendUserId = n
             }
         },
         error: function () {
-            toastr.error(`No records fround.`);
+            toastr.error(`No records found.`);
         }
     });
 }

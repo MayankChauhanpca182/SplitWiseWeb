@@ -495,7 +495,7 @@ public class ExpenseService : IExpenseService
         {
             Id = e.Id,
             GroupId = e.GroupId,
-            GroupDetails = e.GroupId != null ? new GroupVM { Name = e.Group.Name } : new GroupVM{Name = "-"},
+            GroupDetails = e.GroupId != null ? new GroupVM { Name = e.Group.Name } : new GroupVM { Name = "-" },
             Title = e.Title,
             PaidDate = e.PaidDate,
             PaidById = e.PaidById,
@@ -506,7 +506,8 @@ public class ExpenseService : IExpenseService
             Expense = e.PaidById == currentUserId
                     ? e.ExpenseShares.Where(es => es.DeletedAt == null && es.UserId != currentUserId).Sum(es => es.ShareAmount - es.SettledAmount)
                     : (-1) * e.ExpenseShares.Where(es => es.DeletedAt == null && es.UserId == currentUserId).Sum(es => es.ShareAmount - es.SettledAmount),
-            IsSystemGenerated = e.IsSystemGenerated
+            IsSystemGenerated = e.IsSystemGenerated,
+            PaidAmount = e.Amount
         }).ToList();
 
         paginatedList.Page.SetPagination(paginatedItems.TotalRecords, filter.PageSize, filter.PageNumber);

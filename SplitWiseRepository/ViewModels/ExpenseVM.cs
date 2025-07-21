@@ -49,10 +49,14 @@ public class ExpenseVM
     public List<FriendVM> Friends { get; set; } = new List<FriendVM>();
     public List<ExpenseShareVM> ExpenseShares { get; set; } = new List<ExpenseShareVM>();
 
-    [ExcelColumn("Expense")]
-    public decimal Expense { get; set; } = 0;
     public bool IsViewOnly { get; set; } = false;
     public string PaidByName { get; set; }
+
+    [ExcelColumn("Paid Amount")]
+    public decimal PaidAmount { get; set; }
+    
+    [ExcelColumn("Expense")]
+    public decimal Expense { get; set; } = 0;
     public List<User> Members { get; set; } = new List<User>();
     public List<string> MemberNames { get; set; } = new List<string>();
     public List<GroupVM> GroupList { get; set; } = new List<GroupVM>();
