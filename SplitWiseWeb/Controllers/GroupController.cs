@@ -147,7 +147,6 @@ public class GroupController : Controller
     public async Task<IActionResult> GroupSettleUps(int groupId)
     {
         List<GroupMemberVM> members = await _groupService.GetMembers(groupId);
-        members = members.Where(m => m.Expense < 0).ToList();
         return PartialView("GroupSettlementsPartialView", members);
     }
 

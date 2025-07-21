@@ -33,4 +33,7 @@ public class GroupVM
     public List<Currency> Currencies { get; set; } = new List<Currency>();
     public List<GroupMemberVM> Members { get; set; } = new List<GroupMemberVM>();
     public ActivityFilterVM ActivityFilter { get; set; } = new ActivityFilterVM();
+
+    public decimal BorrowedAmount { get; set; } = 0;
+    public decimal LentAmount { get; set; } = 0;
 }

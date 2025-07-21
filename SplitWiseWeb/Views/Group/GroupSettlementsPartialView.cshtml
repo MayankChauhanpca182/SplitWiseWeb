@@ -26,13 +26,16 @@ else
                             </span>
                         </div>
                     </div>
-                    <div class="d-flex gap-2">
+                    <div class="d-flex align-items-center gap-2">
                         <span class="@(user.Expense < 0 ? "text-danger" : "text-success")">
-                            @(user.Expense == 0 ? $"Expense is settled" : (user.Expense > 0 ? $"You lent ₹{user.Expense.ToString("N2")} to {user.Name}" : $"You borrowed ₹{((-1)*user.Expense).ToString("N2")} from {user.Name}"))
+                            @(user.Expense == 0 ? $"Expense is settled" : (user.Expense > 0 ? $"You lent ₹{user.Expense.ToString("N2")}" : $"You borrowed ₹{((-1)*user.Expense).ToString("N2")}"))
                         </span>
+                        @if(user.Expense < 0)
+                        {
+                            <button type="button" class="btn btn-primary text-nowrap" onclick="fetchSettlementModal('@((-1)*(user.Expense))', @user.GroupId, @user.UserId, false)">Settle Up</button>
+                        }
                     </div>
                 </div>
-                <button type="button" class="btn btn-primary text-nowrap" onclick="fetchSettlementModal('@((-1)*(user.Expense))', @user.GroupId, @user.UserId, false)">Settle Up</button>
             </div>
         }
     </div>
