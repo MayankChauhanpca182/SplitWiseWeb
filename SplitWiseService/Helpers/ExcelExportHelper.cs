@@ -47,8 +47,17 @@ public static class ExcelExportHelper
             T item = data[row];
             for (int col = 0; col < propsWithAttribute.Count; col++)
             {
-                object value = propsWithAttribute[col].GetValue(item);
-                worksheet.Cells[row + 4, col + 1].Value = value;
+                if (propsWithAttribute[col].PropertyType == typeof(DateTime) || propsWithAttribute[col].PropertyType == typeof(DateOnly))
+                {
+                    object value = propsWithAttribute[col].GetValue(item);
+                    var date = value as DateTime?;
+                    worksheet.Cells[row + 4, col + 1].Value = (value as DateTime?)?.ToString("dd-MM-yyyyy") ?? "";
+                }
+                else
+                {
+                    object value = propsWithAttribute[col].GetValue(item);
+                    worksheet.Cells[row + 4, col + 1].Value = value;
+                }
             }
         }
 
