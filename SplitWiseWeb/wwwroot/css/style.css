@@ -350,6 +350,7 @@ aside.navigation .navItems:hover, aside.navigation .navItems.active {
 footer.footer {
     background-color: var(--clr-blue-gray) !important;
     height: 50px;
+    line-height: unset !important;
 }
 
 @media (max-width: 767px) {

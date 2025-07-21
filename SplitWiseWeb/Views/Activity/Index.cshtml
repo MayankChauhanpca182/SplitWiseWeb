@@ -30,8 +30,8 @@
             }
             else if (filter.FromDate && filter.ToDate) {
                 if (filter.FromDate > filter.ToDate) {
-                    toastr.error("From Date should be greater then To Date.")
-                    $("#toDate").val("");
+                    toastr.error("To Date should be greater then From Date.");
+                    $("#toDate").val(filter.FromDate).trigger("blur");
                     return;
                 }
             }
@@ -51,7 +51,7 @@
                     }
                 },
                 error: function () {
-                    toastr.error("Internal server error");
+                    toastr.error(SERVER_ERR);
                 }
             });
         }

@@ -404,15 +404,9 @@
             switch (splitType) {
                 case '@SplitType.Equally':
                     $("#remainigBalance").text(formatToINR(amount - splitTotal) + currencySymbole);
-                    $("#remainingBalanceDiv").show();
-                    if (splitTotal > amount) {
-                        $(".amount, #remainigBalance").addClass("text-danger");
-                        isValid = false;
-                    }
-                    else {
-                        $(".amount, #remainigBalance").removeClass("text-danger");
-                        isValid = true;
-                    }
+                    $("#remainingBalanceDiv").hide();
+                    $(".amount, #remainigBalance").removeClass("text-danger");
+                    isValid = true;
                     break;
                 case '@SplitType.Unequally':
                     $("#remainigBalance").text(formatToINR(amount - splitTotal) + currencySymbole);

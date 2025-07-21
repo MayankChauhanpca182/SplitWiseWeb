@@ -38,11 +38,15 @@
         <div class="d-flex gap-5 align-items-center px-3">
             <div class="d-flex flex-column align-items-center gap-2 text-nowrap">
                 <a asp-action="Index" asp-controller="Group" class="text-dark">Group</a>
-                <span class="@(Model.NetGroupExpense < 0 ? "text-danger" : "text-primary")">₹@Model.NetGroupExpense.ToString("N2")</span>
+                <span class="@(Model.NetGroupExpense < 0 ? "text-danger" : "text-primary")">
+                    ₹@(Model.NetGroupExpense > 0 ? Model.NetGroupExpense.ToString("N2") : ((-1)*Model.NetGroupExpense).ToString("N2"))
+                </span>
             </div>
             <div class="d-flex flex-column align-items-center gap-2 text-nowrap">
                 <a asp-action="Index" asp-controller="Expense" class="text-dark">Non-Group</a>
-                <span class="@(Model.NetNonGroupExpense < 0 ? "text-danger" : "text-primary")">₹@Model.NetNonGroupExpense.ToString("N2")</span>
+                <span class="@(Model.NetNonGroupExpense < 0 ? "text-danger" : "text-primary")">
+                    ₹@(Model.NetNonGroupExpense > 0 ? Model.NetNonGroupExpense.ToString("N2") : ((-1)*Model.NetNonGroupExpense).ToString("N2"))
+                </span>
             </div>
             <div class="d-flex flex-column gap-2 text-nowrap">
                 <span>Total</span>

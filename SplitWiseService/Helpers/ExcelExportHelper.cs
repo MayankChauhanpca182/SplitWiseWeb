@@ -25,8 +25,8 @@ public static class ExcelExportHelper
         string searchString = string.IsNullOrEmpty(filter.SearchString) ? string.Empty : filter.SearchString.Replace(" ", "").ToLower();
 
         string filterDetail = "Result was filtered"
-                            + (filter.FromDate.HasValue && filter.ToDate.HasValue ? $" from {filter.FromDate?.ToString("dd-MM-yyyy")} to {filter.ToDate?.ToString("dd-MM-yyyy")}" : "")
-                            + (string.IsNullOrEmpty(searchString) ? " without search query." : $" with search query {searchString}");
+                            + (filter.FromDate.HasValue && filter.ToDate.HasValue ? $" from '{filter.FromDate?.ToString("dd-MM-yyyy")}' to '{filter.ToDate?.ToString("dd-MM-yyyy")}'" : "")
+                            + (string.IsNullOrEmpty(searchString) ? " without search string." : $" with search string '{searchString}'");
 
         // Add to excel
         worksheet.Cells[1, 1, 1, propsWithAttribute.Count].Merge = true;
