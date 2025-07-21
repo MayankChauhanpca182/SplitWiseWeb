@@ -154,7 +154,8 @@ public class GroupController : Controller
     public async Task<IActionResult> GroupName(int groupId)
     {
         GroupVM group = await _groupService.GetGroup(groupId);
-        return PartialView("GroupNamePartialView", group);
+        // return PartialView("GroupNamePartialView", group);
+        return Json(group);
     }
     
     #endregion
