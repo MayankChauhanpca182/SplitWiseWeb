@@ -51,7 +51,7 @@ public static class ExcelExportHelper
                 {
                     object value = propsWithAttribute[col].GetValue(item);
                     var date = value as DateTime?;
-                    worksheet.Cells[row + 4, col + 1].Value = (value as DateTime?)?.ToString("dd-MM-yyyyy") ?? "";
+                    worksheet.Cells[row + 4, col + 1].Value = (value as DateTime?)?.ToString("dd-MM-yyyy") ?? "";
                 }
                 else
                 {
