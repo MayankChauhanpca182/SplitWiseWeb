@@ -94,7 +94,7 @@ public static class NotificationMessages
     public const string MemberRemovedFromGroup = "{0} has been removed from {1} successfully.";
     public const string LeaveGroup = "You have been left group {0} successfully.";
     public const string UnsettledGroup = "All expenses must be settled before deleting the group.";
-    public const string NotMemberOfGroup = "You are no longer a member of this group.";
+    public const string GroupNotFound = "Group Doesn't exist.";
 
     // Expense
     public const string AttachmentRemoved = "Attachment has been removed successfully.";

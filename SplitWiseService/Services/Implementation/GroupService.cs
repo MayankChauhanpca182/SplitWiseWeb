@@ -121,12 +121,12 @@ public class GroupService : IGroupService
         if (group == null)
         {
             // Throw exception that group not found
-            throw new KeyNotFoundException(NotificationMessages.NotFound.Replace("{0}", "the group"));
+            throw new KeyNotFoundException(NotificationMessages.GroupNotFound);
         }
         else if (!group.GroupMembers.Any(gm => gm.DeletedAt == null && gm.UserId == currentUserId))
         {
             // Throw exception that user can not access the group
-            throw new UnauthorizedAccessException(NotificationMessages.NotMemberOfGroup);
+            throw new UnauthorizedAccessException(NotificationMessages.GroupNotFound);
         }
         else
         {
