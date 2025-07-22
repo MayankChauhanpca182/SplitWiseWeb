@@ -2,7 +2,7 @@ using SplitWiseRepository.Models;
 
 namespace SplitWiseRepository.ViewModels;
 
-public class SettlementListVM
+public class SettleUpListVM
 {
     public decimal TotalAmount { get; set; } = 0;
     public User CurrentUser { get; set; } = new User();

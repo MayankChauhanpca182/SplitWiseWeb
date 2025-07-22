@@ -4,18 +4,75 @@
 }
 
 <breadcrumb></breadcrumb>
-<h3 class="d-flex flex-wrap justify-content-between bg-white mb-3 p-3 text-dark-emphasis shadow">
-    <span>
-        Settlements
-    </span>
-    <button type="button" class="btn btn-secondary back-btn">Back</button>
-</h3>
 
-<div class="bg-white" id="settlementListOuter"></div>
+<h3 class="bg-white mb-3 p-3 text-dark-emphasis shadow">Settlements</h3>
+<div class="d-flex flex-wrap justify-content-between gap-3 mb-3">
+    <div class="d-flex align-items-center gap-4">
+        <input type="text" class="searchBox form-control border-secondary-subtle rounded-0" id="settlementSearch"
+            placeholder="Search">
+    </div>
+    <div class="d-flex gap-2 align-items-center">
+        @* <button class="btn btn-primary w-125px" type="button" onclick="exportSettlements()">Export</button> *@
+    </div>
+</div>
+<div id="settlementOuter" class="listOuter bg-white p-3"></div>
 
 
 @section Scripts {
+    @* Settlement list *@
     <script>
-        
+        sortColumn = "";
+        sortOrder = "";
+
+        $("#settlementSearch").on("input", function () {
+            if (searchTimeout === null) {
+                searchTimeout = setTimeout(function () {
+                    getSettlementList(1);
+                }, 500);
+            }
+        });
+
+        $(document).ready(function () {
+            getSettlementList(1);
+        });
+
+        function getSettlementList(currentPage) {
+            clearTimeout(searchTimeout);
+            searchTimeout = null;
+
+            let filter = {
+                PageNumber: currentPage,
+                PageSize: $("#settlementPageSize").val(),
+                SearchString: $("#settlementSearch").val(),
+                SortColumn: sortColumn,
+                SortOrder: sortOrder
+            };
+
+            $.ajax({
+                url: "/Settlement/SettlementList",
+                type: "POST",
+                data: { filter },
+                success: function (response) {
+                    if (!response.statusCode) {
+                        if (response.success == false) {
+                            toastr.error(response.message);
+                        }
+                        else {
+                            $("#settlementOuter").html(response);
+                        }
+                    }
+                },
+                error: function () {
+                    toastr.error(SERVER_ERR);
+                }
+            });
+        }
+
+        // Handle sorting
+        $(document).on("click", ".sortBtn", function () {
+            sortColumn = $(this).data("column");
+            sortOrder = $(this).data("order");
+            getSettlementList(1);
+        });
     </script>
 }

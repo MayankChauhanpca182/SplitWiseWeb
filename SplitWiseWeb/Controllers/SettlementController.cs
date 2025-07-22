@@ -29,11 +29,14 @@ public class SettlementController : Controller
     [Route("settlement")]
     public async Task<IActionResult> Index()
     {
-        // int currentUserId = _userService.LoggedInUserId();
-        // // Friend friend = await _friendService.GetFriend(friendUserId);
-        // User friendUser = friend.Friend1 == currentUserId ? friend.Friend2UserNavigation : friend.Friend1UserNavigation;
         ViewData["ActiveLink"] = "Settlement";
         return View();
+    }
+
+    [HttpPost]
+    public IActionResult SettlementList(FilterVM filter)
+    {
+        return PartialView("SettlementListPartialView");
     }
 
     [Breadcrumb("Settle Up")]
@@ -47,11 +50,11 @@ public class SettlementController : Controller
         return View(friendUser);
     }
 
-    // GET SettlementList
-    public async Task<IActionResult> SettlementList(int friendUserId)
+    // GET SettleUpList
+    public async Task<IActionResult> SettleUpList(int friendUserId)
     {
-        SettlementListVM settlementList = await _settlementService.GetList(friendUserId);
-        return PartialView("SettlementList", settlementList);
+        SettleUpListVM settleUpList = await _settlementService.SettleUpList(friendUserId);
+        return PartialView("SettleUpList", settleUpList);
     }
 
     // POST SettlementModal

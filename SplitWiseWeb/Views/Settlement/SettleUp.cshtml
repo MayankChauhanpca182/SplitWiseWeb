@@ -17,14 +17,14 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            getSettlementList('@Model.Id');
+            getSettleUpList('@Model.Id');
         });
 
         // Settlement list
-        function getSettlementList(friendUserId) {
+        function getSettleUpList(friendUserId) {
             $("#settlementListOuter").empty();
             $.ajax({
-                url: "/Settlement/SettlementList",
+                url: "/Settlement/SettleUpList",
                 type: "GET",
                 data: { friendUserId },
                 success: function (response) {
@@ -84,7 +84,7 @@
                     if (!response.statusCode) {
                         if (response.success) {
                             toastr.success(response.message);
-                            getSettlementList('@Model.Id');
+                            getSettleUpList('@Model.Id');
                             settlementSuccess();
                             // Settled up image
                             setSettledUpImage();

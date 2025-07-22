@@ -35,10 +35,10 @@ public class SettlementService : ISettlementService
         _emailService = emailService;
     }
 
-    public async Task<SettlementListVM> GetList(int friendUserId)
+    public async Task<SettleUpListVM> SettleUpList(int friendUserId)
     {
         User currentUser = await _userService.LoggedInUser();
-        SettlementListVM settlementList = new SettlementListVM();
+        SettleUpListVM settlementList = new SettleUpListVM();
         // Set current user
         settlementList.CurrentUser = currentUser;
 
