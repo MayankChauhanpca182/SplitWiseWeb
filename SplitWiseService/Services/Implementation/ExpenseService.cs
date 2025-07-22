@@ -490,23 +490,38 @@ public class ExpenseService : IExpenseService
         );
 
         PaginatedListVM<ExpenseVM> paginatedList = new PaginatedListVM<ExpenseVM>();
-        paginatedList.List = paginatedItems.Items.Select(e => new ExpenseVM
+        paginatedList.List = paginatedItems.Items.Select(e =>
         {
-            Id = e.Id,
-            GroupId = e.GroupId,
-            GroupDetails = e.GroupId != null ? new GroupVM { Name = e.Group.Name } : new GroupVM { Name = "-" },
-            Title = e.Title,
-            PaidDate = e.PaidDate,
-            PaidById = e.PaidById,
-            PaidByName = e.PaidByUser.FirstName + " " + e.PaidByUser.LastName,
-            Members = e.ExpenseShares.Where(es => es.DeletedAt == null).Select(es => es.User).ToList(),
-            MemberNames = e.ExpenseShares.Where(es => es.DeletedAt == null).Select(es => es.User.FirstName + " " + es.User.LastName).ToList(),
-            Amount = e.Amount.ToString("N2"),
-            Expense = e.PaidById == currentUserId
-                    ? e.ExpenseShares.Where(es => es.DeletedAt == null && es.UserId != currentUserId).Sum(es => es.ShareAmount - es.SettledAmount)
-                    : (-1) * e.ExpenseShares.Where(es => es.DeletedAt == null && es.UserId == currentUserId).Sum(es => es.ShareAmount - es.SettledAmount),
-            IsSystemGenerated = e.IsSystemGenerated,
-            PaidAmount = e.Amount
+            decimal expenseAmount = 0;
+            if (friendUserId > 0)
+            {
+                expenseAmount = e.PaidById == currentUserId
+                        ? e.ExpenseShares.Where(es => es.DeletedAt == null && es.UserId == friendUserId).Sum(es => es.ShareAmount - es.SettledAmount)
+                        : (-1) * e.ExpenseShares.Where(es => es.DeletedAt == null && es.UserId == currentUserId && e.PaidById == friendUserId).Sum(es => es.ShareAmount - es.SettledAmount);
+            }
+            else
+            {
+                expenseAmount = e.PaidById == currentUserId
+                        ? e.ExpenseShares.Where(es => es.DeletedAt == null && es.UserId != currentUserId).Sum(es => es.ShareAmount - es.SettledAmount)
+                        : (-1) * e.ExpenseShares.Where(es => es.DeletedAt == null && es.UserId == currentUserId).Sum(es => es.ShareAmount - es.SettledAmount);
+            }
+
+            return new ExpenseVM
+                {
+                    Id = e.Id,
+                    GroupId = e.GroupId,
+                    GroupDetails = e.GroupId != null ? new GroupVM { Name = e.Group.Name } : new GroupVM { Name = "-" },
+                    Title = e.Title,
+                    PaidDate = e.PaidDate,
+                    PaidById = e.PaidById,
+                    PaidByName = e.PaidByUser.FirstName + " " + e.PaidByUser.LastName,
+                    Members = e.ExpenseShares.Where(es => es.DeletedAt == null).Select(es => es.User).ToList(),
+                    MemberNames = e.ExpenseShares.Where(es => es.DeletedAt == null).Select(es => es.User.FirstName + " " + es.User.LastName).ToList(),
+                    Amount = e.Amount.ToString("N2"),
+                    Expense = expenseAmount,
+                    IsSystemGenerated = e.IsSystemGenerated,
+                    PaidAmount = e.Amount
+                };
         }).ToList();
 
         paginatedList.Page.SetPagination(paginatedItems.TotalRecords, filter.PageSize, filter.PageNumber);
