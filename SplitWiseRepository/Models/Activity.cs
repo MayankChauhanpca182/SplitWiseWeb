@@ -28,4 +28,6 @@ public class Activity : AuditFields
     public int? PaymentId { get; set; }
     [ForeignKey("PaymentId")]
     public virtual Payment Payment { get; set; }
+
+    public string AdditionalDetails { get; set; }
 }

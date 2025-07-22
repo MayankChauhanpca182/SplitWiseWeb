@@ -17,6 +17,7 @@ public class Payment : AuditFields
     [ForeignKey("CurrencyId")]
     public virtual Currency Currency { get; set; }
 
+    [Column(TypeName = "decimal(10,2)")]
     public decimal Amount { get; set; }
 
     public string AttachmentPath { get; set; }
