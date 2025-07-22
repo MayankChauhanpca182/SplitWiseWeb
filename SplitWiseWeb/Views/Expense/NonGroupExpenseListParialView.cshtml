@@ -72,7 +72,7 @@
                     <td class="text-end">
                         @if(expense.Expense < 0)
                         {
-                            <a asp-controller="Settlement" asp-action="Index" asp-route-friendUserId="@expense.PaidById" class="btn border-0" title="Settle Up">
+                            <a asp-controller="Settlement" asp-action="SettleUp" asp-route-friendUserId="@expense.PaidById" class="btn border-0" title="Settle Up">
                                 <i class="bi bi-credit-card"></i>
                             </a>
                         }

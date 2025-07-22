@@ -465,7 +465,6 @@ public class ExpenseService : IExpenseService
                                 ? true
                                 : (e.PaidById == currentUserId && e.ExpenseShares.Any(es => es.DeletedAt == null && es.UserId == friendUserId))
                                     || (e.PaidById == friendUserId && e.ExpenseShares.Any(es => es.DeletedAt == null && es.UserId == currentUserId))
-                                    || (e.ExpenseShares.Any(es => es.DeletedAt == null && es.UserId == currentUserId) && e.ExpenseShares.Any(es => es.DeletedAt == null && es.UserId == friendUserId))
                                 )
                             && (string.IsNullOrEmpty(searchString)
                                 || e.Title.ToLower().Contains(searchString)

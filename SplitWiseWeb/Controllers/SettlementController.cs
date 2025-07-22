@@ -9,7 +9,6 @@ using SplitWiseService.Services.Interface;
 namespace SplitWiseWeb.Controllers;
 
 [Authorize]
-[Breadcrumb("Settlement")]
 public class SettlementController : Controller
 {
     private readonly ISettlementService _settlementService;
@@ -26,13 +25,25 @@ public class SettlementController : Controller
     }
 
     // GET Index
+    [Breadcrumb("Settlement")]
     [Route("settlement")]
-    public async Task<IActionResult> Index(int friendUserId)
+    public async Task<IActionResult> Index()
+    {
+        // int currentUserId = _userService.LoggedInUserId();
+        // // Friend friend = await _friendService.GetFriend(friendUserId);
+        // User friendUser = friend.Friend1 == currentUserId ? friend.Friend2UserNavigation : friend.Friend1UserNavigation;
+        ViewData["ActiveLink"] = "Settlement";
+        return View();
+    }
+
+    [Breadcrumb("Settle Up")]
+    [Route("settle-up")]
+    public async Task<IActionResult> SettleUp(int friendUserId)
     {
         int currentUserId = _userService.LoggedInUserId();
         Friend friend = await _friendService.GetFriend(friendUserId);
         User friendUser = friend.Friend1 == currentUserId ? friend.Friend2UserNavigation : friend.Friend1UserNavigation;
-        ViewData["ActiveLink"] = "Friends";
+        ViewData["ActiveLink"] = "Settlement";
         return View(friendUser);
     }
 

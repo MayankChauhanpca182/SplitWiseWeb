@@ -31,7 +31,12 @@ public class ActivityController : Controller
     public async Task<IActionResult> ActivityList(FilterVM filter, int? groupId = null, int? friendUserId = null)
     {
         List<Activity> activities = await _activityService.ActivityList(filter, groupId, friendUserId);
-        return PartialView("ActivityList", activities);
+        ActivityListVM list = new ActivityListVM
+        {
+            Activities = activities,
+            GroupId = groupId
+        };
+        return PartialView("ActivityList", list);
     }
 
     // POST ExportActivity

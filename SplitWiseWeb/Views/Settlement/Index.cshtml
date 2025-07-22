@@ -6,7 +6,7 @@
 <breadcrumb></breadcrumb>
 <h3 class="d-flex flex-wrap justify-content-between bg-white mb-3 p-3 text-dark-emphasis shadow">
     <span>
-        Settle up with <span class="text-primary">@($"{Model.FirstName} {Model.LastName}")</span>
+        Settlements
     </span>
     <button type="button" class="btn btn-secondary back-btn">Back</button>
 </h3>
@@ -16,99 +16,6 @@
 
 @section Scripts {
     <script>
-        $(document).ready(function () {
-            getSettlementList('@Model.Id');
-        });
-
-        // Settlement list
-        function getSettlementList(friendUserId) {
-            $("#settlementListOuter").empty();
-            $.ajax({
-                url: "/Settlement/SettlementList",
-                type: "GET",
-                data: { friendUserId },
-                success: function (response) {
-                    if (!response.statusCode) {
-                        if (response.success == false) {
-                            toastr.error(response.message);
-                        }
-                        else {
-                            $("#settlementListOuter").html(response);
-                        }
-                    }
-                },
-                error: function () {
-                    toastr.error(SERVER_ERR);
-                }
-            });
-        }
-
-        // Fetch add settlement modal
-        function fetchSettlementModal(amount, groupId = 0, friendUserId = 0, settleAll = false) {
-            $("#regularModalContent").empty();
-            $.ajax({
-                url: "/Settlement/SettlementModal",
-                type: "POST",
-                data: { amount, groupId, friendUserId, settleAll },
-                success: function (response) {
-                    if (!response.statusCode) {
-                        $("#regularModalContent").html(response);
-                        $("#regularModal").modal("show");
-                    }
-                },
-                error: function () {
-                    $("#regularModal").modal("hide");
-                    toastr.error(SERVER_ERR);
-                },
-            });
-        }
-
-        // Save settlement form
-        $(document).on("submit", "#settlementForm", function (e) {
-            e.preventDefault();
-
-            if (!parseFloat($("#Amount").val())) {
-                toastr.error("Enter amount greater then zero.");
-                return;
-            }
-
-            let formData = new FormData(this);
-
-            $.ajax({
-                url: $(this).attr("action"),
-                type: $(this).attr("method"),
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function (response) {
-                    if (!response.statusCode) {
-                        if (response.success) {
-                            toastr.success(response.message);
-                            getSettlementList('@Model.Id');
-                            settlementSuccess();
-                            // Settled up image
-                            setSettledUpImage();
-                        }
-                        else if (response.success == false) {
-                            toastr.error(response.message);
-                        }
-                        else {
-                            $("#regularModalContent").html(response);
-                        }
-                    }
-                },
-                error: function () {
-                    toastr.error(SERVER_ERR);
-                }
-            });
-        });
-
-        // Set settled up image
-        function setSettledUpImage() {
-            $("#settleUpModalTitle").html(`Recorded payment with <span class="text-purple">@Model.FirstName
-                        @Model.LastName</span>`);
-            let image = `<img src="/images/settled-up.png" class="mx-auto my-4" alt="" width="150px" height="150px">`;
-            $("#settlementForm").replaceWith(image);
-        }
+        
     </script>
 }

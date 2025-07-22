@@ -62,4 +62,7 @@ public static class ValidationMessages
     public const string NoFuturePaymentDate = "The payment date must not be set in the future.";
     public const string SplitTypeRequired = "Select expense split type.";
 
+    // Settlement
+    public const string NonNegativeSettlementAmount = "Amount should be greater then zero.";
+
 }

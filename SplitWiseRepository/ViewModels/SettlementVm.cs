@@ -13,6 +13,7 @@ public class SettlementVM
     public User PaidToUser { get; set; }
 
     [Required(ErrorMessage = ValidationMessages.ExpenseAmountRequired)]
+    [Range(0, double.MaxValue, ErrorMessage =ValidationMessages.NonNegativeSettlementAmount)]
     public decimal Amount { get; set; } = 0;
 
     public IFormFile Attachment { get; set; }

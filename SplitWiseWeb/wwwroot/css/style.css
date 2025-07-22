@@ -9,7 +9,7 @@
     --clr-dark-gray: #4a4a4a;
     --clr-purple: #5145DC;
     --clr-blue: #285bc9;
-    --clr-orange: #ffb235;
+    --clr-orange: #d4932a;
 
     --clr-teal: #1caf9a;
     --clr-teal-dark: #1a9e8a;
@@ -104,6 +104,10 @@
 
 .bg-blue-grey {
     background-color: var(--clr-blue-gray) !important;
+}
+
+.bg-orange{
+    background-color: var(--clr-orange) !important;
 }
 
 .cursor-pointer {
@@ -529,8 +533,6 @@ footer.footer {
 
 .actvityItem {
     display: flex;
-    /* flex-wrap: wrap; */
-    /* align-items: center; */
     text-wrap: pretty;
     gap: 5px;
     margin: 5px 0px;

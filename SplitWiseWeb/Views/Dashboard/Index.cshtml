@@ -94,6 +94,9 @@
                         <th scope="col" class="col">
                             <span class="text-clr-grey text-dark-emphasis">Paid By</span>
                         </th>
+                        <th scope="col" class="col">
+                            <span class="text-clr-grey text-dark-emphasis">Paid Amount</span>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -123,6 +126,9 @@
                             <td>
                                 <span>@(expense.PaidById == currentUserId ? "You" : expense.PaidByName)</span>
                             </td>
+                            <td>
+                                <span>₹@expense.PaidAmount.ToString("N2")</span>
+                            </td>
                         </tr>
                     }
                 </tbody>
@@ -135,7 +141,7 @@
     </div>
 
     <div class="bg-white p-3 col">
-        <p class="fw-semibold fs-5 text-dark-emphasis">Recent Payments</p>
+        <p class="fw-semibold fs-5 text-dark-emphasis">Recent Transactions</p>
         <div class="table-responsive bg-white">
             <table class="table table-striped text-nowrap">
                 <thead>
@@ -174,7 +180,7 @@
         </div>
         @if (Model.RecentPayments.Count() == 0)
         {
-            <p class="p-4 text-center">No recent payments found</p>
+            <p class="p-4 text-center">No recent transactions found</p>
         }
     </div>
 </div>
