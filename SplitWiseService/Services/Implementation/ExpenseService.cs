@@ -1,6 +1,8 @@
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Org.BouncyCastle.Crypto.Engines;
+using SixLabors.ImageSharp.Formats.Tiff.Compression.Decompressors;
 using SplitWiseRepository.Constants;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.Repositories.Interface;
@@ -317,6 +319,103 @@ public class ExpenseService : IExpenseService
         return;
     }
 
+    private async Task<string> GetDifferences(Expense oldExpense, ExpenseVM newExpense)
+    {
+        string differences = null;
+
+        // Check amount
+        decimal newAmount = decimal.Parse(newExpense.Amount.Replace(",", ""));
+        if (oldExpense.Amount != newAmount)
+        {
+            differences += string.IsNullOrEmpty(differences) ? "Updated" : "; Updated";
+            differences += $" amount from <strong>₹{oldExpense.Amount:N2}</strong> to <strong>₹{newAmount:N2}</strong>";
+        }
+
+        // Check PaidBy
+        if (oldExpense.PaidById != newExpense.PaidById)
+        {
+            differences += string.IsNullOrEmpty(differences) ? "Updated " : "; Updated";
+
+            User oldPaidBy = await _userService.GetById(oldExpense.PaidById);
+            User newPaidBy = await _userService.GetById(newExpense.PaidById);
+
+            differences += $" paid by from <strong>{oldPaidBy.FirstName + " " + oldPaidBy.LastName}</strong> to <strong>{newPaidBy.FirstName + " " + newPaidBy.LastName}</strong>";
+        }
+
+        // Check splittype
+        if (oldExpense.SplitType != newExpense.SplitTypeEnum)
+        {
+            differences += string.IsNullOrEmpty(differences) ? "Updated" : "; Updated";
+
+            string oldSplitType = string.Empty;
+            switch (oldExpense.SplitType)
+            {
+                case SplitType.ByShare:
+                    oldSplitType = "by share";
+                    break;
+                case SplitType.ByPercentage:
+                    oldSplitType = "by percentage";
+                    break;
+                default:
+                    oldSplitType = oldExpense.SplitType.ToString().ToLower();
+                    break;
+            }
+
+            string newSplitType = string.Empty;
+            switch (newExpense.SplitTypeEnum)
+            {
+                case SplitType.ByShare:
+                    newSplitType = "by share";
+                    break;
+                case SplitType.ByPercentage:
+                    newSplitType = "by percentage";
+                    break;
+                default:
+                    newSplitType = newExpense.SplitTypeEnum.ToString().ToLower();
+                    break;
+            }
+
+            differences += $" splittype from <strong>{oldSplitType}</strong> to <strong>{newSplitType}</strong>";
+        }
+
+        // Check members
+        List<int> oldMembers = oldExpense.ExpenseShares.Where(es => es.DeletedAt == null).Select(es => es.UserId).ToList();
+        List<int> newMembers = newExpense.ExpenseShares.Select(es => es.UserId).ToList();
+
+        List<int> removedMembers = oldMembers.Where(m => !newMembers.Contains(m)).ToList();
+        List<int> addedMembers = newMembers.Where(m => !oldMembers.Contains(m)).ToList();
+
+        if (removedMembers.Count > 0)
+        {
+            differences += string.IsNullOrEmpty(differences) ? "Removed" : "; Removed";
+            for (int i = 0; i < removedMembers.Count; i++)
+            {
+                User user = await _userService.GetById(removedMembers[i]);
+                differences += $" <strong>{user.FirstName} {user.LastName}</strong>";
+                if (i != removedMembers.Count - 1)
+                {
+                    differences += ",";
+                }
+            }
+        }
+
+        if (addedMembers.Count > 0)
+        {
+            differences += string.IsNullOrEmpty(differences) ? "Added" : "; Added";
+            for (int i = 0; i < addedMembers.Count; i++)
+            {
+                User user = await _userService.GetById(addedMembers[i]);
+                differences += $" <strong>{user.FirstName} {user.LastName}</strong>";
+                if (i != addedMembers.Count - 1)
+                {
+                    differences += ",";
+                }
+            }
+        }
+
+        return differences;
+    }
+
     public async Task<ResponseVM> SaveExpense(ExpenseVM newExpense)
     {
         try
@@ -325,7 +424,7 @@ public class ExpenseService : IExpenseService
             await _transaction.Begin();
             ResponseVM response = new ResponseVM();
             User currentUser = await _userService.LoggedInUser();
-            bool isSplitEqually = newExpense.SplitTypeEnum == SplitWiseRepository.Constants.SplitType.Equally;
+            bool isSplitEqually = newExpense.SplitTypeEnum == SplitType.Equally;
 
             if (newExpense.Id == 0)
             {
@@ -339,7 +438,7 @@ public class ExpenseService : IExpenseService
                     PaidDate = newExpense.PaidDate,
                     ExpenseCategoryId = newExpense.CategoryId,
                     CurrencyId = newExpense.CurrencyId,
-                    SplitType = isSplitEqually ? newExpense.SplitTypeEnum : SplitWiseRepository.Constants.SplitType.Unequally,
+                    SplitType = isSplitEqually ? newExpense.SplitTypeEnum : SplitType.Unequally,
                     Note = newExpense.Note,
                     CreatedById = currentUser.Id,
                     UpdatedAt = DateTime.Now,
@@ -373,7 +472,7 @@ public class ExpenseService : IExpenseService
             }
             else
             {
-                // Update expense
+                // Fetch expense
                 Expense existingExpense = await _expenseRepository.Get(
                     predicate: e => e.Id == newExpense.Id,
                     includes: new List<Expression<Func<Expense, object>>>
@@ -381,6 +480,9 @@ public class ExpenseService : IExpenseService
                         e => e.ExpenseShares
                     }
                 );
+
+                string additionalDetails = await GetDifferences(existingExpense, newExpense);
+
                 existingExpense.Title = newExpense.Title;
                 existingExpense.Amount = decimal.Parse(newExpense.Amount.Replace(",", ""));
 
@@ -406,12 +508,12 @@ public class ExpenseService : IExpenseService
                 if (existingExpense.GroupId != null)
                 {
                     // Add group activity
-                    await _activityService.AddActivity(ActivityType.GroupExpenseUpdated, groupId: (int)existingExpense.GroupId, expenseId: existingExpense.Id);
+                    await _activityService.AddActivity(ActivityType.GroupExpenseUpdated, groupId: (int)existingExpense.GroupId, expenseId: existingExpense.Id, additionalDetails: additionalDetails);
                 }
                 else
                 {
                     // Add activity
-                    await _activityService.AddActivity(ActivityType.ExpenseUpdated, expenseId: existingExpense.Id);
+                    await _activityService.AddActivity(ActivityType.ExpenseUpdated, expenseId: existingExpense.Id, additionalDetails: additionalDetails);
                 }
 
                 // Add expense splits
@@ -507,21 +609,21 @@ public class ExpenseService : IExpenseService
             }
 
             return new ExpenseVM
-                {
-                    Id = e.Id,
-                    GroupId = e.GroupId,
-                    GroupDetails = e.GroupId != null ? new GroupVM { Name = e.Group.Name } : new GroupVM { Name = "-" },
-                    Title = e.Title,
-                    PaidDate = e.PaidDate,
-                    PaidById = e.PaidById,
-                    PaidByName = e.PaidByUser.FirstName + " " + e.PaidByUser.LastName,
-                    Members = e.ExpenseShares.Where(es => es.DeletedAt == null).Select(es => es.User).ToList(),
-                    MemberNames = e.ExpenseShares.Where(es => es.DeletedAt == null).Select(es => es.User.FirstName + " " + es.User.LastName).ToList(),
-                    Amount = e.Amount.ToString("N2"),
-                    Expense = expenseAmount,
-                    IsSystemGenerated = e.IsSystemGenerated,
-                    PaidAmount = e.Amount
-                };
+            {
+                Id = e.Id,
+                GroupId = e.GroupId,
+                GroupDetails = e.GroupId != null ? new GroupVM { Name = e.Group.Name } : new GroupVM { Name = "-" },
+                Title = e.Title,
+                PaidDate = e.PaidDate,
+                PaidById = e.PaidById,
+                PaidByName = e.PaidByUser.FirstName + " " + e.PaidByUser.LastName,
+                Members = e.ExpenseShares.Where(es => es.DeletedAt == null).Select(es => es.User).ToList(),
+                MemberNames = e.ExpenseShares.Where(es => es.DeletedAt == null).Select(es => es.User.FirstName + " " + es.User.LastName).ToList(),
+                Amount = e.Amount.ToString("N2"),
+                Expense = expenseAmount,
+                IsSystemGenerated = e.IsSystemGenerated,
+                PaidAmount = e.Amount
+            };
         }).ToList();
 
         paginatedList.Page.SetPagination(paginatedItems.TotalRecords, filter.PageSize, filter.PageNumber);

@@ -3,6 +3,7 @@
 @model ActivityListVM
 @{
     int currentUserId = int.Parse(User.FindFirst("id")?.Value);
+    string userName = Context.Request.Cookies["UserName"];
     string date = string.Empty;
     bool isGroupActivity = Model.GroupId != null;
 }
@@ -150,8 +151,6 @@ else
                     case ActivityType.GroupExpenseUpdated:
                         <span>updated an expense</span>
                         <strong>@(activity.Expense.Title)</strong>
-                        <span>of</span>
-                        <strong>₹@(activity.Expense.Amount.ToString("N2"))</strong>
                         if (isGroupActivity)
                         {
                             <span>in this group.</span>
@@ -217,10 +216,13 @@ else
 
                     case ActivityType.ExpenseUpdated:
                         <span>updated an expense</span>
-                        <strong>@(activity.Expense.Title)</strong>
-                        <span>of</span>
-                        <strong>₹@(activity.Expense.Amount.ToString("N2")).</strong>
+                        <strong>@(activity.Expense.Title).</strong>
                         break;
+                }
+
+                @if(!string.IsNullOrEmpty(activity.AdditionalDetails))
+                {
+                    <span>(@Html.Raw(activity.AdditionalDetails.Replace(userName, "you")))</span>
                 }
             </span>
         </div>
