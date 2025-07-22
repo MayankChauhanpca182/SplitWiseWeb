@@ -36,7 +36,7 @@ else
                             </span>
                             @if(user.Expense < 0)
                             {
-                                <button type="button" class="btn btn-primary text-nowrap" onclick="fetchSettlementModal('@((-1)*(user.Expense))', @user.GroupId, @user.UserId, false)">Settle Up</button>
+                                <button type="button" class="settleUpBtn btn btn-primary text-nowrap" onclick="fetchSettlementModal('@((-1)*(user.Expense))', @user.GroupId, @user.UserId, false)">Settle Up</button>
                             }
                         </div>
                     </div>

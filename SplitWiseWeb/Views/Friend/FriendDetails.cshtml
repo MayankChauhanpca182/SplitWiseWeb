@@ -23,7 +23,7 @@
     <div class="d-flex align-items-center gap-2">
         @if(Model.Expense < 0)
         {
-            <a asp-controller="Settlement" asp-action="SettleUp" asp-route-friendUserId="@Model.UserId" class="btn btn-primary border-0" title="Settle Up">Settle Up</a>
+            <a asp-controller="Settlement" asp-action="SettleUp" asp-route-friendUserId="@Model.UserId" class="settleUpBtn btn btn-primary border-0" title="Settle Up">Settle Up</a>
         }
         <button type="button" class="btn btn-secondary back-btn">Back</button>
     </div>
