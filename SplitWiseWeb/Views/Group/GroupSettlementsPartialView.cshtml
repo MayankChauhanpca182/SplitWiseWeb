@@ -1,5 +1,7 @@
 @model List<GroupMemberVM>
-
+@{
+    int currentUserId = int.Parse(User.FindFirst("id")?.Value);
+}
 
 @if (Model.Count() == 0)
 {
@@ -13,30 +15,33 @@ else
     <div class="d-flex flex-column gap-3">
         @foreach (GroupMemberVM user in Model)
         {
-            <div class="d-flex justify-content-between align-items-center gap-3">
-                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 w-100">
-                    <div class="d-flex align-items-center gap-2">
-                        <img src=@(user.ProfileImagePath ?? "/images/Default_pfp.png") alt="" class="img-50px rounded-circle border border-dark-subtle object-fit-cover">
-                        <div class="d-flex flex-column">
-                            <span class="text-nowrap">
-                                @user.Name
+            @if(user.UserId != currentUserId)
+            {
+                <div class="d-flex justify-content-between align-items-center gap-3">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 w-100">
+                        <div class="d-flex align-items-center gap-2">
+                            <img src=@(user.ProfileImagePath ?? "/images/Default_pfp.png") alt="" class="img-50px rounded-circle border border-dark-subtle object-fit-cover">
+                            <div class="d-flex flex-column">
+                                <span class="text-nowrap">
+                                    @user.Name
+                                </span>
+                                <span class="text-nowrap">
+                                    @user.EmailAddress
+                                </span>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="@(user.Expense < 0 ? "text-danger" : "text-success")">
+                                @(user.Expense == 0 ? $"Expense is settled" : (user.Expense > 0 ? $"You lent ₹{user.Expense.ToString("N2")}" : $"You borrowed ₹{((-1)*user.Expense).ToString("N2")}"))
                             </span>
-                            <span class="text-nowrap">
-                                @user.EmailAddress
-                            </span>
+                            @if(user.Expense < 0)
+                            {
+                                <button type="button" class="btn btn-primary text-nowrap" onclick="fetchSettlementModal('@((-1)*(user.Expense))', @user.GroupId, @user.UserId, false)">Settle Up</button>
+                            }
                         </div>
                     </div>
-                    <div class="d-flex align-items-center gap-2">
-                        <span class="@(user.Expense < 0 ? "text-danger" : "text-success")">
-                            @(user.Expense == 0 ? $"Expense is settled" : (user.Expense > 0 ? $"You lent ₹{user.Expense.ToString("N2")}" : $"You borrowed ₹{((-1)*user.Expense).ToString("N2")}"))
-                        </span>
-                        @if(user.Expense < 0)
-                        {
-                            <button type="button" class="btn btn-primary text-nowrap" onclick="fetchSettlementModal('@((-1)*(user.Expense))', @user.GroupId, @user.UserId, false)">Settle Up</button>
-                        }
-                    </div>
                 </div>
-            </div>
+            }
         }
     </div>
 }

@@ -3,7 +3,6 @@ using System.Net.Mail;
 using System.Text.Json;
 using MailKit.Net.Smtp;
 using SplitWiseService.Constants;
-using SplitWiseService.Exceptions;
 using SplitWiseService.Services.Interface;
 
 namespace SplitWiseWeb.Middleware;
@@ -38,7 +37,7 @@ public class ExceptionHandlingMiddleware
 
         switch (exception)
         {
-            case NotFoundException:
+            case KeyNotFoundException:
                 code = HttpStatusCode.NotFound;
                 message = exception.Message;
                 break;
@@ -53,6 +52,10 @@ public class ExceptionHandlingMiddleware
             case FormatException:
                 code = HttpStatusCode.BadRequest;
                 message = NotificationMessages.Invalid.Replace("{0}", "token");
+                break;
+            case UnauthorizedAccessException:
+                code = HttpStatusCode.Unauthorized;
+                message = exception.Message;
                 break;
             default:
                 code = HttpStatusCode.InternalServerError;

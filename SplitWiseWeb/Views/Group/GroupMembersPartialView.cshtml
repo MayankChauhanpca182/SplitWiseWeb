@@ -15,9 +15,12 @@
                         <span class="text-nowrap">
                             @(user.UserId == currentUserId ? "You" : user.Name)
                         </span>
-                        <span class="text-nowrap @(user.Expense < 0 ? "text-danger" : "text-success")">
-                            @(user.Expense == 0 ? $"Expense is settled" : (user.Expense > 0 ? $"You are owed ₹{user.Expense.ToString("N2")}" : $"Owes you ₹{((-1)*user.Expense).ToString("N2")}"))
-                        </span>
+                        @if(user.UserId != currentUserId)
+                        {
+                            <span class="text-nowrap @(user.Expense < 0 ? "text-danger" : "text-success")">
+                                @(user.Expense == 0 ? $"Expense is settled" : (user.Expense > 0 ? $"You are owed ₹{user.Expense.ToString("N2")}" : $"Owes you ₹{((-1)*user.Expense).ToString("N2")}"))
+                            </span>
+                        }
                     </div>
                 </div>
             </div>

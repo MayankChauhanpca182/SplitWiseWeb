@@ -51,7 +51,7 @@ public class GroupService : IGroupService
             }
         );
     }
-    
+
     private async Task<bool> IsGroupSettled(int groupId)
     {
         bool isSettled = true;
@@ -110,8 +110,25 @@ public class GroupService : IGroupService
         int currentUserId = _userService.LoggedInUserId();
 
         GroupVM groupVM = new GroupVM();
-        Group group = await _groupRepository.Get(g => g.Id == groupId && g.DeletedAt == null);
-        if (group != null)
+        Group group = await _groupRepository.Get(
+            predicate: g => g.Id == groupId && g.DeletedAt == null,
+            includes: new List<Expression<Func<Group, object>>>
+            {
+                g => g.GroupMembers
+            }
+        );
+
+        if (group == null)
+        {
+            // Throw exception that group not found
+            throw new KeyNotFoundException(NotificationMessages.NotFound.Replace("{0}", "the group"));
+        }
+        else if (!group.GroupMembers.Any(gm => gm.DeletedAt == null && gm.UserId == currentUserId))
+        {
+            // Throw exception that user can not access the group
+            throw new UnauthorizedAccessException(NotificationMessages.NotMemberOfGroup);
+        }
+        else
         {
             groupVM.Id = group.Id;
             groupVM.Name = group.Name;
@@ -442,8 +459,10 @@ public class GroupService : IGroupService
                 from e in _expenseRepository.Query()
                 where e.DeletedAt == null && e.GroupId == groupMember.GroupId
                 from es in e.ExpenseShares
-                where (e.PaidById == groupMember.UserId && groupMemberIds.Contains(es.UserId))
-                || (es.UserId == groupMember.UserId && groupMemberIds.Contains(e.PaidById))
+                where es.DeletedAt == null && e.PaidById != es.UserId
+                    && es.ShareAmount != es.SettledAmount
+                    && ((e.PaidById == groupMember.UserId && groupMemberIds.Contains(es.UserId))
+                || (es.UserId == groupMember.UserId && groupMemberIds.Contains(e.PaidById)))
                 group new { e, es } by (e.PaidById == groupMember.UserId ? es.UserId : e.PaidById) into g
                 select new
                 {
