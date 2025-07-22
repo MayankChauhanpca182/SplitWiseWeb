@@ -37,7 +37,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         // Apply ThenIncludes (Deeper navigation properties)
         if (thenIncludes != null)
         {
-            foreach (var thenInclude in thenIncludes)
+            foreach (Func<IQueryable<T>, IQueryable<T>> thenInclude in thenIncludes)
             {
                 query = thenInclude(query);
             }
@@ -88,7 +88,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         // Apply ThenIncludes (Deeper navigation properties)
         if (thenIncludes != null)
         {
-            foreach (var thenInclude in thenIncludes)
+            foreach (Func<IQueryable<T>, IQueryable<T>> thenInclude in thenIncludes)
             {
                 query = thenInclude(query);
             }
@@ -134,7 +134,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         // Apply ThenIncludes (Deeper navigation properties)
         if (thenIncludes != null)
         {
-            foreach (var thenInclude in thenIncludes)
+            foreach (Func<IQueryable<T>, IQueryable<T>> thenInclude in thenIncludes)
             {
                 query = thenInclude(query);
             }
@@ -201,7 +201,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         // Apply ThenIncludes (Deeper navigation properties)
         if (thenIncludes != null)
         {
-            foreach (var thenInclude in thenIncludes)
+            foreach (Func<IQueryable<T>, IQueryable<T>> thenInclude in thenIncludes)
             {
                 query = thenInclude(query);
             }
@@ -237,7 +237,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         // Apply ThenIncludes (Deeper navigation properties)
         if (thenIncludes != null)
         {
-            foreach (var thenInclude in thenIncludes)
+            foreach (Func<IQueryable<T>, IQueryable<T>> thenInclude in thenIncludes)
             {
                 query = thenInclude(query);
             }
@@ -281,7 +281,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         // Apply ThenIncludes (Deeper navigation properties)
         if (thenIncludes != null)
         {
-            foreach (var thenInclude in thenIncludes)
+            foreach (Func<IQueryable<T>, IQueryable<T>> thenInclude in thenIncludes)
             {
                 query = thenInclude(query);
             }
