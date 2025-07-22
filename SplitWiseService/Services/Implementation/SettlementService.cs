@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SplitWiseRepository.Constants;
 using SplitWiseRepository.Models;
@@ -17,12 +18,13 @@ public class SettlementService : ISettlementService
     private readonly IGenericRepository<ExpenseShare> _expenseShareRepository;
     private readonly IGenericRepository<Group> _groupRepository;
     private readonly IGenericRepository<Payment> _paymentRepository;
+    private readonly IGenericRepository<User> _userRepository;
     private readonly ITransactionRepository _transaction;
     private readonly IUserService _userService;
     private readonly IActivityService _activityService;
     private readonly IEmailService _emailService;
 
-    public SettlementService(IUserService userService, IGenericRepository<Friend> friendRepository, IGenericRepository<Expense> expenseRepository, IGenericRepository<Group> groupRepository, ITransactionRepository transaction, IGenericRepository<Payment> paymentRepository, IGenericRepository<ExpenseShare> expenseShareRepository, IActivityService activityService, IEmailService emailService)
+    public SettlementService(IUserService userService, IGenericRepository<Friend> friendRepository, IGenericRepository<Expense> expenseRepository, IGenericRepository<Group> groupRepository, ITransactionRepository transaction, IGenericRepository<Payment> paymentRepository, IGenericRepository<ExpenseShare> expenseShareRepository, IActivityService activityService, IEmailService emailService, IGenericRepository<User> userRepository)
     {
         _userService = userService;
         _friendRepository = friendRepository;
@@ -33,6 +35,7 @@ public class SettlementService : ISettlementService
         _expenseShareRepository = expenseShareRepository;
         _activityService = activityService;
         _emailService = emailService;
+        _userRepository = userRepository;
     }
 
     public async Task<SettleUpListVM> SettleUpList(int friendUserId)
@@ -270,4 +273,85 @@ public class SettlementService : ISettlementService
         }
     }
 
+    public async Task<PaginatedListVM<SettlementListVM>> SettlementList(FilterVM filter)
+    {
+        int currentUserId = _userService.LoggedInUserId();
+        string searchString = string.IsNullOrEmpty(filter.SearchString) ? string.Empty : filter.SearchString.Replace(" ", "").ToLower();
+
+        // Order filter
+        Func<IQueryable<SettlementListVM>, IOrderedQueryable<SettlementListVM>> orderBy = q => q.OrderBy(f => f.UserId);
+        if (!string.IsNullOrEmpty(filter.SortColumn))
+        {
+            switch (filter.SortColumn.ToLower())
+            {
+                case "name":
+                    orderBy = filter.SortOrder == "asc" ? q => q.OrderBy(s => s.Name) : q => q.OrderByDescending(s => s.Name);
+                    break;
+                case "email":
+                    orderBy = filter.SortOrder == "asc" ? q => q.OrderBy(s => s.EmailAddress) : q => q.OrderByDescending(s => s.EmailAddress);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        IQueryable<SettlementListVM> list = from e in _expenseRepository.Query()
+                                            join es in _expenseShareRepository.Query() on e.Id equals es.ExpenseId
+                                            where e.DeletedAt == null && es.DeletedAt == null
+                                                && ((e.PaidById == currentUserId && es.UserId != currentUserId)
+                                                || (e.PaidById != currentUserId && es.UserId == currentUserId))
+                                            group new { e, es } by (e.PaidById == currentUserId ? es.UserId : e.PaidById) into g
+                                            select new SettlementListVM
+                                            {
+                                                UserId = g.Key,
+                                                Expense = g.Sum(x => x.e.PaidById == currentUserId ? (x.es.ShareAmount - x.es.SettledAmount) : -(x.es.ShareAmount - x.es.SettledAmount))
+                                            };
+
+        IQueryable<SettlementListVM> query = list.Where(q => q.Expense < 0)
+                                            .Join(_userRepository.Query(), q => q.UserId, u => u.Id,
+                                                (q, u) => new SettlementListVM
+                                                {
+                                                    UserId = u.Id,
+                                                    Name = u.FirstName + " " + u.LastName,
+                                                    EmailAddress = u.EmailAddress,
+                                                    ProfileImagePath = u.ProfileImagePath,
+                                                    Expense = q.Expense
+                                                });
+
+        // Search filter
+        query = query.Where(es => string.IsNullOrEmpty(searchString)
+                            || es.Name.Contains(searchString)
+                            || es.EmailAddress.Contains(searchString));
+
+        // Sorting
+        query = orderBy(query);
+
+        // Total records
+        int totalRecords = await query.CountAsync();
+
+        PaginatedListVM<SettlementListVM> paginatedList = new PaginatedListVM<SettlementListVM>();
+        if (filter.PageNumber > 0 && filter.PageSize > 0)
+        {
+            paginatedList.List = await query.Skip((int)((filter.PageNumber - 1) * filter.PageSize)).Take(filter.PageSize).ToListAsync();
+        }
+        else
+        {
+            paginatedList.List = await query.ToListAsync();
+        }
+        paginatedList.Page.SetPagination(totalRecords, filter.PageSize, filter.PageNumber);
+
+        return paginatedList;
+    }
+
+    public async Task<byte[]> ExportSettlements(FilterVM filter)
+    {
+        filter.PageNumber = 0;
+        filter.PageSize = 0;
+        PaginatedListVM<SettlementListVM> paginatedList = await SettlementList(filter);
+        if (!paginatedList.List.Any())
+        {
+            return null;
+        }
+        return ExcelExportHelper.ExportToExcel(paginatedList.List.ToList(), filter, "Settlements");
+    }
 }

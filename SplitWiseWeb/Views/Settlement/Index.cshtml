@@ -12,7 +12,7 @@
             placeholder="Search">
     </div>
     <div class="d-flex gap-2 align-items-center">
-        @* <button class="btn btn-primary w-125px" type="button" onclick="exportSettlements()">Export</button> *@
+        <button class="btn btn-primary w-125px" type="button" onclick="exportSettlements()">Export</button>
     </div>
 </div>
 <div id="settlementOuter" class="listOuter bg-white p-3"></div>
@@ -74,5 +74,18 @@
             sortOrder = $(this).data("order");
             getSettlementList(1);
         });
+    </script>
+
+    @* Export Settlements *@
+    <script>
+        function exportSettlements() {
+            let filter = {
+                SearchString: $("#settlementSearch").val(),
+                SortColumn: sortColumn,
+                SortOrder: sortOrder
+            };
+
+            exportExcelAjax(filter, "/Settlement/ExportSettlements", "Settlements");
+        }
     </script>
 }

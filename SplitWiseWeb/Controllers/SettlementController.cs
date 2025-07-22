@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using SmartBreadcrumbs.Attributes;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.ViewModels;
+using SplitWiseService.Constants;
 using SplitWiseService.Services.Interface;
 
 namespace SplitWiseWeb.Controllers;
@@ -27,16 +28,30 @@ public class SettlementController : Controller
     // GET Index
     [Breadcrumb("Settlement")]
     [Route("settlement")]
-    public async Task<IActionResult> Index()
+    public IActionResult Index()
     {
         ViewData["ActiveLink"] = "Settlement";
         return View();
     }
 
+    // POST SettlementList
     [HttpPost]
-    public IActionResult SettlementList(FilterVM filter)
+    public async Task<IActionResult> SettlementList(FilterVM filter)
     {
-        return PartialView("SettlementListPartialView");
+        PaginatedListVM<SettlementListVM> paginatedList = await _settlementService.SettlementList(filter);
+        return PartialView("SettlementListPartialView", paginatedList);
+    }
+
+    // POST ExportSettlements
+    [HttpPost]
+    public async Task<IActionResult> ExportSettlements(FilterVM filter)
+    {
+        byte[] fileData = await _settlementService.ExportSettlements(filter);
+        if (fileData == null)
+        {
+            return Json(new ResponseVM { Success = false, Message = NotificationMessages.CanNotExportEmptyList.Replace("{0}", "settlements") });
+        }
+        return File(fileData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Settlements.xlsx");
     }
 
     [Breadcrumb("Settle Up")]
