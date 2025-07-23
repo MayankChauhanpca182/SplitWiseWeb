@@ -587,11 +587,11 @@
         }
 
         // Confirmation logic to handle split difference
-        function handleSplitConfirmation(form, expenseShare, amount, splitTotal) {
-            remainingAmountToAdd = parseFloat((amount - splitTotal).toFixed(2));
+        function handleSplitConfirmation(form, difference) {
+            remainingAmountToAdd = parseFloat(difference.replace("₹", "").replace("%", ""));
 
             $("#confirmationModalTitle").text("Split Adjustment");
-            $("#confirmationModalBody").html(`<span>Remaining amount <strong>₹${remainingAmountToAdd}</strong> will be added to one of the members. Do you want to continue?</span>`);
+            $("#confirmationModalBody").html(`<span>Remaining amount <strong>${difference}</strong> will be added to one of the members. Do you want to continue?</span>`);
             $("#confirmationModalYesBtn").attr("onclick", "confirmSplitAndSubmit()");
             $("#confirmationModal").modal("show");
 
@@ -669,7 +669,7 @@
                         return;
                     } else if (diff > 0) {
                         // Ask for confirmation to adjust remaining amount
-                        handleSplitConfirmation(this, expenseShare, amount, splitTotal);
+                        handleSplitConfirmation(this, `₹${diff.toFixed(2)}`);
                         return;
                     }
                     break;
@@ -680,8 +680,14 @@
                     }
                     break;
                 case '@SplitType.ByPercentage':
-                    if ((100 - splitTotal) > 0.99) {
+                    const diff1 = 100 - splitTotal;
+                    if (diff1 > 0.99) {
                         toastr.error("Amount should be split properly");
+                        return;
+                    }
+                    else if (diff1 > 0) {
+                        // Ask for confirmation to adjust remaining amount
+                        handleSplitConfirmation(this, `${diff1.toFixed(2)}%`);
                         return;
                     }
                     break;
