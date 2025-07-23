@@ -26,6 +26,20 @@ else
             activity.PerformedOnUser.LastName;
         }
 
+        bool isPerformedByUserMember = true;
+        bool isPerformedOnUserMember = true;
+
+        @if(Model.GroupId != null && activity.Group != null)
+        {
+            isPerformedByUserMember = activity.Group.GroupMembers.Any(gm => gm.DeletedAt == null && gm.UserId == activity.PerformedById);
+
+            @if(activity.PerformedOnUser != null)
+            {
+                isPerformedOnUserMember = activity.Group.GroupMembers.Any(gm => gm.DeletedAt == null && gm.UserId == activity.PerformedOnId);
+            }
+        }
+
+
         @if (date != activity.CreatedAt.ToString("dd-MM-yyyy"))
         {
             date = activity.CreatedAt.ToString("dd-MM-yyyy");
@@ -70,7 +84,7 @@ else
             <span>
                 <img src="@(activity.PerformedByUser.ProfileImagePath ?? "/images/Default_pfp.png")" alt=""
                     class="img-20px img-20px rounded-circle">
-                <strong>@performedByUserName</strong>
+                <strong class="@(isPerformedByUserMember ? "" : "opacity-75")">@performedByUserName</strong>
 
                 @switch (activity.ActivityType)
                 {
@@ -99,7 +113,7 @@ else
                         <span>added</span>
                         <img src="@(activity.PerformedOnUser.ProfileImagePath ?? "/images/Default_pfp.png")" alt=""
                             class="img-20px rounded-circle">
-                        <strong>@performedOnUserName</strong>
+                        <strong class="@(isPerformedOnUserMember ? "" : "opacity-75")">@performedOnUserName</strong>
                         if (isGroupActivity)
                         {
                             <span>to this group.</span>
@@ -117,7 +131,7 @@ else
                         <span>removed</span>
                         <img src="@(activity.PerformedOnUser.ProfileImagePath ?? "/images/Default_pfp.png")" alt=""
                             class="img-20px rounded-circle">
-                        <strong>@performedOnUserName</strong>
+                        <strong class="@(isPerformedOnUserMember ? "" : "opacity-75")">@performedOnUserName</strong>
                         if (isGroupActivity)
                         {
                             <span>from this group.</span>
@@ -184,7 +198,7 @@ else
                         <span>to</span>
                         <img src="@(activity.PerformedOnUser.ProfileImagePath ?? "/images/Default_pfp.png")" alt=""
                             class="img-20px rounded-circle">
-                        <strong>@performedOnUserName</strong>
+                        <strong class="@(isPerformedOnUserMember ? "" : "opacity-75")">@performedOnUserName</strong>
                         if (isGroupActivity)
                         {
                             <span>in this group.</span>
@@ -204,7 +218,7 @@ else
                         <span>to</span>
                         <img src="@(activity.PerformedOnUser.ProfileImagePath ?? "/images/Default_pfp.png")" alt=""
                             class="img-20px rounded-circle">
-                        <strong>@performedOnUserName.</strong>
+                        <strong class="@(isPerformedOnUserMember ? "" : "opacity-75")">@performedOnUserName.</strong>
                         break;
 
                     case ActivityType.ExpenseAdded:

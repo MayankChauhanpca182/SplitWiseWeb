@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using SplitWiseRepository.Constants;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.Repositories.Interface;
@@ -40,44 +41,6 @@ public class ActivityService : IActivityService
         return;
     }
 
-    public async Task<List<Activity>> GroupActivityList(int groupId)
-    {
-        List<Activity> groupActivities = await _activityRepository.List(
-            predicate: a => a.DeletedAt == null && a.GroupId == groupId,
-            orderBy: a => a.OrderByDescending(a => a.CreatedAt),
-            includes: new List<System.Linq.Expressions.Expression<Func<Activity, object>>>
-            {
-                a => a.Group,
-                a => a.PerformedByUser,
-                a => a.PerformedOnUser,
-                a => a.Expense,
-                a => a.Payment
-            }
-        );
-
-        return groupActivities;
-    }
-
-    public async Task<List<Activity>> UserActivityList()
-    {
-        int currentUserId = _userService.LoggedInUserId();
-
-        List<Activity> userActivities = await _activityRepository.List(
-            predicate: a => a.DeletedAt == null && (a.PerformedById == currentUserId || a.PerformedOnId == currentUserId),
-            orderBy: a => a.OrderByDescending(a => a.CreatedAt),
-            includes: new List<System.Linq.Expressions.Expression<Func<Activity, object>>>
-            {
-                a => a.Group,
-                a => a.PerformedByUser,
-                a => a.PerformedOnUser,
-                a => a.Expense,
-                a => a.Payment
-            }
-        );
-
-        return userActivities;
-    }
-
     public async Task<List<Activity>> ActivityList(FilterVM filter, int? groupId = null, int? friendUserId = null)
     {
         int currentUserId = _userService.LoggedInUserId();
@@ -114,6 +77,11 @@ public class ActivityService : IActivityService
                 a => a.PerformedOnUser,
                 a => a.Expense,
                 a => a.Payment
+            },
+            thenIncludes: new List<Func<IQueryable<Activity>, IQueryable<Activity>>>
+            {
+                a => a.Include(a => a.Group)
+                    .ThenInclude(g => g.GroupMembers)
             }
         );
 
