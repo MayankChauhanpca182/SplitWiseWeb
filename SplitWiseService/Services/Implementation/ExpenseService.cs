@@ -392,6 +392,30 @@ public class ExpenseService : IExpenseService
             {
                 User user = await _userService.GetById(removedMembers[i]);
                 differences += $" <strong>{user.FirstName} {user.LastName}</strong>";
+                decimal settledAmount = oldExpense.ExpenseShares.Where(es => es.UserId == removedMembers[i]).Select(es => es.SettledAmount).FirstOrDefault();
+                if (settledAmount != 0)
+                {
+                    differences += ":";
+
+                    string direction = string.Empty;
+                    string preposition = string.Empty;
+                    User payer = await _userService.GetById(newExpense.PaidById);
+
+                    if (settledAmount < 0)
+                    {
+                        direction = "owe";
+                        preposition = "to";
+                        settledAmount = (-1) * settledAmount;
+                    }
+                    else
+                    {
+                        direction = "are owed";
+                        preposition = "from";
+                    }
+
+                    differences += $" System has generated an expense of <strong>₹{settledAmount:N2}</strong> - <strong>{user.FirstName + " " + user.LastName}</strong> {direction} <strong>₹{settledAmount:N2}</strong> {preposition} <strong>{payer.FirstName + " " + payer.LastName}</strong>";
+                }
+
                 if (i != removedMembers.Count - 1)
                 {
                     differences += ",";
@@ -612,7 +636,7 @@ public class ExpenseService : IExpenseService
             {
                 Id = e.Id,
                 GroupId = e.GroupId,
-                GroupDetails = e.GroupId != null ? new GroupVM { Name = e.Group.Name } : new GroupVM { Name = "-" },
+                GroupDetails = e.GroupId != null ? new GroupVM { Name = e.Group.Name } : new GroupVM { Name = "Non-Group" },
                 Title = e.Title,
                 PaidDate = e.PaidDate,
                 PaidById = e.PaidById,

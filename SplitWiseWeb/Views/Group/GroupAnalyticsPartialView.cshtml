@@ -8,7 +8,8 @@
 }
 
 <p class="fw-bold fs-5 text-dark-emphasis text-center pb-4">Total Expense:
-    <span>₹@Model.TotalExpense.ToString("N2")</span></p>
+    <span>₹@Model.TotalExpense.ToString("N2")</span>
+</p>
 
 <div class="d-flex justify-content-evenly">
     @if (Model.TotalExpense > 0)
@@ -85,7 +86,7 @@
             }
         };
 
-        // Category vs expense chart
+        // Member vs expense chart
         const memberExpenseChartData = {
             labels: @Html.Raw(Json.Serialize(memberList)),
             datasets: [{

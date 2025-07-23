@@ -32,6 +32,9 @@
                     <span class="text-clr-grey text-dark-emphasis">Paid By</span>
                 </th>
                 <th scope="col" class="col">
+                    <span class="text-clr-grey text-dark-emphasis">Paid Amount</span>
+                </th>
+                <th scope="col" class="col">
                     <span class="text-clr-grey text-dark-emphasis">Expense</span>
                 </th>
                 <th scope="col" class="col-1 text-center">
@@ -54,6 +57,9 @@
                     </td>
                     <td>
                         <span>@expense.PaidByName</span>
+                    </td>
+                    <td>
+                        <span>₹@expense.PaidAmount.ToString("N2")</span>
                     </td>
                     <td class="@(expense.Expense < 0 ? "text-danger" : "text-success")">
                         @(expense.Expense == 0 ? $"Expense is settled" : (expense.Expense > 0 ? $"You are owed ₹{expense.Expense.ToString("N2")}" : $"You owe {expense.PaidByName} ₹{((-1)*expense.Expense).ToString("N2")}"))
