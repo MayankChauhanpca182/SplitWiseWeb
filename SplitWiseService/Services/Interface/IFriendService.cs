@@ -17,4 +17,5 @@ public interface IFriendService
     public Task UpdateReferrals(User newUser);
     public Task<byte[]> ExportFriends(FilterVM filter);
     public Task<FriendVM> FriendDetails(int friendUserId);
+    public Task<FriendAnalyticsVM> GetAnalytics(int friendUserId);
 }

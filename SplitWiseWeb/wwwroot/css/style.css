@@ -67,7 +67,7 @@
     box-shadow: none;
 }
 
-.settleUpBtn{
+.settleUpBtn {
     background-color: var(--clr-orange) !important;
 }
 
@@ -111,7 +111,7 @@
     background-color: var(--clr-blue-gray) !important;
 }
 
-.bg-orange{
+.bg-orange {
     background-color: var(--clr-orange) !important;
 }
 
@@ -127,7 +127,8 @@ textarea {
     --bs-table-bg-type: #0000000c;
 }
 
-th, td {
+th,
+td {
     vertical-align: middle;
     max-width: 300px !important;
     white-space: nowrap;
@@ -342,7 +343,8 @@ aside.navigation .navItems {
     font-weight: 400;
 }
 
-aside.navigation .navItems:hover, aside.navigation .navItems.active {
+aside.navigation .navItems:hover,
+aside.navigation .navItems.active {
     color: var(--clr-dark-gray) !important;
     background-color: var(--clr-mint) !important;
 }
@@ -551,12 +553,13 @@ footer.footer {
 }
 
 /* Charts */
-#group-analytics {
-    height: calc(100vh - 372px);
+#group-analytics,
+#friend-analytics {
+    max-height: calc(100vh - 372px);
     overflow-y: auto;
 }
 
-.pieChartCanvas{
+.pieChartCanvas {
     height: 350px;
     width: 350px;
 }

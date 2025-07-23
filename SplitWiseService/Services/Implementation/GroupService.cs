@@ -553,21 +553,24 @@ public class GroupService : IGroupService
     {
         GroupAnalyticsVM analytics = new GroupAnalyticsVM();
 
-        // Calculate total expense
-        analytics.TotalExpense = await _expenseRepository.Sum(
-            selector: e => e.Amount,
-            predicate: e => e.DeletedAt == null && e.GroupId == groupId
+        List<Expense> expenses = await _expenseRepository.List(
+            predicate: e => e.DeletedAt == null && e.GroupId == groupId,
+            includes: new List<Expression<Func<Expense, object>>>
+            {
+                e => e.ExpenseCategory
+            }
         );
 
+        // Calculate total expense
+        analytics.TotalExpense = expenses.Sum(e => e.Amount);
+
         // Get chart data
-        analytics.CategoryExpenseChart = (from e in _expenseRepository.Query()
-                                          where e.DeletedAt == null && e.GroupId == groupId
-                                          group e by e.ExpenseCategory.Name into g
-                                          select new CategoryExpenseChart
-                                          {
-                                              Category = g.Key,
-                                              Expense = g.Sum(x => x.Amount)
-                                          }).OrderByDescending(d => d.Expense).ToList();
+        analytics.CategoryExpenseChart = expenses.GroupBy(e => e.ExpenseCategory.Name)
+                                        .Select(g => new CategoryExpenseChart
+                                        {
+                                            Category = g.Key,
+                                            Expense = g.Sum(x => x.Amount)
+                                        }).OrderByDescending(d => d.Expense).ToList();
 
         analytics.MemberExpenseCharts = (from e in _expenseRepository.Query()
                                          join es in _expenseShareRepository.Query() on e.Id equals es.ExpenseId

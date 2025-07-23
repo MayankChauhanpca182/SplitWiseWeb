@@ -1,10 +1,10 @@
-@model GroupAnalyticsVM
+@model FriendAnalyticsVM
 @{
     List<string> categoryList = Model.CategoryExpenseChart.Select(d => d.Category).ToList();
     List<decimal> categoryExpenseList = Model.CategoryExpenseChart.Select(d => d.Expense).ToList();
 
-    List<string> memberList = Model.MemberExpenseCharts.Select(d => d.Member).ToList();
-    List<decimal> memberExpenseList = Model.MemberExpenseCharts.Select(d => d.Expense).ToList();
+    List<string> groupTypeList = Model.GroupTypeExpenseCharts.Select(d => d.Category).ToList();
+    List<decimal> groupTypeExpenseList = Model.GroupTypeExpenseCharts.Select(d => d.Expense).ToList();
 }
 
 <p class="fw-bold fs-5 text-dark-emphasis text-center pb-4">Total Expense:
@@ -17,7 +17,7 @@
             <canvas class="pieChartCanvas" id="category-expense-chart"></canvas>
         </div>
         <div class="chartContainer">
-            <canvas class="pieChartCanvas" id="member-expense-chart"></canvas>
+            <canvas class="pieChartCanvas" id="group-type-expense-chart"></canvas>
         </div>
     }
 </div>
@@ -86,21 +86,21 @@
         };
 
         // Category vs expense chart
-        const memberExpenseChartData = {
-            labels: @Html.Raw(Json.Serialize(memberList)),
+        const groupTypeExpenseChartData = {
+            labels: @Html.Raw(Json.Serialize(groupTypeList)),
             datasets: [{
-                data: @Html.Raw(Json.Serialize(memberExpenseList))
+                data: @Html.Raw(Json.Serialize(groupTypeExpenseList))
             }]
         };
 
-        const memberExpenseChartConfig = {
+        const groupTypeExpenseChartConfig = {
             type: 'pie',
-            data: memberExpenseChartData,
+            data: groupTypeExpenseChartData,
             options: {
                 plugins: {
                     title: {
                         display: true,
-                        text: 'Expense vs Member',
+                        text: 'Expense vs Group type',
                         font: {
                             size: 18
                         },
@@ -123,9 +123,9 @@
                         align: "center",
                         color: '#000',
                         formatter: function (value, context) {
-                            const member = context.chart.data.labels[context.dataIndex];
+                            const typeName = context.chart.data.labels[context.dataIndex];
                             let percentage = ((value / total) * 100).toFixed(1) + '%';
-                            return `${member}\n${percentage}\n₹${value}`;
+                            return `${typeName}\n${percentage}\n₹${value}`;
                         },
                         font: {
                             weight: 'bold',
@@ -146,7 +146,7 @@
         setTimeout(function () {
             Chart.register(ChartDataLabels);
             new Chart(document.getElementById('category-expense-chart'), categoryExpenseChartConfig);
-            new Chart(document.getElementById('member-expense-chart'), memberExpenseChartConfig);
+            new Chart(document.getElementById('group-type-expense-chart'), groupTypeExpenseChartConfig);
         }, 500);
     }
 </script>

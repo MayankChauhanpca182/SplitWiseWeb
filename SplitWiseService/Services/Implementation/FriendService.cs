@@ -638,4 +638,49 @@ public class FriendService : IFriendService
         return friendVM;
     }
 
+    public async Task<FriendAnalyticsVM> GetAnalytics(int friendUserId)
+    {
+        int currentUserId = _userService.LoggedInUserId();
+        FriendAnalyticsVM analytics = new FriendAnalyticsVM();
+
+        List<ExpenseShare> expenseShares = await _expenseShareRepository.List(
+            predicate: es => es.Expense.DeletedAt == null && es.DeletedAt == null
+                    && es.Expense.ExpenseShares.Any(es => es.DeletedAt == null && es.UserId == currentUserId)
+                    && es.Expense.ExpenseShares.Any(es => es.DeletedAt == null && es.UserId == friendUserId)
+                    && (es.Expense.PaidById == currentUserId || es.Expense.PaidById == friendUserId)
+                    && (es.UserId == currentUserId || es.UserId == friendUserId),
+            thenIncludes: new List<Func<IQueryable<ExpenseShare>, IQueryable<ExpenseShare>>>
+            {
+                e => e.Include(e => e.Expense)
+                        .ThenInclude(es => es.ExpenseShares),
+                e => e.Include(e => e.Expense)
+                        .ThenInclude(es => es.ExpenseCategory)
+            }
+        );
+
+        // Calculate total expense
+        analytics.TotalExpense = expenseShares.Sum(es => es.ShareAmount);
+
+        // Get chart data
+        analytics.CategoryExpenseChart = expenseShares.GroupBy(es => es.Expense.ExpenseCategory.Name)
+                                        .Select(g => new CategoryExpenseChart
+                                        {
+                                            Category = g.Key,
+                                            Expense = g.Sum(x => x.ShareAmount)
+                                        }).OrderByDescending(d => d.Expense).ToList();
+
+        analytics.GroupTypeExpenseCharts = new List<CategoryExpenseChart>
+        {
+            new CategoryExpenseChart{
+                Category = "Non-Group",
+                Expense = expenseShares.Count() > 0 ? expenseShares.Where(es => es.Expense.GroupId == null).Sum(es => es.ShareAmount) : 0
+            },
+            new CategoryExpenseChart{
+                Category = "Group",
+                Expense = expenseShares.Count() > 0 ? expenseShares.Where(es => es.Expense.GroupId != null).Sum(es => es.ShareAmount) : 0
+            }
+        };
+
+        return analytics;
+    }
 }

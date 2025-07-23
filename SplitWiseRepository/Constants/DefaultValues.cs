@@ -7,5 +7,4 @@ public static class DefaultValues
     public const int PageNumber = 1;
     public const int PageSize = 5;
     public const string SortOrder = "asc";
-    public const string BaseColor = "rgba(28, 175, 154, {0})";
 }

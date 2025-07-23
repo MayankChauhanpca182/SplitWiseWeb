@@ -159,4 +159,11 @@ public class FriendController : Controller
         FriendVM friend = await _friendService.FriendDetails(friendUserId);
         return View(friend);
     }
+
+    // GET FriendAnalytics
+    public async Task<IActionResult> FriendAnalytics(int friendUserId)
+    {
+        FriendAnalyticsVM friendAnalytics = await _friendService.GetAnalytics(friendUserId);
+        return PartialView("FriendAnalyticsPartialView", friendAnalytics);
+    }
 }

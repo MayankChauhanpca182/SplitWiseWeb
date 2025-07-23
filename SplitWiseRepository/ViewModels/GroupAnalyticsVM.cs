@@ -5,7 +5,6 @@ namespace SplitWiseRepository.ViewModels;
 public class GroupAnalyticsVM
 {
     public decimal TotalExpense { get; set; } = 0;
-    public string BaseColor { get; set; } = DefaultValues.BaseColor;
     public List<CategoryExpenseChart> CategoryExpenseChart { get; set; } = new List<CategoryExpenseChart>();
     public List<MemberExpenseChart> MemberExpenseCharts { get; set; } = new List<MemberExpenseChart>();
 }
