@@ -549,3 +549,14 @@ footer.footer {
     font-style: italic;
     font-weight: 700;
 }
+
+/* Charts */
+#group-analytics {
+    height: calc(100vh - 372px);
+    overflow-y: auto;
+}
+
+.pieChartCanvas{
+    height: 350px;
+    width: 350px;
+}

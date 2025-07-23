@@ -549,4 +549,40 @@ public class GroupService : IGroupService
         return ExcelExportHelper.ExportToExcel(paginatedList.List.ToList(), filter, "Groups");
     }
 
+    public async Task<GroupAnalyticsVM> GetAnalytics(int groupId)
+    {
+        GroupAnalyticsVM analytics = new GroupAnalyticsVM();
+
+        // Calculate total expense
+        analytics.TotalExpense = await _expenseRepository.Sum(
+            selector: e => e.Amount,
+            predicate: e => e.DeletedAt == null && e.GroupId == groupId
+        );
+
+        // Get chart data
+        analytics.CategoryExpenseChart = (from e in _expenseRepository.Query()
+                                          where e.DeletedAt == null && e.GroupId == groupId
+                                          group e by e.ExpenseCategory.Name into g
+                                          select new CategoryExpenseChart
+                                          {
+                                              Category = g.Key,
+                                              Expense = g.Sum(x => x.Amount)
+                                          }).OrderByDescending(d => d.Expense).ToList();
+
+        analytics.MemberExpenseCharts = (from e in _expenseRepository.Query()
+                                         join es in _expenseShareRepository.Query() on e.Id equals es.ExpenseId
+                                         where e.DeletedAt == null && e.GroupId == groupId && es.DeletedAt == null
+                                         group new { e, es } by new
+                                         {
+                                             UserId = es.UserId,
+                                             UserName = es.User.FirstName + " " + es.User.LastName
+                                         } into g
+                                         select new MemberExpenseChart
+                                         {
+                                             Member = g.Key.UserName,
+                                             Expense = g.Sum(x => x.es.ShareAmount)
+                                         }).OrderByDescending(d => d.Expense).ToList();
+
+        return analytics;
+    }
 }

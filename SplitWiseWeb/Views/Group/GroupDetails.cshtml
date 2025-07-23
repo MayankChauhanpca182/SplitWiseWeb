@@ -55,6 +55,11 @@
                 data-bs-target="#group-noticeboard" type="button" role="tab" aria-controls="group-noticeboard"
                 aria-selected="true">Notice Board</button>
         </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="group-analytics-tab" data-bs-toggle="pill" data-bs-target="#group-analytics"
+                type="button" role="tab" aria-controls="group-analytics" aria-selected="true"
+                onclick="fetchGroupAnalytics(@Model.Id)">Analytics</button>
+        </li>
     </ul>
 
     <div class="tab-content" id="pills-tabContent">
@@ -96,6 +101,8 @@
                     rows="10" disabled></textarea>
             </div>
         </div>
+
+        <div class="tab-pane fade" id="group-analytics" role="tabpanel" aria-labelledby="group-analytics-tab"></div>
     </div>
 </div>
 
@@ -483,6 +490,32 @@
             };
 
             exportExcelAjax(filter, "/Activity/ExportActivity", `Activities_of_group_${'@Model.Name'}`, '@Model.Id');
+        }
+    </script>
+
+    @* Group Analytics *@
+    <script>
+        function fetchGroupAnalytics(groupId){
+            $("#group-analytics").empty();
+            $.ajax({
+                url: "/Group/GroupAnalytics",
+                type: "GET",
+                data: { groupId },
+                success: function (response) {
+                    if (!response.statusCode) {
+                        if (response.success == false) {
+                            toastr.error(response.message);
+                        }
+                        else {
+                            $("#group-analytics").html(response);
+                            generateChart();
+                        }
+                    }
+                },
+                error: function () {
+                    toastr.error(SERVER_ERR);
+                }
+            });
         }
     </script>
 }
