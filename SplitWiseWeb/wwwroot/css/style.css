@@ -175,6 +175,10 @@ td {
     width: 125px !important;
 }
 
+.h-50px{
+    height: 50px !important;
+}
+
 .img-20px {
     width: 20px;
     height: 20px;
@@ -266,12 +270,15 @@ a {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 300px;
+    padding: 10px 30px;
+    width: 100%;
+    max-width: 1200px;
 }
 
 .facets {
     width: 100%;
     height: 600px;
+    min-height: 600px;
     background-image: url(/images/facets.png);
     background-position: center 0px;
     background-repeat: repeat-x;
@@ -301,6 +308,7 @@ a {
 .featuresDemoOuter {
     width: 100%;
     height: 600px;
+    min-height: 600px;
     display: flex;
 }
 
@@ -316,6 +324,10 @@ a {
     justify-content: space-between;
 }
 
+.featuresDemo .discription{
+    width: 30%;
+}
+
 .demoImageOuter{
     display: flex;
     flex-direction: column-reverse;
@@ -324,6 +336,11 @@ a {
 
 .demoImageOuter img{
     width: 70%;
+    max-width: 700px;
+}
+
+#featureListHeading{
+    text-align: center;
 }
 
 .featureList{
@@ -333,7 +350,7 @@ a {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    gap: 10pxi;
+    gap: 10px;
 }
 
 .featureItem{
@@ -370,6 +387,92 @@ a {
 .quickLinks{
     width: 70%;
     margin: auto;
+}
+
+@media (max-width: 1199px) {
+    .featuresDemoOuter {
+        height: 475px;
+    }
+    .featureList{
+        width: 90%;
+    }
+    .commentCardsOuter{
+        width: 90%;
+    }
+    .commentCard{
+        max-width: 300px;
+    }
+}
+
+@media (max-width: 991px) {
+    #facetsImageContainer img {
+        width: 300px;
+    }
+    .featuresDemoOuter {
+        flex-direction: column;
+        height: fit-content;
+    }
+    .featuresDemo {
+        width: 100%;
+        height: 100%;
+        padding-top: 40px;
+    }
+    .featureList{
+        width: 80%;
+    }
+    .featureItem{
+        width: 40%;
+    }
+    .commentCard{
+        max-width: 350px;
+    }
+}
+
+@media (max-width: 767px) {
+    .facets .container {
+        flex-direction: column-reverse;
+    }
+    #facetsImageContainer img {
+        width: 200px;
+    }
+    .facets .container .section {
+        height: fit-content;
+        max-width: 60%;
+    }
+    .featureList{
+        width: 60%;
+    }
+    .featureItem{
+        width: 100%;
+    }
+    .commentCard{
+        max-width: 400px;
+        height: 175px;
+    }
+}
+
+@media (max-width: 575px) {
+    .clientPageHeader {
+        padding: 10px 10px;
+    }
+    .facets .container .section {
+        height: fit-content;
+        max-width: 95%;
+    }
+    .featuresDemo .discription{
+        width: 50%;
+    }
+    #featureListHeading{
+        text-align: start;
+    }
+    .featureList{
+        width: 60%;
+        margin: 0 5px;
+    }
+    .commentCard{
+        max-width: 400px;
+        height: 200px;
+    }
 }
 
 

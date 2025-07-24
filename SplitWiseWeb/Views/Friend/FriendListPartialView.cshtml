@@ -41,7 +41,7 @@
                     <td >@friend.EmailAddress</td>
                     <td
                         class="@(friend.Expense < 0 ? "text-danger" : "text-success")">
-                        @(friend.Expense == 0 ? $"Expense is settled" : (friend.Expense > 0 ? $"You are owed ₹{friend.Expense.ToString("N2")}" : $"Owes you ₹{((-1)*friend.Expense).ToString("N2")}"))
+                        @(friend.Expense == 0 ? $"Expense is settled" : (friend.Expense > 0 ? $"You are owed ₹{friend.Expense.ToString("N2")}" : $"You owe ₹{((-1)*friend.Expense).ToString("N2")}"))
                     </td>
                     <td class="text-end">
                         @if (Model.IsDeletedData)

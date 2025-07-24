@@ -283,13 +283,15 @@
     <script>
         // Export friend activities
         function exportActivities() {
-            let filter = {
-                SearchString: $("#activitySearch").val(),
-                FromDate: $("#fromDate").val(),
-                ToDate: $("#toDate").val()
-            };
+            if (validateDates()) {
+                let filter = {
+                    SearchString: $("#activitySearch").val(),
+                    FromDate: $("#fromDate").val(),
+                    ToDate: $("#toDate").val()
+                };
 
-            exportExcelAjax(filter, "/Activity/ExportActivity", `Activities_with_${'@Model.Name'}`, null, '@Model.UserId');
+                exportExcelAjax(filter, "/Activity/ExportActivity", `Activities_with_${'@Model.Name'}`, null, '@Model.UserId');
+            }
         }
     </script>
 

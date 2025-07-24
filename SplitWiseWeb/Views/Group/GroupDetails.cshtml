@@ -483,13 +483,15 @@
     <script>
         // Export activities
         function exportActivities() {
-            let filter = {
-                SearchString: $("#activitySearch").val(),
-                FromDate: $("#fromDate").val(),
-                ToDate: $("#toDate").val()
-            };
+            if (validateDates()) {
+                let filter = {
+                    SearchString: $("#activitySearch").val(),
+                    FromDate: $("#fromDate").val(),
+                    ToDate: $("#toDate").val()
+                };
 
-            exportExcelAjax(filter, "/Activity/ExportActivity", `Activities_of_group_${'@Model.Name'}`, '@Model.Id');
+                exportExcelAjax(filter, "/Activity/ExportActivity", `Activities_of_group_${'@Model.Name'}`, '@Model.Id');
+            }
         }
     </script>
 

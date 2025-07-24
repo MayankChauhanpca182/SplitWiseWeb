@@ -6,18 +6,20 @@
 
 <div class="clientPage">
     <!-- Header -->
-    <header class="clientPageHeader">
-        <div class="d-flex align-items-center gap-2">
-            <a asp-controller="Auth" asp-action="Index" class="navbar-brand d-flex justify-content-center gap-3">
-                <img src="/images/splitmate/icononly_transparent_nobuffer.png" alt="" width="60px">
-                <span class="text-secondary fs-3 fw-semibold">SplitMate</span>
-            </a>
-        </div>
-        <div class="d-flex align-items-center gap-3">
-            <a asp-action="Login" asp-controller="Auth" class="text-primary fw-semibold">Log in</a>
-            <a asp-action="Register" asp-controller="User" class="btn btn-primary">Sign Up</a>
-        </div>
-    </header>
+    <div class="d-flex justify-content-center">
+        <header class="clientPageHeader">
+            <div class="d-flex align-items-center gap-2">
+                <a asp-controller="Auth" asp-action="Index" class="navbar-brand d-flex justify-content-center align-items-center gap-3">
+                    <img src="/images/splitmate/icononly_transparent_nobuffer.png" alt="" width="60px">
+                    <span class="text-secondary fs-3 fw-semibold">SplitMate</span>
+                </a>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <a asp-action="Login" asp-controller="Auth" class="text-primary fw-semibold">Log in</a>
+                <a asp-action="Register" asp-controller="User" class="btn btn-primary">Sign Up</a>
+            </div>
+        </header>
+    </div>
 
     <div class="facets">
         <div class="container mx-auto px-5 py-5">
@@ -37,8 +39,8 @@
     <div class="featuresDemoOuter">
         <div class="featuresDemo bg-charcoal">
             <p class="text-center text-white d-flex flex-column align-items-center">
-                <span class="fs-3 fw-semibold mb-2">Track balances</span>
-                <span class="w-30">Keep track of shared expenses, balances, and who owes who.</span>
+                <span class="title fs-3 fw-semibold mb-2">Track balances</span>
+                <span class="discription">Keep track of shared expenses, balances, and who owes who.</span>
             </p>
             <div class="demoImageOuter">
                 <img src="/images/demos/friend-list.png" alt="">
@@ -46,8 +48,8 @@
         </div>
         <div class="featuresDemo bg-primary">
             <p class="text-center text-white d-flex flex-column align-items-center">
-                <span class="fs-3 fw-semibold mb-2">Organize expenses</span>
-                <span class="w-30">Split expenses with any group: trips, housemates, friends, and family.</span>
+                <span class="title fs-3 fw-semibold mb-2">Organize expenses</span>
+                <span class="discription">Split expenses with any group: trips, housemates, friends, and family.</span>
             </p>
             <div class="demoImageOuter">
                 <img src="/images/demos/friend-detail.png" alt="">
@@ -58,8 +60,8 @@
     <div class="featuresDemoOuter">
         <div class="featuresDemo bg-orange-bright">
             <p class="text-center text-white d-flex flex-column align-items-center">
-                <span class="fs-3 fw-semibold mb-2">Add expenses easily</span>
-                <span class="w-30">Quickly add expenses on the go before you forget who paid.</span>
+                <span class="title fs-3 fw-semibold mb-2">Add expenses easily</span>
+                <span class="discription">Quickly add expenses on the go before you forget who paid.</span>
             </p>
             <div class="demoImageOuter">
                 <img src="/images/demos/add-expense.png" alt="">
@@ -67,8 +69,8 @@
         </div>
         <div class="featuresDemo bg-charcoal">
             <p class="text-center text-white d-flex flex-column align-items-center">
-                <span class="fs-3 fw-semibold mb-2">Pay friends back</span>
-                <span class="w-30">Settle up with a friend and record any cash or online payment.</span>
+                <span class="title fs-3 fw-semibold mb-2">Pay friends back</span>
+                <span class="discription">Settle up with a friend and record any cash or online payment.</span>
             </p>
             <div class="demoImageOuter">
                 <img src="/images/demos/settle-up.png" alt="">
@@ -77,15 +79,15 @@
     </div>
 
     <div class="p-5 pb-0 w-100">
-        <p class="fs-2 fw-semibold text-center">The whole shebang</p>
-        <div class="featureList">
+        <p class="fs-2 fw-semibold" id="featureListHeading">The whole shebang</p>
+        <div class="featureList text-nowrap">
             <span class="featureItem">
                 <img src="/images/splitmate/icononly_transparent_nobuffer.png" alt="">
                 <span class="fs-5">Add friends and groups</span>
             </span>
             <span class="featureItem">
                 <img src="/images/splitmate/icononly_transparent_nobuffer.png" alt="">
-                <span class="fs-5">Split expenses, record debts</span>
+                <span class="fs-5">Split expenses</span>
             </span>
             <span class="featureItem">
                 <img src="/images/splitmate/icononly_transparent_nobuffer.png" alt="">
@@ -118,7 +120,7 @@
         </div>
     </div>
 
-    <div class="w-100 p-5">
+    <div class="w-100 py-5 px-3">
         <div class="commentCardsOuter">
             <div class="commentCard">
                 <span class="fs-5">“Fundamental” for tracking finances. As good as WhatsApp for containing
@@ -145,13 +147,13 @@
                 <span class="fw-semibold fs-5"><i>Mr. Dhaval Gohel</i></span>
             </div>
             <div class="commentCard">
-                <span class="fs-5">I use it everyday. I use it for trips, roommates, loans. I love splitwise.</span>
+                <span class="fs-5">I use it everyday. I use it for trips, roommates, loans. I love splitmate.</span>
                 <span class="fw-semibold fs-5"><i>Mr. Hemrajsinh Jethwa</i></span>
             </div>
         </div>
     </div>
 
-    <div class="quickLinks mb-2 px-5 mb-4">
+    <div class="quickLinks mb-2 px-5 mb-4 text-nowrap">
         <span class="d-flex gap-3 justify-content-center">
             <a asp-action="Login" asp-controller="Auth" class="text-primary fw-semibold">Log in</a>
             <span>|</span>

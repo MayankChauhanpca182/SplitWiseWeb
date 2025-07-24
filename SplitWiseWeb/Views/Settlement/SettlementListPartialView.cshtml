@@ -41,7 +41,7 @@
                     <td>@settlement.EmailAddress</td>
                     <td
                         class="@(settlement.Expense < 0 ? "text-danger" : "text-success")">
-                        @(settlement.Expense == 0 ? $"Expense is settled" : (settlement.Expense > 0 ? $"You are owed ₹{settlement.Expense.ToString("N2")}" : $"Owes you ₹{((-1)*settlement.Expense).ToString("N2")}"))
+                        @(settlement.Expense == 0 ? $"Expense is settled" : (settlement.Expense > 0 ? $"You are owed ₹{settlement.Expense.ToString("N2")}" : $"You owe ₹{((-1)*settlement.Expense).ToString("N2")}"))
                     </td>
                     <td class="text-end">
                         <a asp-controller="Settlement" asp-action="SettleUp" asp-route-friendUserId="@settlement.UserId" class="btn border-0" title="Settle Up">
