@@ -31,6 +31,8 @@ public class EmailService : IEmailService
     public async Task Send(string toEmail, string subject, string body)
     {
         IConfigurationSection? emailConfigurations = _configuration.GetSection("EmailConfigurations");
+        string clientPageUrl = _urlBuilder.Create("Index", "Auth");
+        body = body.Replace("{clientPage}", clientPageUrl);
 
         // Create email
         MimeMessage email = new MimeMessage();

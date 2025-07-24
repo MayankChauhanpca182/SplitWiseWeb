@@ -38,11 +38,11 @@ public class AuthController : Controller
     public IActionResult Login()
     {
         // Clear Session And Cookies
-        HttpContext.Session.Clear();
-        Response.Cookies.Delete("JwtToken");
-        Response.Cookies.Delete("RememberMeToken");
-        Response.Cookies.Delete("UserName");
-        Response.Cookies.Delete("ProfileImagePath");
+        // HttpContext.Session.Clear();
+        // Response.Cookies.Delete("JwtToken");
+        // Response.Cookies.Delete("RememberMeToken");
+        // Response.Cookies.Delete("UserName");
+        // Response.Cookies.Delete("ProfileImagePath");
         return View();
     }
 
