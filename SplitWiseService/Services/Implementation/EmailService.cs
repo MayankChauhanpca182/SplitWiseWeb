@@ -95,7 +95,7 @@ public class EmailService : IEmailService
     public async Task ReferralEmail(string senderName, string email)
     {
         string fileText = GetEmailTemplate(EmailTemplates.Referral);
-        string loginLink = _urlBuilder.Create("Register", "User");
+        string loginLink = _urlBuilder.Create("Index", "Auth");
 
         string emailBody = fileText.Replace("{recieverName}", "Sir or Madam").Replace("{senderName}", senderName).Replace("{link}", loginLink);
         await Send(email, EmailSubjects.ReferralRequest, emailBody);

@@ -12,4 +12,7 @@ public class ActivityVM
     
     [ExcelColumn("Activity")]
     public string ActivityMessage { get; set; } = string.Empty;
+
+    [ExcelColumn("Additional Details")]
+    public string AdditionalDetails { get; set; } = string.Empty;
 }

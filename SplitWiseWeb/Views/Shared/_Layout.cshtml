@@ -108,6 +108,16 @@
                         <i class="bi bi-person-fill"></i>
                         Non-Group
                     </a>
+                    <a asp-action="Index" asp-controller="Settlement"
+                        class="navItems @((ViewData["ActiveLink"] as string) == "Settlement" ? "active" : "")">
+                        <i class="bi bi-credit-card-fill"></i>
+                        Settlement
+                    </a>
+                    <a asp-action="Index" asp-controller="Activity"
+                        class="navItems @((ViewData["ActiveLink"] as string) == "Activities" ? "active" : "")">
+                        <i class="bi bi-clock-fill"></i>
+                        Activities
+                    </a>   
                     <div class="navigatinAccordion accordion accordion-flush" id="contactsAccordion">
                         <div class="accordion-item">
                             <h2 class="accordion-header">
@@ -135,16 +145,6 @@
                             </div>
                         </div>
                     </div>
-                    <a asp-action="Index" asp-controller="Activity"
-                        class="navItems @((ViewData["ActiveLink"] as string) == "Activities" ? "active" : "")">
-                        <i class="bi bi-clock-fill"></i>
-                        Activities
-                    </a>
-                    <a asp-action="Index" asp-controller="Settlement"
-                        class="navItems @((ViewData["ActiveLink"] as string) == "Settlement" ? "active" : "")">
-                        <i class="bi bi-credit-card-fill"></i>
-                        Settlement
-                    </a>
                 </div>
             </aside>
             <!-- Sidebar end -->

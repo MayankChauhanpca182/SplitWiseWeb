@@ -17,7 +17,7 @@ public class ActivityController : Controller
     }
 
     // GET UserActivities
-    [Breadcrumb("User Activities")]
+    [Breadcrumb("Activities")]
     [Route("user-activities")]
     public async Task<IActionResult> Index()
     {

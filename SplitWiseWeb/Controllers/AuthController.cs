@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SplitWiseRepository.Constants;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.ViewModels;
 using SplitWiseService.Services.Interface;
@@ -17,9 +18,8 @@ public class AuthController : Controller
         _userService = userService;
     }
 
-    #region Login
-    // GET Login
-    public IActionResult Login()
+    // GET Index
+    public IActionResult Index()
     {
         string? jwtToken = Request.Cookies["JwtToken"];
         string? rememberMeToken = Request.Cookies["RememberMeToken"];
@@ -32,8 +32,23 @@ public class AuthController : Controller
         return RedirectToAction("Index", "Dashboard");
     }
 
+    #region Login
+    // GET Login
+    [Route("login")]
+    public IActionResult Login()
+    {
+        // Clear Session And Cookies
+        HttpContext.Session.Clear();
+        Response.Cookies.Delete("JwtToken");
+        Response.Cookies.Delete("RememberMeToken");
+        Response.Cookies.Delete("UserName");
+        Response.Cookies.Delete("ProfileImagePath");
+        return View();
+    }
+
     // POST Login
     [HttpPost]
+    [Route("login")]
     public async Task<IActionResult> Login(LoginVM loginVM)
     {
         if (!ModelState.IsValid)
@@ -55,7 +70,7 @@ public class AuthController : Controller
         // Set Cookies 
         CookieOptions options = new CookieOptions
         {
-            Expires = loginVM.IsRememberMe ? DateTime.Now.AddHours(24) : DateTime.Now.AddHours(1),
+            Expires = loginVM.IsRememberMe ? DateTime.Now.AddHours(DefaultValues.CookiesMaxExpiryHours) : DateTime.Now.AddHours(DefaultValues.CookiesMinExpiryHours),
             HttpOnly = true,
             Secure = false,
             SameSite = SameSiteMode.Strict
@@ -151,7 +166,7 @@ public class AuthController : Controller
         Response.Cookies.Delete("UserName");
         Response.Cookies.Delete("ProfileImagePath");
 
-        return RedirectToAction("Login");
+        return RedirectToAction("Index");
     }
     #endregion
 

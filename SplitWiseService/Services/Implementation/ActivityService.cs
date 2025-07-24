@@ -208,7 +208,8 @@ public class ActivityService : IActivityService
             {
                 Date = a.CreatedAt.ToString("dd-MM-yyyy"),
                 Time = a.CreatedAt.ToString("HH:mm:ss"),
-                ActivityMessage = message
+                ActivityMessage = message,
+                AdditionalDetails = a.AdditionalDetails
             };
         }).ToList();
 
@@ -218,4 +219,5 @@ public class ActivityService : IActivityService
         }
         return ExcelExportHelper.ExportToExcel(activities, filter, "Activities");
     }
+
 }

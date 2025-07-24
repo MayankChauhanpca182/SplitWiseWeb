@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SmartBreadcrumbs.Attributes;
+using SplitWiseRepository.Constants;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.ViewModels;
 using SplitWiseService.Constants;
@@ -181,7 +182,7 @@ public class UserController : Controller
             User user = await _userService.LoggedInUser();
             CookieOptions options = new CookieOptions
             {
-                Expires = DateTime.Now.AddHours(24),
+                Expires = DateTime.Now.AddHours(DefaultValues.CookiesMaxExpiryHours),
                 HttpOnly = true,
                 Secure = false,
                 SameSite = SameSiteMode.Strict
