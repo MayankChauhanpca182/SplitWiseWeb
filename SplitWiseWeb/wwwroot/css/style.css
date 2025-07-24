@@ -221,7 +221,8 @@ body {
 }
 
 #loginLayoutBody {
-    background-image: url("/images/Splitmate_LoginPage.jpg");
+    background-color: #c0c0c0 !important;
+    background-image: url("/images/facets.png");
     background-size: cover;
     background-repeat: no-repeat;
 }
