@@ -37,12 +37,6 @@ public class AuthController : Controller
     [Route("login")]
     public IActionResult Login()
     {
-        // Clear Session And Cookies
-        // HttpContext.Session.Clear();
-        // Response.Cookies.Delete("JwtToken");
-        // Response.Cookies.Delete("RememberMeToken");
-        // Response.Cookies.Delete("UserName");
-        // Response.Cookies.Delete("ProfileImagePath");
         return View();
     }
 
