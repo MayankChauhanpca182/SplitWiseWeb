@@ -33,8 +33,7 @@
                 </div>
                 <button type="button"
                     class="btn dropdown-toggle dropdown-toggle-split border-secondary-subtle rounded-0"
-                    data-bs-toggle="dropdown" aria-expanded="false" onclick="emptySearchBox()" @(Model.GroupId > 0 ?
-                                                                                                                   "disabled" : "")>
+                    data-bs-toggle="dropdown" aria-expanded="false" onclick="emptySearchBox()" @(Model.GroupId > 0 ? "disabled" : "")>
                     <span class="visually-hidden">User list</span>
                 </button>
                 <ul class="dropdownList dropdown-menu w-100 px-2">
@@ -620,7 +619,7 @@
                 success: function (response) {
                     if (!response.statusCode) {
                         if (response.success) {
-                            window.location = "/group-expenses";
+                            window.history.back();
                         } else {
                             toastr.error(response.message);
                         }
@@ -706,7 +705,7 @@
                 success: function (response) {
                     if (!response.statusCode) {
                         if (response.success) {
-                            window.location = "/groups";
+                            window.history.back();
                         } else {
                             toastr.error(response.message);
                         }
