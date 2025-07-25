@@ -96,23 +96,21 @@ else
                         <span>created the group</span>
                         <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt=""
                             class="img-20px rounded-circle">
-                        @* <strong>@activity.Group.Name.</strong> *@
-                        <strong>@activity.AdditionalDetails.</strong>
+                        <strong>@(activity.GroupName ?? activity.Group.Name).</strong>
                         break;
 
                     case ActivityType.GroupUpdated:
                         <span>updated the group</span>
                         <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt=""
                             class="img-20px rounded-circle">
-                        @* <strong>@activity.Group.Name.</strong> *@
-                        <strong>@activity.AdditionalDetails.</strong>
+                        <strong>@(activity.GroupName ?? activity.Group.Name).</strong>
                         break;
 
                     case ActivityType.GroupDeleted:
                         <span>deleted the group</span>
                         <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt=""
                             class="img-20px rounded-circle">
-                        <strong>@activity.Group.Name.</strong>
+                        <strong>@(activity.GroupName ?? activity.Group.Name).</strong>
                         break;
 
                     case ActivityType.MemberAdded:
@@ -131,7 +129,7 @@ else
                             <span>to the group</span>
                             <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt=""
                                 class="img-20px rounded-circle">
-                            <strong>@activity.Group.Name.</strong>
+                            <strong>@(activity.GroupName ?? activity.Group.Name).</strong>
                         }
                         break;
 
@@ -151,7 +149,7 @@ else
                             <span>from the group</span>
                             <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt=""
                                 class="img-20px rounded-circle">
-                            <strong>@activity.Group.Name.</strong>
+                            <strong>@(activity.GroupName ?? activity.Group.Name).</strong>
                         }
                         break;
 
@@ -169,7 +167,7 @@ else
                             <span>in the group</span>
                             <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt=""
                                 class="img-20px rounded-circle">
-                            <strong>@activity.Group.Name.</strong>
+                            <strong>@(activity.GroupName ?? activity.Group.Name).</strong>
                         }
                         break;
                     case ActivityType.GroupExpenseUpdated:
@@ -184,7 +182,7 @@ else
                             <span>in the group</span>
                             <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt=""
                                 class="img-20px rounded-circle">
-                            <strong>@activity.Group.Name.</strong>
+                            <strong>@(activity.GroupName ?? activity.Group.Name).</strong>
                         }
                         @if (!string.IsNullOrEmpty(activity.AdditionalDetails))
                         {
@@ -203,7 +201,7 @@ else
                             <span>left the group</span>
                             <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt=""
                                 class="img-20px rounded-circle">
-                            <strong>@activity.Group.Name.</strong>
+                            <strong>@(activity.GroupName ?? activity.Group.Name).</strong>
                         }
                         break;
 
@@ -225,7 +223,7 @@ else
                             <span>in the group</span>
                             <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt=""
                                 class="img-20px rounded-circle">
-                            <strong>@activity.Group.Name.</strong>
+                            <strong>@(activity.GroupName ?? activity.Group.Name).</strong>
                         }
                         break;
 
@@ -255,12 +253,6 @@ else
                         }
                         break;
                 }
-
-                @* @if (!string.IsNullOrEmpty(activity.AdditionalDetails))
-                {
-                    <span>(@Html.Raw(activity.AdditionalDetails.Replace(userName, "You")))</span>
-                   
-                } *@
             </span>
         </div>
     }

@@ -494,7 +494,8 @@ public class ExpenseService : IExpenseService
                 if (newExpense.GroupId != null)
                 {
                     // Add group activity
-                    await _activityService.AddActivity(ActivityType.GroupExpenseAdded, groupId: (int)newExpense.GroupId, expenseId: expense.Id);
+                    GroupVM group = await _groupService.GetGroup((int)newExpense.GroupId);
+                    await _activityService.AddActivity(ActivityType.GroupExpenseAdded, groupId: (int)newExpense.GroupId, expenseId: expense.Id, groupName: group.Name);
                 }
                 else
                 {
@@ -543,7 +544,8 @@ public class ExpenseService : IExpenseService
                 if (existingExpense.GroupId != null)
                 {
                     // Add group activity
-                    await _activityService.AddActivity(ActivityType.GroupExpenseUpdated, groupId: (int)existingExpense.GroupId, expenseId: existingExpense.Id, additionalDetails: additionalDetails);
+                    GroupVM group = await _groupService.GetGroup((int)newExpense.GroupId);
+                    await _activityService.AddActivity(ActivityType.GroupExpenseUpdated, groupId: (int)existingExpense.GroupId, expenseId: existingExpense.Id, additionalDetails: additionalDetails, groupName: group.Name);
                 }
                 else
                 {

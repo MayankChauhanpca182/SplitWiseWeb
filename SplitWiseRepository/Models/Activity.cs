@@ -30,4 +30,5 @@ public class Activity : AuditFields
     public virtual Payment Payment { get; set; }
 
     public string AdditionalDetails { get; set; }
+    public string GroupName { get; set; }
 }
