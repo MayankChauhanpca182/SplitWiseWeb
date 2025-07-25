@@ -59,11 +59,20 @@
                         <span>@expense.PaidByName</span>
                     </td>
                     <td>
-                        <span>₹@expense.PaidAmount.ToString("N2")</span>
+                        <span>₹@((expense.PaidAmount > 0 ? expense.PaidAmount : (-1)*expense.PaidAmount).ToString("N2"))</span>
                     </td>
-                    <td class="@(expense.Expense < 0 ? "text-danger" : "text-success")">
-                        @(expense.Expense == 0 ? $"Expense is settled" : (expense.Expense > 0 ? $"You are owed ₹{expense.Expense.ToString("N2")}" : $"You owe {expense.PaidByName} ₹{((-1)*expense.Expense).ToString("N2")}"))
-                    </td>
+                    @if(expense.PaidAmount > 0)
+                    {
+                        <td class="@(expense.Expense < 0 ? "text-danger" : "text-success")">
+                            @(expense.Expense == 0 ? $"Expense is settled" : (expense.Expense > 0 ? $"You are owed ₹{expense.Expense.ToString("N2")}" : $"You owe {expense.PaidByName} ₹{((-1)*expense.Expense).ToString("N2")}"))
+                        </td>
+                    }
+                    else
+                    {
+                        <td class="@(expense.Expense < 0 ? "text-danger" : "text-success")">
+                            @(expense.Expense == 0 ? $"Expense is settled" : (expense.Expense > 0 ? $"You are owed ₹{expense.Expense.ToString("N2")}" : $"You owe {expense.MemberNames.FirstOrDefault()} ₹{((-1)*expense.Expense).ToString("N2")}"))
+                        </td>
+                    }
                     <td class="text-end">
                         @if(!expense.IsSystemGenerated)
                         {

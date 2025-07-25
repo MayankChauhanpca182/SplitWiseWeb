@@ -91,17 +91,6 @@ public class SettlementService : ISettlementService
             };
         }).Where(g => g.Expense > 0).ToList();
 
-        // Fetch friend
-        Friend friend = await _friendRepository.Get(
-            predicate: f => f.DeletedAt == null
-                            && ((f.Friend1 == currentUser.Id && f.Friend2 == friendUserId) || (f.Friend2 == currentUser.Id && f.Friend1 == friendUserId)),
-            includes: new List<Expression<Func<Friend, object>>>
-            {
-                fr => fr.Friend1UserNavigation,
-                fr => fr.Friend2UserNavigation
-            }
-        );
-
         // Calculate net amount
         decimal netAmount = await _expenseShareRepository.Sum(
             selector: es => es.Expense.PaidById == currentUser.Id ? (es.ShareAmount - es.SettledAmount) : -(es.ShareAmount - es.SettledAmount),
@@ -115,12 +104,11 @@ public class SettlementService : ISettlementService
             }
         );
 
-        User friendUser = friend.Friend1 == currentUser.Id ? friend.Friend2UserNavigation : friend.Friend1UserNavigation;
+        User friendUser = await _userService.GetById(friendUserId);
 
         // Set friend expense
         settlementList.Friend = new FriendVM
         {
-            FriendId = friend.Id,
             UserId = friendUser.Id,
             Name = $"{friendUser.FirstName} {friendUser.LastName}",
             ProfileImagePath = friendUser.ProfileImagePath,

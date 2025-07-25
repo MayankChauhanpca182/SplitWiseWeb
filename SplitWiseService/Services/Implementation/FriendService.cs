@@ -644,7 +644,7 @@ public class FriendService : IFriendService
         FriendAnalyticsVM analytics = new FriendAnalyticsVM();
 
         List<ExpenseShare> expenseShares = await _expenseShareRepository.List(
-            predicate: es => es.Expense.DeletedAt == null && es.DeletedAt == null
+            predicate: es => es.Expense.DeletedAt == null && es.DeletedAt == null && !es.Expense.IsSystemGenerated
                     && es.Expense.ExpenseShares.Any(es => es.DeletedAt == null && es.UserId == currentUserId)
                     && es.Expense.ExpenseShares.Any(es => es.DeletedAt == null && es.UserId == friendUserId)
                     && (es.Expense.PaidById == currentUserId || es.Expense.PaidById == friendUserId)

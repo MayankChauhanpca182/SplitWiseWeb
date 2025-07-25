@@ -584,7 +584,6 @@ public class ExpenseService : IExpenseService
         PaginatedItemsVM<Expense> paginatedItems = await _expenseRepository.PaginatedList(
             predicate: e => (e.PaidById == currentUserId || e.ExpenseShares.Any(es => es.DeletedAt == null && es.UserId == currentUserId))
                             && e.DeletedAt == null
-                            && (!filter.IsSystemGenerated ? !e.IsSystemGenerated : true)
                             && (isAllExpense ? true : (isGroupExpenses ? e.GroupId != null : e.GroupId == null))
                             && (groupId == 0 || e.GroupId == groupId)
                             && (friendUserId == 0

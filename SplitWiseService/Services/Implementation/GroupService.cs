@@ -179,8 +179,11 @@ public class GroupService : IGroupService
                     exisitngGroup.UpdatedById = currentUser.Id;
                     await _groupRepository.Update(exisitngGroup);
 
+                    // Additional details
+                    string additionlDetails = newGroupVm.Name;
+
                     // Add group activity
-                    await _activityService.AddActivity(ActivityType.GroupUpdated, groupId: exisitngGroup.Id);
+                    await _activityService.AddActivity(ActivityType.GroupUpdated, groupId: exisitngGroup.Id, additionalDetails: additionlDetails);
                 }
             }
             else
@@ -201,8 +204,10 @@ public class GroupService : IGroupService
                     newGroup.ImagePath = ImageHelper.UploadImage(newGroupVm.Image);
                 }
                 await _groupRepository.Add(newGroup);
+                // Additional details
+                string additionlDetails = newGroupVm.Name;
                 // Add group activity
-                await _activityService.AddActivity(ActivityType.GroupCreated, groupId: newGroup.Id);
+                await _activityService.AddActivity(ActivityType.GroupCreated, groupId: newGroup.Id, additionalDetails: additionlDetails);
 
                 await AddMember(newGroup.Id, currentUser.Id);
             }
@@ -554,7 +559,7 @@ public class GroupService : IGroupService
         GroupAnalyticsVM analytics = new GroupAnalyticsVM();
 
         List<Expense> expenses = await _expenseRepository.List(
-            predicate: e => e.DeletedAt == null && e.GroupId == groupId,
+            predicate: e => e.DeletedAt == null && e.GroupId == groupId && !e.IsSystemGenerated,
             includes: new List<Expression<Func<Expense, object>>>
             {
                 e => e.ExpenseCategory
@@ -574,7 +579,7 @@ public class GroupService : IGroupService
 
         analytics.MemberExpenseCharts = (from e in _expenseRepository.Query()
                                          join es in _expenseShareRepository.Query() on e.Id equals es.ExpenseId
-                                         where e.DeletedAt == null && e.GroupId == groupId && es.DeletedAt == null
+                                         where e.DeletedAt == null && e.GroupId == groupId && es.DeletedAt == null && !e.IsSystemGenerated
                                          group new { e, es } by new
                                          {
                                              UserId = es.UserId,

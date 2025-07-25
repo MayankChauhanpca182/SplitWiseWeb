@@ -96,14 +96,16 @@ else
                         <span>created the group</span>
                         <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt=""
                             class="img-20px rounded-circle">
-                        <strong>@activity.Group.Name.</strong>
+                        @* <strong>@activity.Group.Name.</strong> *@
+                        <strong>@activity.AdditionalDetails.</strong>
                         break;
 
                     case ActivityType.GroupUpdated:
                         <span>updated the group</span>
                         <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt=""
                             class="img-20px rounded-circle">
-                        <strong>@activity.Group.Name.</strong>
+                        @* <strong>@activity.Group.Name.</strong> *@
+                        <strong>@activity.AdditionalDetails.</strong>
                         break;
 
                     case ActivityType.GroupDeleted:
@@ -184,6 +186,11 @@ else
                                 class="img-20px rounded-circle">
                             <strong>@activity.Group.Name.</strong>
                         }
+                        @if (!string.IsNullOrEmpty(activity.AdditionalDetails))
+                        {
+                            <span>(@Html.Raw(activity.AdditionalDetails.Replace(userName, "You")))</span>
+
+                        }
                         break;
 
                     case ActivityType.LeaveGroup:
@@ -241,13 +248,19 @@ else
                     case ActivityType.ExpenseUpdated:
                         <span>updated an expense</span>
                         <strong>@(activity.Expense.Title).</strong>
+                        @if (!string.IsNullOrEmpty(activity.AdditionalDetails))
+                        {
+                            <span>(@Html.Raw(activity.AdditionalDetails.Replace(userName, "You")))</span>
+
+                        }
                         break;
                 }
 
-                @if (!string.IsNullOrEmpty(activity.AdditionalDetails))
+                @* @if (!string.IsNullOrEmpty(activity.AdditionalDetails))
                 {
                     <span>(@Html.Raw(activity.AdditionalDetails.Replace(userName, "You")))</span>
-                }
+                   
+                } *@
             </span>
         </div>
     }

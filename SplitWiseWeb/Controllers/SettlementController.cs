@@ -60,7 +60,15 @@ public class SettlementController : Controller
     {
         int currentUserId = _userService.LoggedInUserId();
         Friend friend = await _friendService.GetFriend(friendUserId);
-        User friendUser = friend.Friend1 == currentUserId ? friend.Friend2UserNavigation : friend.Friend1UserNavigation;
+        User friendUser = new User();
+        if (friend != null)
+        {
+            friendUser = friend.Friend1 == currentUserId ? friend.Friend2UserNavigation : friend.Friend1UserNavigation;
+        }
+        else
+        {
+            friendUser = await _userService.GetById(friendUserId);
+        }
         ViewData["ActiveLink"] = "Settlement";
         return View(friendUser);
     }

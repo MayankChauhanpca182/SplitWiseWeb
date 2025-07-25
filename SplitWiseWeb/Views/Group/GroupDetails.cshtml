@@ -68,13 +68,6 @@
                 <div class="d-flex align-items-center gap-2">
                     <input type="text" class="searchBox form-control border-secondary-subtle rounded-0"
                         id="groupExpenseListSearch" placeholder="Search">
-                    <div class="form-check">
-                        <input class="form-check-input border border-secondary-subtle" type="checkbox" value=""
-                            id="systemExpensesCkb" onchange="getGroupExpenseList(1)">
-                        <label class="form-check-label text-nowrap" for="systemExpensesCkb">
-                            Include system expenses
-                        </label>
-                    </div>
                 </div>
                 <div class="d-flex gap-2">
                     <button class="btn btn-primary w-125px" type="button" onclick="exportGroupExpenses()">Export</button>
@@ -293,8 +286,7 @@
                 PageSize: $("#groupExpensePageSize").val(),
                 SearchString: $("#groupExpenseListSearch").val(),
                 SortColumn: sortColumn,
-                SortOrder: sortOrder,
-                IsSystemGenerated: $("#systemExpensesCkb").prop("checked")
+                SortOrder: sortOrder
             };
 
             $.ajax({
@@ -471,8 +463,7 @@
             let filter = {
                 SearchString: $("#groupExpenseListSearch").val(),
                 SortColumn: sortColumn,
-                SortOrder: sortOrder,
-                IsSystemGenerated: $("#systemExpensesCkb").prop("checked")
+                SortOrder: sortOrder
             };
 
             exportExcelAjax(filter, "/Expense/ExportGroupExpenses", `${'@Model.Name'}_Group_Expenses`, '@Model.Id');
