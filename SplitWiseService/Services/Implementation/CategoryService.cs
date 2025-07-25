@@ -7,17 +7,21 @@ namespace SplitWiseService.Services.Implementation;
 public class CategoryService : ICategoryService
 {
     private readonly IGenericRepository<Category> _categoryRepository;
-    private readonly IUserService _userService;
 
-    public CategoryService(IGenericRepository<Category> categoryRepository, IUserService userService)
+    public CategoryService(IGenericRepository<Category> categoryRepository)
     {
         _categoryRepository = categoryRepository;
-        _userService = userService;
+    }
+
+    public async Task<Category> GetById(int categoryId)
+    {
+        return await _categoryRepository.Get(
+            predicate: c => c.DeletedAt == null && c.Id == categoryId
+        );
     }
 
     public async Task<List<Category>> GetList()
     {
-        int currentUserId = _userService.LoggedInUserId();
         List<Category> categories = await _categoryRepository.List(
             predicate: c => c.IsSystem
         );

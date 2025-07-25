@@ -331,16 +331,27 @@ public class ExpenseService : IExpenseService
             differences += $" amount from <strong>₹{oldExpense.Amount:N2}</strong> to <strong>₹{newAmount:N2}</strong>";
         }
 
-        // Check PaidBy
-        if (oldExpense.PaidById != newExpense.PaidById)
+        // Check category
+        if (oldExpense.ExpenseCategoryId != newExpense.CategoryId)
         {
             differences += string.IsNullOrEmpty(differences) ? "Updated " : "; Updated";
 
-            User oldPaidBy = await _userService.GetById(oldExpense.PaidById);
-            User newPaidBy = await _userService.GetById(newExpense.PaidById);
+            Category oldCategory = await _categoryService.GetById(oldExpense.ExpenseCategoryId);
+            Category newCategory = await _categoryService.GetById(newExpense.CategoryId);
 
-            differences += $" paid by from <strong>{oldPaidBy.FirstName + " " + oldPaidBy.LastName}</strong> to <strong>{newPaidBy.FirstName + " " + newPaidBy.LastName}</strong>";
+            differences += $" category from <strong>{oldCategory.Name}</strong> to <strong>{newCategory.Name}</strong>";
         }
+
+        // Check PaidBy
+            if (oldExpense.PaidById != newExpense.PaidById)
+            {
+                differences += string.IsNullOrEmpty(differences) ? "Updated " : "; Updated";
+
+                User oldPaidBy = await _userService.GetById(oldExpense.PaidById);
+                User newPaidBy = await _userService.GetById(newExpense.PaidById);
+
+                differences += $" paid by from <strong>{oldPaidBy.FirstName + " " + oldPaidBy.LastName}</strong> to <strong>{newPaidBy.FirstName + " " + newPaidBy.LastName}</strong>";
+            }
 
         // Check splittype
         if (oldExpense.SplitType != newExpense.SplitTypeEnum)
