@@ -51,9 +51,78 @@ $(document).ready(function () {
 });
 
 // Tool tips
+// function initializeTooltips() {
+//   $("[title]").each(function () {
+//     // Destroy any existing tooltip to prevent duplicates
+//     const existingTooltip = bootstrap.Tooltip.getInstance(this);
+//     if (existingTooltip) {
+//       existingTooltip.dispose();
+//     }
+
+//     new bootstrap.Tooltip(this, {
+//       html: true,
+//       placement: "top",
+//       trigger: "hover",
+//       delay: { show: 100, hide: 50 },
+//       popperConfig: function (defaultBsPopperConfig) {
+//         return {
+//           ...defaultBsPopperConfig,
+//           modifiers: [
+//             {
+//               name: "offset",
+//               options: {
+//                 offset: [1, 1],
+//               },
+//             },
+//             {
+//               name: "flip",
+//               options: {
+//                 fallbackPlacements: ["right", "left", "bottom"],
+//               },
+//             },
+//           ],
+//         };
+//       },
+//     });
+//   });
+// }
+
+// function initializeTooltips() {
+//   $("[title]").each(function () {
+//     const existingTooltip = bootstrap.Tooltip.getInstance(this);
+//     if (existingTooltip) {
+//       existingTooltip.dispose();
+//     }
+
+//     new bootstrap.Tooltip(this, {
+//       html: true,
+//       placement: "top",
+//       trigger: "hover",
+//       delay: { show: 100, hide: 50 },
+//       container: "body",
+//       popperConfig(defaultBsPopperConfig) {
+//         return {
+//           ...defaultBsPopperConfig,
+//           modifiers: [
+//             {
+//               name: "offset",
+//               options: {
+//                 offset: ({ reference, popper }) => {
+//                   // Align left: shift tooltip left by half the element width
+//                   const offsetX = -(reference.width / 2) + 2;
+//                   return [offsetX, 8]; // [horizontal, vertical]
+//                 },
+//               },
+//             },
+//           ],
+//         };
+//       },
+//     });
+//   });
+// }
+
 function initializeTooltips() {
   $("[title]").each(function () {
-    // Destroy any existing tooltip to prevent duplicates
     const existingTooltip = bootstrap.Tooltip.getInstance(this);
     if (existingTooltip) {
       existingTooltip.dispose();
@@ -64,20 +133,33 @@ function initializeTooltips() {
       placement: "top",
       trigger: "hover",
       delay: { show: 100, hide: 50 },
-      popperConfig: function (defaultBsPopperConfig) {
+      container: "body",
+      popperConfig(defaultBsPopperConfig) {
         return {
           ...defaultBsPopperConfig,
           modifiers: [
             {
-              name: "offset",
-              options: {
-                offset: [1, 1],
+              name: "alignLeftExactly",
+              enabled: true,
+              phase: "write", // ← required to set final style
+              fn({ state }) {
+                // Set tooltip's left to exactly match the td's left
+                const tdLeft = state.elements.reference.getBoundingClientRect().left;
+                const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+                state.elements.popper.style.left = `${tdLeft + scrollLeft}px`;
               },
             },
             {
-              name: "flip",
+              name: "preventOverflow",
               options: {
-                fallbackPlacements: ["right", "left", "bottom"],
+                boundary: "viewport",
+              },
+            },
+            {
+              name: "computeStyles",
+              options: {
+                // Prevent GPU transforms so we can use exact pixel control
+                gpuAcceleration: false,
               },
             },
           ],
@@ -86,6 +168,8 @@ function initializeTooltips() {
     });
   });
 }
+
+
 
 $(document).ready(function () {
   $("td").each(function () {
