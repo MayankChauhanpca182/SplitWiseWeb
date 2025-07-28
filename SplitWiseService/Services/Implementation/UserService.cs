@@ -72,8 +72,8 @@ public class UserService : IUserService
             //  Create User Instance
             User newUser = new()
             {
-                FirstName = TextHelper.CapitalizeWord(registerUserVM.FirstName),
-                LastName = TextHelper.CapitalizeWord(registerUserVM.LastName),
+                FirstName = TextHelper.CapitalizeWord(registerUserVM.FirstName.Trim()),
+                LastName = TextHelper.CapitalizeWord(registerUserVM.LastName.Trim()),
                 EmailAddress = TextHelper.NormalizeEmail(registerUserVM.Email),
                 PasswordHash = PasswordHelper.Hash(registerUserVM.Password),
                 CurrencyId = 23,
@@ -153,8 +153,8 @@ public class UserService : IUserService
             // Current user id
             User originalUser = await LoggedInUser();
 
-            originalUser.FirstName = newUser.FirstName;
-            originalUser.LastName = newUser.LastName;
+            originalUser.FirstName = TextHelper.CapitalizeWord(newUser.FirstName.Trim());
+            originalUser.LastName = TextHelper.CapitalizeWord(newUser.LastName.Trim());
             originalUser.Address = newUser.Address;
             originalUser.Birthdate = newUser.Birthdate;
             originalUser.CurrencyId = newUser.CurrencyId;

@@ -468,7 +468,7 @@ public class ExpenseService : IExpenseService
                 Expense expense = new Expense
                 {
                     GroupId = newExpense.GroupId,
-                    Title = newExpense.Title,
+                    Title = newExpense.Title.Trim(),
                     Amount = newAmount,
                     PaidById = newExpense.PaidById,
                     PaidDate = newExpense.PaidDate,
@@ -520,7 +520,7 @@ public class ExpenseService : IExpenseService
 
                 string additionalDetails = await GetDifferences(existingExpense, newExpense);
 
-                existingExpense.Title = newExpense.Title;
+                existingExpense.Title = newExpense.Title.Trim();
                 existingExpense.Amount = newAmount;
 
                 int oldPaidById = existingExpense.PaidById;

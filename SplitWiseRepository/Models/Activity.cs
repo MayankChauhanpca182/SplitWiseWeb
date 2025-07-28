@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using SplitWiseRepository.Constants;
 
@@ -30,6 +31,10 @@ public class Activity : AuditFields
     public virtual Payment Payment { get; set; }
 
     public string AdditionalDetails { get; set; }
+    
+    [MaxLength(50)]
     public string GroupName { get; set; }
+
+    [MaxLength(20)]
     public string Amount { get; set; }
 }

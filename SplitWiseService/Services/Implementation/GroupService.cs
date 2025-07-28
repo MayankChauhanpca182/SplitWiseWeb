@@ -167,7 +167,7 @@ public class GroupService : IGroupService
                 }
                 else
                 {
-                    exisitngGroup.Name = newGroupVm.Name;
+                    exisitngGroup.Name = newGroupVm.Name.Trim();
                     exisitngGroup.NoticeBoard = newGroupVm.NoticeBoard;
                     exisitngGroup.CurrencyId = newGroupVm.CurrencyId;
                     exisitngGroup.IsSimplifiedPayments = newGroupVm.IsSimplifiedPayments;
@@ -180,7 +180,7 @@ public class GroupService : IGroupService
                     await _groupRepository.Update(exisitngGroup);
 
                     // Add group activity
-                    await _activityService.AddActivity(ActivityType.GroupUpdated, groupId: exisitngGroup.Id, groupName: newGroupVm.Name);
+                    await _activityService.AddActivity(ActivityType.GroupUpdated, groupId: exisitngGroup.Id, groupName: exisitngGroup.Name);
                 }
             }
             else
@@ -188,7 +188,7 @@ public class GroupService : IGroupService
                 // Add new group
                 Group newGroup = new Group
                 {
-                    Name = newGroupVm.Name,
+                    Name = newGroupVm.Name.Trim(),
                     NoticeBoard = newGroupVm.NoticeBoard,
                     CurrencyId = newGroupVm.CurrencyId,
                     IsSimplifiedPayments = newGroupVm.IsSimplifiedPayments,
@@ -201,8 +201,9 @@ public class GroupService : IGroupService
                     newGroup.ImagePath = ImageHelper.UploadImage(newGroupVm.Image);
                 }
                 await _groupRepository.Add(newGroup);
+
                 // Add group activity
-                await _activityService.AddActivity(ActivityType.GroupCreated, groupId: newGroup.Id, groupName: newGroupVm.Name);
+                await _activityService.AddActivity(ActivityType.GroupCreated, groupId: newGroup.Id, groupName: newGroup.Name);
 
                 await AddMember(newGroup.Id, currentUser.Id);
             }
