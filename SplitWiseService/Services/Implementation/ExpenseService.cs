@@ -199,6 +199,29 @@ public class ExpenseService : IExpenseService
         return expenseVM;
     }
 
+    private async Task UpdateSystemExpenses(int expenseId, int paidById)
+    {
+        int currentUserId = _userService.LoggedInUserId();
+
+        // Fetch all system expenses for current expense
+        List<ExpenseShare> systemExpenseShares = await _expenseShareRepository.List(
+            predicate: es => es.DeletedAt == null && es.ShareAmount != es.SettledAmount && es.Expense.ReferenceExpenseId == expenseId,
+            includes: new List<Expression<Func<ExpenseShare, object>>>
+            {
+                    es => es.Expense
+            }
+        );
+
+        foreach (ExpenseShare systemShare in systemExpenseShares)
+        {
+            systemShare.UserId = paidById;
+            systemShare.UpdatedAt = DateTime.Now;
+            systemShare.UpdatedById = currentUserId;
+            await _expenseShareRepository.Update(systemShare);
+        }
+        return;
+    }
+
     private async Task UpdateExpenseShare(Expense expense, List<ExpenseShareVM> updatedShares, SplitType splitType, bool isNew, int oldPaidById, decimal amountToBeSettle)
     {
         User currentUser = await _userService.LoggedInUser();
@@ -231,6 +254,7 @@ public class ExpenseService : IExpenseService
                     CurrencyId = expense.CurrencyId,
                     SplitType = SplitType.Equally,
                     IsSystemGenerated = true,
+                    ReferenceExpenseId = expense.Id,
                     CreatedById = currentUser.Id,
                     UpdatedById = currentUser.Id,
                     UpdatedAt = DateTime.Now
@@ -249,6 +273,8 @@ public class ExpenseService : IExpenseService
                 };
                 await _expenseShareRepository.Add(systemExpenseShare);
             }
+
+            await UpdateSystemExpenses(expense.Id, expense.PaidById);
         }
 
         foreach (ExpenseShareVM share in updatedShares)
@@ -343,15 +369,15 @@ public class ExpenseService : IExpenseService
         }
 
         // Check PaidBy
-            if (oldExpense.PaidById != newExpense.PaidById)
-            {
-                differences += string.IsNullOrEmpty(differences) ? "Updated " : "; Updated";
+        if (oldExpense.PaidById != newExpense.PaidById)
+        {
+            differences += string.IsNullOrEmpty(differences) ? "Updated " : "; Updated";
 
-                User oldPaidBy = await _userService.GetById(oldExpense.PaidById);
-                User newPaidBy = await _userService.GetById(newExpense.PaidById);
+            User oldPaidBy = await _userService.GetById(oldExpense.PaidById);
+            User newPaidBy = await _userService.GetById(newExpense.PaidById);
 
-                differences += $" paid by from <strong>{oldPaidBy.FirstName + " " + oldPaidBy.LastName}</strong> to <strong>{newPaidBy.FirstName + " " + newPaidBy.LastName}</strong>";
-            }
+            differences += $" paid by from <strong>{oldPaidBy.FirstName + " " + oldPaidBy.LastName}</strong> to <strong>{newPaidBy.FirstName + " " + newPaidBy.LastName}</strong>";
+        }
 
         // Check splittype
         if (oldExpense.SplitType != newExpense.SplitTypeEnum)
