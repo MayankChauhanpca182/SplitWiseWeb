@@ -141,7 +141,7 @@ public class DashboardService : IDashboardService
     {
         int currentUserId = _userService.LoggedInUserId();
 
-        decimal totalSpent = await _expenseRepository.Sum(
+        decimal totalSpent = await _paymentRepository.Sum(
             selector: e => e.Amount,
             predicate: e => e.DeletedAt == null && e.PaidById == currentUserId
         );

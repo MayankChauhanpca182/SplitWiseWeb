@@ -127,7 +127,7 @@
                                 <span>@(expense.PaidById == currentUserId ? "You" : expense.PaidByName)</span>
                             </td>
                             <td>
-                                <span>₹@expense.PaidAmount.ToString("N2")</span>
+                                <span>₹@((expense.PaidAmount > 0 ? expense.PaidAmount : (-1)*expense.PaidAmount).ToString("N2"))</span>
                             </td>
                         </tr>
                     }
