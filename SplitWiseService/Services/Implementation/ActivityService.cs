@@ -19,7 +19,7 @@ public class ActivityService : IActivityService
         _userService = userService;
     }
 
-    public async Task AddActivity(ActivityType activityType, int? groupId = null, int? expenseId = null, int? paymentId = null, int? performedOnId = null, string additionalDetails = null, string groupName = null)
+    public async Task AddActivity(ActivityType activityType, int? groupId = null, int? expenseId = null, int? paymentId = null, int? performedOnId = null, string additionalDetails = null, string groupName = null, string amount = null)
     {
         int currentUserId = _userService.LoggedInUserId();
 
@@ -33,6 +33,7 @@ public class ActivityService : IActivityService
             PaymentId = paymentId,
             AdditionalDetails = additionalDetails,
             GroupName = groupName,
+            Amount = amount,
             CreatedById = currentUserId,
             UpdatedAt = DateTime.Now,
             UpdatedById = currentUserId

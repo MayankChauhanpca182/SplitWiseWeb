@@ -31,4 +31,5 @@ public class Activity : AuditFields
 
     public string AdditionalDetails { get; set; }
     public string GroupName { get; set; }
+    public string Amount { get; set; }
 }

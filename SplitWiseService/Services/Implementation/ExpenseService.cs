@@ -460,6 +460,7 @@ public class ExpenseService : IExpenseService
             ResponseVM response = new ResponseVM();
             User currentUser = await _userService.LoggedInUser();
             bool isSplitEqually = newExpense.SplitTypeEnum == SplitType.Equally;
+            decimal newAmount = decimal.Parse(newExpense.Amount.Replace(",", ""));
 
             if (newExpense.Id == 0)
             {
@@ -468,7 +469,7 @@ public class ExpenseService : IExpenseService
                 {
                     GroupId = newExpense.GroupId,
                     Title = newExpense.Title,
-                    Amount = decimal.Parse(newExpense.Amount.Replace(",", "")),
+                    Amount = newAmount,
                     PaidById = newExpense.PaidById,
                     PaidDate = newExpense.PaidDate,
                     ExpenseCategoryId = newExpense.CategoryId,
@@ -495,12 +496,12 @@ public class ExpenseService : IExpenseService
                 {
                     // Add group activity
                     GroupVM group = await _groupService.GetGroup((int)newExpense.GroupId);
-                    await _activityService.AddActivity(ActivityType.GroupExpenseAdded, groupId: (int)newExpense.GroupId, expenseId: expense.Id, groupName: group.Name);
+                    await _activityService.AddActivity(ActivityType.GroupExpenseAdded, groupId: (int)newExpense.GroupId, expenseId: expense.Id, groupName: group.Name, amount: newAmount.ToString("N2"));
                 }
                 else
                 {
                     // Add activity
-                    await _activityService.AddActivity(ActivityType.ExpenseAdded, expenseId: expense.Id);
+                    await _activityService.AddActivity(ActivityType.ExpenseAdded, expenseId: expense.Id, amount: newAmount.ToString("N2"));
                 }
 
                 response.Success = true;
@@ -520,7 +521,7 @@ public class ExpenseService : IExpenseService
                 string additionalDetails = await GetDifferences(existingExpense, newExpense);
 
                 existingExpense.Title = newExpense.Title;
-                existingExpense.Amount = decimal.Parse(newExpense.Amount.Replace(",", ""));
+                existingExpense.Amount = newAmount;
 
                 int oldPaidById = existingExpense.PaidById;
                 decimal amountToBeSettle = existingExpense.ExpenseShares.Where(es => es.DeletedAt == null && es.UserId != oldPaidById).Sum(es => es.SettledAmount);
@@ -545,12 +546,12 @@ public class ExpenseService : IExpenseService
                 {
                     // Add group activity
                     GroupVM group = await _groupService.GetGroup((int)newExpense.GroupId);
-                    await _activityService.AddActivity(ActivityType.GroupExpenseUpdated, groupId: (int)existingExpense.GroupId, expenseId: existingExpense.Id, additionalDetails: additionalDetails, groupName: group.Name);
+                    await _activityService.AddActivity(ActivityType.GroupExpenseUpdated, groupId: (int)existingExpense.GroupId, expenseId: existingExpense.Id, additionalDetails: additionalDetails, groupName: group.Name, amount: newAmount.ToString("N2"));
                 }
                 else
                 {
                     // Add activity
-                    await _activityService.AddActivity(ActivityType.ExpenseUpdated, expenseId: existingExpense.Id, additionalDetails: additionalDetails);
+                    await _activityService.AddActivity(ActivityType.ExpenseUpdated, expenseId: existingExpense.Id, additionalDetails: additionalDetails, amount: newAmount.ToString("N2"));
                 }
 
                 // Add expense splits

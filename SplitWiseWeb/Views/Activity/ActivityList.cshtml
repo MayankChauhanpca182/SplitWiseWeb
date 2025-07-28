@@ -157,7 +157,7 @@ else
                         <span>added an expense</span>
                         <strong>@(activity.Expense.Title)</strong>
                         <span>of</span>
-                        <strong>₹@(activity.Expense.Amount.ToString("N2"))</strong>
+                        <strong>₹@(activity.Amount ?? activity.Expense.Amount.ToString("N2"))</strong>
                         if (isGroupActivity)
                         {
                             <span>in this group.</span>
@@ -240,7 +240,7 @@ else
                         <span>added an expense</span>
                         <strong>@(activity.Expense.Title)</strong>
                         <span>of</span>
-                        <strong>₹@(activity.Expense.Amount.ToString("N2")).</strong>
+                        <strong>₹@(activity.Amount ?? activity.Expense.Amount.ToString("N2")).</strong>
                         break;
 
                     case ActivityType.ExpenseUpdated:

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SplitWiseRepository.Models;
 
@@ -11,9 +12,11 @@ using SplitWiseRepository.Models;
 namespace SplitWiseRepository.Migrations
 {
     [DbContext(typeof(SplitWiseDbContext))]
-    partial class SplitWiseDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250728040547_Alter_Table_Activities_Add_Column_Amount")]
+    partial class Alter_Table_Activities_Add_Column_Amount
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
