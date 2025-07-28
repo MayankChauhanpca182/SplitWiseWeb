@@ -50,8 +50,13 @@ public static class ExcelExportHelper
                 if (propsWithAttribute[col].PropertyType == typeof(DateTime) || propsWithAttribute[col].PropertyType == typeof(DateOnly))
                 {
                     object value = propsWithAttribute[col].GetValue(item);
-                    var date = value as DateTime?;
+                    DateTime? date = value as DateTime?;
                     worksheet.Cells[row + 4, col + 1].Value = (value as DateTime?)?.ToString("dd-MM-yyyy") ?? "";
+                }
+                else if (propsWithAttribute[col].PropertyType == typeof(List<string>))
+                {
+                    List<string> value = (List<string>)propsWithAttribute[col].GetValue(item);
+                    worksheet.Cells[row + 4, col + 1].Value = string.Join(", ", value);
                 }
                 else
                 {

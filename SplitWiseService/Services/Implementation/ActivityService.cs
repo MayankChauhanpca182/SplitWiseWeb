@@ -210,8 +210,9 @@ public class ActivityService : IActivityService
             {
                 Date = a.CreatedAt.ToString("dd-MM-yyyy"),
                 Time = a.CreatedAt.ToString("HH:mm:ss"),
-                ActivityMessage = message,
-                AdditionalDetails = a.AdditionalDetails
+                ActivityMessage = message + (string.IsNullOrEmpty(a.AdditionalDetails)
+                                            ? string.Empty 
+                                            : $" ({a.AdditionalDetails.Replace("<strong>", string.Empty).Replace("</strong>", string.Empty)})")
             };
         }).ToList();
 

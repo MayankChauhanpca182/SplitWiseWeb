@@ -52,12 +52,13 @@ public class ExpenseVM
     public bool IsViewOnly { get; set; } = false;
     public string PaidByName { get; set; }
 
-    [ExcelColumn("Paid Amount")]
     public decimal PaidAmount { get; set; }
     
     [ExcelColumn("Expense")]
     public decimal Expense { get; set; } = 0;
     public List<User> Members { get; set; } = new List<User>();
+
+    [ExcelColumn("Members")]
     public List<string> MemberNames { get; set; } = new List<string>();
     public List<GroupVM> GroupList { get; set; } = new List<GroupVM>();
     public string AttachmentPath { get; set; } = string.Empty;
