@@ -267,7 +267,7 @@ public class SettlementService : ISettlementService
     public async Task<PaginatedListVM<SettlementListVM>> SettlementList(FilterVM filter)
     {
         int currentUserId = _userService.LoggedInUserId();
-        string searchString = string.IsNullOrEmpty(filter.SearchString) ? string.Empty : filter.SearchString.Replace(" ", "").ToLower();
+        string searchString = string.IsNullOrEmpty(filter.SearchString) ? string.Empty : filter.SearchString.Trim().ToLower();
 
         // Order filter
         Func<IQueryable<SettlementListVM>, IOrderedQueryable<SettlementListVM>> orderBy = q => q.OrderBy(f => f.UserId);

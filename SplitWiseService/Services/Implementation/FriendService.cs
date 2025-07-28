@@ -230,7 +230,7 @@ public class FriendService : IFriendService
     {
         int currentUserId = _userService.LoggedInUserId();
 
-        filter.SearchString = string.IsNullOrEmpty(filter.SearchString) ? string.Empty : filter.SearchString.Replace(" ", "").ToLower();
+        filter.SearchString = string.IsNullOrEmpty(filter.SearchString) ? string.Empty : filter.SearchString.Trim().ToLower();
 
         Func<IQueryable<FriendRequest>, IOrderedQueryable<FriendRequest>> orderBy = q => q.OrderBy(fr => fr.Id);
         if (!string.IsNullOrEmpty(filter.SortColumn))
@@ -404,7 +404,7 @@ public class FriendService : IFriendService
     public async Task<PaginatedListVM<FriendVM>> FriendList(FilterVM filter, int groupId = 0)
     {
         int currentUserId = _userService.LoggedInUserId();
-        filter.SearchString = string.IsNullOrEmpty(filter.SearchString) ? string.Empty : filter.SearchString.Replace(" ", "").ToLower();
+        filter.SearchString = string.IsNullOrEmpty(filter.SearchString) ? string.Empty : filter.SearchString.Trim().ToLower();
 
         // Order filter
         Func<IQueryable<Friend>, IOrderedQueryable<Friend>> orderBy = q => q.OrderBy(f => f.Id);
@@ -441,9 +441,11 @@ public class FriendService : IFriendService
                     || (f.Friend1 == currentUserId
                         ? (f.Friend2UserNavigation.FirstName.ToLower().Contains(filter.SearchString)
                             || f.Friend2UserNavigation.LastName.ToLower().Contains(filter.SearchString)
+                            || (f.Friend2UserNavigation.FirstName + " " + f.Friend2UserNavigation.LastName).ToLower().Contains(filter.SearchString)
                             || f.Friend2UserNavigation.EmailAddress.ToLower().Contains(filter.SearchString))
                         : (f.Friend1UserNavigation.FirstName.ToLower().Contains(filter.SearchString)
                             || f.Friend1UserNavigation.LastName.ToLower().Contains(filter.SearchString)
+                            || (f.Friend1UserNavigation.FirstName + " " + f.Friend1UserNavigation.LastName).ToLower().Contains(filter.SearchString)
                             || f.Friend1UserNavigation.EmailAddress.ToLower().Contains(filter.SearchString)))),
             orderBy: orderBy,
             includes: new List<Expression<Func<Friend, object>>>

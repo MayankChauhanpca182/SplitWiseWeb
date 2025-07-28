@@ -46,7 +46,7 @@ public class ActivityService : IActivityService
     public async Task<List<Activity>> ActivityList(FilterVM filter, int? groupId = null, int? friendUserId = null)
     {
         int currentUserId = _userService.LoggedInUserId();
-        string searchString = string.IsNullOrEmpty(filter.SearchString) ? string.Empty : filter.SearchString.Replace(" ", "").ToLower();
+        string searchString = string.IsNullOrEmpty(filter.SearchString) ? string.Empty : filter.SearchString.Trim().ToLower();
 
         bool isSearchTextYou = "you".Contains(searchString);
         DateTime newToDate = ((DateTime)filter.ToDate).AddDays(1);
@@ -64,8 +64,10 @@ public class ActivityService : IActivityService
                                 || (isSearchTextYou && (a.PerformedById == currentUserId || a.PerformedOnId == currentUserId))
                                 || a.PerformedByUser.FirstName.ToLower().Contains(searchString)
                                 || a.PerformedByUser.LastName.ToLower().Contains(searchString)
+                                || (a.PerformedByUser.FirstName + " " + a.PerformedByUser.LastName).ToLower().Contains(searchString)
                                 || a.PerformedOnUser.FirstName.ToLower().Contains(searchString)
                                 || a.PerformedOnUser.LastName.ToLower().Contains(searchString)
+                                || (a.PerformedOnUser.FirstName + " " + a.PerformedOnUser.LastName).ToLower().Contains(searchString)
                                 || a.Group.Name.ToLower().Contains(searchString)
                                 || a.Expense.Title.ToLower().Contains(searchString)
                                 || a.Expense.Amount.ToString().Contains(searchString)

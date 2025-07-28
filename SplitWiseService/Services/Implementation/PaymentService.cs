@@ -21,7 +21,7 @@ public class PaymentService : IPaymentService
     public async Task<PaginatedListVM<Payment>> FriendPaymentList(FilterVM filter, int friendUserId)
     {
         int currentUserId = _userService.LoggedInUserId();
-        string searchString = string.IsNullOrEmpty(filter.SearchString) ? string.Empty : filter.SearchString.Replace(" ", "").ToLower();
+        string searchString = string.IsNullOrEmpty(filter.SearchString) ? string.Empty : filter.SearchString.Trim().ToLower();
 
         Func<IQueryable<Payment>, IOrderedQueryable<Payment>> orderBy = q => q.OrderByDescending(p => p.CreatedAt);
         if (!string.IsNullOrEmpty(filter.SortColumn))

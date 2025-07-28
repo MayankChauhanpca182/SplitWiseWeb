@@ -22,7 +22,7 @@ public static class ExcelExportHelper
                 .ToList();
 
         // Add filter details
-        string searchString = string.IsNullOrEmpty(filter.SearchString) ? string.Empty : filter.SearchString.Replace(" ", "").ToLower();
+        string searchString = string.IsNullOrEmpty(filter.SearchString) ? string.Empty : filter.SearchString.Trim().ToLower();
 
         string filterDetail = "Result was filtered"
                             + (filter.FromDate.HasValue && filter.ToDate.HasValue ? $" from '{filter.FromDate?.ToString("dd-MM-yyyy")}' to '{filter.ToDate?.ToString("dd-MM-yyyy")}'" : "")

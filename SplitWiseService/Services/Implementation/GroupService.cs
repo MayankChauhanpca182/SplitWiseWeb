@@ -226,7 +226,7 @@ public class GroupService : IGroupService
     public async Task<PaginatedListVM<GroupVM>> GroupList(FilterVM filter)
     {
         int currentUserId = _userService.LoggedInUserId();
-        string searchString = string.IsNullOrEmpty(filter.SearchString) ? string.Empty : filter.SearchString.Replace(" ", "").ToLower();
+        string searchString = string.IsNullOrEmpty(filter.SearchString) ? string.Empty : filter.SearchString.Trim().ToLower();
 
         Func<IQueryable<Group>, IOrderedQueryable<Group>> orderBy = q => q.OrderByDescending(g => g.Id);
         if (!string.IsNullOrEmpty(filter.SortColumn))

@@ -602,7 +602,7 @@ public class ExpenseService : IExpenseService
     public async Task<PaginatedListVM<ExpenseVM>> ExpenseList(FilterVM filter, bool isAllExpense = false, int groupId = 0, int friendUserId = 0)
     {
         int currentUserId = _userService.LoggedInUserId();
-        string searchString = string.IsNullOrEmpty(filter.SearchString) ? "" : filter.SearchString.Replace(" ", "").ToLower();
+        string searchString = string.IsNullOrEmpty(filter.SearchString) ? string.Empty : filter.SearchString.Trim().ToLower();
         bool isGroupExpenses = groupId > 0;
 
         Func<IQueryable<Expense>, IOrderedQueryable<Expense>> orderBy = q => q.OrderByDescending(e => e.PaidDate).ThenByDescending(e => e.UpdatedAt);
@@ -635,7 +635,7 @@ public class ExpenseService : IExpenseService
                                 || e.Title.ToLower().Contains(searchString)
                                 || e.PaidByUser.FirstName.ToLower().Contains(searchString)
                                 || e.PaidByUser.LastName.ToLower().Contains(searchString)
-                                || (e.PaidByUser.FirstName + e.PaidByUser.LastName).ToLower().Contains(searchString)
+                                || (e.PaidByUser.FirstName + " " + e.PaidByUser.LastName).ToLower().Contains(searchString)
                                 || (e.GroupId != null && e.Group.Name.ToLower().Contains(searchString))),
             orderBy: orderBy,
             includes: new List<Expression<Func<Expense, object>>>
