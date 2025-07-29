@@ -48,12 +48,11 @@ function createFallItem(type) {
 
     el.style.left = Math.random() * window.innerWidth + 'px';
 
-    el.style.top = '-30px';
+    el.style.top = '-40px';
 
-    el.style.animationDuration = `${3 + Math.random() * 2}s`;
+    el.style.animationDuration = `${4 + Math.random() * 2}s`;
 
     document.body.appendChild(el);
-    // document.getElementById("regularModalContent").appendChild(el);
 
     setTimeout(() => el.remove(), 6000);
 
@@ -61,7 +60,7 @@ function createFallItem(type) {
 
 function getRandomColor() {
 
-    const colors = ['#e74c3c', '#f1c40f', '#2ecc71', '#9b59b6', '#ff69b4'];
+    const colors = ['#e74c3c', '#f1c40f', '#2ecc71', '#9b59b6', '#ff69b4', '#3385ff'];
 
     return colors[Math.floor(Math.random() * colors.length)];
 
