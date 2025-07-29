@@ -33,32 +33,32 @@
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="group-expenses-tab" data-bs-toggle="pill"
                 data-bs-target="#group-expenses" type="button" role="tab" aria-controls="group-expenses"
-                aria-selected="false" onclick="getGroupExpenseList(1)">Expenses</button>
+                aria-selected="false" onclick="getGroupExpenseList(1), fetchGroupName()">Expenses</button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="group-activity-tab" data-bs-toggle="pill" data-bs-target="#group-activity"
                 type="button" role="tab" aria-controls="group-activity" aria-selected="false"
-                onclick="fetchActivities()">Activities</button>
+                onclick="fetchActivities(), fetchGroupName()">Activities</button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="group-settleup-tab" data-bs-toggle="pill" data-bs-target="#group-settleup"
                 type="button" role="tab" aria-controls="group-settleup" aria-selected="false"
-                onclick="fetchGroupSettleUps('@Model.Id')">Settle Up</button>
+                onclick="fetchGroupSettleUps('@Model.Id'), fetchGroupName()">Settle Up</button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="group-members-tab" data-bs-toggle="pill" data-bs-target="#group-members"
                 type="button" role="tab" aria-controls="group-members" aria-selected="true"
-                onclick="fetchGroupMembers()">Members</button>
+                onclick="fetchGroupMembers(), fetchGroupName()">Members</button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="group-noticeboard-tab" data-bs-toggle="pill"
                 data-bs-target="#group-noticeboard" type="button" role="tab" aria-controls="group-noticeboard"
-                aria-selected="true">Notice Board</button>
+                aria-selected="true" onclick="fetchGroupName()">Notice Board</button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="group-analytics-tab" data-bs-toggle="pill" data-bs-target="#group-analytics"
                 type="button" role="tab" aria-controls="group-analytics" aria-selected="true"
-                onclick="fetchGroupAnalytics(@Model.Id)">Analytics</button>
+                onclick="fetchGroupAnalytics(@Model.Id), fetchGroupName()">Analytics</button>
         </li>
     </ul>
 

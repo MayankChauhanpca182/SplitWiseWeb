@@ -285,7 +285,7 @@ public class ExpenseService : IExpenseService
         }
 
         // Check if old payer is removed
-        if (!isNew && !updatedShares.Any(s => s.UserId == oldPaidById))
+        if (!isNew && !updatedShares.Any(s => s.UserId == oldPaidById) && amountToBeSettle != 0)
         {
             // Add system generated expense
             Expense systemExpense = new Expense
