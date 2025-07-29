@@ -231,6 +231,12 @@ public class ExpenseService : IExpenseService
         HashSet<int> updatedUserIds = updatedShares.Select(es => es.UserId).ToHashSet();
 
         List<ExpenseShare> sharesToDelete = existingShares.Where(es => !updatedUserIds.Contains(es.UserId)).ToList();
+
+        if (sharesToDelete.Any())
+        {
+            await UpdateSystemExpenses(expense.Id, expense.PaidById);
+        }
+
         // Delete shares
         foreach (ExpenseShare share in sharesToDelete)
         {
@@ -250,7 +256,6 @@ public class ExpenseService : IExpenseService
                     Title = "System Generated",
                     Amount = amount,
                     GroupId = expense.GroupId,
-                    // PaidById = share.UserId,
                     PaidDate = DateTime.Today,
                     ExpenseCategoryId = expense.ExpenseCategoryId,
                     CurrencyId = expense.CurrencyId,
@@ -269,7 +274,6 @@ public class ExpenseService : IExpenseService
                 ExpenseShare systemExpenseShare = new ExpenseShare
                 {
                     ExpenseId = systemExpense.Id,
-                    // UserId = expense.PaidById,
                     ShareAmount = amount,
                     CreatedById = currentUser.Id,
                     UpdatedById = currentUser.Id,
@@ -278,44 +282,42 @@ public class ExpenseService : IExpenseService
                 systemExpenseShare.UserId = share.SettledAmount > 0 ? expense.PaidById : share.UserId;
                 await _expenseShareRepository.Add(systemExpenseShare);
             }
-
-            await UpdateSystemExpenses(expense.Id, expense.PaidById);
         }
 
         // Check if old payer is removed
-        // if (!updatedShares.Any(s => s.UserId == oldPaidById))
-        // {
-        //     // Add system generated expense
-        //     Expense systemExpense = new Expense
-        //     {
-        //         Title = "System Generated",
-        //         Amount = amountToBeSettle,
-        //         GroupId = expense.GroupId,
-        //         // PaidById = ,
-        //         PaidDate = DateTime.Today,
-        //         ExpenseCategoryId = expense.ExpenseCategoryId,
-        //         CurrencyId = expense.CurrencyId,
-        //         SplitType = SplitType.Equally,
-        //         IsSystemGenerated = true,
-        //         ReferenceExpenseId = expense.Id,
-        //         CreatedById = currentUser.Id,
-        //         UpdatedById = currentUser.Id,
-        //         UpdatedAt = DateTime.Now
-        //     };
-        //     await _expenseRepository.Add(systemExpense);
+        if (!isNew && !updatedShares.Any(s => s.UserId == oldPaidById))
+        {
+            // Add system generated expense
+            Expense systemExpense = new Expense
+            {
+                Title = "System Generated",
+                Amount = amountToBeSettle,
+                GroupId = expense.GroupId,
+                PaidById = expense.PaidById,
+                PaidDate = DateTime.Today,
+                ExpenseCategoryId = expense.ExpenseCategoryId,
+                CurrencyId = expense.CurrencyId,
+                SplitType = SplitType.Equally,
+                IsSystemGenerated = true,
+                ReferenceExpenseId = expense.Id,
+                CreatedById = currentUser.Id,
+                UpdatedById = currentUser.Id,
+                UpdatedAt = DateTime.Now
+            };
+            await _expenseRepository.Add(systemExpense);
 
-        //     // Add expense share
-        //     ExpenseShare systemExpenseShare = new ExpenseShare
-        //     {
-        //         ExpenseId = systemExpense.Id,
-        //         UserId = oldPaidById,
-        //         ShareAmount = amountToBeSettle,
-        //         CreatedById = currentUser.Id,
-        //         UpdatedById = currentUser.Id,
-        //         UpdatedAt = DateTime.Now
-        //     };
-        //     await _expenseShareRepository.Add(systemExpenseShare);
-        // }
+            // Add expense share
+            ExpenseShare systemExpenseShare = new ExpenseShare
+            {
+                ExpenseId = systemExpense.Id,
+                UserId = oldPaidById,
+                ShareAmount = amountToBeSettle,
+                CreatedById = currentUser.Id,
+                UpdatedById = currentUser.Id,
+                UpdatedAt = DateTime.Now
+            };
+            await _expenseShareRepository.Add(systemExpenseShare);
+        }
 
         foreach (ExpenseShareVM share in updatedShares)
         {
