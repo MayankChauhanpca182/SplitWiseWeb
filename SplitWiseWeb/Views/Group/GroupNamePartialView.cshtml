@@ -1,6 +1,6 @@
 @model GroupVM
 
-<img src="@(Model.ImagePath ?? "/images/default_group_img.png")" alt="Image" class="rounded-circle border border-dark-subtle object-fit-cover" width="70px" height="70px">
+<img src="@(Model.ImagePath ?? "~/images/default_group_img.png")" alt="Image" class="rounded-circle border border-dark-subtle object-fit-cover" width="70px" height="70px">
 <div class="d-flex flex-column">
     <span>
         @Model.Name

@@ -26,7 +26,7 @@
                     @if (Model.GroupId > 0)
                     {
                         <span class="expenseMemberPill" id="groupPill-@Model.GroupDetails.Id">
-                            <img src=@(Model.GroupDetails.ImagePath ?? "/images/default_group_img.png")>
+                            <img src=@(Model.GroupDetails.ImagePath ?? "~/images/default_group_img.png")>
                             <span>@Model.GroupDetails.Name</span>
                         </span>
                     }
@@ -45,7 +45,7 @@
                         {
                             <li class="dropdownLi cursor-pointer" onclick='changeGroup(@Html.Raw(Json.Serialize(group)))'>
                                 <span class="d-flex align-items-center gap-2">
-                                    <img src=@(group.ImagePath ?? "/images/Default_pfp.png") alt=""
+                                    <img src=@(group.ImagePath ?? "~/images/Default_pfp.png") alt=""
                                         class="img-25px rounded-circle border border-dark-subtle object-fit-cover">
                                     <span class="name">@group.Name</span>
                                 </span>
@@ -64,7 +64,7 @@
                     @foreach (ExpenseShareVM share in Model.ExpenseShares)
                     {
                         <span class="expenseMemberPill" id="expenseMemberPill-@share.UserId">
-                            <img src=@(share.ProfileImagePath ?? "/images/Default_pfp.png")>
+                            <img src=@(share.ProfileImagePath ?? "~/images/Default_pfp.png")>
                             <span>@share.UserName</span>
                             <button type="button" class="btn-close removeMember" aria-label="Close"
                                 onclick="removePill(@share.UserId)"></button>
@@ -88,7 +88,7 @@
                                     @(Model.ExpenseShares.Any(es => es.UserId == user.UserId) ? "checked" : "")
                                     data-user='@(Html.Raw(Json.Serialize(user)))'>
                                 <label for="userCkb-@user.UserId" class="d-flex align-items-center gap-2">
-                                    <img src=@(user.ProfileImagePath ?? "/images/Default_pfp.png") alt=""
+                                    <img src=@(user.ProfileImagePath ?? "~/images/Default_pfp.png") alt=""
                                         class="img-25px rounded-circle border border-dark-subtle object-fit-cover">
                                     <span class="name">@user.Name</span>
                                 </label>
@@ -239,7 +239,7 @@
             {
                 <div class="expenseShare" id="expenseShare-@share.UserId">
                     <span>
-                        <img src=@(share.ProfileImagePath ?? "/images/Default_pfp.png")>
+                        <img src=@(share.ProfileImagePath ?? "~/images/Default_pfp.png")>
                         @share.UserName
                     </span>
                     <span>
@@ -452,7 +452,7 @@
             });
 
             // Add pill
-            let newPill = `<span class="expenseMemberPill" id=${"expenseMemberPill-" + user.userId}><img src=${user.profileImagePath ?? "/images/Default_pfp.png"}><span>${user.name}</span><button type="button" class="btn-close removeMember" aria-label="Close"  onclick="removePill(${user.userId})"></button></span>`;
+            let newPill = `<span class="expenseMemberPill" id=${"expenseMemberPill-" + user.userId}><img src=${user.profileImagePath ?? "~/images/Default_pfp.png"}><span>${user.name}</span><button type="button" class="btn-close removeMember" aria-label="Close"  onclick="removePill(${user.userId})"></button></span>`;
             $(".memberPillDiv").append(newPill);
 
             // Add into paid by
@@ -460,7 +460,7 @@
             $("#paidBySelect").append(newOption);
 
             // Add into expense share div
-            let div = `<div class="expenseShare" id="expenseShare-${user.userId}"><span><img src=${user.profileImagePath ?? "/images/Default_pfp.png"}>${user.name}</span><span><input type="text" class="amount form-control" id="amount-${user.userId}" value="0"><span class="expenseShareTypeSymbole">${currencySymbole}</span></span></div>`;
+            let div = `<div class="expenseShare" id="expenseShare-${user.userId}"><span><img src=${user.profileImagePath ?? "~/images/Default_pfp.png"}>${user.name}</span><span><input type="text" class="amount form-control" id="amount-${user.userId}" value="0"><span class="expenseShareTypeSymbole">${currencySymbole}</span></span></div>`;
             $("#expenseShareDiv").append(div);
         }
 
@@ -781,7 +781,7 @@
             $("#expenseShareDiv").empty();
 
             let pill = `<span class="expenseMemberPill" id="groupPill-${group.id}">
-                                        <img src=${group.imagePath ?? "/images/default_group_img.png"}>
+                                        <img src=${group.imagePath ?? "~/images/default_group_img.png"}>
                                         <span>${group.name}</span>
                                     </span>`;
             $(".groupPillDiv").html(pill);
@@ -797,7 +797,7 @@
                                     <input class="userCkb form-check-input m-0" type="checkbox" id="userCkb-${member.id}"
                                         data-user='${JSON.stringify(member)}'>
                                     <label for="userCkb-${member.id}" class="d-flex align-items-center gap-2">
-                                        <img src=${member.profileImagePath ?? "/images/Default_pfp.png"} alt=""
+                                        <img src=${member.profileImagePath ?? "~/images/Default_pfp.png"} alt=""
                                             class="img-25px rounded-circle border border-dark-subtle object-fit-cover">
                                         <span class="name">${member.name}</span>
                                     </label>

@@ -12,7 +12,7 @@
     <input asp-for="@Model.ProfileImage" accept="image/png, image/jpg, image/jpeg" hidden>
 
     <label for="ProfileImage" class="cursor-pointer" title="Click to select an image" style="width: 100px;">
-        <img src=@(Model.ProfileImagePath ?? "/images/Default_pfp.png") alt="" id="previewImage"
+        <img src=@(Model.ProfileImagePath ?? "~/images/Default_pfp.png") alt="" id="previewImage"
             class="rounded-circle border border-dark-subtle object-fit-cover" width="100px" height="100px">
     </label>
     <span class="text-danger" asp-validation-for="@Model.ProfileImage"></span>
@@ -82,7 +82,7 @@
                     if (!validTypes.includes(file.type)) {
                         toastr.error("Only following image types are allowed: jpeg, jpg, png.");
                         $(this).val("");
-                        $('#previewImage').attr('src', '@(Model.ProfileImagePath ?? "/images/Default_pfp.png")');
+                        $('#previewImage').attr('src', '@(Model.ProfileImagePath ?? "~/images/Default_pfp.png")');
                         return;
                     }
                     else {

@@ -6,7 +6,7 @@
 @if (Model.Count() == 0)
 {
     <div class="d-flex flex-column align-items-center p-4 gap-3">
-        <img src="/images/checked.png" alt="" width="100px" height="100px">
+        <img src="~/images/checked.png" alt="" width="100px" height="100px">
         <span class="text-primary fs-3 fw-semibold">You don't owe anything in this group</span>
     </div>
 }
@@ -20,7 +20,7 @@ else
                 <div class="d-flex justify-content-between align-items-center gap-3">
                     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 w-100">
                         <div class="d-flex align-items-center gap-2">
-                            <img src=@(user.ProfileImagePath ?? "/images/Default_pfp.png") alt="" class="img-50px rounded-circle border border-dark-subtle object-fit-cover">
+                            <img src=@(user.ProfileImagePath ?? "~/images/Default_pfp.png") alt="" class="img-50px rounded-circle border border-dark-subtle object-fit-cover">
                             <div class="d-flex flex-column">
                                 <span class="text-nowrap">
                                     @user.Name

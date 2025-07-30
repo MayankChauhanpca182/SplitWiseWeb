@@ -85,7 +85,7 @@ else
             <span class="text-nowrap">@activity.CreatedAt.ToString("HH:mm:ss") : </span>
             <span>
                 <span class="@(isPerformedByUserMember ? "" : "opacity-75")">
-                    <img src="@(activity.PerformedByUser.ProfileImagePath ?? "/images/Default_pfp.png")" alt=""
+                    <img src="@(activity.PerformedByUser.ProfileImagePath ?? "~/images/Default_pfp.png")" alt=""
                         class="img-20px img-20px rounded-circle">
                     <strong>@performedByUserName</strong>
                 </span>
@@ -94,21 +94,21 @@ else
                 {
                     case ActivityType.GroupCreated:
                         <span>created the group</span>
-                        <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt=""
+                        <img src="@(activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
                             class="img-20px rounded-circle">
                         <strong>@(activity.GroupName ?? activity.Group.Name).</strong>
                         break;
 
                     case ActivityType.GroupUpdated:
                         <span>updated the group</span>
-                        <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt=""
+                        <img src="@(activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
                             class="img-20px rounded-circle">
                         <strong>@(activity.GroupName ?? activity.Group.Name).</strong>
                         break;
 
                     case ActivityType.GroupDeleted:
                         <span>deleted the group</span>
-                        <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt=""
+                        <img src="@(activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
                             class="img-20px rounded-circle">
                         <strong>@(activity.GroupName ?? activity.Group.Name).</strong>
                         break;
@@ -116,7 +116,7 @@ else
                     case ActivityType.MemberAdded:
                         <span>added</span>
                         <span class="@(isPerformedOnUserMember ? "" : "opacity-75")">
-                            <img src="@(activity.PerformedOnUser.ProfileImagePath ?? "/images/Default_pfp.png")" alt=""
+                            <img src="@(activity.PerformedOnUser.ProfileImagePath ?? "~/images/Default_pfp.png")" alt=""
                                 class="img-20px rounded-circle">
                             <strong>@performedOnUserName</strong>
                         </span>
@@ -127,7 +127,7 @@ else
                         else
                         {
                             <span>to the group</span>
-                            <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt=""
+                            <img src="@(activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
                                 class="img-20px rounded-circle">
                             <strong>@(activity.GroupName ?? activity.Group.Name).</strong>
                         }
@@ -136,7 +136,7 @@ else
                     case ActivityType.MemberRemoved:
                         <span>removed</span>
                         <span class="@(isPerformedOnUserMember ? "" : "opacity-75")">
-                            <img src="@(activity.PerformedOnUser.ProfileImagePath ?? "/images/Default_pfp.png")" alt=""
+                            <img src="@(activity.PerformedOnUser.ProfileImagePath ?? "~/images/Default_pfp.png")" alt=""
                                 class="img-20px rounded-circle">
                             <strong>@performedOnUserName</strong>
                         </span>
@@ -147,7 +147,7 @@ else
                         else
                         {
                             <span>from the group</span>
-                            <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt=""
+                            <img src="@(activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
                                 class="img-20px rounded-circle">
                             <strong>@(activity.GroupName ?? activity.Group.Name).</strong>
                         }
@@ -165,7 +165,7 @@ else
                         else
                         {
                             <span>in the group</span>
-                            <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt=""
+                            <img src="@(activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
                                 class="img-20px rounded-circle">
                             <strong>@(activity.GroupName ?? activity.Group.Name).</strong>
                         }
@@ -180,7 +180,7 @@ else
                         else
                         {
                             <span>in the group</span>
-                            <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt=""
+                            <img src="@(activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
                                 class="img-20px rounded-circle">
                             <strong>@(activity.GroupName ?? activity.Group.Name).</strong>
                         }
@@ -199,7 +199,7 @@ else
                         else
                         {
                             <span>left the group</span>
-                            <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt=""
+                            <img src="@(activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
                                 class="img-20px rounded-circle">
                             <strong>@(activity.GroupName ?? activity.Group.Name).</strong>
                         }
@@ -210,7 +210,7 @@ else
                         <strong>₹@activity.Payment.Amount.ToString("N2")</strong>
                         <span>to</span>
                         <span class="@(isPerformedOnUserMember ? "" : "opacity-75")">
-                            <img src="@(activity.PerformedOnUser.ProfileImagePath ?? "/images/Default_pfp.png")" alt=""
+                            <img src="@(activity.PerformedOnUser.ProfileImagePath ?? "~/images/Default_pfp.png")" alt=""
                                 class="img-20px rounded-circle">
                             <strong>@performedOnUserName</strong>
                         </span>
@@ -221,7 +221,7 @@ else
                         else
                         {
                             <span>in the group</span>
-                            <img src="@(activity.Group.ImagePath ?? "/images/default_group_img.png")" alt=""
+                            <img src="@(activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
                                 class="img-20px rounded-circle">
                             <strong>@(activity.GroupName ?? activity.Group.Name).</strong>
                         }
@@ -231,7 +231,7 @@ else
                         <span>paid</span>
                         <strong>₹@activity.Payment.Amount.ToString("N2")</strong>
                         <span>to</span>
-                        <img src="@(activity.PerformedOnUser.ProfileImagePath ?? "/images/Default_pfp.png")" alt=""
+                        <img src="@(activity.PerformedOnUser.ProfileImagePath ?? "~/images/Default_pfp.png")" alt=""
                             class="img-20px rounded-circle">
                         <strong>@performedOnUserName.</strong>
                         break;

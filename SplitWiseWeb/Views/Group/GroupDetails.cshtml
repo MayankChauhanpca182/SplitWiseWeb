@@ -8,7 +8,7 @@
 <h3
     class="d-flex flex-wrap justify-content-between align-items-center gap-3 bg-white mb-3 p-3 text-dark-emphasis shadow">
     <div class="d-flex align-items-center gap-3" id="group-name">
-        <img src="@(Model.ImagePath ?? "/images/default_group_img.png")" alt="Image" class="rounded-circle border border-dark-subtle object-fit-cover" id="groupImage" width="70px" height="70px">
+        <img src="@(Model.ImagePath ?? "~/images/default_group_img.png")" alt="Image" class="rounded-circle border border-dark-subtle object-fit-cover" id="groupImage" width="70px" height="70px">
         <div class="d-flex flex-column">
             <span>
                 <span id="groupName">@Model.Name</span>
@@ -117,7 +117,7 @@
                         }
                         else {
                             $("#groupExpense").removeClass("text-success").removeClass("text-danger");
-                            $("#groupImage").prop("src", response.imagePath ?? "/images/default_group_img.png");
+                            $("#groupImage").prop("src", response.imagePath ?? "~/images/default_group_img.png");
                             $("#groupName").text(response.name);
                             $("#groupNoticeBoard").text(response.noticeBoard);
                             
@@ -452,7 +452,7 @@
         // Set settled up image
         function setSettledUpImage() {
             $("#settleUpModalTitle").html(`Payment recorded`);
-            let image = `<img src="/images/settled-up.png" class="mx-auto my-5" alt="" width="200px" height="200px">`;
+            let image = `<img src="~/images/settled-up.png" class="mx-auto my-5" alt="" width="200px" height="200px">`;
             $("#settlementForm").replaceWith(image);
         }
     </script>
