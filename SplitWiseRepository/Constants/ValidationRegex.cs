@@ -6,7 +6,7 @@ public static class ValidationRegex
     public const string EmailRegex = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
 
     // Password
-    public const string PasswordRegex = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]+$";
+    public const string PasswordRegex = @"^(?=.*[A-Za-z])(?=.*\d)(?=.*[^\w\s]).+$";
 
     // Name
     public const string NameRegex = @"^[A-Za-z]+$";
