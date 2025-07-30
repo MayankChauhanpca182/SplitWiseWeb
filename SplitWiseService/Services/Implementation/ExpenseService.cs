@@ -199,13 +199,13 @@ public class ExpenseService : IExpenseService
         return expenseVM;
     }
 
-    private async Task UpdateSystemExpenses(int expenseId, int paidById)
+    private async Task UpdateSystemExpenses(Expense expense, int oldPaidById)
     {
         int currentUserId = _userService.LoggedInUserId();
 
         // Fetch all system expenses for current expense
         List<ExpenseShare> systemExpenseShares = await _expenseShareRepository.List(
-            predicate: es => es.DeletedAt == null && es.ShareAmount != es.SettledAmount && es.Expense.ReferenceExpenseId == expenseId,
+            predicate: es => es.DeletedAt == null && es.Expense.ReferenceExpenseId == expense.Id,
             includes: new List<Expression<Func<ExpenseShare, object>>>
             {
                     es => es.Expense
@@ -214,10 +214,46 @@ public class ExpenseService : IExpenseService
 
         foreach (ExpenseShare systemShare in systemExpenseShares)
         {
-            systemShare.UserId = paidById;
-            systemShare.UpdatedAt = DateTime.Now;
-            systemShare.UpdatedById = currentUserId;
-            await _expenseShareRepository.Update(systemShare);
+            if (systemShare.ShareAmount != systemShare.SettledAmount)
+            {
+                systemShare.UserId = expense.PaidById;
+                systemShare.UpdatedAt = DateTime.Now;
+                systemShare.UpdatedById = currentUserId;
+                await _expenseShareRepository.Update(systemShare);
+            }
+            else if (systemShare.UserId == oldPaidById)
+            {
+                // Add system generated expense
+                Expense systemExpense = new Expense
+                {
+                    Title = "System Generated",
+                    Amount = systemShare.SettledAmount,
+                    GroupId = expense.GroupId,
+                    PaidById = systemShare.UserId,
+                    PaidDate = DateTime.Today,
+                    ExpenseCategoryId = expense.ExpenseCategoryId,
+                    CurrencyId = expense.CurrencyId,
+                    SplitType = SplitType.Equally,
+                    IsSystemGenerated = true,
+                    ReferenceExpenseId = expense.Id,
+                    CreatedById = currentUserId,
+                    UpdatedById = currentUserId,
+                    UpdatedAt = DateTime.Now
+                };
+                await _expenseRepository.Add(systemExpense);
+
+                // Add expense share
+                ExpenseShare systemExpenseShare = new ExpenseShare
+                {
+                    ExpenseId = systemExpense.Id,
+                    UserId = expense.PaidById,
+                    ShareAmount = systemShare.SettledAmount,
+                    CreatedById = currentUserId,
+                    UpdatedById = currentUserId,
+                    UpdatedAt = DateTime.Now
+                };
+                await _expenseShareRepository.Add(systemExpenseShare);
+            }
         }
         return;
     }
@@ -232,9 +268,9 @@ public class ExpenseService : IExpenseService
 
         List<ExpenseShare> sharesToDelete = existingShares.Where(es => !updatedUserIds.Contains(es.UserId)).ToList();
 
-        if (sharesToDelete.Any())
+        if (expense.PaidById != oldPaidById)
         {
-            await UpdateSystemExpenses(expense.Id, expense.PaidById);
+            await UpdateSystemExpenses(expense, oldPaidById);
         }
 
         // Delete shares
@@ -344,9 +380,9 @@ public class ExpenseService : IExpenseService
             ExpenseShare existingShare = existingShares.FirstOrDefault(es => es.UserId == share.UserId);
             if (existingShare != null)
             {
-                if (existingShare.UserId == oldPaidById && oldPaidById != expense.PaidById)
+                if (existingShare.UserId == oldPaidById && oldPaidById != expense.PaidById && amountToBeSettle != 0)
                 {
-                    existingShare.SettledAmount = (-1) * amountToBeSettle;
+                    existingShare.SettledAmount += (-1) * amountToBeSettle;
                 }
                 existingShare.ShareAmount = shareAmount;
                 existingShare.UpdatedAt = DateTime.Now;
@@ -592,7 +628,7 @@ public class ExpenseService : IExpenseService
                 existingExpense.Amount = newAmount;
 
                 int oldPaidById = existingExpense.PaidById;
-                decimal amountToBeSettle = existingExpense.ExpenseShares.Where(es => es.DeletedAt == null && es.UserId != oldPaidById).Sum(es => es.SettledAmount);
+                decimal amountToBeSettle = existingExpense.ExpenseShares.Where(es => es.DeletedAt == null && es.UserId != oldPaidById && es.SettledAmount > 0).Sum(es => es.SettledAmount);
 
                 existingExpense.PaidById = newExpense.PaidById;
                 existingExpense.PaidDate = newExpense.PaidDate;
