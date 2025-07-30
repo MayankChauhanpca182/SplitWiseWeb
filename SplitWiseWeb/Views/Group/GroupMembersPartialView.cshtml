@@ -4,6 +4,7 @@
 }
 
 <div class="d-flex flex-column gap-3">
+    <p class="fw-semibold mb-0">There are total <strong>@Model.Count()</strong> members including you</p>
     @foreach (GroupMemberVM user in Model.OrderByDescending(gm => gm.UserId == currentUserId).ThenBy(gm => gm.UserId))
     {
         <div class="d-flex justify-content-between align-items-center gap-3">

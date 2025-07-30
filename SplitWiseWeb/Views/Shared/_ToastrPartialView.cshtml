@@ -21,11 +21,15 @@
   $(document).ready(function () {
     let successMessage = '@(TempData["successMessage"])';
     let errorMessage = '@(TempData["errorMessage"])';
+    let infoMessage = '@(TempData["infoMessage"])';
     if (successMessage && successMessage.trim() !== "") {
       toastr.success(successMessage);
     }
     if (errorMessage && errorMessage.trim() !== "") {
       toastr.error(errorMessage);
+    }
+    if (infoMessage && infoMessage.trim() !== "") {
+      toastr.info(infoMessage);
     }
   });
 </script>
