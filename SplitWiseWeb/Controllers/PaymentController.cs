@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SplitWiseRepository.Models;
 using SplitWiseRepository.ViewModels;
@@ -7,6 +8,7 @@ using SplitWiseService.Services.Interface;
 
 namespace SplitWiseWeb.Controllers;
 
+[Authorize]
 public class PaymentController : Controller
 {
     private readonly IPaymentService _paymentService;
