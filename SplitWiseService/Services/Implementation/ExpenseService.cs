@@ -205,7 +205,7 @@ public class ExpenseService : IExpenseService
 
         // Fetch all system expenses for current expense
         List<ExpenseShare> systemExpenseShares = await _expenseShareRepository.List(
-            predicate: es => es.DeletedAt == null && es.Expense.ReferenceExpenseId == expense.Id,
+            predicate: es => es.Expense.DeletedAt == null && es.DeletedAt == null && es.Expense.ReferenceExpenseId == expense.Id,
             includes: new List<Expression<Func<ExpenseShare, object>>>
             {
                     es => es.Expense
@@ -223,6 +223,11 @@ public class ExpenseService : IExpenseService
             }
             else if (systemShare.UserId == oldPaidById)
             {
+                // Delete system expense of this system share
+                systemShare.Expense.DeletedAt = DateTime.Now;
+                systemShare.Expense.DeletedById = currentUserId;
+                await _expenseRepository.Update(systemShare.Expense);
+
                 // Add system generated expense
                 Expense systemExpense = new Expense
                 {
