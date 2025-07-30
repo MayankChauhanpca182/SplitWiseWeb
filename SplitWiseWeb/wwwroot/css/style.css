@@ -517,7 +517,7 @@ a {
     width: 600px;
 }
 
-input[type="checkbox"]:checked {
+input[type="checkbox"]:checked, input[type="checkbox"]:indeterminate {
     border-color: var(--clr-primary) !important;
     background-color: var(--clr-primary) !important;
     box-shadow: none;

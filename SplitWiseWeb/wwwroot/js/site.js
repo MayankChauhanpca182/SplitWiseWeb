@@ -71,7 +71,7 @@ function initializeTooltips() {
             {
               name: "alignLeftExactly",
               enabled: true,
-              phase: "write", 
+              phase: "write",
               fn({ state }) {
                 if (state.placement === "top") {
                   const tdLeft = state.elements.reference.getBoundingClientRect().left;
@@ -153,10 +153,10 @@ function formatToINR(amount) {
 $(document).on("input", ".dropdownSearch", function () {
   let searchBox = $(this);
   let searchStr = searchBox.val().toLowerCase().replace(/\s/g, "");
-  searchBox.parent().find("li").hide();
+  searchBox.parent().parent().find("li").hide();
 
   if (searchStr === "") {
-    searchBox.parent().find("li").show();
+    searchBox.parent().parent().find("li").show();
   }
   else {
     $(".dropdownList span.name").each(function () {
@@ -166,11 +166,49 @@ $(document).on("input", ".dropdownSearch", function () {
       }
     });
   }
+  checkMasterCheckbox();
 });
 
 // Empty searchbox on dropdown open
 function emptySearchBox() {
   $(".dropdownSearch").val("").trigger("input");
+}
+
+// Drop down master checkbox
+$(document).on("change", "#userCkbMaster", function () {
+  let checkedMaster = $(this).prop("checked");
+
+  $(".userCkb").filter(function () {
+    return $(this).closest("li").is(":visible");
+  }).each(function () {
+    if ($(this).prop("checked") !== checkedMaster) {
+      $(this).prop("checked", checkedMaster).trigger("change");
+    }
+  });
+});
+
+$(document).on("change", ".userCkb", function () {
+  checkMasterCheckbox();
+});
+
+function checkMasterCheckbox() {
+  let totalSubCheckBox = $(".userCkb").filter(function () {
+    return $(this).closest("li").is(":visible");
+  }).length;
+
+  let checkedSubCheckBox = $(".userCkb:checked").filter(function () {
+    return $(this).closest("li").is(":visible");
+  }).length;
+
+  if (checkedSubCheckBox === totalSubCheckBox) {
+    $("#userCkbMaster").prop("indeterminate", false).prop("checked", true);
+  }
+  else if (checkedSubCheckBox === 0) {
+    $("#userCkbMaster").prop("indeterminate", false).prop("checked", false);
+  }
+  else {
+    $("#userCkbMaster").prop("indeterminate", true);
+  }
 }
 
 // Back button click

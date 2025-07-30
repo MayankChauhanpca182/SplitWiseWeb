@@ -38,9 +38,17 @@
                     <span class="visually-hidden">User list</span>
                 </button>
                 <ul class="dropdownList dropdown-menu w-100 px-2">
-                    <input type="text"
-                        class="dropdownSearch searchBox form-control border-secondary-subtle rounded-0 my-1"
-                        placeholder="Search">
+                    <div class="d-flex align-items-center gap-3">
+                        <input type="text"
+                            class="dropdownSearch searchBox form-control border-secondary-subtle rounded-0 my-1"
+                            placeholder="Search">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="userCkbMaster">
+                            <label class="form-check-label" for="userCkbMaster">
+                                All
+                            </label>
+                        </div>
+                    </div>
                     <div id="friendsDropdown">
                         @foreach (FriendVM user in Model.Friends)
                         {
@@ -239,21 +247,21 @@
     @* Store img path in const *@
     <script>
         const categoryImages = {
-            @foreach (Category cat in Model.Categories)
+                    @foreach (Category cat in Model.Categories)
             {
-            @:@cat.Id: "@cat.CategoryImagePath",
+                            @:@cat.Id: "@cat.CategoryImagePath",
             }
-            };
+                    };
     </script>
 
     @* Store currency symboles in array *@
     <script>
         const currencySymboles = {
-            @foreach (Currency currency in Model.Currencies)
+                    @foreach (Currency currency in Model.Currencies)
             {
-            @:@currency.Id: "@currency.Symbole",
+                            @:@currency.Id: "@currency.Symbole",
             }
-            };
+                    };
 
 
         // Change symbole on currency change
@@ -267,11 +275,11 @@
     @* Add current members to array *@
     <script>
         {
-                    @foreach (ExpenseShareVM share in Model.ExpenseShares)
+                            @foreach (ExpenseShareVM share in Model.ExpenseShares)
                 {
                     <text>members.push({UserId: @share.UserId, ShareAmount: @share.ShareAmount});</text>
             }
-                }
+                        }
     </script>
 
     @* Validate selected file *@
@@ -437,6 +445,7 @@
             $("#paidByOption-" + userId).remove();
             // Remove expense share
             $("#expenseShare-" + userId).remove();
+            checkMasterCheckbox();
         }
 
         // Checkbox change

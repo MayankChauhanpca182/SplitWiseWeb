@@ -77,7 +77,7 @@ public class ExpenseController : Controller
     public async Task<IActionResult> AddGroupExpense(int expenseId, int groupId)
     {
         ExpenseVM expense = await _expenseService.GetGroupExpense(expenseId, groupId);
-        if (!expense.GroupList.Any())
+        if (!expense.GroupList.Any() && groupId == 0)
         {
             TempData["infoMessage"] = NotificationMessages.NoGroupsForUser;
             return RedirectToAction("Index", "Group");
