@@ -177,6 +177,7 @@
                 data: { groupId },
                 success: function (response) {
                     if (!response.statusCode) {
+                        selectedUserIds = [];
                         $("#largeModalContent").html(response);
                         $("#largeModal").modal("show");
                     }

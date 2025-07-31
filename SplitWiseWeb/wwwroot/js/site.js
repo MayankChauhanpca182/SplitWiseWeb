@@ -1,5 +1,6 @@
 ﻿// Global variables
 const SERVER_ERR = "Internal server error."
+let selectedUserIds = [];
 
 // Prevent bfcache for chrome
 window.addEventListener('pageshow', function (event) {

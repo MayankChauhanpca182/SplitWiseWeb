@@ -436,6 +436,24 @@ public class GroupService : IGroupService
         }
     }
 
+    public async Task<ResponseVM> AddSelectedUsers(int groupId, List<int> selectedUserIds)
+    {
+        ResponseVM response = new ResponseVM();
+        foreach (int userId in selectedUserIds)
+        {
+            response = await AddGroupMembers(groupId, userId);
+            if (!response.Success)
+            {
+                break;
+            }
+        }
+        if (response.Success)
+        {
+            response.Message = NotificationMessages.FriendAddedToGroup;
+        }
+        return response;
+    }
+
     public async Task<ResponseVM> RemoveGroupMember(int groupMemberId)
     {
         try

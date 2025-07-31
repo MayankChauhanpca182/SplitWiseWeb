@@ -6,9 +6,11 @@
 </div>
 
 <div class="modal-body">
-    <div class="d-flex align-items-center px-2 mb-3">
+    <div class="d-flex align-items-center justify-content-between px-2 mb-3">
         <input type="text" class="searchBox form-control border-secondary-subtle rounded-0" id="friendSearch"
             placeholder="Search">
+        <button class="btn btn-primary w-125px" type="button" id="addMembreBtn"
+            onclick="addSelectedMembers()">Add</button>
     </div>
     <div id="friendListOuter" class="listOuter bg-white"></div>
 </div>
@@ -58,6 +60,7 @@
                     }
                     else {
                         $("#friendListOuter").html(response);
+                        checkSelectedUsers();
                     }
                 }
             },
@@ -78,6 +81,55 @@
 
 @* Add new member *@
 <script>
+    $(document).on("change", ".userCkb", function () {
+        let userId = $(this).data("userid");
+
+        if (selectedUserIds.includes(userId)) {
+            selectedUserIds = selectedUserIds.filter(n => n !== userId);
+        }
+        else {
+            selectedUserIds.push(userId);
+        }
+    });
+
+    function checkSelectedUsers() {
+        $(".userCkb").each(function () {
+            let userId = $(this).data("userid");
+            $(this).prop("checked", selectedUserIds.includes(userId));
+        });
+    }
+
+    function addSelectedMembers() {
+        if (!selectedUserIds.length) {
+            toastr.error("Select atleast one friend.")
+        }
+        else {
+            $.ajax({
+                url: "/Group/AddSelectedUsers",
+                type: "POST",
+                data: { groupId: @Model, selectedUserIds },
+                success: function (response) {
+                    if (!response.statusCode) {
+                        if (response.success == false) {
+                            toastr.error(response.message);
+                        }
+                        else {
+                            toastr.success(response.message);
+                            getFriendList(1);
+                            fetchGroupMembers();
+                            fetchActivities();
+                            selectedUserIds = [];
+                            $("#largeModal").modal("hide");
+                        }
+                    }
+                },
+                error: function () {
+                    toastr.error(SERVER_ERR);
+                }
+            });
+        }
+    }
+
     function addToGroup(userId) {
         $.ajax({
             url: "/Group/AddGroupMembers",

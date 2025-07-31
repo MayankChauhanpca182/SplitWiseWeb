@@ -130,6 +130,14 @@ public class GroupController : Controller
         return Json(response);
     }
 
+    // POST AddSelectedUsers
+    [HttpPost]
+    public async Task<IActionResult> AddSelectedUsers(int groupId, List<int> selectedUserIds)
+    {
+        ResponseVM response = await _groupService.AddSelectedUsers(groupId, selectedUserIds);
+        return Json(response);
+    }
+
     // POST RemoveGroupMembers
     [HttpPost]
     public async Task<IActionResult> RemoveGroupMembers(int groupMemberId)

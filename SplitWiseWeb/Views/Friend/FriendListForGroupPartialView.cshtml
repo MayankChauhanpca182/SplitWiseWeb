@@ -22,9 +22,9 @@
                         <i class="bi bi-arrow-down"></i>
                     </a>
                 </th>
-                <th scope="col" class="col-1 text-center">
+                @* <th scope="col" class="col-1 text-center">
                     <span class="text-clr-grey text-dark-emphasis">Actions</span>
-                </th>
+                </th> *@
             </tr>
         </thead>
         <tbody>
@@ -32,15 +32,21 @@
             {
                 <tr>
                     <td>
-                        <img src="@(friend.ProfileImagePath ?? "~/images/Default_pfp.png")" class="img-40px object-fit-cover rounded-circle border border-secondary-subtle">
-                        <span class="ms-1">@friend.Name</span>
+                        <div class="form-check d-flex align-items-center gap-2">
+                            <input type="checkbox" class="userCkb form-check-input" id="userCkb-@friend.UserId" data-userid="@friend.UserId">
+                            <label class="form-check-label" for="userCkb-@friend.UserId">
+                                <img src="@(friend.ProfileImagePath ?? "~/images/Default_pfp.png")"
+                                    class="img-40px object-fit-cover rounded-circle border border-secondary-subtle">
+                                <span class="ms-1">@friend.Name</span>
+                            </label>
+                        </div>
                     </td>
                     <td><span class="my-auto">@friend.EmailAddress</span></td>
-                    <td class="text-center">
+                    @* <td class="text-center">
                         <a class="btn border-0" title="Add to group" onclick="addToGroup('@friend.UserId')">
                             <i class="bi bi-person-plus-fill text-success"></i>
                         </a>
-                    </td>
+                    </td> *@
                 </tr>
             }
         </tbody>
