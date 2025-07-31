@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SmartBreadcrumbs.Attributes;
@@ -77,7 +78,7 @@ public class ExpenseController : Controller
     public async Task<IActionResult> AddGroupExpense(int expenseId, int groupId)
     {
         ExpenseVM expense = await _expenseService.GetGroupExpense(expenseId, groupId);
-        if (!expense.GroupList.Any() && groupId == 0)
+        if (!expense.GroupList.Any() && expenseId == 0 && groupId == 0)
         {
             TempData["infoMessage"] = NotificationMessages.NoGroupsForUser;
             return RedirectToAction("Index", "Group");
@@ -142,6 +143,14 @@ public class ExpenseController : Controller
     public async Task<IActionResult> RemoveAttachment(int expenseId)
     {
         ResponseVM response = await _expenseService.RemoveAttachment(expenseId);
+        return Json(response);
+    }
+    #endregion
+
+    #region Delete Expense
+    public async Task<IActionResult> DeleteExpense(int expenseId)
+    {
+        ResponseVM response = await _expenseService.DeleteExpense(expenseId);
         return Json(response);
     }
     #endregion

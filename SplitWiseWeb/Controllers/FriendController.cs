@@ -160,6 +160,13 @@ public class FriendController : Controller
         return View(friend);
     }
 
+    // GET FriendDetailJson
+    public async Task<IActionResult> FriendDetailJson(int friendUserId)
+    {
+        FriendVM friend = await _friendService.FriendDetails(friendUserId);
+        return Json(friend);
+    }
+
     // GET FriendAnalytics
     public async Task<IActionResult> FriendAnalytics(int friendUserId)
     {

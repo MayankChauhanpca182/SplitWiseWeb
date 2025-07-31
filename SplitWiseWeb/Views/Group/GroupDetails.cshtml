@@ -107,7 +107,7 @@
     <script>
         function fetchGroupName() {
             $.ajax({
-                url: "/Group/GroupName",
+                url: "/Group/GroupDetailJson",
                 type: "GET",
                 data: { groupId: '@Model.Id' },
                 success: function (response) {
@@ -503,6 +503,40 @@
                         else {
                             $("#group-analytics").html(response);
                             generateChart();
+                        }
+                    }
+                },
+                error: function () {
+                    toastr.error(SERVER_ERR);
+                }
+            });
+        }
+    </script>
+
+    @* Delete group expense *@
+    <script>
+        function deleteGroupExpense(expenseId, expenseName) {
+            $("#confirmationModalTitle").text(`Delete expense`);
+            $("#confirmationModalBody").html(`<span>Are you sure you want to delete expense <strong>${expenseName}?</strong></span>`);
+            $("#confirmationModalYesBtn").attr("onclick", `deleteGroupExpenseConfirm(${expenseId})`);
+            $("#confirmationModal").modal("show");
+        }
+
+        function deleteGroupExpenseConfirm(expenseId) {
+            $.ajax({
+                url: "/Expense/DeleteExpense",
+                type: "POST",
+                data: { expenseId },
+                success: function (response) {
+                    $("#confirmationModal").modal("hide");
+                    if (!response.statusCode) {
+                        if (response.success == false) {
+                            toastr.error(response.message);
+                        }
+                        else {
+                            toastr.success(response.message);
+                            getGroupExpenseList(1);
+                            fetchGroupName();
                         }
                     }
                 },

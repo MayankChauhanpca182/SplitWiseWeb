@@ -158,8 +158,8 @@ public class GroupController : Controller
         return PartialView("GroupSettlementsPartialView", members);
     }
 
-    // GET GroupName
-    public async Task<IActionResult> GroupName(int groupId)
+    // GET GroupDetailJson
+    public async Task<IActionResult> GroupDetailJson(int groupId)
     {
         GroupVM group = await _groupService.GetGroup(groupId);
         return Json(group);

@@ -91,4 +91,37 @@
             exportExcelAjax(filter, "/Expense/ExportNonGroupExpenses", "Non_Group_Expenses");
         }
     </script>
+
+    @* Delete non group expense *@
+    <script>
+        function deleteNonGroupExpense(expenseId, expenseName) {
+            $("#confirmationModalTitle").text(`Delete expense`);
+            $("#confirmationModalBody").html(`<span>Are you sure you want to delete expense <strong>${expenseName}?</strong></span>`);
+            $("#confirmationModalYesBtn").attr("onclick", `deleteNonGroupExpenseConfirm(${expenseId})`);
+            $("#confirmationModal").modal("show");
+        }
+
+        function deleteNonGroupExpenseConfirm(expenseId) {
+            $.ajax({
+                url: "/Expense/DeleteExpense",
+                type: "POST",
+                data: { expenseId },
+                success: function (response) {
+                    $("#confirmationModal").modal("hide");
+                    if (!response.statusCode) {
+                        if (response.success == false) {
+                            toastr.error(response.message);
+                        }
+                        else {
+                            toastr.success(response.message);
+                            getNonGroupExpenseList(1);
+                        }
+                    }
+                },
+                error: function () {
+                    toastr.error(SERVER_ERR);
+                }
+            });
+        }
+    </script>
 }

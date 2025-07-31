@@ -53,11 +53,12 @@ public class ActivityService : IActivityService
 
         PaginatedItemsVM<Activity> userActivities = await _activityRepository.PaginatedList(
             predicate: a => a.DeletedAt == null
-                             && (groupId > 0
+                            && (groupId > 0
                                 ? a.GroupId == groupId
                                 : (friendUserId == null
                                     ? a.PerformedById == currentUserId || a.PerformedOnId == currentUserId
                                     : ((a.PerformedById == currentUserId && a.PerformedOnId == friendUserId) || (a.PerformedById == friendUserId && a.PerformedOnId == currentUserId))))
+                            // && ((a.ActivityType == ActivityType.GroupExpenseDeleted || a.ActivityType == ActivityType.NonGroupExpenseDeleted) ? a.PerformedOnId == currentUserId : true)
                             && a.CreatedAt >= filter.FromDate
                             && a.CreatedAt < newToDate
                             && (string.IsNullOrEmpty(searchString)
@@ -148,7 +149,7 @@ public class ActivityService : IActivityService
             string groupName = string.Empty;
             if (a.Group != null)
             {
-                groupName = a.Group.Name;
+                groupName = a.GroupName ?? a.Group.Name;
             }
 
             // Expense name, amount
@@ -157,7 +158,7 @@ public class ActivityService : IActivityService
             if (a.Expense != null)
             {
                 expenseName = a.Expense.Title;
-                expenseAmount = "₹" + a.Expense.Amount.ToString("N2");
+                expenseAmount = "₹" + (a.Amount ?? a.Expense.Amount.ToString("N2"));
             }
 
             // Payment
@@ -192,7 +193,7 @@ public class ActivityService : IActivityService
                     message += $" added an expense {expenseName} of {expenseAmount} in the group {groupName}.";
                     break;
                 case ActivityType.GroupExpenseUpdated:
-                    message += $" updated an expense {expenseName} of {expenseAmount} in the group {groupName}.";
+                    message += $" updated an expense {expenseName} in the group {groupName}.";
                     break;
                 case ActivityType.GroupPaymenent:
                     message += $" paid {paymentAmount} to {performedOnUserName} in the group {groupName}.";
@@ -204,7 +205,13 @@ public class ActivityService : IActivityService
                     message += $" added an expense {expenseName} of {expenseAmount}.";
                     break;
                 case ActivityType.ExpenseUpdated:
-                    message += $" updated an expense {expenseName} of {expenseAmount}.";
+                    message += $" updated an expense {expenseName}.";
+                    break;
+                case ActivityType.GroupExpenseDeleted:
+                    message += $" deleted an expense {expenseName} in the group {groupName}.";
+                    break;
+                case ActivityType.NonGroupExpenseDeleted:
+                    message += $" deleted an expense {expenseName}.";
                     break;
             }
 
@@ -213,7 +220,7 @@ public class ActivityService : IActivityService
                 Date = a.CreatedAt.ToString("dd-MM-yyyy"),
                 Time = a.CreatedAt.ToString("HH:mm:ss"),
                 ActivityMessage = message + (string.IsNullOrEmpty(a.AdditionalDetails)
-                                            ? string.Empty 
+                                            ? string.Empty
                                             : $" ({a.AdditionalDetails.Replace("<strong>", string.Empty).Replace("</strong>", string.Empty)})")
             };
         }).ToList();

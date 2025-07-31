@@ -13,7 +13,7 @@
             <span>
                 @Model.Name
             </span>
-            <span class="fs-5 fw-normal @(Model.Expense < 0 ? "text-danger" : "text-success")">
+            <span class="fs-5 fw-normal @(Model.Expense < 0 ? "text-danger" : "text-success")" id="friendExpense">
                 @(Model.Expense == 0 ? $"Expense is settled" : (Model.Expense > 0 ? $"You are owed ₹{Model.Expense.ToString("N2")}"
                     : $"You owe ₹{((-1) * Model.Expense).ToString("N2")}"))
             </span>
@@ -306,6 +306,77 @@
                         else {
                             $("#friend-analytics").html(response);
                             generateChart();
+                        }
+                    }
+                },
+                error: function () {
+                    toastr.error(SERVER_ERR);
+                }
+            });
+        }
+    </script>
+
+    @* Delete group expense *@
+    <script>
+        function deleteFriendExpense(expenseId, expenseName) {
+            $("#confirmationModalTitle").text(`Delete expense`);
+            $("#confirmationModalBody").html(`<span>Are you sure you want to delete expense <strong>${expenseName}?</strong></span>`);
+            $("#confirmationModalYesBtn").attr("onclick", `deleteFriendExpenseConfirm(${expenseId})`);
+            $("#confirmationModal").modal("show");
+        }
+
+        function deleteFriendExpenseConfirm(expenseId) {
+            $.ajax({
+                url: "/Expense/DeleteExpense",
+                type: "POST",
+                data: { expenseId },
+                success: function (response) {
+                    $("#confirmationModal").modal("hide");
+                    if (!response.statusCode) {
+                        if (response.success == false) {
+                            toastr.error(response.message);
+                        }
+                        else {
+                            toastr.success(response.message);
+                            fetchFriendExpenses(1);
+                            fetchfriendDetails();
+                        }
+                    }
+                },
+                error: function () {
+                    toastr.error(SERVER_ERR);
+                }
+            });
+        }
+    </script>
+
+    @* Fetch friend details *@
+    <script>
+        function fetchfriendDetails() {
+            $.ajax({
+                url: "/Friend/FriendDetailJson",
+                type: "GET",
+                data: { friendUserId: '@Model.UserId' },
+                success: function (response) {
+                    if (!response.statusCode) {
+                        if (response.success == false) {
+                            toastr.error(response.message);
+                        }
+                        else {
+                            console.log(response);
+                            $("#friendExpense").removeClass("text-success").removeClass("text-danger");
+                            if(response.expense < 0){
+                                $("#friendExpense").addClass("text-danger");
+                                $("#friendExpense").text(`You owe ₹${formatToINR((-1)*response.expense)}`);
+                            }
+                            else if(response.expense === 0){
+                                $("#friendExpense").addClass("text-success");
+                                $("#friendExpense").text(`Expense is settled`);
+                            }
+                            else{
+                                $("#friendExpense").addClass("text-success");
+                                $("#friendExpense").text(`You are owed ₹${formatToINR(response.expense)}`);
+                            }
                         }
                     }
                 },

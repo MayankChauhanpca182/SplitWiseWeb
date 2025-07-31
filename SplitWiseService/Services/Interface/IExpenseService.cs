@@ -10,4 +10,5 @@ public interface IExpenseService
     public Task<PaginatedListVM<ExpenseVM>> ExpenseList(FilterVM filter, bool isAllExpense = false, int groupId = 0, int friendUserId = 0);
     public Task<ResponseVM> RemoveAttachment(int expenseId);
     public Task<byte[]> ExportExpenses(FilterVM filter, bool isAllExpense = false, int groupId = 0, int friendUserId = 0);
+    public Task<ResponseVM> DeleteExpense(int expenseId);
 }

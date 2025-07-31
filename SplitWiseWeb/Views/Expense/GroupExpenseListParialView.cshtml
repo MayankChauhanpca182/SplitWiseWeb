@@ -87,6 +87,9 @@
                             <a asp-action="AddGroupExpense" asp-controller="Expense" asp-route-expenseId="@expense.Id" class="btn border-0" title="Edit">
                                 <i class="bi bi-pencil-square"></i>
                             </a>
+                            <button class="btn border-0" title="Delete" onclick="deleteGroupExpense(@expense.Id, '@expense.Title')">
+                                <i class="bi bi-trash text-danger"></i>
+                            </button>
                         }
                     </td>
                 </tr>
