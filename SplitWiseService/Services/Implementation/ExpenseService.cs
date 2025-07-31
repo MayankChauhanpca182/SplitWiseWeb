@@ -259,10 +259,6 @@ public class ExpenseService : IExpenseService
             }
             else if (systemShare.UserId == oldPaidById)
             {
-                // // Delete system expense of this system share
-                // systemShare.Expense.DeletedAt = DateTime.Now;
-                // systemShare.Expense.DeletedById = currentUserId;
-
                 // Remove reference id from system expense
                 systemShare.Expense.ReferenceExpenseId = null;
                 systemShare.Expense.UpdatedAt = DateTime.Now;
@@ -487,7 +483,7 @@ public class ExpenseService : IExpenseService
                     }
                     else
                     {
-                        direction = "are owed";
+                        direction = "owed";
                         preposition = "from";
                     }
 
@@ -559,16 +555,19 @@ public class ExpenseService : IExpenseService
                 // Add expense splits
                 await UpdateExpenseShare(expense, newExpense.ExpenseShares, newExpense.SplitTypeEnum, isNew: true, 0, 0);
 
+                // Users involved in activity
+                List<int> userIds = newExpense.ExpenseShares.Select(es => es.UserId).ToList();
+
                 if (newExpense.GroupId != null)
                 {
                     // Add group activity
                     GroupVM group = await _groupService.GetGroup((int)newExpense.GroupId);
-                    await _activityService.AddActivity(ActivityType.GroupExpenseAdded, groupId: (int)newExpense.GroupId, expenseId: expense.Id, groupName: group.Name, amount: newAmount.ToString("N2"));
+                    await _activityService.AddActivity(ActivityType.GroupExpenseAdded, userIds, groupId: (int)newExpense.GroupId, expenseId: expense.Id, groupName: group.Name, amount: newAmount.ToString("N2"));
                 }
                 else
                 {
                     // Add activity
-                    await _activityService.AddActivity(ActivityType.ExpenseAdded, expenseId: expense.Id, amount: newAmount.ToString("N2"));
+                    await _activityService.AddActivity(ActivityType.ExpenseAdded, userIds, expenseId: expense.Id, amount: newAmount.ToString("N2"));
                 }
 
                 response.Success = true;
@@ -609,16 +608,22 @@ public class ExpenseService : IExpenseService
                 }
 
                 await _expenseRepository.Update(existingExpense);
+
+                // Users involved in activity
+                List<int> existingUserIds = existingExpense.ExpenseShares.Where(es => es.DeletedAt == null).Select(es => es.UserId).ToList();
+                List<int> newUserIds = newExpense.ExpenseShares.Select(es => es.UserId).ToList();
+                List<int> userIds = existingUserIds.Union(newUserIds).ToList();
+
                 if (existingExpense.GroupId != null)
                 {
                     // Add group activity
                     GroupVM group = await _groupService.GetGroup((int)newExpense.GroupId);
-                    await _activityService.AddActivity(ActivityType.GroupExpenseUpdated, groupId: (int)existingExpense.GroupId, expenseId: existingExpense.Id, additionalDetails: additionalDetails, groupName: group.Name, amount: newAmount.ToString("N2"));
+                    await _activityService.AddActivity(ActivityType.GroupExpenseUpdated, userIds, groupId: (int)existingExpense.GroupId, expenseId: existingExpense.Id, additionalDetails: additionalDetails, groupName: group.Name, amount: newAmount.ToString("N2"));
                 }
                 else
                 {
                     // Add activity
-                    await _activityService.AddActivity(ActivityType.ExpenseUpdated, expenseId: existingExpense.Id, additionalDetails: additionalDetails, amount: newAmount.ToString("N2"));
+                    await _activityService.AddActivity(ActivityType.ExpenseUpdated, userIds, expenseId: existingExpense.Id, additionalDetails: additionalDetails, amount: newAmount.ToString("N2"));
                 }
 
                 // Add expense splits
@@ -797,7 +802,7 @@ public class ExpenseService : IExpenseService
             // Begin transaction
             await _transaction.Begin();
             ResponseVM response = new ResponseVM();
-            int currentUserId = _userService.LoggedInUserId();
+            User currentUser = await _userService.LoggedInUser();
 
             // Fetch expense
             Expense expense = await _expenseRepository.Get(
@@ -823,7 +828,7 @@ public class ExpenseService : IExpenseService
 
             // Delete expense
             expense.DeletedAt = DateTime.Now;
-            expense.DeletedById = currentUserId;
+            expense.DeletedById = currentUser.Id;
             await _expenseRepository.Update(expense);
 
             User payer = expense.PaidByUser;
@@ -831,37 +836,29 @@ public class ExpenseService : IExpenseService
             string groupName = expense.GroupId > 0 ? expense.Group.Name : string.Empty;
 
             // Add activity for payer
-            // await _activityService.AddActivity(activityType, groupId: expense.GroupId, expenseId: expense.Id, performedOnId: expense.PaidById);
+            string additionalDetails = string.Empty;
 
-            // Add activity for share members
             foreach (ExpenseShare share in expense.ExpenseShares.Where(es => es.DeletedAt == null))
             {
-                string additionalDetails = string.Empty;
                 User user = share.User;
                 if (share.UserId != expense.PaidById && share.SettledAmount > 0)
                 {
                     // System expense 
                     await AddSystemExpense(expense, share.UserId, expense.PaidById, share.SettledAmount);
 
-                    additionalDetails = $"System has generated an expense of <strong>₹{share.SettledAmount:N2}</strong>  - <strong>{user.FirstName + " " + user.LastName}</strong> are owed <strong>₹{share.SettledAmount:N2}</strong> from <strong>{payer.FirstName + " " + payer.LastName}</strong>";
+                    additionalDetails += string.IsNullOrEmpty(additionalDetails) ? string.Empty : ", ";
+
+                    additionalDetails += $"System has generated an expense of <strong>₹{share.SettledAmount:N2}</strong>  - <strong>{user.FirstName + " " + user.LastName}</strong> owed <strong>₹{share.SettledAmount:N2}</strong> from <strong>{payer.FirstName + " " + payer.LastName}</strong>";
                 }
 
-                await _activityService.AddActivity(activityType, groupId: expense.GroupId, expenseId: expense.Id, performedOnId: share.UserId, additionalDetails: additionalDetails, groupName: groupName);
+                // Send mail
+                string senderName = user.Id == currentUser.Id ? "you" : $"{currentUser.FirstName} {currentUser.LastName}";
+                await _emailService.DeleteExpense($"{user.FirstName}", senderName, expense.Title, user.EmailAddress, groupName);
             }
 
-            // // Fetch settled expense shares
-            // List<ExpenseShare> settledShares = expense.ExpenseShares
-            //                                 .Where(es => es.DeletedAt == null
-            //                                             && es.UserId != expense.PaidById
-            //                                             && es.ShareAmount > 0)
-            //                                 .ToList();
-
-
-            // // System expense for settled expense shares
-            // foreach (ExpenseShare share in settledShares)
-            // {
-            //     await AddSystemExpense(expense, expense.PaidById, share.UserId, share.SettledAmount);
-            // }
+            // Users involved in activity
+            List<int> userIds = expense.ExpenseShares.Where(es => es.DeletedAt == null).Select(es => es.UserId).ToList();
+            await _activityService.AddActivity(activityType, userIds, groupId: expense.GroupId, expenseId: expense.Id, groupName: groupName, additionalDetails: additionalDetails);
 
             response.Success = true;
             response.Message = NotificationMessages.Deleted.Replace("{0}", $"Expense {expense.Title}");

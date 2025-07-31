@@ -15,5 +15,6 @@ public interface IEmailService
     public Task RemovedFromGroupEmail(string recieverName, string senderName, string groupName, string email);
     public Task AddExpense(string recieverName, string senderName, string expenseName, string amount, string splitType, string shareAmount, string email, string oweVariable, string groupName = "");
     public Task UpdateExpense(string recieverName, string senderName, string expenseName, string amount, string splitType, string shareAmount, string email, string oweVariable, string groupName = "");
+    public Task DeleteExpense(string recieverName, string senderName, string expenseName, string email, string groupName = "");
     public Task PaymentRecorded(string senderName, string recieverName, string amount, string email);
 }

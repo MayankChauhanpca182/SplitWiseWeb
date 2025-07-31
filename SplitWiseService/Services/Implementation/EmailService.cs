@@ -193,6 +193,28 @@ public class EmailService : IEmailService
         return;
     }
 
+    public async Task DeleteExpense(string recieverName, string senderName, string expenseName, string email, string groupName = "")
+    {
+        string fileText;
+        string subject;
+
+        if (!string.IsNullOrEmpty(groupName))
+        {
+            fileText = GetEmailTemplate(EmailTemplates.DeleteGroupExpense);
+            fileText = fileText.Replace("{groupName}", groupName);
+            subject = EmailSubjects.UpdateGroupExpense;
+        }
+        else
+        {
+            fileText = GetEmailTemplate(EmailTemplates.DeleteNonGroupExpense);
+            subject = EmailSubjects.UpdateNonGroupExpense;
+        }
+
+        string emailBody = fileText.Replace("{recieverName}", recieverName).Replace("{senderName}", senderName).Replace("{expenseName}", expenseName);
+        await Send(email, subject, emailBody);
+        return;
+    }
+
     public async Task PaymentRecorded(string senderName, string recieverName, string amount, string email)
     {
         string fileText = GetEmailTemplate(EmailTemplates.PaymentRecorded);

@@ -18,6 +18,8 @@ public static class EmailTemplates
     public const string AddGroupExpense = "AddGroupExpense.html";
     public const string UpdateGroupExpense = "UpdateGroupExpense.html";
     public const string PaymentRecorded = "PaymentRecorded.html";
+    public const string DeleteGroupExpense = "DeleteGroupExpense.html";
+    public const string DeleteNonGroupExpense = "DeleteNonGroupExpense.html";
 }
 
 public static class EmailSubjects
@@ -38,5 +40,7 @@ public static class EmailSubjects
     public const string AddGroupExpense = "Group expense has been added.";
     public const string UpdateGroupExpense = "Group expense has been updated.";
     public const string PaymentRecorded = "A payment has been recorded with you.";
+    public const string DeleteGroupExpense = "Group expense has been deleted.";
+    public const string DeleteNonGroupExpense = "NonGroup expense has been deleted.";
 }
 

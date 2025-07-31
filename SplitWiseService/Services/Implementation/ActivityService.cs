@@ -19,7 +19,7 @@ public class ActivityService : IActivityService
         _userService = userService;
     }
 
-    public async Task AddActivity(ActivityType activityType, int? groupId = null, int? expenseId = null, int? paymentId = null, int? performedOnId = null, string additionalDetails = null, string groupName = null, string amount = null)
+    public async Task AddActivity(ActivityType activityType, List<int> userIds, int? groupId = null, int? expenseId = null, int? paymentId = null, int? performedOnId = null, string additionalDetails = null, string groupName = null, string amount = null)
     {
         int currentUserId = _userService.LoggedInUserId();
 
@@ -34,6 +34,7 @@ public class ActivityService : IActivityService
             AdditionalDetails = additionalDetails,
             GroupName = groupName,
             Amount = amount,
+            UserIds = string.Join(",", userIds),
             CreatedById = currentUserId,
             UpdatedAt = DateTime.Now,
             UpdatedById = currentUserId
@@ -56,9 +57,9 @@ public class ActivityService : IActivityService
                             && (groupId > 0
                                 ? a.GroupId == groupId
                                 : (friendUserId == null
-                                    ? a.PerformedById == currentUserId || a.PerformedOnId == currentUserId
-                                    : ((a.PerformedById == currentUserId && a.PerformedOnId == friendUserId) || (a.PerformedById == friendUserId && a.PerformedOnId == currentUserId))))
-                            // && ((a.ActivityType == ActivityType.GroupExpenseDeleted || a.ActivityType == ActivityType.NonGroupExpenseDeleted) ? a.PerformedOnId == currentUserId : true)
+                                    ? a.PerformedById == currentUserId || a.PerformedOnId == currentUserId || a.UserIds.Contains(currentUserId.ToString())
+                                    : ((a.PerformedById == currentUserId && (a.PerformedOnId == friendUserId || a.UserIds.Contains(friendUserId.ToString())))
+                                        || (a.PerformedById == friendUserId && (a.PerformedOnId == currentUserId || a.UserIds.Contains(currentUserId.ToString()))))))
                             && a.CreatedAt >= filter.FromDate
                             && a.CreatedAt < newToDate
                             && (string.IsNullOrEmpty(searchString)

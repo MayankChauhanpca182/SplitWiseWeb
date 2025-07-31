@@ -155,17 +155,20 @@ public class SettlementService : ISettlementService
             User paidToUser = await _userService.GetById(payment.PaidToId);
             await _emailService.PaymentRecorded($"{currentUser.FirstName} {currentUser.LastName}", $"{paidToUser.FirstName} {paidToUser.LastName}", settlement.Amount.ToString("N2"), paidToUser.EmailAddress);
 
+            // Users involved in activity
+            List<int> userIds = new List<int>() { settlement.PaidById, settlement.PaidToId};
+
             // Add activity
             if (settlement.GroupId > 0)
             {
                 Group group = await _groupRepository.Get(
                     predicate: g => g.DeletedAt == null && g.Id == settlement.GroupId
                 );
-                await _activityService.AddActivity(ActivityType.GroupPaymenent, groupId: settlement.GroupId, performedOnId: settlement.PaidToId, paymentId: payment.Id, groupName: group.Name);
+                await _activityService.AddActivity(ActivityType.GroupPaymenent, userIds, groupId: settlement.GroupId, performedOnId: settlement.PaidToId, paymentId: payment.Id, groupName: group.Name);
             }
             else
             {
-                await _activityService.AddActivity(ActivityType.NonGroupPaymenent, performedOnId: settlement.PaidToId, paymentId: payment.Id);
+                await _activityService.AddActivity(ActivityType.NonGroupPaymenent, userIds, performedOnId: settlement.PaidToId, paymentId: payment.Id);
             }
 
             // Update ExpenseShares

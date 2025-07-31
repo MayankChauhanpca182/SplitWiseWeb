@@ -158,7 +158,13 @@ public class GroupService : IGroupService
             if (newGroupVm.Id > 0)
             {
                 // Fetch group and update it
-                Group exisitngGroup = await _groupRepository.Get(g => g.Id == newGroupVm.Id && g.DeletedAt == null);
+                Group exisitngGroup = await _groupRepository.Get(
+                    predicate: g => g.Id == newGroupVm.Id && g.DeletedAt == null,
+                    includes: new List<Expression<Func<Group, object>>>
+                    {
+                        g => g.GroupMembers
+                    }
+                    );
                 if (exisitngGroup == null)
                 {
                     response.Success = false;
@@ -179,8 +185,11 @@ public class GroupService : IGroupService
                     exisitngGroup.UpdatedById = currentUser.Id;
                     await _groupRepository.Update(exisitngGroup);
 
+                    // Users involved in activity
+                    List<int> userIds = exisitngGroup.GroupMembers.Where(gm => gm.DeletedAt == null).Select(gm => gm.UserId).ToList();
+
                     // Add group activity
-                    await _activityService.AddActivity(ActivityType.GroupUpdated, groupId: exisitngGroup.Id, groupName: exisitngGroup.Name);
+                    await _activityService.AddActivity(ActivityType.GroupUpdated, userIds, groupId: exisitngGroup.Id, groupName: exisitngGroup.Name);
                 }
             }
             else
@@ -202,8 +211,11 @@ public class GroupService : IGroupService
                 }
                 await _groupRepository.Add(newGroup);
 
+                // Users involved in activity
+                List<int> userIds = new List<int>() { currentUser.Id };
+
                 // Add group activity
-                await _activityService.AddActivity(ActivityType.GroupCreated, groupId: newGroup.Id, groupName: newGroup.Name);
+                await _activityService.AddActivity(ActivityType.GroupCreated, userIds, groupId: newGroup.Id, groupName: newGroup.Name);
 
                 await AddMember(newGroup.Id, currentUser.Id);
             }
@@ -300,7 +312,13 @@ public class GroupService : IGroupService
             ResponseVM response = new ResponseVM();
             int currentUserId = _userService.LoggedInUserId();
 
-            Group group = await _groupRepository.Get(g => g.Id == groupId && g.DeletedAt == null);
+            Group group = await _groupRepository.Get(
+                predicate: g => g.Id == groupId && g.DeletedAt == null,
+                includes: new List<Expression<Func<Group, object>>>
+                {
+                    g => g.GroupMembers
+                }
+                );
             if (group == null)
             {
                 response.Success = false;
@@ -323,8 +341,11 @@ public class GroupService : IGroupService
                     response.Success = true;
                     response.Message = NotificationMessages.Deleted.Replace("{0}", "Group");
 
+                    // Users involved in activity
+                    List<int> userIds = group.GroupMembers.Where(gm => gm.DeletedAt == null).Select(gm => gm.UserId).ToList();
+
                     // Add group activity
-                    await _activityService.AddActivity(ActivityType.GroupDeleted, groupId: group.Id, groupName: group.Name);
+                    await _activityService.AddActivity(ActivityType.GroupDeleted, userIds, groupId: group.Id, groupName: group.Name);
                 }
             }
 
@@ -415,8 +436,11 @@ public class GroupService : IGroupService
             User currentUser = await _userService.LoggedInUser();
             await AddMember(groupId, userId);
 
+            // Users involved in activity
+            List<int> userIds = new List<int>() { currentUser.Id, userId };
+
             // Add group activity
-            await _activityService.AddActivity(ActivityType.MemberAdded, groupId: group.Id, performedOnId: userId, groupName: group.Name);
+            await _activityService.AddActivity(ActivityType.MemberAdded, userIds, groupId: group.Id, performedOnId: userId, groupName: group.Name);
 
             // Send email
             await _emailService.AddedToGroupEmail(user.FirstName, $"{currentUser.FirstName} {currentUser.LastName}", group.Name, user.EmailAddress);
@@ -523,6 +547,9 @@ public class GroupService : IGroupService
                 response.Success = true;
                 response.Message = NotificationMessages.MemberRemovedFromGroup.Replace("{0}", $"{user.FirstName} {user.LastName}").Replace("{1}", group.Name);
 
+                // Users involved in activity
+                List<int> userIds = user.Id == currentUser.Id ?  new List<int>() { currentUser.Id } : new List<int>() { currentUser.Id, user.Id };
+
                 if (user != null)
                 {
                     if (user.Id == currentUser.Id)
@@ -530,7 +557,7 @@ public class GroupService : IGroupService
                         response.Message = NotificationMessages.LeaveGroup.Replace("{0}", group.Name);
 
                         // Add group activity
-                        await _activityService.AddActivity(ActivityType.LeaveGroup, groupId: group.Id, groupName: group.Name);
+                        await _activityService.AddActivity(ActivityType.LeaveGroup, userIds, groupId: group.Id, groupName: group.Name);
                     }
                     else
                     {
@@ -538,7 +565,7 @@ public class GroupService : IGroupService
                         await _emailService.RemovedFromGroupEmail(user.FirstName, $"{currentUser.FirstName} {currentUser.LastName}", group.Name, user.EmailAddress);
 
                         // Add group activity
-                        await _activityService.AddActivity(ActivityType.MemberRemoved, groupId: group.Id, performedOnId: groupMember.UserId, groupName: group.Name);
+                        await _activityService.AddActivity(ActivityType.MemberRemoved, userIds, groupId: group.Id, performedOnId: groupMember.UserId, groupName: group.Name);
                     }
                 }
 
