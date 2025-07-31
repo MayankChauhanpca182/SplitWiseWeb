@@ -8,9 +8,9 @@
 <h3
     class="d-flex flex-wrap justify-content-between align-items-center gap-3 bg-white mb-3 p-3 text-dark-emphasis shadow">
     <div class="d-flex align-items-center gap-3" id="friend-name">
-        <img src="@(Model.ProfileImagePath ?? "~/images/Default_pfp.png")" alt="" class="img-70px rounded-circle border border-dark-subtle object-fit-cover">
+        <img src="~@(Model.ProfileImagePath ?? "/images/Default_pfp.png")" alt="" class="img-70px rounded-circle border border-dark-subtle object-fit-cover" id="friendImage">
         <div class="d-flex flex-column">
-            <span>
+            <span id="friendName">
                 @Model.Name
             </span>
             <span class="fs-5 fw-normal @(Model.Expense < 0 ? "text-danger" : "text-success")" id="friendExpense">
@@ -18,6 +18,7 @@
                     : $"You owe ₹{((-1) * Model.Expense).ToString("N2")}"))
             </span>
         </div>
+        <button class="btn btn-primary" onclick="fetchfriendDetails()"></button>
     </div>
 
     <div class="d-flex align-items-center gap-2">
@@ -363,7 +364,8 @@
                             toastr.error(response.message);
                         }
                         else {
-                            console.log(response);
+                            $("#friendImage").prop("src", `~${response.profileImagePath ?? "/images/Default_pfp.png"}`);
+                            $("#friendName").text(response.name);
                             $("#friendExpense").removeClass("text-success").removeClass("text-danger");
                             if(response.expense < 0){
                                 $("#friendExpense").addClass("text-danger");

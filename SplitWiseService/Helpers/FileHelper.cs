@@ -27,18 +27,18 @@ public static class FileHelper
         }
 
         // Return relative path to be stored in DB or shown in frontend
-        return $"~/uploads/{fileName}";
+        return $"/uploads/{fileName}";
     }
 
     public static void DeleteFile(string filePath)
     {
-        if (string.IsNullOrEmpty(filePath) || filePath.StartsWith("~/defaultimages/", StringComparison.OrdinalIgnoreCase)
-        || filePath.StartsWith("~/default", StringComparison.OrdinalIgnoreCase))
+        if (string.IsNullOrEmpty(filePath) || filePath.StartsWith("/defaultimages/", StringComparison.OrdinalIgnoreCase)
+        || filePath.StartsWith("/default", StringComparison.OrdinalIgnoreCase))
         {
             return;
         }
 
-        string fullPath = Path.Combine(Directory.GetCurrentDirectory(),"wwwroot", filePath.Replace("~/", string.Empty));
+        string fullPath = Path.Combine(Directory.GetCurrentDirectory(),"wwwroot", filePath.TrimStart('/'));
 
         if (File.Exists(fullPath))
         {

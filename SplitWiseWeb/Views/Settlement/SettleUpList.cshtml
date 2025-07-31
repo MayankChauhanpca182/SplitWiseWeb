@@ -15,7 +15,7 @@ else
             <div
                 class="settleListItem d-flex justify-content-between align-items-center gap-2 p-2 bg-white border border-secondary-subtle">
                 <div class="d-flex align-items-center gap-2">
-                    <img src=@(Model.CurrentUser.ProfileImagePath ?? "~/images/Default_pfp.png") alt=""
+                    <img src="~@(Model.CurrentUser.ProfileImagePath ?? "/images/Default_pfp.png")" alt=""
                         class="rounded-circle border border-dark-subtle object-fit-cover" width="40px" height="40px">
                     <div class="d-flex flex-column fw-semibold">
                         <span>Settle all expenses</span>
@@ -34,7 +34,7 @@ else
             <div
                 class="settleListItem d-flex justify-content-between align-items-center gap-2 p-2 bg-white border border-secondary-subtle">
                 <div class="d-flex align-items-center gap-2">
-                    <img src=@(Model.Friend.ProfileImagePath ?? "~/images/Default_pfp.png") alt=""
+                    <img src="~@(Model.Friend.ProfileImagePath ?? "/images/Default_pfp.png")" alt=""
                         class="rounded-circle border border-dark-subtle object-fit-cover" width="40px" height="40px">
                     <div class="d-flex flex-column fw-semibold">
                         <span>NonGroup expenses</span>
@@ -51,7 +51,7 @@ else
             <div
                 class="settleListItem d-flex justify-content-between align-items-center gap-2 p-2 bg-white border border-secondary-subtle">
                 <div class="d-flex align-items-center gap-2">
-                    <img src=@(group.ImagePath ?? "~/images/default_group_img.png") alt=""
+                    <img src="~@(group.ImagePath ?? "/images/default_group_img.png")" alt=""
                         class="rounded-circle border border-dark-subtle object-fit-cover" width="40px" height="40px">
                     <div class="d-flex flex-column fw-semibold">
                         <span>@group.Name</span>

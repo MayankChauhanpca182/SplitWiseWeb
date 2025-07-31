@@ -22,7 +22,7 @@ public static class ImageHelper
         Random random = new Random();
         string selectedFile = imageFiles[random.Next(imageFiles.Length)];
 
-        return $"~/defaultimages/{Path.GetFileName(selectedFile)}";
+        return $"/defaultimages/{Path.GetFileName(selectedFile)}";
     }
 
     public static string UploadImage(IFormFile imageFile, string existingImagePath = null)
@@ -50,18 +50,18 @@ public static class ImageHelper
             image.Save(filePath);
         }
 
-        return $"~/uploads/{fileName}";
+        return $"/uploads/{fileName}";
     }
 
     public static void DeleteImage(string imagePath)
     {
-        if (string.IsNullOrEmpty(imagePath) || imagePath.StartsWith("~/defaultimages/", StringComparison.OrdinalIgnoreCase)
-        || imagePath.StartsWith("~/default", StringComparison.OrdinalIgnoreCase))
+        if (string.IsNullOrEmpty(imagePath) || imagePath.StartsWith("/defaultimages/", StringComparison.OrdinalIgnoreCase)
+        || imagePath.StartsWith("/default", StringComparison.OrdinalIgnoreCase))
         {
             return;
         }
 
-        string fullPath = Path.Combine(Directory.GetCurrentDirectory(),"wwwroot", imagePath.Replace("~/", string.Empty));
+        string fullPath = Path.Combine(Directory.GetCurrentDirectory(),"wwwroot", imagePath.TrimStart('/'));
 
         if (File.Exists(fullPath))
         {
