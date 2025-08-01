@@ -461,7 +461,7 @@
             });
 
             // Add pill
-            let newPill = `<span class="expenseMemberPill" id=${"expenseMemberPill-" + user.userId}><img src="${user.profileImagePath ?? "~/images/Default_pfp.png"}"><span>${user.name}</span><button type="button" class="btn-close removeMember" aria-label="Close"  onclick="removePill(${user.userId})"></button></span>`;
+            let newPill = `<span class="expenseMemberPill" id=${"expenseMemberPill-" + user.userId}><img src="${baseUrl}${user.profileImagePath?.replace("~/", "") ?? "images/Default_pfp.png"}"><span>${user.name}</span><button type="button" class="btn-close removeMember" aria-label="Close"  onclick="removePill(${user.userId})"></button></span>`;
             $(".memberPillDiv").append(newPill);
 
             // Add into paid by
@@ -469,7 +469,7 @@
             $("#paidBySelect").append(newOption);
 
             // Add into expense share div
-            let div = `<div class="expenseShare" id="expenseShare-${user.userId}"><span><img src="${user.profileImagePath ?? "~/images/Default_pfp.png"}">${user.name}</span><span><input type="text" class="amount form-control" id="amount-${user.userId}" value="0"><span class="expenseShareTypeSymbole">${currencySymbole}</span></span></div>`;
+            let div = `<div class="expenseShare" id="expenseShare-${user.userId}"><span><img src="${baseUrl}${user.profileImagePath?.replace("~/", "") ?? "images/Default_pfp.png"}">${user.name}</span><span><input type="text" class="amount form-control" id="amount-${user.userId}" value="0"><span class="expenseShareTypeSymbole">${currencySymbole}</span></span></div>`;
             $("#expenseShareDiv").append(div);
         }
 
@@ -739,7 +739,7 @@
 
         function removeAttachmentConfirm(expenseId) {
             $.ajax({
-                url: "/Expense/RemoveAttachment",
+                url: baseUrl + "Expense/RemoveAttachment",
                 type: "POST",
                 data: { expenseId },
                 success: function (response) {
@@ -769,7 +769,7 @@
         // Change group
         function changeGroup(group) {
             $.ajax({
-                url: "/Group/GroupMembersJson",
+                url: baseUrl + "Group/GroupMembersJson",
                 type: "GET",
                 data: { groupId: group.id },
                 success: function (response) {
@@ -790,7 +790,7 @@
             $("#paidBySelect").empty();
             $("#expenseShareDiv").empty();
 
-            let pill = `<span class="expenseMemberPill" id="groupPill-${group.id}"><img src="${group.imagePath ?? "~/images/default_group_img.png"}"><span>${group.name}</span></span>`;
+            let pill = `<span class="expenseMemberPill" id="groupPill-${group.id}"><img src="${baseUrl}${group.imagePath?.replace("~/", "") ?? "images/default_group_img.png"}"><span>${group.name}</span></span>`;
             $(".groupPillDiv").html(pill);
 
             // Set group id in hidden field
@@ -804,7 +804,7 @@
                                         <input class="userCkb form-check-input m-0" type="checkbox" id="userCkb-${member.id}"
                                             data-user='${JSON.stringify(member)}'>
                                         <label for="userCkb-${member.id}" class="d-flex align-items-center gap-2">
-                                            <img src="${member.profileImagePath ?? "~/images/Default_pfp.png"}" alt=""
+                                            <img src="${baseUrl}${member.profileImagePath?.replace("~/", "") ?? "images/Default_pfp.png"}" alt=""
                                                 class="img-25px rounded-circle border border-dark-subtle object-fit-cover">
                                             <span class="name">${member.name}</span>
                                         </label>

@@ -50,7 +50,7 @@
         };
 
         $.ajax({
-            url: "/Friend/FriengListForGroup",
+            url: baseUrl + "Friend/FriengListForGroup",
             type: "POST",
             data: { filter, groupId: @Model },
             success: function (response) {
@@ -105,7 +105,7 @@
         }
         else {
             $.ajax({
-                url: "/Group/AddSelectedUsers",
+                url: baseUrl + "Group/AddSelectedUsers",
                 type: "POST",
                 data: { groupId: @Model, selectedUserIds },
                 success: function (response) {
@@ -132,7 +132,7 @@
 
     function addToGroup(userId) {
         $.ajax({
-            url: "/Group/AddGroupMembers",
+            url: baseUrl + "Group/AddGroupMembers",
             type: "POST",
             data: { groupId: @Model, userId },
             success: function (response) {

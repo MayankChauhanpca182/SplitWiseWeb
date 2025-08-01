@@ -44,7 +44,7 @@
             };
 
             $.ajax({
-                url: "/Friend/FriendRequestList",
+                url: baseUrl + "Friend/FriendRequestList",
                 type: "POST",
                 data: { filter },
                 success: function (response) {
@@ -76,7 +76,7 @@
         // Accept request
         function acceptRequest(id) {
             $.ajax({
-                url: "/Friend/AcceptRequest",
+                url: baseUrl + "Friend/AcceptRequest",
                 type: "POST",
                 data: { id },
                 success: function (response) {
@@ -99,7 +99,7 @@
         // Reject request
         function rejectRequestConfirm(id) {
             $.ajax({
-                url: "/Friend/RejectRequest",
+                url: baseUrl + "Friend/RejectRequest",
                 type: "POST",
                 data: { id },
                 success: function (response) {

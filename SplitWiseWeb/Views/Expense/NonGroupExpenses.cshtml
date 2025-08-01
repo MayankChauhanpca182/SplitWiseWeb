@@ -52,7 +52,7 @@
             };
 
             $.ajax({
-                url: "/Expense/NonGroupExpenseList",
+                url: baseUrl + "Expense/NonGroupExpenseList",
                 type: "POST",
                 data: { filter },
                 success: function (response) {
@@ -103,7 +103,7 @@
 
         function deleteNonGroupExpenseConfirm(expenseId) {
             $.ajax({
-                url: "/Expense/DeleteExpense",
+                url: baseUrl + "Expense/DeleteExpense",
                 type: "POST",
                 data: { expenseId },
                 success: function (response) {

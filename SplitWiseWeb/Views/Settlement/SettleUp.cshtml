@@ -24,7 +24,7 @@
         function getSettleUpList(friendUserId) {
             $("#settlementListOuter").empty();
             $.ajax({
-                url: "/Settlement/SettleUpList",
+                url: baseUrl + "Settlement/SettleUpList",
                 type: "GET",
                 data: { friendUserId },
                 success: function (response) {
@@ -47,7 +47,7 @@
         function fetchSettlementModal(amount, groupId = 0, friendUserId = 0, settleAll = false) {
             $("#regularModalContent").empty();
             $.ajax({
-                url: "/Settlement/SettlementModal",
+                url: baseUrl + "Settlement/SettlementModal",
                 type: "POST",
                 data: { amount, groupId, friendUserId, settleAll },
                 success: function (response) {

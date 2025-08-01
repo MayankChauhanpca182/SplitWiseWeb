@@ -109,7 +109,7 @@
             let email = $("#inputEmail").val();
             $("#regularModalContent").empty();
             $.ajax({
-                url: "/User/ResendLinkModal",
+                url: baseUrl + "User/ResendLinkModal",
                 type: "POST",
                 data: { email },
                 success: function (response) {

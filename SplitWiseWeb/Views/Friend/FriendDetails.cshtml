@@ -119,7 +119,7 @@
             }
 
             $.ajax({
-                url: "/Activity/ActivityList",
+                url: baseUrl + "Activity/ActivityList",
                 type: "POST",
                 data: { filter, friendUserId: '@Model.UserId' },
                 success: function (response) {
@@ -165,7 +165,7 @@
             };
 
             $.ajax({
-                url: "/Payment/FriendPaymentList",
+                url: baseUrl + "Payment/FriendPaymentList",
                 type: "POST",
                 data: { filter, friendUserId: '@Model.UserId' },
                 success: function (response) {
@@ -222,7 +222,7 @@
             };
 
             $.ajax({
-                url: "/Expense/FriendExpenseList",
+                url: baseUrl + "Expense/FriendExpenseList",
                 type: "POST",
                 data: { filter, friendUserId: '@Model.UserId' },
                 success: function (response) {
@@ -296,7 +296,7 @@
         function fetchFriendAnalytics(friendUserId){
             $("#friend-analytics").empty();
             $.ajax({
-                url: "/Friend/FriendAnalytics",
+                url: baseUrl + "Friend/FriendAnalytics",
                 type: "GET",
                 data: { friendUserId },
                 success: function (response) {
@@ -328,7 +328,7 @@
 
         function deleteFriendExpenseConfirm(expenseId) {
             $.ajax({
-                url: "/Expense/DeleteExpense",
+                url: baseUrl + "Expense/DeleteExpense",
                 type: "POST",
                 data: { expenseId },
                 success: function (response) {
@@ -355,7 +355,7 @@
     <script>
         function fetchfriendDetails() {
             $.ajax({
-                url: "/Friend/FriendDetailJson",
+                url: baseUrl + "Friend/FriendDetailJson",
                 type: "GET",
                 data: { friendUserId: '@Model.UserId' },
                 success: function (response) {
@@ -364,7 +364,7 @@
                             toastr.error(response.message);
                         }
                         else {
-                            $("#friendImage").prop("src", `${response.profileImagePath ?? "~/images/Default_pfp.png"}`);
+                            $("#friendImage").prop("src", baseUrl + `${response.profileImagePath.replace("~/", "") ?? "images/Default_pfp.png"}`);
                             $("#friendName").text(response.name);
                             $("#friendExpense").removeClass("text-success").removeClass("text-danger");
                             if(response.expense < 0){

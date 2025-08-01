@@ -85,7 +85,7 @@
         // Delete group
         function deleteGroupConfirm(groupId) {
             $.ajax({
-                url: "/Group/DeleteGroup",
+                url: baseUrl + "Group/DeleteGroup",
                 type: "POST",
                 data: { groupId },
                 success: function (response) {

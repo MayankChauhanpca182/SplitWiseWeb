@@ -2,7 +2,7 @@
 function fetchAddGroupModal(groupId = 0) {
     $("#regularModalContent").empty();
     $.ajax({
-        url: "/Group/AddGroupModal",
+        url: baseUrl + "Group/AddGroupModal",
         type: "GET",
         data: { groupId },
         success: function (response) {

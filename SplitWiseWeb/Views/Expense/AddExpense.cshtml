@@ -422,7 +422,7 @@
             });
 
             // Add pill
-            let newPill = `<span class="expenseMemberPill" id=${"expenseMemberPill-" + user.userId}><img src="${user.profileImagePath ?? "~/images/Default_pfp.png"}"><span>${user.name}</span><button type="button" class="btn-close removeMember" aria-label="Close"  onclick="removePill(${user.userId})"></button></span>`;
+            let newPill = `<span class="expenseMemberPill" id=${"expenseMemberPill-" + user.userId}><img src="${baseUrl}${user.profileImagePath?.replace("~/", "") ?? "images/Default_pfp.png"}"><span>${user.name}</span><button type="button" class="btn-close removeMember" aria-label="Close"  onclick="removePill(${user.userId})"></button></span>`;
             $(".memberPillDiv").append(newPill);
 
             // Add into paid by
@@ -430,7 +430,7 @@
             $("#paidBySelect").append(newOption);
 
             // Add into expense share div
-            let div = `<div class="expenseShare" id="expenseShare-${user.userId}"><span><img src="${user.profileImagePath ?? "~/images/Default_pfp.png"}">${user.name}</span><span><input type="text" class="amount form-control" id="amount-${user.userId}" value="0"><span class="expenseShareTypeSymbole">${currencySymbole}</span></span></div>`;
+            let div = `<div class="expenseShare" id="expenseShare-${user.userId}"><span><img src="${baseUrl}${user.profileImagePath?.replace("~/", "") ?? "images/Default_pfp.png"}">${user.name}</span><span><input type="text" class="amount form-control" id="amount-${user.userId}" value="0"><span class="expenseShareTypeSymbole">${currencySymbole}</span></span></div>`;
             $("#expenseShareDiv").append(div);
         }
 
@@ -701,7 +701,7 @@
 
         function removeAttachmentConfirm(expenseId) {
             $.ajax({
-                url: "/Expense/RemoveAttachment",
+                url: baseUrl + "Expense/RemoveAttachment",
                 type: "POST",
                 data: { expenseId },
                 success: function (response) {

@@ -7,7 +7,7 @@ let searchTimeout;
 function fetchAddFriendModal() {
     $("#regularModalContent").empty();
     $.ajax({
-        url: "/Friend/AddFriendModal",
+        url: baseUrl + "Friend/AddFriendModal",
         type: "GET",
         success: function (response) {
             if (!response.statusCode) {
@@ -77,7 +77,7 @@ $(document).on("submit", "#sendReferralForm", function (e) {
 // Export to excel
 function exportExcelAjax(filter, url, fileName, groupId = null, friendUserId = null) {
     $.ajax({
-        url: url,
+        url: baseUrl + url,
         type: "POST",
         data: { filter, groupId, friendUserId },
         xhrFields: {

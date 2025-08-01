@@ -49,7 +49,7 @@
             };
 
             $.ajax({
-                url: "/Settlement/SettlementList",
+                url: baseUrl + "Settlement/SettlementList",
                 type: "POST",
                 data: { filter },
                 success: function (response) {

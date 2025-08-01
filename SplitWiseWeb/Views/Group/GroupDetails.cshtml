@@ -107,7 +107,7 @@
     <script>
         function fetchGroupName() {
             $.ajax({
-                url: "/Group/GroupDetailJson",
+                url: baseUrl + "Group/GroupDetailJson",
                 type: "GET",
                 data: { groupId: '@Model.Id' },
                 success: function (response) {
@@ -117,7 +117,7 @@
                         }
                         else {
                             $("#groupExpense").removeClass("text-success").removeClass("text-danger");
-                            $("#groupImage").prop("src", `${response.imagePath ?? "~/images/default_group_img.png"}`);
+                            $("#groupImage").prop("src", baseUrl + `${response.imagePath.replace("~/", "") ?? "images/default_group_img.png"}`);
                             $("#groupName").text(response.name);
                             $("#groupNoticeBoard").text(response.noticeBoard);
                             
@@ -149,7 +149,7 @@
         function fetchGroupMembers() {
             $("#group-members").empty();
             $.ajax({
-                url: "/Group/GroupMembers",
+                url: baseUrl + "Group/GroupMembers",
                 type: "GET",
                 data: { groupId: '@Model.Id' },
                 success: function (response) {
@@ -172,7 +172,7 @@
         function addgroupMemberModal(groupId) {
             $("#largeModalContent").empty();
             $.ajax({
-                url: "/Group/AddgroupMemberModal",
+                url: baseUrl + "Group/AddgroupMemberModal",
                 type: "GET",
                 data: { groupId },
                 success: function (response) {
@@ -192,7 +192,7 @@
         // Remove group member
         function removeGroupMemberConfirm(groupMemberId) {
             $.ajax({
-                url: "/Group/RemoveGroupMembers",
+                url: baseUrl + "Group/RemoveGroupMembers",
                 type: "POST",
                 data: { groupMemberId },
                 success: function (response) {
@@ -216,7 +216,7 @@
 
         function leaveGroupConfirm(groupMemberId) {
             $.ajax({
-                url: "/Group/RemoveGroupMembers",
+                url: baseUrl + "Group/RemoveGroupMembers",
                 type: "POST",
                 data: { groupMemberId },
                 success: function (response) {
@@ -291,7 +291,7 @@
             };
 
             $.ajax({
-                url: "/Expense/ExpensesByGroup",
+                url: baseUrl + "Expense/ExpensesByGroup",
                 type: "POST",
                 data: { filter, groupId: '@Model.Id' },
                 success: function (response) {
@@ -344,7 +344,7 @@
             }
 
             $.ajax({
-                url: "/Activity/ActivityList",
+                url: baseUrl + "Activity/ActivityList",
                 type: "POST",
                 data: { filter, groupId: '@Model.Id' },
                 success: function (response) {
@@ -370,7 +370,7 @@
         function fetchGroupSettleUps(groupId) {
             $("#group-settleup").empty();
             $.ajax({
-                url: "/Group/GroupSettleUps",
+                url: baseUrl + "Group/GroupSettleUps",
                 type: "GET",
                 data: { groupId },
                 success: function (response) {
@@ -393,7 +393,7 @@
         function fetchSettlementModal(amount, groupId = 0, friendUserId = 0, settleAll = false) {
             $("#regularModalContent").empty();
             $.ajax({
-                url: "/Settlement/SettlementModal",
+                url: baseUrl + "Settlement/SettlementModal",
                 type: "POST",
                 data: { amount, groupId, friendUserId, settleAll },
                 success: function (response) {
@@ -492,7 +492,7 @@
         function fetchGroupAnalytics(groupId){
             $("#group-analytics").empty();
             $.ajax({
-                url: "/Group/GroupAnalytics",
+                url: baseUrl + "Group/GroupAnalytics",
                 type: "GET",
                 data: { groupId },
                 success: function (response) {
@@ -524,7 +524,7 @@
 
         function deleteGroupExpenseConfirm(expenseId) {
             $.ajax({
-                url: "/Expense/DeleteExpense",
+                url: baseUrl + "Expense/DeleteExpense",
                 type: "POST",
                 data: { expenseId },
                 success: function (response) {
