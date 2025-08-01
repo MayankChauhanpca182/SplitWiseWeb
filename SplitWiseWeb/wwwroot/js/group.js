@@ -38,10 +38,10 @@ $(document).on("submit", "#groupForm", function (e) {
                     let path = window.location.pathname;
                     switch (true)
                     {
-                        case path === "/groups":
+                        case path === baseUrl + "groups":
                             getGroupList(1);
                             break;
-                        case /^\/group-details\/[^/]+$/.test(path):
+                        case /group-details/.test(path):
                             fetchGroupName();
                             searchActivities();
                             break;

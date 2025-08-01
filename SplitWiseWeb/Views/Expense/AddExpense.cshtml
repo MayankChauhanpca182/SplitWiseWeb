@@ -39,15 +39,15 @@
                 </button>
                 <ul class="dropdownList dropdown-menu w-100 px-2">
                     <div class="d-flex align-items-center gap-3">
-                        <input type="text"
-                            class="dropdownSearch searchBox form-control border-secondary-subtle rounded-0 my-1"
-                            placeholder="Search">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" value="" id="userCkbMaster">
                             <label class="form-check-label" for="userCkbMaster">
-                                All
+                                Select all
                             </label>
                         </div>
+                        <input type="text"
+                            class="dropdownSearch searchBox form-control border-secondary-subtle rounded-0 my-1"
+                            placeholder="Search">
                     </div>
                     <div id="friendsDropdown">
                         @foreach (FriendVM user in Model.Friends)
@@ -591,7 +591,7 @@
                 success: function (response) {
                     if (!response.statusCode) {
                         if (response.success) {
-                            window.location = baseUrl + "/non-group-expenses";
+                            window.location = baseUrl + "non-group-expenses";
                         } else {
                             toastr.error(response.message);
                         }
@@ -677,7 +677,7 @@
                 success: function (response) {
                     if (!response.statusCode) {
                         if (response.success) {
-                            window.location = baseUrl + "/non-group-expenses";
+                            window.location = baseUrl + "non-group-expenses";
                         } else {
                             toastr.error(response.message);
                         }

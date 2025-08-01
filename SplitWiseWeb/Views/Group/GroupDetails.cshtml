@@ -171,13 +171,13 @@
         // Fetch add new member modal
         function addgroupMemberModal(groupId) {
             $("#largeModalContent").empty();
+            selectedUserIds = [];
             $.ajax({
                 url: baseUrl + "Group/AddgroupMemberModal",
                 type: "GET",
                 data: { groupId },
                 success: function (response) {
                     if (!response.statusCode) {
-                        selectedUserIds = [];
                         $("#largeModalContent").html(response);
                         $("#largeModal").modal("show");
                     }
@@ -228,7 +228,7 @@
                         else {
                             toastr.success(response.message);
                             // Redirect to group list
-                            window.location = baseUrl + "/groups";
+                            window.location = baseUrl + "groups";
                         }
                     }
                 },
@@ -259,6 +259,58 @@
             $("#confirmationModal").modal("show");
         }
 
+    </script>
+
+    @* Add new member *@
+    <script>
+        $(document).on("change", ".userCkb", function () {
+            let userId = $(this).data("userid");
+
+            if (selectedUserIds.includes(userId)) {
+                selectedUserIds = selectedUserIds.filter(n => n !== userId);
+            }
+            else {
+                selectedUserIds.push(userId);
+            }
+        });
+
+        function checkSelectedUsers() {
+            $(".userCkb").each(function () {
+                let userId = $(this).data("userid");
+                $(this).prop("checked", selectedUserIds.includes(userId));
+            });
+        }
+
+        function addSelectedMembers() {
+            if (!selectedUserIds.length) {
+                toastr.error("Select atleast one friend.")
+            }
+            else {
+                $.ajax({
+                    url: baseUrl + "Group/AddSelectedUsers",
+                    type: "POST",
+                    data: { groupId: @Model.Id, selectedUserIds },
+                    success: function (response) {
+                        if (!response.statusCode) {
+                            if (response.success == false) {
+                                toastr.error(response.message);
+                            }
+                            else {
+                                toastr.success(response.message);
+                                getFriendList(1);
+                                fetchGroupMembers();
+                                searchActivities();
+                                selectedUserIds = [];
+                                $("#largeModal").modal("hide");
+                            }
+                        }
+                    },
+                    error: function () {
+                        toastr.error(SERVER_ERR);
+                    }
+                });
+            }
+        }
     </script>
 
     @* Group expenses *@
