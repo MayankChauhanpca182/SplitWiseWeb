@@ -26,7 +26,7 @@
                     @if (Model.GroupId > 0)
                     {
                         <span class="expenseMemberPill" id="groupPill-@Model.GroupDetails.Id">
-                            <img src="@(Model.GroupDetails.ImagePath ?? "~/images/default_group_img.png")">
+                            <img src="@Url.Content(Model.GroupDetails.ImagePath ?? "/images/default_group_img.png")">
                             <span>@Model.GroupDetails.Name</span>
                         </span>
                     }

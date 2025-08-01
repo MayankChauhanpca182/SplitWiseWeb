@@ -28,6 +28,16 @@ $(document).on("submit", "form", function (e) {
   }
 });
 
+// Back button click
+$(document).on("click", ".back-btn", function () {
+  if (document.referrer) {
+    window.history.back();
+  }
+  else {
+    window.location.href = "/";
+  }
+});
+
 // Loading Spinner
 $("#loader").show();
 
@@ -212,12 +222,7 @@ function checkMasterCheckbox() {
   }
 }
 
-// Back button click
-$(document).on("click", ".back-btn", function () {
-  if (document.referrer) {
-    window.history.back();
-  }
-  else {
-    window.location.href = "/";
-  }
+// Dropdown toggle by div
+$(document).on("click", ".memberPillDiv, .groupPillDiv", function(){
+  $(this).siblings(".dropdown-toggle").click();  
 });

@@ -3,14 +3,14 @@
 @if (Model.TotalAmount == 0)
 {
     <div class="d-flex flex-column align-items-center p-4 gap-3">
-        <img src="~/images/checked.png" alt="" width="100px" height="100px">
+        <img src="@Url.Content("~/images/checked.png")" alt="" width="100px" height="100px">
         <span class="text-primary fs-3 fw-semibold">You are all settled up</span>
     </div>
 }
 else
 {
     <div class="settleList d-flex flex-column gap-3 p-3">
-        @if (Model.Groups.Count() > 0 && Model.Friend.Expense != 0)
+        @if (Model.Groups.Count() > 0 || (Model.Groups.Count() > 0 && Model.Friend.Expense != 0))
         {
             <div
                 class="settleListItem d-flex justify-content-between align-items-center gap-2 p-2 bg-white border border-secondary-subtle">

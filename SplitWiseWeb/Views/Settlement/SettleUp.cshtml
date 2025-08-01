@@ -107,7 +107,7 @@
         function setSettledUpImage() {
             $("#settleUpModalTitle").html(`Recorded payment with <span class="text-purple">@Model.FirstName
                         @Model.LastName</span>`);
-            let image = `<img src="~/images/settled-up.png" class="mx-auto my-4" alt="" width="150px" height="150px">`;
+            let image = `<img src="${baseUrl}images/settled-up.png" class="mx-auto my-4" alt="" width="150px" height="150px">`;
             $("#settlementForm").replaceWith(image);
         }
     </script>
