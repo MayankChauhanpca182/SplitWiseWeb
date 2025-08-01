@@ -43,7 +43,7 @@ $(document).on("submit", "#groupForm", function (e) {
                             break;
                         case /^\/group-details\/[^/]+$/.test(path):
                             fetchGroupName();
-                            fetchActivities();
+                            searchActivities();
                             break;
                     };
                 }

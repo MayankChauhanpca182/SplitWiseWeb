@@ -1,8 +1,4 @@
 @model ActivityFilterVM
-@{
-    DateTime fromDate = Model.MinDate > Model.FirstDay ? Model.MinDate : Model.FirstDay;
-    DateTime toDate = Model.MaxDate > Model.LastDay ? Model.LastDay : Model.MaxDate;
-}
 
 <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
     <div class="d-flex flex-wrap align-items-center gap-3">
@@ -16,18 +12,16 @@
         <div class="d-flex align-items-center gap-3">
             <div class="custom-form-floating form-floating">
                 <input type="date" class="form-control border-secondary-subtle rounded-0" id="fromDate"
-                    value="@fromDate.ToString("yyyy-MM-dd")" min="@Model.MinDate.ToString("yyyy-MM-dd")"
-                    max="@Model.MaxDate.ToString("yyyy-MM-dd")">
+                    value="@Model.FirstDay.ToString("yyyy-MM-dd")">
                 <label for="fromDate">From Date</label>
             </div>
             <div class="custom-form-floating form-floating">
                 <input type="date" class="form-control border-secondary-subtle rounded-0" id="toDate"
-                    value="@toDate.ToString("yyyy-MM-dd")" min="@Model.MinDate.ToString("yyyy-MM-dd")"
-                    max="@Model.MaxDate.ToString("yyyy-MM-dd")">
+                    value="@Model.LastDay.ToString("yyyy-MM-dd")">
                 <label for="toDate">To Date</label>
             </div>
         </div>
         <button class="btn btn-primary w-125px h-50px" type="button" onclick="searchActivities()">Search</button>
     </div>
-    <button class="btn btn-primary w-125px h-50px" type="button" onclick="exportActivities()">Export</button>
+    <button class="btn btn-primary w-125px h-50px" type="button" onclick="exportActivitiesValidate()">Export</button>
 </div>

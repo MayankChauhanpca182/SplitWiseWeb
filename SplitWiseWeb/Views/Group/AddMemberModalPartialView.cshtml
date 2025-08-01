@@ -117,7 +117,7 @@
                             toastr.success(response.message);
                             getFriendList(1);
                             fetchGroupMembers();
-                            fetchActivities();
+                            searchActivities();
                             selectedUserIds = [];
                             $("#largeModal").modal("hide");
                         }
@@ -144,7 +144,7 @@
                         toastr.success(response.message);
                         getFriendList(1);
                         fetchGroupMembers();
-                        fetchActivities();
+                        searchActivities();
                     }
                 }
             },

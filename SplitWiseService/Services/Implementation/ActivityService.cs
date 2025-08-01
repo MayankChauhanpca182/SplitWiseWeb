@@ -96,37 +96,10 @@ public class ActivityService : IActivityService
 
     public async Task<ActivityFilterVM> GetActivityFilter(int? groupId = null, int? friendUserId = null)
     {
-        int currentUserId = _userService.LoggedInUserId();
         ActivityFilterVM activityFilter = new ActivityFilterVM();
         activityFilter.FirstDay = DateHelper.FirstDayOfMonth(DateTime.Now);
         activityFilter.LastDay = DateHelper.LastDayOfMonth(DateTime.Now);
 
-        // First activity
-        Activity firstActivity = await _activityRepository.FirstOrLast(
-            isFirstElement: true,
-            predicate: a => a.DeletedAt == null
-                        && (groupId != null
-                            ? a.GroupId == groupId
-                            : (friendUserId == null
-                                ? a.PerformedById == currentUserId || a.PerformedOnId == currentUserId
-                                : ((a.PerformedById == currentUserId && a.PerformedOnId == friendUserId) || (a.PerformedById == friendUserId && a.PerformedOnId == currentUserId)))),
-            orderBy: a => a.OrderBy(a => a.CreatedAt)
-        );
-
-        // Last activity
-        Activity lastActivity = await _activityRepository.FirstOrLast(
-            isFirstElement: false,
-            predicate: a => a.DeletedAt == null
-                        && (groupId != null
-                            ? a.GroupId == groupId
-                            : (friendUserId == null
-                                ? a.PerformedById == currentUserId || a.PerformedOnId == currentUserId
-                                : ((a.PerformedById == currentUserId && a.PerformedOnId == friendUserId) || (a.PerformedById == friendUserId && a.PerformedOnId == currentUserId)))),
-            orderBy: a => a.OrderBy(a => a.CreatedAt)
-        );
-
-        activityFilter.MinDate = firstActivity != null ? firstActivity.CreatedAt : DateTime.Now;
-        activityFilter.MaxDate = lastActivity != null ? lastActivity.CreatedAt : DateTime.Now;
         return activityFilter;
     }
 

@@ -24,17 +24,6 @@
                 ToDate: $("#toDate").val()
             };
 
-            if ((!filter.FromDate || !filter.ToDate) && !(filter.FromDate && filter.ToDate)) {
-                return;
-            }
-            else if (filter.FromDate && filter.ToDate) {
-                if (filter.FromDate > filter.ToDate) {
-                    toastr.error("To Date should be greater then From Date.");
-                    $("#toDate").val(filter.FromDate).trigger("blur");
-                    return;
-                }
-            }
-
             $.ajax({
                 url: baseUrl + "Activity/ActivityList",
                 type: "POST",

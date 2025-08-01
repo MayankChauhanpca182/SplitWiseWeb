@@ -38,7 +38,7 @@
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="group-activity-tab" data-bs-toggle="pill" data-bs-target="#group-activity"
                 type="button" role="tab" aria-controls="group-activity" aria-selected="false"
-                onclick="fetchActivities(), fetchGroupName()">Activities</button>
+                onclick="searchActivities(), fetchGroupName()">Activities</button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="group-settleup-tab" data-bs-toggle="pill" data-bs-target="#group-settleup"
@@ -331,17 +331,6 @@
                 FromDate: $("#fromDate").val(),
                 ToDate: $("#toDate").val()
             };
-
-            if ((!filter.FromDate || !filter.ToDate) && !(filter.FromDate && filter.ToDate)) {
-                return;
-            }
-            else if (filter.FromDate && filter.ToDate) {
-                if (filter.FromDate > filter.ToDate) {
-                    toastr.error("From Date should be greater then To Date.")
-                    $("#toDate").val("");
-                    return;
-                }
-            }
 
             $.ajax({
                 url: baseUrl + "Activity/ActivityList",
