@@ -35,7 +35,7 @@
                         <div class="form-check d-flex align-items-center gap-2">
                             <input type="checkbox" class="userCkb form-check-input" id="userCkb-@friend.UserId" data-userid="@friend.UserId">
                             <label class="form-check-label" for="userCkb-@friend.UserId">
-                                <img src="~@(friend.ProfileImagePath ?? "/images/Default_pfp.png")"
+                                <img src="@Url.Content(friend.ProfileImagePath ?? "~/images/Default_pfp.png")"
                                     class="img-40px object-fit-cover rounded-circle border border-secondary-subtle">
                                 <span class="ms-1">@friend.Name</span>
                             </label>

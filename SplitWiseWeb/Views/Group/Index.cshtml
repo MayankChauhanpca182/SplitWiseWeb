@@ -21,7 +21,7 @@
 
 @section Scripts {
 
-    <script src="/js/group.js"></script>
+    <script src="@Url.Content("~/js/group.js")"></script>
 
     @* Group list *@
     <script>
@@ -53,7 +53,7 @@
             };
 
             $.ajax({
-                url: "/Group/GroupList",
+                url: baseUrl + "Group/GroupList",
                 type: "POST",
                 data: { filter },
                 success: function (response) {

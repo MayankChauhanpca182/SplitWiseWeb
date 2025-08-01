@@ -12,7 +12,7 @@
 </div>
 
 @section Scripts {
-    <script src="/js/activity.js"></script>
+    <script src="@Url.Content("~/js/activity.js")"></script>
     <script>
         function fetchActivities() {
             clearTimeout(searchTimeout);
@@ -36,7 +36,7 @@
             }
 
             $.ajax({
-                url: "/Activity/ActivityList",
+                url: baseUrl + "Activity/ActivityList",
                 type: "POST",
                 data: { filter },
                 success: function (response) {

@@ -62,7 +62,7 @@
                         <span class="d-flex gap-1" title="@(string.Join(", ", expense.Members.Select(m => $"{m.FirstName} {m.LastName}")))">
                             @foreach(User member in expense.Members)
                             {
-                                <img src="~@(member.ProfileImagePath ?? "/images/Default_pfp.png")" alt="" class="img-30px rounded-circle border border-dark-subtle object-fit-cover">                                
+                                <img src="@Url.Content(member.ProfileImagePath ?? "~/images/Default_pfp.png")" alt="" class="img-30px rounded-circle border border-dark-subtle object-fit-cover">                                
                             }
                         </span>
                     </td>

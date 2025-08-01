@@ -8,7 +8,7 @@
 <h3
     class="d-flex flex-wrap justify-content-between align-items-center gap-3 bg-white mb-3 p-3 text-dark-emphasis shadow">
     <div class="d-flex align-items-center gap-3" id="friend-name">
-        <img src="~@(Model.ProfileImagePath ?? "/images/Default_pfp.png")" alt="" class="img-70px rounded-circle border border-dark-subtle object-fit-cover" id="friendImage">
+        <img src="@Url.Content(Model.ProfileImagePath ?? "~/images/Default_pfp.png")" alt="" class="img-70px rounded-circle border border-dark-subtle object-fit-cover" id="friendImage">
         <div class="d-flex flex-column">
             <span id="friendName">
                 @Model.Name
@@ -94,7 +94,7 @@
 
 @section Scripts{
     @* Friend activities *@
-    <script src="/js/activity.js"></script>
+    <script src="@Url.Content("~/js/activity.js")"></script>
     <script>
         // Fetch activities
         function fetchActivities() {
@@ -364,7 +364,7 @@
                             toastr.error(response.message);
                         }
                         else {
-                            $("#friendImage").prop("src", `~${response.profileImagePath ?? "/images/Default_pfp.png"}`);
+                            $("#friendImage").prop("src", `${response.profileImagePath ?? "~/images/Default_pfp.png"}`);
                             $("#friendName").text(response.name);
                             $("#friendExpense").removeClass("text-success").removeClass("text-danger");
                             if(response.expense < 0){

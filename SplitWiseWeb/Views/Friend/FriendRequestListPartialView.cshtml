@@ -32,7 +32,7 @@
             {
                 <tr>
                     <td>
-                        <img src="~@(request.ProfileImagePath ?? "/images/Default_pfp.png")" class="img-40px object-fit-cover rounded-circle">
+                        <img src="@Url.Content(request.ProfileImagePath ?? "~/images/Default_pfp.png")" class="img-40px object-fit-cover rounded-circle">
                         <span>@request.Name</span>
                     </td>
                     <td><span class="my-auto">@request.Email</span></td>

@@ -35,7 +35,7 @@
             {
                 <tr>
                     <td>
-                        <img src="~@(settlement.ProfileImagePath ?? "/images/Default_pfp.png")" class="img-40px object-fit-cover rounded-circle border border-secondary-subtle">
+                        <img src="@Url.Content(settlement.ProfileImagePath ?? "~/images/Default_pfp.png")" class="img-40px object-fit-cover rounded-circle border border-secondary-subtle">
                         <span class="ms-1">@settlement.Name</span>
                     </td>
                     <td>@settlement.EmailAddress</td>

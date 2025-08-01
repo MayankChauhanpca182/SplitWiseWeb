@@ -83,7 +83,7 @@
             };
 
             $.ajax({
-                url: "/Friend/FriendList",
+                url: baseUrl + "Friend/FriendList",
                 type: "POST",
                 data: { filter },
                 success: function (response) {
