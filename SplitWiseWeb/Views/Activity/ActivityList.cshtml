@@ -96,21 +96,21 @@ else
                 {
                     case ActivityType.GroupCreated:
                         <span>created the group</span>
-                        <img src="@Url.Content(activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
+                        <img src="@Url.Content(activity.GroupImagePath ?? activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
                             class="img-20px rounded-circle">
                         <strong>@(activity.GroupName ?? activity.Group.Name).</strong>
                         break;
 
                     case ActivityType.GroupUpdated:
                         <span>updated the group</span>
-                        <img src="@Url.Content(activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
+                        <img src="@Url.Content(activity.GroupImagePath ?? activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
                             class="img-20px rounded-circle">
                         <strong>@(activity.GroupName ?? activity.Group.Name).</strong>
                         break;
 
                     case ActivityType.GroupDeleted:
                         <span>deleted the group</span>
-                        <img src="@Url.Content(activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
+                        <img src="@Url.Content(activity.GroupImagePath ?? activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
                             class="img-20px rounded-circle">
                         <strong>@(activity.GroupName ?? activity.Group.Name).</strong>
                         break;
@@ -129,7 +129,7 @@ else
                         else
                         {
                             <span>to the group</span>
-                            <img src="@Url.Content(activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
+                            <img src="@Url.Content(activity.GroupImagePath ?? activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
                                 class="img-20px rounded-circle">
                             <strong>@(activity.GroupName ?? activity.Group.Name).</strong>
                         }
@@ -149,7 +149,7 @@ else
                         else
                         {
                             <span>from the group</span>
-                            <img src="@Url.Content(activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
+                            <img src="@Url.Content(activity.GroupImagePath ?? activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
                                 class="img-20px rounded-circle">
                             <strong>@(activity.GroupName ?? activity.Group.Name).</strong>
                         }
@@ -167,7 +167,7 @@ else
                         else
                         {
                             <span>in the group</span>
-                            <img src="@Url.Content(activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
+                            <img src="@Url.Content(activity.GroupImagePath ?? activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
                                 class="img-20px rounded-circle">
                             <strong>@(activity.GroupName ?? activity.Group.Name).</strong>
                         }
@@ -182,7 +182,7 @@ else
                         else
                         {
                             <span>in the group</span>
-                            <img src="@Url.Content(activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
+                            <img src="@Url.Content(activity.GroupImagePath ?? activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
                                 class="img-20px rounded-circle">
                             <strong>@(activity.GroupName ?? activity.Group.Name).</strong>
                         }
@@ -200,7 +200,7 @@ else
                         else
                         {
                             <span>left the group</span>
-                            <img src="@Url.Content(activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
+                            <img src="@Url.Content(activity.GroupImagePath ?? activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
                                 class="img-20px rounded-circle">
                             <strong>@(activity.GroupName ?? activity.Group.Name).</strong>
                         }
@@ -222,7 +222,7 @@ else
                         else
                         {
                             <span>in the group</span>
-                            <img src="@Url.Content(activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
+                            <img src="@Url.Content(activity.GroupImagePath ?? activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
                                 class="img-20px rounded-circle">
                             <strong>@(activity.GroupName ?? activity.Group.Name).</strong>
                         }
@@ -262,7 +262,7 @@ else
                         else
                         {
                             <span>in the group</span>
-                            <img src="@Url.Content(activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
+                            <img src="@Url.Content(activity.GroupImagePath ?? activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
                                 class="img-20px rounded-circle">
                             <strong>@(activity.GroupName ?? activity.Group.Name).</strong>
                         }

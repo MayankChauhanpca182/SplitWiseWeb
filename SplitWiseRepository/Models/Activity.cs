@@ -34,6 +34,7 @@ public class Activity : AuditFields
 
     [MaxLength(50)]
     public string GroupName { get; set; }
+    public string GroupImagePath { get; set; }
 
     [MaxLength(20)]
     public string Amount { get; set; }

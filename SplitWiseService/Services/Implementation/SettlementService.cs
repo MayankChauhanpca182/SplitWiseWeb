@@ -164,7 +164,7 @@ public class SettlementService : ISettlementService
                 Group group = await _groupRepository.Get(
                     predicate: g => g.DeletedAt == null && g.Id == settlement.GroupId
                 );
-                await _activityService.AddActivity(ActivityType.GroupPaymenent, userIds, groupId: settlement.GroupId, performedOnId: settlement.PaidToId, paymentId: payment.Id, groupName: group.Name);
+                await _activityService.AddActivity(ActivityType.GroupPaymenent, userIds, groupId: settlement.GroupId, performedOnId: settlement.PaidToId, paymentId: payment.Id, groupName: group.Name, groupImagePath: group.ImagePath);
             }
             else
             {
