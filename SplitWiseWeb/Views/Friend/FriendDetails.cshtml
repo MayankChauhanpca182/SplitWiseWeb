@@ -18,7 +18,6 @@
                     : $"You owe ₹{((-1) * Model.Expense).ToString("N2")}"))
             </span>
         </div>
-        <button class="btn btn-primary" onclick="fetchfriendDetails()"></button>
     </div>
 
     <div class="d-flex align-items-center gap-2">
@@ -258,7 +257,7 @@
                 SortOrder: sortOrder
             };
 
-            exportExcelAjax(filter, "/Expense/ExportFriendExpenses", `Expenses_with_${'@Model.Name'}`, 0, '@Model.UserId');
+            exportExcelAjax(filter, "Expense/ExportFriendExpenses", `Expenses_with_${'@Model.Name'}`, 0, '@Model.UserId');
         }
     </script>
 
@@ -271,7 +270,7 @@
                 SortOrder: sortOrder
             };
 
-            exportExcelAjax(filter, "/Payment/ExportPayments", `Payments_with_${'@Model.Name'}`, 0, '@Model.UserId');
+            exportExcelAjax(filter, "Payment/ExportPayments", `Payments_with_${'@Model.Name'}`, 0, '@Model.UserId');
         }
     </script>
 
@@ -286,7 +285,7 @@
                     ToDate: $("#toDate").val()
                 };
 
-                exportExcelAjax(filter, "/Activity/ExportActivity", `Activities_with_${'@Model.Name'}`, null, '@Model.UserId');
+                exportExcelAjax(filter, "Activity/ExportActivity", `Activities_with_${'@Model.Name'}`, null, '@Model.UserId');
             }
         }
     </script>

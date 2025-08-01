@@ -456,7 +456,7 @@
                 SortOrder: sortOrder
             };
 
-            exportExcelAjax(filter, "/Expense/ExportGroupExpenses", `${'@Model.Name'}_Group_Expenses`, '@Model.Id');
+            exportExcelAjax(filter, "Expense/ExportGroupExpenses", `${'@Model.Name'}_Group_Expenses`, '@Model.Id');
         }
     </script>
 
@@ -471,7 +471,7 @@
                     ToDate: $("#toDate").val()
                 };
 
-                exportExcelAjax(filter, "/Activity/ExportActivity", `Activities_of_group_${'@Model.Name'}`, '@Model.Id');
+                exportExcelAjax(filter, "Activity/ExportActivity", `Activities_of_group_${'@Model.Name'}`, '@Model.Id');
             }
         }
     </script>

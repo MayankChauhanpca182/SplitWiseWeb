@@ -10,7 +10,7 @@
         <header class="clientPageHeader">
             <div class="d-flex align-items-center gap-2">
                 <a asp-controller="Auth" asp-action="Index" class="navbar-brand d-flex justify-content-center align-items-center gap-3">
-                    <img src="~/images/splitmate/icononly_transparent_nobuffer.png" alt="" width="60px">
+                    <img src="@Url.Content("~/images/splitmate/icononly_transparent_nobuffer.png")" alt="" width="60px">
                     <span class="text-secondary fs-3 fw-semibold">SplitMate</span>
                 </a>
             </div>
@@ -24,14 +24,16 @@
     <div class="facets">
         <div class="container mx-auto px-5 py-5">
             <div class="section">
-                <span class="fs-1 fw-semibold mb-3">Less stress when sharing <span
-                        class="text-secondary">expenses.</span></span>
+                <span class="fs-1 fw-semibold mb-3">
+                    Less stress when sharing 
+                    <span class="text-secondary">expenses.</span>
+                </span>
                 <span class="fs-5 mb-3">Keep track of your shared expenses and balances with housemates, groups,
                     friends, and family.</span>
                 <a asp-action="Register" asp-controller="User" class="btn btn-primary p-2 w-40 fs-4">Sign Up</a>
             </div>
             <div class="section" id="facetsImageContainer">
-                <img src="~/images/splitmate/icononly_transparent_nobuffer.png" alt="">
+                <img src="@Url.Content("~/images/splitmate/icononly_transparent_nobuffer.png")" alt="">
             </div>
         </div>
     </div>
@@ -43,7 +45,7 @@
                 <span class="discription">Keep track of shared expenses, balances, and who owes who.</span>
             </p>
             <div class="demoImageOuter">
-                <img src="~/images/demos/friend-list.png" alt="">
+                <img src="@Url.Content("~/images/demos/friend-list.png")" alt="">
             </div>
         </div>
         <div class="featuresDemo bg-primary">
@@ -52,7 +54,7 @@
                 <span class="discription">Split expenses with any group: trips, housemates, friends, and family.</span>
             </p>
             <div class="demoImageOuter">
-                <img src="~/images/demos/friend-detail.png" alt="">
+                <img src="@Url.Content("~/images/demos/friend-detail.png")" alt="">
             </div>
         </div>
     </div>
@@ -64,7 +66,7 @@
                 <span class="discription">Quickly add expenses on the go before you forget who paid.</span>
             </p>
             <div class="demoImageOuter">
-                <img src="~/images/demos/add-expense.png" alt="">
+                <img src="@Url.Content("~/images/demos/add-expense.png")" alt="">
             </div>
         </div>
         <div class="featuresDemo bg-charcoal">
@@ -73,7 +75,7 @@
                 <span class="discription">Settle up with a friend and record any cash or online payment.</span>
             </p>
             <div class="demoImageOuter">
-                <img src="~/images/demos/settle-up.png" alt="">
+                <img src="@Url.Content("~/images/demos/settle-up.png")" alt="">
             </div>
         </div>
     </div>
@@ -82,39 +84,39 @@
         <p class="fs-2 fw-semibold" id="featureListHeading">The whole shebang</p>
         <div class="featureList text-nowrap">
             <span class="featureItem">
-                <img src="~/images/splitmate/icononly_transparent_nobuffer.png" alt="">
+                <img src="@Url.Content("~/images/splitmate/icononly_transparent_nobuffer.png")" alt="">
                 <span class="fs-5">Add friends and groups</span>
             </span>
             <span class="featureItem">
-                <img src="~/images/splitmate/icononly_transparent_nobuffer.png" alt="">
+                <img src="@Url.Content("~/images/splitmate/icononly_transparent_nobuffer.png")" alt="">
                 <span class="fs-5">Split expenses</span>
             </span>
             <span class="featureItem">
-                <img src="~/images/splitmate/icononly_transparent_nobuffer.png" alt="">
+                <img src="@Url.Content("~/images/splitmate/icononly_transparent_nobuffer.png")" alt="">
                 <span class="fs-5">Unlimited expenses</span>
             </span>
             <span class="featureItem">
-                <img src="~/images/splitmate/icononly_transparent_nobuffer.png" alt="">
+                <img src="@Url.Content("~/images/splitmate/icononly_transparent_nobuffer.png")" alt="">
                 <span class="fs-5">Equal or unequal splits</span>
             </span>
             <span class="featureItem">
-                <img src="~/images/splitmate/icononly_transparent_nobuffer.png" alt="">
+                <img src="@Url.Content("~/images/splitmate/icononly_transparent_nobuffer.png")" alt="">
                 <span class="fs-5">Split by percentage</span>
             </span>
             <span class="featureItem">
-                <img src="~/images/splitmate/icononly_transparent_nobuffer.png" alt="">
+                <img src="@Url.Content("~/images/splitmate/icononly_transparent_nobuffer.png")" alt="">
                 <span class="fs-5">Split by share</span>
             </span>
             <span class="featureItem">
-                <img src="~/images/splitmate/icononly_transparent_nobuffer.png" alt="">
+                <img src="@Url.Content("~/images/splitmate/icononly_transparent_nobuffer.png")" alt="">
                 <span class="fs-5">Spending totals</span>
             </span>
             <span class="featureItem">
-                <img src="~/images/splitmate/icononly_transparent_nobuffer.png" alt="">
+                <img src="@Url.Content("~/images/splitmate/icononly_transparent_nobuffer.png")" alt="">
                 <span class="fs-5">Expense search</span>
             </span>
             <span class="featureItem">
-                <img src="~/images/splitmate/icononly_transparent_nobuffer.png" alt="">
+                <img src="@Url.Content("~/images/splitmate/icononly_transparent_nobuffer.png")" alt="">
                 <span class="fs-5">Chart analytics</span>
             </span>
         </div>
