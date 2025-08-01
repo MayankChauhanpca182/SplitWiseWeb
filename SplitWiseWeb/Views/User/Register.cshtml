@@ -88,7 +88,7 @@
                         if (response.success) {
                             toastr.success(response.message);
                             // Redirect to login
-                            window.location = "/login";
+                            window.location = baseUrl + "/login";
                         }
                         else {
                             toastr.error(response.message);
@@ -138,7 +138,7 @@
                         if (response.success) {
                             toastr.success(response.message);
                             // Redirect to login
-                            window.location = "/login";
+                            window.location = baseUrl + "/login";
                         }
                         else {
                             toastr.error(response.message);

@@ -117,7 +117,7 @@
                         }
                         else {
                             $("#groupExpense").removeClass("text-success").removeClass("text-danger");
-                            $("#groupImage").prop("src", baseUrl + `${response.imagePath.replace("~/", "") ?? "images/default_group_img.png"}`);
+                            $("#groupImage").prop("src", baseUrl + `${response.imagePath?.replace("~/", "") ?? "images/default_group_img.png"}`);
                             $("#groupName").text(response.name);
                             $("#groupNoticeBoard").text(response.noticeBoard);
                             
@@ -228,7 +228,7 @@
                         else {
                             toastr.success(response.message);
                             // Redirect to group list
-                            window.location = "/groups";
+                            window.location = baseUrl + "/groups";
                         }
                     }
                 },

@@ -363,7 +363,7 @@
                             toastr.error(response.message);
                         }
                         else {
-                            $("#friendImage").prop("src", baseUrl + `${response.profileImagePath.replace("~/", "") ?? "images/Default_pfp.png"}`);
+                            $("#friendImage").prop("src", baseUrl + `${response.profileImagePath?.replace("~/", "") ?? "images/Default_pfp.png"}`);
                             $("#friendName").text(response.name);
                             $("#friendExpense").removeClass("text-success").removeClass("text-danger");
                             if(response.expense < 0){

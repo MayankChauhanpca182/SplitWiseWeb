@@ -96,7 +96,7 @@ public static class NotificationMessages
     public const string LeaveGroup = "You have been left group {0} successfully.";
     public const string UnsettledGroup = "All expenses must be settled before deleting the group.";
     public const string GroupNotFound = "Group Doesn't exist.";
-    public const string NoGroupsForUser = "It seems you're not currently part of any group. To add a group expense, you’ll need to create a new group.";
+    public const string NoGroupsForUser = "You are not currently associated with any group. To add a group expense, please create a new group first.";
 
     // Expense
     public const string AttachmentRemoved = "Attachment has been removed successfully.";

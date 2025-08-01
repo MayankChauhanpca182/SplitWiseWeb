@@ -79,14 +79,14 @@
                         </td>
                     }
                     <td class="text-end">
-                        @if(expense.Expense < 0)
-                        {
-                            <a asp-controller="Settlement" asp-action="SettleUp" asp-route-friendUserId="@expense.PaidById" class="btn border-0" title="Settle Up">
-                                <i class="bi bi-credit-card"></i>
-                            </a>
-                        }
                         @if(!expense.IsSystemGenerated)
                         {
+                            @if(expense.Expense < 0)
+                            {
+                                <a asp-controller="Settlement" asp-action="SettleUp" asp-route-friendUserId="@expense.PaidById" class="btn border-0" title="Settle Up">
+                                    <i class="bi bi-credit-card"></i>
+                                </a>
+                            }
                             <a asp-action="ViewNonGroupExpense" asp-controller="Expense" asp-route-expenseId="@expense.Id" class="btn border-0" title="View">
                                 <i class="bi bi-file-earmark-fill"></i>
                             </a>

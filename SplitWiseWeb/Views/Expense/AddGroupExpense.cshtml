@@ -570,10 +570,10 @@
             let categoryId = $(this).val();
             let imagePath = categoryImages[categoryId];
             if (imagePath) {
-                $("#categoryImage").attr("src", imagePath);
+                $("#categoryImage").attr("src", baseUrl + imagePath.replace("~/", ""));
             }
             else {
-                $("#categoryImage").attr("src", "/defaultcategory/other.png");
+                $("#categoryImage").attr("src", baseUrl + "defaultcategory/other.png");
             }
         });
     </script>

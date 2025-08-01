@@ -202,12 +202,12 @@ public class EmailService : IEmailService
         {
             fileText = GetEmailTemplate(EmailTemplates.DeleteGroupExpense);
             fileText = fileText.Replace("{groupName}", groupName);
-            subject = EmailSubjects.UpdateGroupExpense;
+            subject = EmailSubjects.DeleteGroupExpense;
         }
         else
         {
             fileText = GetEmailTemplate(EmailTemplates.DeleteNonGroupExpense);
-            subject = EmailSubjects.UpdateNonGroupExpense;
+            subject = EmailSubjects.DeleteNonGroupExpense;
         }
 
         string emailBody = fileText.Replace("{recieverName}", recieverName).Replace("{senderName}", senderName).Replace("{expenseName}", expenseName);
