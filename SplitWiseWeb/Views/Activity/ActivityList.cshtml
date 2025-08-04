@@ -96,23 +96,23 @@ else
                 {
                     case ActivityType.GroupCreated:
                         <span>created the group</span>
-                        <img src="@Url.Content(activity.GroupImagePath ?? activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
+                        <img src="@Url.Content(activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
                             class="img-20px rounded-circle">
-                        <strong>@(activity.GroupName ?? activity.Group.Name).</strong>
+                        <strong>@(activity.Group.Name).</strong>
                         break;
 
                     case ActivityType.GroupUpdated:
                         <span>updated the group</span>
-                        <img src="@Url.Content(activity.GroupImagePath ?? activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
+                        <img src="@Url.Content(activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
                             class="img-20px rounded-circle">
-                        <strong>@(activity.GroupName ?? activity.Group.Name).</strong>
+                        <strong>@(activity.Group.Name).</strong>
                         break;
 
                     case ActivityType.GroupDeleted:
                         <span>deleted the group</span>
-                        <img src="@Url.Content(activity.GroupImagePath ?? activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
+                        <img src="@Url.Content(activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
                             class="img-20px rounded-circle">
-                        <strong>@(activity.GroupName ?? activity.Group.Name).</strong>
+                        <strong>@(activity.Group.Name).</strong>
                         break;
 
                     case ActivityType.MemberAdded:
@@ -129,9 +129,9 @@ else
                         else
                         {
                             <span>to the group</span>
-                            <img src="@Url.Content(activity.GroupImagePath ?? activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
+                            <img src="@Url.Content(activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
                                 class="img-20px rounded-circle">
-                            <strong>@(activity.GroupName ?? activity.Group.Name).</strong>
+                            <strong>@(activity.Group.Name).</strong>
                         }
                         break;
 
@@ -149,9 +149,9 @@ else
                         else
                         {
                             <span>from the group</span>
-                            <img src="@Url.Content(activity.GroupImagePath ?? activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
+                            <img src="@Url.Content(activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
                                 class="img-20px rounded-circle">
-                            <strong>@(activity.GroupName ?? activity.Group.Name).</strong>
+                            <strong>@(activity.Group.Name).</strong>
                         }
                         break;
 
@@ -167,9 +167,9 @@ else
                         else
                         {
                             <span>in the group</span>
-                            <img src="@Url.Content(activity.GroupImagePath ?? activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
+                            <img src="@Url.Content(activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
                                 class="img-20px rounded-circle">
-                            <strong>@(activity.GroupName ?? activity.Group.Name).</strong>
+                            <strong>@(activity.Group.Name).</strong>
                         }
                         break;
                     case ActivityType.GroupExpenseUpdated:
@@ -182,13 +182,9 @@ else
                         else
                         {
                             <span>in the group</span>
-                            <img src="@Url.Content(activity.GroupImagePath ?? activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
+                            <img src="@Url.Content(activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
                                 class="img-20px rounded-circle">
-                            <strong>@(activity.GroupName ?? activity.Group.Name).</strong>
-                        }
-                        @if (!string.IsNullOrEmpty(activity.AdditionalDetails))
-                        {
-                            <span>(@Html.Raw(activity.AdditionalDetails.Replace(userName, "You")))</span>
+                            <strong>@(activity.Group.Name).</strong>
                         }
                         break;
 
@@ -200,9 +196,9 @@ else
                         else
                         {
                             <span>left the group</span>
-                            <img src="@Url.Content(activity.GroupImagePath ?? activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
+                            <img src="@Url.Content(activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
                                 class="img-20px rounded-circle">
-                            <strong>@(activity.GroupName ?? activity.Group.Name).</strong>
+                            <strong>@(activity.Group.Name).</strong>
                         }
                         break;
 
@@ -222,9 +218,9 @@ else
                         else
                         {
                             <span>in the group</span>
-                            <img src="@Url.Content(activity.GroupImagePath ?? activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
+                            <img src="@Url.Content(activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
                                 class="img-20px rounded-circle">
-                            <strong>@(activity.GroupName ?? activity.Group.Name).</strong>
+                            <strong>@(activity.Group.Name).</strong>
                         }
                         break;
 
@@ -247,10 +243,6 @@ else
                     case ActivityType.ExpenseUpdated:
                         <span>updated an expense</span>
                         <strong>@(activity.Expense.Title).</strong>
-                        @if (!string.IsNullOrEmpty(activity.AdditionalDetails))
-                        {
-                            <span>(@Html.Raw(activity.AdditionalDetails.Replace(userName, "You")))</span>
-                        }
                         break;
                     case ActivityType.GroupExpenseDeleted:
                         <span>deleted an expense</span>
@@ -262,23 +254,19 @@ else
                         else
                         {
                             <span>in the group</span>
-                            <img src="@Url.Content(activity.GroupImagePath ?? activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
+                            <img src="@Url.Content(activity.Group.ImagePath ?? "~/images/default_group_img.png")" alt=""
                                 class="img-20px rounded-circle">
-                            <strong>@(activity.GroupName ?? activity.Group.Name).</strong>
-                        }
-                        @if (!string.IsNullOrEmpty(activity.AdditionalDetails))
-                        {
-                            <span>(@Html.Raw(activity.AdditionalDetails.Replace(userName, "You")))</span>
+                            <strong>@(activity.Group.Name).</strong>
                         }
                         break;
                     case ActivityType.NonGroupExpenseDeleted:
                         <span>deleted an expense</span>
                         <strong>@(activity.Expense.Title).</strong>
-                        @if (!string.IsNullOrEmpty(activity.AdditionalDetails))
-                        {
-                            <span>(@Html.Raw(activity.AdditionalDetails.Replace(userName, "You")))</span>
-                        }
                         break;
+                }
+                @if (!string.IsNullOrEmpty(activity.AdditionalDetails))
+                {
+                    <span>(@Html.Raw(activity.AdditionalDetails.Replace(userName, "You")))</span>
                 }
             </span>
         </div>

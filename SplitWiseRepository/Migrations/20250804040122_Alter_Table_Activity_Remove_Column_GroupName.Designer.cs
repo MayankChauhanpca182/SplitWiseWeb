@@ -12,8 +12,8 @@ using SplitWiseRepository.Models;
 namespace SplitWiseRepository.Migrations
 {
     [DbContext(typeof(SplitWiseDbContext))]
-    [Migration("20250801121556_Alter_Table_Activity_Add_Column_GroupImagePath")]
-    partial class Alter_Table_Activity_Add_Column_GroupImagePath
+    [Migration("20250804040122_Alter_Table_Activity_Remove_Column_GroupName")]
+    partial class Alter_Table_Activity_Remove_Column_GroupName
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -60,13 +60,6 @@ namespace SplitWiseRepository.Migrations
 
                     b.Property<int?>("GroupId")
                         .HasColumnType("int");
-
-                    b.Property<string>("GroupImagePath")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("GroupName")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int?>("PaymentId")
                         .HasColumnType("int");

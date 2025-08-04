@@ -21,9 +21,9 @@ public class ActivityController : Controller
     // GET UserActivities
     [Breadcrumb("Activities")]
     [Route("user-activities")]
-    public async Task<IActionResult> Index()
+    public IActionResult Index()
     {
-        ActivityFilterVM activityFilter = await _activityService.GetActivityFilter();
+        ActivityFilterVM activityFilter = _activityService.GetActivityFilter();
         ViewData["ActiveLink"] = "Activities";
         return View(activityFilter);
     }

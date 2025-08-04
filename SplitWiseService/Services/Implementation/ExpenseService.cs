@@ -561,8 +561,7 @@ public class ExpenseService : IExpenseService
                 if (newExpense.GroupId != null)
                 {
                     // Add group activity
-                    GroupVM group = await _groupService.GetGroup((int)newExpense.GroupId);
-                    await _activityService.AddActivity(ActivityType.GroupExpenseAdded, userIds, groupId: (int)newExpense.GroupId, expenseId: expense.Id, groupName: group.Name, groupImagePath: group.ImagePath, amount: newAmount.ToString("N2"));
+                    await _activityService.AddActivity(ActivityType.GroupExpenseAdded, userIds, groupId: (int)newExpense.GroupId, expenseId: expense.Id, amount: newAmount.ToString("N2"));
                 }
                 else
                 {
@@ -617,8 +616,7 @@ public class ExpenseService : IExpenseService
                 if (existingExpense.GroupId != null)
                 {
                     // Add group activity
-                    GroupVM group = await _groupService.GetGroup((int)newExpense.GroupId);
-                    await _activityService.AddActivity(ActivityType.GroupExpenseUpdated, userIds, groupId: (int)existingExpense.GroupId, expenseId: existingExpense.Id, additionalDetails: additionalDetails, groupName: group.Name, groupImagePath: group.ImagePath, amount: newAmount.ToString("N2"));
+                    await _activityService.AddActivity(ActivityType.GroupExpenseUpdated, userIds, groupId: (int)existingExpense.GroupId, expenseId: existingExpense.Id, additionalDetails: additionalDetails, amount: newAmount.ToString("N2"));
                 }
                 else
                 {
@@ -834,7 +832,6 @@ public class ExpenseService : IExpenseService
             User payer = expense.PaidByUser;
             ActivityType activityType = expense.GroupId > 0 ? ActivityType.GroupExpenseDeleted : ActivityType.NonGroupExpenseDeleted;
             string groupName = expense.GroupId > 0 ? expense.Group.Name : string.Empty;
-            string groupImagePath = expense.GroupId > 0 ? expense.Group.ImagePath : string.Empty;
 
             // Add activity for payer
             string additionalDetails = string.Empty;
@@ -859,7 +856,7 @@ public class ExpenseService : IExpenseService
 
             // Users involved in activity
             List<int> userIds = expense.ExpenseShares.Where(es => es.DeletedAt == null).Select(es => es.UserId).ToList();
-            await _activityService.AddActivity(activityType, userIds, groupId: expense.GroupId, expenseId: expense.Id, groupName: groupName, groupImagePath: groupImagePath, additionalDetails: additionalDetails);
+            await _activityService.AddActivity(activityType, userIds, groupId: expense.GroupId, expenseId: expense.Id, additionalDetails: additionalDetails);
 
             response.Success = true;
             response.Message = NotificationMessages.Deleted.Replace("{0}", $"Expense {expense.Title}");

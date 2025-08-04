@@ -19,7 +19,7 @@ public class ActivityService : IActivityService
         _userService = userService;
     }
 
-    public async Task AddActivity(ActivityType activityType, List<int> userIds, int? groupId = null, int? expenseId = null, int? paymentId = null, int? performedOnId = null, string additionalDetails = null, string groupName = null, string amount = null, string groupImagePath = null)
+    public async Task AddActivity(ActivityType activityType, List<int> userIds, int? groupId = null, int? expenseId = null, int? paymentId = null, int? performedOnId = null, string additionalDetails = null, string amount = null)
     {
         int currentUserId = _userService.LoggedInUserId();
 
@@ -32,8 +32,6 @@ public class ActivityService : IActivityService
             ExpenseId = expenseId,
             PaymentId = paymentId,
             AdditionalDetails = additionalDetails,
-            GroupName = groupName,
-            GroupImagePath = groupImagePath,
             Amount = amount,
             UserIds = string.Join(",", userIds),
             CreatedById = currentUserId,
@@ -95,7 +93,7 @@ public class ActivityService : IActivityService
         return userActivities.Items.ToList();
     }
 
-    public async Task<ActivityFilterVM> GetActivityFilter(int? groupId = null, int? friendUserId = null)
+    public ActivityFilterVM GetActivityFilter(int? groupId = null, int? friendUserId = null)
     {
         ActivityFilterVM activityFilter = new ActivityFilterVM();
         activityFilter.FirstDay = DateHelper.FirstDayOfMonth(DateTime.Now);
@@ -124,7 +122,7 @@ public class ActivityService : IActivityService
             string groupName = string.Empty;
             if (a.Group != null)
             {
-                groupName = a.GroupName ?? a.Group.Name;
+                groupName = a.Group.Name;
             }
 
             // Expense name, amount

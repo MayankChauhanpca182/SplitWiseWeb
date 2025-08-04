@@ -144,6 +144,34 @@ public class GroupService : IGroupService
         return groupVM;
     }
 
+    private string GetDifferences(Group oldGroup, GroupVM newGroup)
+    {
+        string differences = null;
+
+        // Check name
+        if (oldGroup.Name != newGroup.Name.Trim())
+        {
+            differences += string.IsNullOrEmpty(differences) ? "Updated" : "; Updated";
+            differences += $" name from <strong>{oldGroup.Name}</strong> to <strong>{newGroup.Name.Trim()}</strong>";
+        }
+
+        // Check name
+        if (newGroup.Image != null)
+        {
+            differences += string.IsNullOrEmpty(differences) ? "Updated" : "; Updated";
+            differences += $" <strong>group icon</strong>";
+        }
+
+        // Check noticeboard
+        if (oldGroup.NoticeBoard != newGroup.NoticeBoard.Trim())
+        {
+            differences += string.IsNullOrEmpty(differences) ? "Updated" : "; Updated";
+            differences += $" <strong>noticeboard</strong>";
+        }
+
+        return differences;
+    }
+
     public async Task<ResponseVM> SaveGroup(GroupVM newGroupVm)
     {
         try
@@ -173,8 +201,10 @@ public class GroupService : IGroupService
                 }
                 else
                 {
+                    string additionalDetails = GetDifferences(exisitngGroup, newGroupVm);
+
                     exisitngGroup.Name = newGroupVm.Name.Trim();
-                    exisitngGroup.NoticeBoard = newGroupVm.NoticeBoard;
+                    exisitngGroup.NoticeBoard = newGroupVm.NoticeBoard.Trim();
                     exisitngGroup.CurrencyId = newGroupVm.CurrencyId;
                     exisitngGroup.IsSimplifiedPayments = newGroupVm.IsSimplifiedPayments;
                     if (newGroupVm.Image != null)
@@ -189,7 +219,7 @@ public class GroupService : IGroupService
                     List<int> userIds = exisitngGroup.GroupMembers.Where(gm => gm.DeletedAt == null).Select(gm => gm.UserId).ToList();
 
                     // Add group activity
-                    await _activityService.AddActivity(ActivityType.GroupUpdated, userIds, groupId: exisitngGroup.Id, groupName: exisitngGroup.Name, groupImagePath: exisitngGroup.ImagePath);
+                    await _activityService.AddActivity(ActivityType.GroupUpdated, userIds, groupId: exisitngGroup.Id, additionalDetails: additionalDetails);
                 }
             }
             else
@@ -215,7 +245,7 @@ public class GroupService : IGroupService
                 List<int> userIds = new List<int>() { currentUser.Id };
 
                 // Add group activity
-                await _activityService.AddActivity(ActivityType.GroupCreated, userIds, groupId: newGroup.Id, groupName: newGroup.Name, groupImagePath: newGroup.ImagePath);
+                await _activityService.AddActivity(ActivityType.GroupCreated, userIds, groupId: newGroup.Id);
 
                 await AddMember(newGroup.Id, currentUser.Id);
             }
@@ -345,7 +375,7 @@ public class GroupService : IGroupService
                     List<int> userIds = group.GroupMembers.Where(gm => gm.DeletedAt == null).Select(gm => gm.UserId).ToList();
 
                     // Add group activity
-                    await _activityService.AddActivity(ActivityType.GroupDeleted, userIds, groupId: group.Id, groupName: group.Name, groupImagePath: group.ImagePath);
+                    await _activityService.AddActivity(ActivityType.GroupDeleted, userIds, groupId: group.Id);
                 }
             }
 
@@ -440,7 +470,7 @@ public class GroupService : IGroupService
             List<int> userIds = new List<int>() { currentUser.Id, userId };
 
             // Add group activity
-            await _activityService.AddActivity(ActivityType.MemberAdded, userIds, groupId: group.Id, performedOnId: userId, groupName: group.Name, groupImagePath: group.ImagePath);
+            await _activityService.AddActivity(ActivityType.MemberAdded, userIds, groupId: group.Id, performedOnId: userId);
 
             // Send email
             await _emailService.AddedToGroupEmail(user.FirstName, $"{currentUser.FirstName} {currentUser.LastName}", group.Name, user.EmailAddress);
@@ -557,7 +587,7 @@ public class GroupService : IGroupService
                         response.Message = NotificationMessages.LeaveGroup.Replace("{0}", group.Name);
 
                         // Add group activity
-                        await _activityService.AddActivity(ActivityType.LeaveGroup, userIds, groupId: group.Id, groupName: group.Name, groupImagePath: group.ImagePath);
+                        await _activityService.AddActivity(ActivityType.LeaveGroup, userIds, groupId: group.Id);
                     }
                     else
                     {
@@ -565,7 +595,7 @@ public class GroupService : IGroupService
                         await _emailService.RemovedFromGroupEmail(user.FirstName, $"{currentUser.FirstName} {currentUser.LastName}", group.Name, user.EmailAddress);
 
                         // Add group activity
-                        await _activityService.AddActivity(ActivityType.MemberRemoved, userIds, groupId: group.Id, performedOnId: groupMember.UserId, groupName: group.Name, groupImagePath: group.ImagePath);
+                        await _activityService.AddActivity(ActivityType.MemberRemoved, userIds, groupId: group.Id, performedOnId: groupMember.UserId);
                     }
                 }
 
