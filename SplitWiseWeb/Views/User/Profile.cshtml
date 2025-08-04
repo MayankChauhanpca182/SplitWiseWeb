@@ -19,8 +19,8 @@
         <span class="text-danger" asp-validation-for="@Model.ProfileImage"></span>
 
         <!-- Email -->
-        <div class="form-floating mt-4 rounded-2 shadow-sm">
-            <input asp-for=@Model.EmailAddress class="form-control border-secondary-subtle" placeholder="First Name"
+        <div class="form-floating mt-4 shadow-sm">
+            <input asp-for=@Model.EmailAddress class="form-control border-secondary-subtle rounded-0" placeholder="First Name"
                 readonly disabled>
             <label asp-for="@Model.EmailAddress">Email</label>
         </div>
@@ -28,8 +28,8 @@
         <div class="d-flex justify-content-between gap-3 mt-4">
             <!-- First Name -->
             <div class="col">
-                <div class="form-floating rounded-2 shadow-sm">
-                    <input asp-for=@Model.FirstName class="form-control border-secondary-subtle" id="inputFirstName"
+                <div class="form-floating shadow-sm">
+                    <input asp-for=@Model.FirstName class="form-control border-secondary-subtle rounded-0" id="inputFirstName"
                         placeholder="First Name">
                     <label asp-for="@Model.FirstName">First Name</label>
                 </div>
@@ -38,8 +38,8 @@
 
             <!-- Last Name -->
             <div class="col">
-                <div class="form-floating rounded-2 shadow-sm">
-                    <input asp-for=@Model.LastName class="form-control border-secondary-subtle" id="inputLastName"
+                <div class="form-floating shadow-sm">
+                    <input asp-for=@Model.LastName class="form-control border-secondary-subtle rounded-0" id="inputLastName"
                         placeholder="Last Name">
                     <label asp-for="@Model.LastName">Last Name</label>
                 </div>
@@ -48,17 +48,17 @@
         </div>
 
         <!-- Address -->
-        <div class="form-floating mt-3 rounded-2 shadow-sm">
-            <textarea asp-for=@Model.Address class="form-control border-secondary-subtle" placeholder="Address"
-                rows="3"></textarea>
+        <div class="form-floating mt-3 shadow-sm">
+            <textarea asp-for=@Model.Address class="form-control border-secondary-subtle rounded-0" placeholder="Address"
+                rows="3" style="height: unset;"></textarea>
             <label asp-for="@Model.Address">Address</label>
         </div>
 
         <div class="d-flex justify-content-between gap-3 mt-4">
             <!-- Birthdate -->
             <div class="col">
-                <div class="form-floating rounded-2 shadow-sm">
-                    <input asp-for=@Model.Birthdate type="date" class="form-control rounded-2 border-secondary-subtle">
+                <div class="form-floating shadow-sm">
+                    <input asp-for=@Model.Birthdate type="date" class="form-control border-secondary-subtle rounded-0">
                     <label asp-for="@Model.Birthdate">Date of Birth</label>
                 </div>
                 <span class="text-danger" asp-validation-for="@Model.Birthdate"></span>
@@ -66,8 +66,8 @@
 
             <!-- Currency -->
             <div class="col">
-                <div class="form-floating rounded-2 shadow-sm">
-                    <select asp-for="@Model.CurrencyId" class="form-select rounded-2 border-secondary-subtle" disabled>
+                <div class="form-floating shadow-sm">
+                    <select asp-for="@Model.CurrencyId" class="form-select border-secondary-subtle rounded-0" disabled>
                         @foreach (Currency currency in Model.Currencies)
                         {
                             <option value="@currency.Id">@currency.Name</option>

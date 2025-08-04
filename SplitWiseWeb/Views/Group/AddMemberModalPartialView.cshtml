@@ -44,15 +44,13 @@
             PageSize: $("#friendPageSize").val(),
             SearchString: $("#friendSearch").val(),
             SortColumn: sortColumn,
-            SortOrder: sortOrder,
-            HasActions: false,
-            HasCkb: true
+            SortOrder: sortOrder
         };
 
         $.ajax({
             url: baseUrl + "Friend/FriengListForGroup",
             type: "POST",
-            data: { filter, groupId: @Model },
+            data: { filter, groupId: @Model},
             success: function (response) {
                 if (!response.statusCode) {
                     if (response.success == false) {

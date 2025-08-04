@@ -240,7 +240,7 @@ a {
     padding: 12px 9px !important;
 }
 
-input[type="checkbox"]{
+input[type="checkbox"], label{
     cursor: pointer;
 }
 
@@ -673,8 +673,7 @@ footer.footer {
 
 /* Profile */
 #profileForm{
-    max-width: 500px;
-    width: 500px;
+    width: 650px;
 }
 
 /* Group */
@@ -700,10 +699,14 @@ footer.footer {
 
 #friendsDropdown,
 #groupsDropdown {
-    max-height: 125px;
+    max-height: 175px;
     overflow-y: auto;
     display: grid;
     grid-template-columns: 1fr 1fr;
+}
+
+.memberPillDiv {
+    scrollbar-width: thin;
 }
 
 .expenseMemberPill {

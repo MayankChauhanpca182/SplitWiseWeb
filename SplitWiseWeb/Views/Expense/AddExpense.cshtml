@@ -34,7 +34,7 @@
                 </div>
                 <button type="button"
                     class="btn dropdown-toggle dropdown-toggle-split border-secondary-subtle rounded-0"
-                    data-bs-toggle="dropdown" aria-expanded="false" onclick="emptySearchBox()">
+                    data-bs-toggle="dropdown" aria-expanded="false" onclick="emptySearchBox()" data-bs-auto-close="outside">
                     <span class="visually-hidden">User list</span>
                 </button>
                 <ul class="dropdownList dropdown-menu w-100 px-2">
@@ -432,6 +432,7 @@
             // Add into expense share div
             let div = `<div class="expenseShare" id="expenseShare-${user.userId}"><span><img src="${baseUrl}${user.profileImagePath?.replace("~/", "") ?? "images/Default_pfp.png"}">${user.name}</span><span><input type="text" class="amount form-control" id="amount-${user.userId}" value="0"><span class="expenseShareTypeSymbole">${currencySymbole}</span></span></div>`;
             $("#expenseShareDiv").append(div);
+            setAmountAsPerSplitType();
         }
 
         // Remove member

@@ -5,6 +5,7 @@
         <thead>
             <tr>
                 <th scope="col" class="col">
+                    <input type="checkbox" class="form-check-input me-2" id="friendMasterCkb">
                     <span class="text-clr-grey text-dark-emphasis">Name</span>
                     <button class="btn p-0 sortBtn" data-column="name" data-order="asc" title="Asc">
                         <i class="bi bi-arrow-up"></i>
@@ -22,9 +23,6 @@
                         <i class="bi bi-arrow-down"></i>
                     </a>
                 </th>
-                @* <th scope="col" class="col-1 text-center">
-                    <span class="text-clr-grey text-dark-emphasis">Actions</span>
-                </th> *@
             </tr>
         </thead>
         <tbody>
@@ -33,7 +31,7 @@
                 <tr>
                     <td>
                         <div class="form-check d-flex align-items-center gap-2">
-                            <input type="checkbox" class="userCkb form-check-input" id="userCkb-@friend.UserId" data-userid="@friend.UserId">
+                            <input type="checkbox" class="friendCkb form-check-input" id="userCkb-@friend.UserId" data-userid="@friend.UserId">
                             <label class="form-check-label" for="userCkb-@friend.UserId">
                                 <img src="@Url.Content(friend.ProfileImagePath ?? "~/images/Default_pfp.png")"
                                     class="img-40px object-fit-cover rounded-circle border border-secondary-subtle">
@@ -42,11 +40,6 @@
                         </div>
                     </td>
                     <td><span class="my-auto">@friend.EmailAddress</span></td>
-                    @* <td class="text-center">
-                        <a class="btn border-0" title="Add to group" onclick="addToGroup('@friend.UserId')">
-                            <i class="bi bi-person-plus-fill text-success"></i>
-                        </a>
-                    </td> *@
                 </tr>
             }
         </tbody>

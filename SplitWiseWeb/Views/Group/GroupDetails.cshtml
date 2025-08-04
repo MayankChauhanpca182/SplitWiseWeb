@@ -263,7 +263,7 @@
 
     @* Add new member *@
     <script>
-        $(document).on("change", ".userCkb", function () {
+        $(document).on("change", ".friendCkb", function () {
             let userId = $(this).data("userid");
 
             if (selectedUserIds.includes(userId)) {
@@ -275,10 +275,11 @@
         });
 
         function checkSelectedUsers() {
-            $(".userCkb").each(function () {
+            $(".friendCkb").each(function () {
                 let userId = $(this).data("userid");
                 $(this).prop("checked", selectedUserIds.includes(userId));
             });
+            checkMasterFriendCheckbox();
         }
 
         function addSelectedMembers() {
@@ -309,6 +310,37 @@
                         toastr.error(SERVER_ERR);
                     }
                 });
+            }
+        }
+
+        // Drop down master checkbox
+        $(document).on("change", "#friendMasterCkb", function () {
+        let checkedMaster = $(this).prop("checked");
+
+        $(".friendCkb").each(function () {
+            if ($(this).prop("checked") !== checkedMaster) {
+                $(this).prop("checked", checkedMaster).trigger("change");
+            }
+        });
+        });
+
+        $(document).on("change", ".friendCkb", function () {
+            checkMasterFriendCheckbox();
+        });
+
+        function checkMasterFriendCheckbox() {
+            let totalSubCheckBox = $(".friendCkb").length;
+
+            let checkedSubCheckBox = $(".friendCkb:checked").length;
+
+            if (checkedSubCheckBox === totalSubCheckBox) {
+                $("#friendMasterCkb").prop("indeterminate", false).prop("checked", true);
+            }
+            else if (checkedSubCheckBox === 0) {
+                $("#friendMasterCkb").prop("indeterminate", false).prop("checked", false);
+            }
+            else {
+                $("#friendMasterCkb").prop("indeterminate", true);
             }
         }
     </script>
