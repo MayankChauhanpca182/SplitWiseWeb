@@ -240,6 +240,10 @@ a {
     padding: 12px 9px !important;
 }
 
+input[type="checkbox"]{
+    cursor: pointer;
+}
+
 
 /* Breadcrumbs */
 .breadcrumb {
@@ -600,7 +604,6 @@ aside.navigation>div {
 }
 
 aside.navigation .navItems {
-    /* display: inline-block; */
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
@@ -668,6 +671,12 @@ footer.footer {
     font-size: 11px;
 }
 
+/* Profile */
+#profileForm{
+    max-width: 500px;
+    width: 500px;
+}
+
 /* Group */
 .groupNoticeBoard {
     background-color: #1caf9a !important;
@@ -693,6 +702,8 @@ footer.footer {
 #groupsDropdown {
     max-height: 125px;
     overflow-y: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
 }
 
 .expenseMemberPill {

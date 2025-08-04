@@ -26,7 +26,17 @@ public class UrlBuilder
 
         string url = urlHelper.Action(action, controller, new { token, upTo }, httpContext.Request.Scheme)!;
 
-        return url;
+        // Get local IP
+        string ip = Dns.GetHostEntry(Dns.GetHostName())
+                    .AddressList
+                    .FirstOrDefault(x => x.AddressFamily == AddressFamily.InterNetwork)?
+                    .ToString() ?? "localhost";
+
+        string updatedUrl = url
+            .Replace("localhost", ip)
+            .Replace("127.0.0.1", ip);
+
+        return updatedUrl;
     }
 
 }
