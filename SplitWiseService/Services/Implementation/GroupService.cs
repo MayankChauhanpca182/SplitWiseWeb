@@ -163,7 +163,10 @@ public class GroupService : IGroupService
         }
 
         // Check noticeboard
-        if (oldGroup.NoticeBoard != newGroup.NoticeBoard.Trim())
+        if (!(string.IsNullOrEmpty(oldGroup.NoticeBoard) && string.IsNullOrEmpty(newGroup.NoticeBoard))
+            || (string.IsNullOrEmpty(oldGroup.NoticeBoard) && !string.IsNullOrEmpty(newGroup.NoticeBoard))
+            || (!string.IsNullOrEmpty(oldGroup.NoticeBoard) && string.IsNullOrEmpty(newGroup.NoticeBoard))
+            || (!string.IsNullOrEmpty(oldGroup.NoticeBoard) && !string.IsNullOrEmpty(newGroup.NoticeBoard) && oldGroup.NoticeBoard != newGroup.NoticeBoard.Trim()))
         {
             differences += string.IsNullOrEmpty(differences) ? "Updated" : "; Updated";
             differences += $" <strong>noticeboard</strong>";
@@ -204,7 +207,7 @@ public class GroupService : IGroupService
                     string additionalDetails = GetDifferences(exisitngGroup, newGroupVm);
 
                     exisitngGroup.Name = newGroupVm.Name.Trim();
-                    exisitngGroup.NoticeBoard = newGroupVm.NoticeBoard.Trim();
+                    exisitngGroup.NoticeBoard = newGroupVm.NoticeBoard;
                     exisitngGroup.CurrencyId = newGroupVm.CurrencyId;
                     exisitngGroup.IsSimplifiedPayments = newGroupVm.IsSimplifiedPayments;
                     if (newGroupVm.Image != null)

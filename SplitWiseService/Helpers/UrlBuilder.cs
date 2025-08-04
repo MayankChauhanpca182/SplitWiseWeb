@@ -1,3 +1,5 @@
+using System.Net;
+using System.Net.Sockets;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
@@ -22,8 +24,9 @@ public class UrlBuilder
         ActionContext actionContext = new ActionContext(httpContext, httpContext.GetRouteData(), new Microsoft.AspNetCore.Mvc.Abstractions.ActionDescriptor());
         IUrlHelper urlHelper = _urlHelperFactory.GetUrlHelper(actionContext);
 
-        string verificationLink = urlHelper.Action(action, controller, new { token, upTo }, httpContext.Request.Scheme)!;
-        return verificationLink;
+        string url = urlHelper.Action(action, controller, new { token, upTo }, httpContext.Request.Scheme)!;
+
+        return url;
     }
 
 }
