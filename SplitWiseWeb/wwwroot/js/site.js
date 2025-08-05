@@ -211,8 +211,6 @@ function checkMasterCheckbox() {
     return $(this).closest("li").is(":visible");
   }).length;
 
-  console.log("checked : ", checkedSubCheckBox)
-
   if (checkedSubCheckBox === totalSubCheckBox) {
     $("#userCkbMaster").prop("indeterminate", false).prop("checked", true);
   }
@@ -226,5 +224,6 @@ function checkMasterCheckbox() {
 
 // Dropdown toggle by div
 $(document).on("click", ".memberPillDiv, .groupPillDiv", function(){
-  $(this).siblings(".dropdown-toggle").click();  
+  $(this).siblings(".dropdown-toggle").click();
+  checkMasterCheckbox();
 });
