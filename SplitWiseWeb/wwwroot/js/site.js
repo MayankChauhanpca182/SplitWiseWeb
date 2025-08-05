@@ -117,7 +117,7 @@ function initializeTooltips() {
 }
 
 $(document).ready(function () {
-  $("td").each(function () {
+  $("td, .dropdownLi, .expenseMemberPill").each(function () {
     let text = $(this).text();
     $(this).attr("title", text.trim());
   });

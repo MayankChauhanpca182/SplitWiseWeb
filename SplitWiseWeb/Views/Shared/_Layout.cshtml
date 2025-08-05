@@ -63,7 +63,7 @@
                             class="rounded-circle" id="profile-image" width="35px" height="35px">
                         <span class="d-none d-sm-block" id="profile-name">@(userName)</span>
                     </button>
-                    <ul class="dropdown-menu">
+                    <ul class="dropdown-menu dropdown-menu-end">
                         <li>
                             <a asp-action="Profile" asp-controller="User"
                                 class="navItems dropdown-item d-flex align-items-center gap-2 text-dark-emphasis @((ViewData["ActiveLink"] as string) == "Profile" ? "active" : "")">

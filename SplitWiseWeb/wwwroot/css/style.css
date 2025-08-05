@@ -149,6 +149,11 @@ td {
     text-overflow: ellipsis;
 }
 
+/* Toastr */
+#toast-container>div{
+    margin: 6px !important;
+}
+
 /* Tool Tip */
 .tooltip-inner {
     background-color: #2e2e2e;
@@ -510,7 +515,6 @@ input[type="checkbox"], label{
     font-weight: bold;
 }
 
-
 /* Login page */
 #loginFormOuter {
     width: 500px;
@@ -697,6 +701,13 @@ footer.footer {
     margin: 3px 0px;
 }
 
+.dropdownLi span{
+    max-width: 300px !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 #friendsDropdown,
 #groupsDropdown {
     max-height: 175px;
@@ -726,6 +737,13 @@ footer.footer {
     width: 20px;
     border-radius: 50%;
     object-fit: cover;
+}
+
+.expenseMemberPill span{
+    max-width: 125px !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 #expenseShareDiv {

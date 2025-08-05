@@ -8,5 +8,5 @@ public static class DefaultValues
     public const int PageSize = 5;
     public const string SortOrder = "asc";
     public const int CookiesMinExpiryHours = 24;
-    public const int CookiesMaxExpiryHours = 24;
+    public const int CookiesMaxExpiryHours = 24*7;
 }

@@ -25,7 +25,7 @@
             <label asp-for="@Model.EmailAddress">Email</label>
         </div>
 
-        <div class="d-flex justify-content-between gap-3 mt-4">
+        <div class="d-flex justify-content-between gap-4 mt-4">
             <!-- First Name -->
             <div class="col">
                 <div class="form-floating shadow-sm">
@@ -48,13 +48,13 @@
         </div>
 
         <!-- Address -->
-        <div class="form-floating mt-3 shadow-sm">
+        <div class="form-floating mt-4 shadow-sm">
             <textarea asp-for=@Model.Address class="form-control border-secondary-subtle rounded-0" placeholder="Address"
                 rows="3" style="height: unset;"></textarea>
             <label asp-for="@Model.Address">Address</label>
         </div>
 
-        <div class="d-flex justify-content-between gap-3 mt-4">
+        <div class="d-flex justify-content-between gap-4 mt-4">
             <!-- Birthdate -->
             <div class="col">
                 <div class="form-floating shadow-sm">
@@ -79,7 +79,7 @@
             </div>
         </div>
 
-        <div class="d-flex align-items-center gap-3 mt-4 mx-auto">
+        <div class="d-flex align-items-center gap-4 mt-4 mx-auto">
             <button type="submit" class="btn btn-primary w-auto">Update</button>
             <a asp-action="Index" asp-controller="Dashboard" class="btn btn-secondary w-auto">Cancel</a>
         </div>

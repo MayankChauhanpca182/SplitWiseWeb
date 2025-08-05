@@ -23,7 +23,8 @@ public class CategoryService : ICategoryService
     public async Task<List<Category>> GetList()
     {
         List<Category> categories = await _categoryRepository.List(
-            predicate: c => c.IsSystem
+            predicate: c => c.IsSystem,
+            orderBy: c => c.OrderBy(c => c.Name)
         );
         return categories;
     }

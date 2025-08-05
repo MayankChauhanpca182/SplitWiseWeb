@@ -33,7 +33,8 @@
                 </div>
                 <button type="button"
                     class="btn dropdown-toggle dropdown-toggle-split border-secondary-subtle rounded-0"
-                    data-bs-toggle="dropdown" aria-expanded="false" onclick="emptySearchBox()" @(Model.GroupId > 0 ? "disabled" : "")>
+                    data-bs-toggle="dropdown" aria-expanded="false" onclick="emptySearchBox()" @(Model.GroupId > 0 ?
+                                                                                                                   "disabled" : "")>
                     <span class="visually-hidden">User list</span>
                 </button>
                 <ul class="dropdownList dropdown-menu w-100 px-2">
@@ -73,7 +74,8 @@
                 </div>
                 <button type="button"
                     class="btn dropdown-toggle dropdown-toggle-split border-secondary-subtle rounded-0"
-                    data-bs-toggle="dropdown" aria-expanded="false" onclick="emptySearchBox()" data-bs-auto-close="outside">
+                    data-bs-toggle="dropdown" aria-expanded="false" onclick="emptySearchBox()"
+                    data-bs-auto-close="outside">
                     <span class="visually-hidden">User list</span>
                 </button>
                 <ul class="dropdownList dropdown-menu w-100 px-2">
@@ -152,8 +154,9 @@
                     <span class="text-danger" asp-validation-for="@Model.CategoryId"></span>
                 </div>
                 <img src="@Url.Content(Model.CategoryId > 0 ? (Model.Categories.Where(c => c.Id == Model.CategoryId).Select(c =>
-                                         c.CategoryImagePath).First() ?? "~/defaultcategory/other.png") : Model.Categories.Select(c =>
-                                         c.CategoryImagePath).First())" alt="" id="categoryImage" class="my-auto" width="50px" height="50px">
+                                                                                   c.CategoryImagePath).First() ?? "~/defaultcategory/other.png") : Model.Categories.Select(c =>
+                                                                                   c.CategoryImagePath).First())" alt="" id="categoryImage"
+                    class="my-auto" width="50px" height="50px">
             </div>
         </div>
 
@@ -284,21 +287,21 @@
     @* Store img path in const *@
     <script>
         const categoryImages = {
-                    @foreach (Category cat in Model.Categories)
+                            @foreach (Category cat in Model.Categories)
             {
-                            @:@cat.Id: "@cat.CategoryImagePath",
+                                            @:@cat.Id: "@cat.CategoryImagePath",
             }
-                    };
+                            };
     </script>
 
     @* Store currency symboles in array *@
     <script>
         const currencySymboles = {
-                    @foreach (Currency currency in Model.Currencies)
+                            @foreach (Currency currency in Model.Currencies)
             {
-                            @:@currency.Id: "@currency.Symbole",
+                                            @:@currency.Id: "@currency.Symbole",
             }
-                    };
+                            };
 
 
         // Change symbole on currency change
@@ -312,11 +315,11 @@
     @* Add current members to array *@
     <script>
         {
-                    @foreach (ExpenseShareVM share in Model.ExpenseShares)
+                            @foreach (ExpenseShareVM share in Model.ExpenseShares)
                 {
                     <text>members.push({UserId: @share.UserId, ShareAmount: @share.ShareAmount});</text>
             }
-                }
+                        }
     </script>
 
     @* Validate selected file *@
@@ -460,8 +463,9 @@
             });
 
             // Add pill
-            let newPill = `<span class="expenseMemberPill" id=${"expenseMemberPill-" + user.userId}><img src="${baseUrl}${user.profileImagePath?.replace("~/", "") ?? "images/Default_pfp.png"}"><span>${user.name}</span><button type="button" class="btn-close removeMember" aria-label="Close"  onclick="removePill(${user.userId})"></button></span>`;
+            let newPill = `<span class="expenseMemberPill" id=${"expenseMemberPill-" + user.userId} title="${user.name}"><img src="${baseUrl}${user.profileImagePath?.replace("~/", "") ?? "images/Default_pfp.png"}"><span>${user.name}</span><button type="button" class="btn-close removeMember" aria-label="Close"  onclick="removePill(${user.userId})"></button></span>`;
             $(".memberPillDiv").append(newPill);
+            initializeTooltips();
 
             // Add into paid by
             let newOption = `<option value="${user.userId}" id="paidByOption-${user.userId}">${user.name}</option>`;
@@ -776,6 +780,7 @@
                     if (!response.statusCode) {
                         addGroupPill(group);
                         addMembers(response);
+                        initializeTooltips();
                     }
                 },
                 error: function () {
@@ -790,7 +795,7 @@
             $("#paidBySelect").empty();
             $("#expenseShareDiv").empty();
 
-            let pill = `<span class="expenseMemberPill" id="groupPill-${group.id}"><img src="${baseUrl}${group.imagePath?.replace("~/", "") ?? "images/default_group_img.png"}"><span>${group.name}</span></span>`;
+            let pill = `<span class="expenseMemberPill" id="groupPill-${group.id}" title="${group.name}"><img src="${baseUrl}${group.imagePath?.replace("~/", "") ?? "images/default_group_img.png"}"><span>${group.name}</span></span>`;
             $(".groupPillDiv").html(pill);
 
             // Set group id in hidden field
@@ -800,15 +805,15 @@
         function addMembers(groupmembers) {
             $("#friendsDropdown").empty();
             $.each(groupmembers, function (index, member) {
-                let memberLi = `<li class="dropdownLi">
-                                        <input class="userCkb form-check-input m-0" type="checkbox" id="userCkb-${member.id}"
-                                            data-user='${JSON.stringify(member)}' checked>
-                                        <label for="userCkb-${member.id}" class="d-flex align-items-center gap-2">
-                                            <img src="${baseUrl}${member.profileImagePath?.replace("~/", "") ?? "images/Default_pfp.png"}" alt=""
-                                                class="img-25px rounded-circle border border-dark-subtle object-fit-cover">
-                                            <span class="name">${member.name}</span>
-                                        </label>
-                                    </li>`;
+                let memberLi = `<li class="dropdownLi" title="${member.name}">
+                                                <input class="userCkb form-check-input m-0" type="checkbox" id="userCkb-${member.id}"
+                                                    data-user='${JSON.stringify(member)}' checked>
+                                                <label for="userCkb-${member.id}" class="d-flex align-items-center gap-2">
+                                                    <img src="${baseUrl}${member.profileImagePath?.replace("~/", "") ?? "images/Default_pfp.png"}" alt=""
+                                                        class="img-25px rounded-circle border border-dark-subtle object-fit-cover">
+                                                    <span class="name">${member.name}</span>
+                                                </label>
+                                            </li>`;
                 $("#friendsDropdown").append(memberLi);
                 addMember(member);
             });
