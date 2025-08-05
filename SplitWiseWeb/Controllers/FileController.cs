@@ -28,7 +28,7 @@ public class FileController : Controller
         }
 
         // Build the absolute path
-        string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", filePath.TrimStart('/'));
+        string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", filePath.Replace("~/", string.Empty));
         if (!System.IO.File.Exists(fullPath))
         {
             return NotFound();

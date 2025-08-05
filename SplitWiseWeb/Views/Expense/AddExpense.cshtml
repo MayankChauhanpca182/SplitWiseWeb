@@ -34,7 +34,8 @@
                 </div>
                 <button type="button"
                     class="btn dropdown-toggle dropdown-toggle-split border-secondary-subtle rounded-0"
-                    data-bs-toggle="dropdown" aria-expanded="false" onclick="emptySearchBox()" data-bs-auto-close="outside">
+                    data-bs-toggle="dropdown" aria-expanded="false" onclick="emptySearchBox()"
+                    data-bs-auto-close="outside">
                     <span class="visually-hidden">User list</span>
                 </button>
                 <ul class="dropdownList dropdown-menu w-100 px-2">
@@ -113,8 +114,9 @@
                     <span class="text-danger" asp-validation-for="@Model.CategoryId"></span>
                 </div>
                 <img src="@Url.Content(Model.CategoryId > 0 ? (Model.Categories.Where(c => c.Id == Model.CategoryId).Select(c =>
-                                         c.CategoryImagePath).First() ?? "~/defaultcategory/other.png") : Model.Categories.Select(c =>
-                                         c.CategoryImagePath).First())" alt="" id="categoryImage" class="my-auto" width="50px" height="50px">
+                                                                                                        c.CategoryImagePath).First() ?? "~/defaultcategory/other.png") : Model.Categories.Select(c =>
+                                                                                                        c.CategoryImagePath).First())"
+                    alt="" id="categoryImage" class="my-auto" width="50px" height="50px">
             </div>
         </div>
 
@@ -242,49 +244,10 @@
             $("#addExpenseForm").find("input, button, textarea, select").prop("disabled", true);
             $(".amount").prop("disabled", true);
         }
-    </script>
-
-    @* Store img path in const *@
-    <script>
-        const categoryImages = {
-                    @foreach (Category cat in Model.Categories)
-            {
-                            @:@cat.Id: "@cat.CategoryImagePath",
-            }
-                    };
-    </script>
-
-    @* Store currency symboles in array *@
-    <script>
-        const currencySymboles = {
-                    @foreach (Currency currency in Model.Currencies)
-            {
-                            @:@currency.Id: "@currency.Symbole",
-            }
-                    };
-
-
-        // Change symbole on currency change
-        $("#currencySelect").on("change", function () {
-            let currencyId = $(this).val();
-            currencySymbole = currencySymboles[currencyId];
-            setAmountAsPerSplitType();
-        });
-    </script>
-
-    @* Add current members to array *@
-    <script>
-        {
-                            @foreach (ExpenseShareVM share in Model.ExpenseShares)
-                {
-                    <text>members.push({UserId: @share.UserId, ShareAmount: @share.ShareAmount});</text>
-            }
-                        }
-    </script>
-
-    @* Validate selected file *@
-    <script>
         $(document).ready(function () {
+            checkMasterCheckbox();
+
+            // Validate selected file
             $('#Attachment').on('change', function () {
                 const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
                 const file = this.files[0];
@@ -308,6 +271,44 @@
                 }
             });
         });
+    </script>
+
+    @* Store img path in const *@
+    <script>
+        const categoryImages = {
+                                @foreach (Category cat in Model.Categories)
+            {
+                                                    @:@cat.Id: "@cat.CategoryImagePath",
+            }
+                                };
+    </script>
+
+    @* Store currency symboles in array *@
+    <script>
+        const currencySymboles = {
+                                @foreach (Currency currency in Model.Currencies)
+            {
+                                                    @:@currency.Id: "@currency.Symbole",
+            }
+                                };
+
+
+        // Change symbole on currency change
+        $("#currencySelect").on("change", function () {
+            let currencyId = $(this).val();
+            currencySymbole = currencySymboles[currencyId];
+            setAmountAsPerSplitType();
+        });
+    </script>
+
+    @* Add current members to array *@
+    <script>
+        {
+                                        @foreach (ExpenseShareVM share in Model.ExpenseShares)
+                {
+                    <text>members.push({UserId: @share.UserId, ShareAmount: @share.ShareAmount});</text>
+            }
+                                    }
     </script>
 
     @* Validate amount *@
@@ -725,11 +726,5 @@
                 }
             });
         }
-    </script>
-
-    <script>
-        $(document).ready(function(){
-            checkMasterCheckbox();
-        });
     </script>
 }

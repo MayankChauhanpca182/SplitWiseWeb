@@ -197,7 +197,7 @@ public class SettlementService : ISettlementService
 
                 // Fetch expense share list
                 List<ExpenseShare> expenseShares = await _expenseShareRepository.List(
-                    predicate: es => es.DeletedAt == null
+                    predicate: es => es.DeletedAt == null && es.Expense.DeletedAt == null
                                 && es.ShareAmount != es.SettledAmount
                                 && ((es.UserId == currentUser.Id && es.Expense.PaidById == settlement.PaidToId)
                                     || (es.UserId == settlement.PaidToId && es.Expense.PaidById == currentUser.Id))

@@ -211,6 +211,8 @@ function checkMasterCheckbox() {
     return $(this).closest("li").is(":visible");
   }).length;
 
+  console.log("checked : ", checkedSubCheckBox)
+
   if (checkedSubCheckBox === totalSubCheckBox) {
     $("#userCkbMaster").prop("indeterminate", false).prop("checked", true);
   }
