@@ -42,6 +42,7 @@ public class SettlementService : ISettlementService
     {
         User currentUser = await _userService.LoggedInUser();
         SettleUpListVM settlementList = new SettleUpListVM();
+        
         // Set current user
         settlementList.CurrentUser = currentUser;
 
@@ -89,11 +90,11 @@ public class SettlementService : ISettlementService
                 NoticeBoard = g.NoticeBoard,
                 Expense = netAmount
             };
-        }).Where(g => g.Expense > 0).ToList();
+        }).Where(g => g.Expense != 0).ToList();
 
         // Calculate net amount
         decimal netAmount = await _expenseShareRepository.Sum(
-            selector: es => es.Expense.PaidById == currentUser.Id ? (es.ShareAmount - es.SettledAmount) : -(es.ShareAmount - es.SettledAmount),
+            selector: es => es.Expense.PaidById == currentUser.Id ? -(es.ShareAmount - es.SettledAmount) : (es.ShareAmount - es.SettledAmount),
             predicate: es => es.DeletedAt == null && es.Expense.DeletedAt == null && es.Expense.GroupId == null
                     && es.ShareAmount != es.SettledAmount
                     && ((es.Expense.PaidById == currentUser.Id && es.UserId == friendUserId)
@@ -112,7 +113,7 @@ public class SettlementService : ISettlementService
             UserId = friendUser.Id,
             Name = $"{friendUser.FirstName} {friendUser.LastName}",
             ProfileImagePath = friendUser.ProfileImagePath,
-            Expense = netAmount < 0 ? (-1) * netAmount : 0
+            Expense = netAmount
         };
 
         // Set total
@@ -173,7 +174,7 @@ public class SettlementService : ISettlementService
             {
                 // Fetch all expense shares
                 List<ExpenseShare> expenseShares = await _expenseShareRepository.List(
-                    predicate: es => es.DeletedAt == null
+                    predicate: es => es.DeletedAt == null && es.Expense.DeletedAt == null
                                 && es.ShareAmount != es.SettledAmount
                                 && ((es.Expense.PaidById == settlement.PaidToId && es.UserId == currentUser.Id)
                                     || (es.Expense.PaidById == currentUser.Id && es.UserId == settlement.PaidToId)),

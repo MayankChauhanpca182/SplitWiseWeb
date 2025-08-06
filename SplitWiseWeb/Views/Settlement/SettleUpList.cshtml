@@ -19,11 +19,16 @@ else
                         class="rounded-circle border border-dark-subtle object-fit-cover" width="40px" height="40px">
                     <div class="d-flex flex-column fw-semibold">
                         <span>Settle all expenses</span>
-                        <span class="text-danger">₹@(Model.TotalAmount.ToString("N2"))</span>
+                        <span class="@(Model.TotalAmount > 0 ? "text-danger" : "text-success")">
+                            ₹@(Math.Abs(Model.TotalAmount).ToString("N2"))
+                        </span>
                     </div>
                 </div>
-                <button type="button" class="settleUpBtn btn btn-primary"
-                    onclick="fetchSettlementModal(@Model.TotalAmount, 0, @Model.Friend.UserId, true)">Settle Up</button>
+                @if (Model.TotalAmount > 0)
+                {
+                    <button type="button" class="settleUpBtn btn btn-primary"
+                        onclick="fetchSettlementModal(@Model.TotalAmount, 0, @Model.Friend.UserId, true)">Settle Up</button>
+                }
             </div>
 
             <p class="mb-0 fw-semibold">Or, settle a specific group expenses</p>
@@ -38,11 +43,16 @@ else
                         class="rounded-circle border border-dark-subtle object-fit-cover" width="40px" height="40px">
                     <div class="d-flex flex-column fw-semibold">
                         <span>NonGroup expenses</span>
-                        <span class="text-danger">₹@(Model.Friend.Expense.ToString("N2"))</span>
+                        <span class="@(Model.Friend.Expense > 0 ? "text-danger" : "text-success")">
+                            ₹@(Math.Abs(Model.Friend.Expense).ToString("N2"))
+                        </span>
                     </div>
                 </div>
-                <button type="button" class="settleUpBtn btn btn-primary"
-                    onclick="fetchSettlementModal(@Model.Friend.Expense, 0, @Model.Friend.UserId, false)">Settle Up</button>
+                @if (Model.Friend.Expense > 0)
+                {
+                    <button type="button" class="settleUpBtn btn btn-primary"
+                        onclick="fetchSettlementModal(@Model.Friend.Expense, 0, @Model.Friend.UserId, false)">Settle Up</button>
+                }
             </div>
         }
 
@@ -55,12 +65,17 @@ else
                         class="rounded-circle border border-dark-subtle object-fit-cover" width="40px" height="40px">
                     <div class="d-flex flex-column fw-semibold">
                         <span>@group.Name</span>
-                        <span class="text-danger">₹@(group.Expense.ToString("N2"))</span>
+                        <span class="@(group.Expense > 0 ? "text-danger" : "text-success")">
+                            ₹@(Math.Abs(group.Expense).ToString("N2"))
+                        </span>
                     </div>
                 </div>
-                <button type="button" class="settleUpBtn btn btn-primary"
-                    onclick="fetchSettlementModal(@group.Expense, @group.Id, @Model.Friend.UserId, false)">Settle
-                    Up</button>
+                @if (group.Expense > 0)
+                {
+                    <button type="button" class="settleUpBtn btn btn-primary"
+                        onclick="fetchSettlementModal(@group.Expense, @group.Id, @Model.Friend.UserId, false)">Settle
+                        Up</button>
+                }
             </div>
         }
     </div>

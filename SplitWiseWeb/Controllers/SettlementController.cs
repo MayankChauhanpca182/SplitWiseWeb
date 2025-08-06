@@ -55,20 +55,15 @@ public class SettlementController : Controller
     }
 
     [Breadcrumb("Settle Up")]
-    [Route("settle-up")]
+    [Route("settle-up/{friendUserId}")]
     public async Task<IActionResult> SettleUp(int friendUserId)
     {
-        int currentUserId = _userService.LoggedInUserId();
-        Friend friend = await _friendService.GetFriend(friendUserId);
-        User friendUser = new User();
-        if (friend != null)
+        User friendUser = await _userService.GetById(friendUserId);
+        if (friendUser == null)
         {
-            friendUser = friend.Friend1 == currentUserId ? friend.Friend2UserNavigation : friend.Friend1UserNavigation;
+            throw new KeyNotFoundException(NotificationMessages.NotFound.Replace("{0}", "user"));
         }
-        else
-        {
-            friendUser = await _userService.GetById(friendUserId);
-        }
+
         ViewData["ActiveLink"] = "Settlement";
         return View(friendUser);
     }
