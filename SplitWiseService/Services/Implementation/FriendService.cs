@@ -611,6 +611,11 @@ public class FriendService : IFriendService
         int currentUserId = _userService.LoggedInUserId();
 
         Friend friend = await GetFriend(friendUserId);
+        if (friend == null)
+        {
+            throw new KeyNotFoundException(NotificationMessages.NotFound.Replace("{0}", "friend"));
+        }
+
         User friendUser = friend.Friend1 == currentUserId ? friend.Friend2UserNavigation : friend.Friend1UserNavigation;
 
         FriendVM friendVM = new FriendVM()

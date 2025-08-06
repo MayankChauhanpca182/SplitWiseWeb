@@ -18,7 +18,7 @@ public class ExpenseVM
     public string Title { get; set; }
 
     [Required(ErrorMessage = ValidationMessages.ExpenseAmountRequired)]
-    [ExcelColumn("Amount")]
+    [ExcelColumn("Paid Amount")]
     public string Amount { get; set; } = "0";
 
     public int CategoryId { get; set; }
@@ -50,12 +50,14 @@ public class ExpenseVM
     public List<ExpenseShareVM> ExpenseShares { get; set; } = new List<ExpenseShareVM>();
 
     public bool IsViewOnly { get; set; } = false;
-    public string PaidByName { get; set; }
 
     public decimal PaidAmount { get; set; }
     
     [ExcelColumn("Expense")]
     public decimal Expense { get; set; } = 0;
+
+    [ExcelColumn("Paid By")]
+    public string PaidByName { get; set; }
     public List<User> Members { get; set; } = new List<User>();
 
     [ExcelColumn("Members")]

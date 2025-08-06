@@ -13,7 +13,6 @@ namespace SplitWiseService.Services.Implementation;
 
 public class SettlementService : ISettlementService
 {
-    private readonly IGenericRepository<Friend> _friendRepository;
     private readonly IGenericRepository<Expense> _expenseRepository;
     private readonly IGenericRepository<ExpenseShare> _expenseShareRepository;
     private readonly IGenericRepository<Group> _groupRepository;
@@ -24,10 +23,9 @@ public class SettlementService : ISettlementService
     private readonly IActivityService _activityService;
     private readonly IEmailService _emailService;
 
-    public SettlementService(IUserService userService, IGenericRepository<Friend> friendRepository, IGenericRepository<Expense> expenseRepository, IGenericRepository<Group> groupRepository, ITransactionRepository transaction, IGenericRepository<Payment> paymentRepository, IGenericRepository<ExpenseShare> expenseShareRepository, IActivityService activityService, IEmailService emailService, IGenericRepository<User> userRepository)
+    public SettlementService(IUserService userService, IGenericRepository<Expense> expenseRepository, IGenericRepository<Group> groupRepository, ITransactionRepository transaction, IGenericRepository<Payment> paymentRepository, IGenericRepository<ExpenseShare> expenseShareRepository, IActivityService activityService, IEmailService emailService, IGenericRepository<User> userRepository)
     {
         _userService = userService;
-        _friendRepository = friendRepository;
         _expenseRepository = expenseRepository;
         _groupRepository = groupRepository;
         _transaction = transaction;

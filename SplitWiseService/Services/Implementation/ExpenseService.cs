@@ -59,6 +59,12 @@ public class ExpenseService : IExpenseService
                         .ThenInclude(es => es.User)
                 }
             );
+            
+            if (!expense.ExpenseShares.Any(es => es.DeletedAt == null && es.UserId == currentUser.Id) && expense.CreatedById != currentUser.Id)
+            {
+                throw new UnauthorizedAccessException(NotificationMessages.NotFound.Replace("{0}", "expense"));
+            }
+            
             expenseVM.Id = expense.Id;
             expenseVM.GroupId = expense.GroupId;
             expenseVM.Title = expense.Title;
@@ -142,6 +148,12 @@ public class ExpenseService : IExpenseService
                         .ThenInclude(es => es.User)
                 }
             );
+
+            if (!expense.ExpenseShares.Any(es => es.DeletedAt == null && es.UserId == currentUser.Id) && expense.CreatedById != currentUser.Id)
+            {
+                throw new UnauthorizedAccessException(NotificationMessages.NotFound.Replace("{0}", "expense"));
+            }
+
             expenseVM.Id = expense.Id;
             expenseVM.GroupId = expense.GroupId;
             expenseVM.Title = expense.Title;

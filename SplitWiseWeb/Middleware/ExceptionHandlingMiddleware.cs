@@ -69,14 +69,14 @@ public class ExceptionHandlingMiddleware
         await exceptionService.LogException(exception, context);
 
         bool isAjaxRequest = context.Request.Headers["X-Requested-With"] == "XMLHttpRequest";
- 
+
         if (isAjaxRequest)
         {
             // For AJAX - return JSON response
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = 200;
             context.Response.Headers.Add("X-Error", "true");
- 
+
             var jsonResponse = new
             {
                 success = false,
@@ -88,8 +88,8 @@ public class ExceptionHandlingMiddleware
         }
         else
         {
-            // For Normal Requests - use TempData for Toastr
-            context.Response.Redirect($"/Auth/HandleExceptionWithToaster?message={Uri.EscapeDataString(message)}");
+            string baseUrl = context.Request.PathBase;
+            context.Response.Redirect($"{baseUrl}/Auth/HandleExceptionWithToaster?message={Uri.EscapeDataString(message)}");
         }
     }
 }
