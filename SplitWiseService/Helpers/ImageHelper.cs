@@ -43,7 +43,7 @@ public static class ImageHelper
         {
             image.Mutate(x => x.Resize(new ResizeOptions
             {
-                Size = new Size(800, 800),
+                Size = new Size(300, 300),
                 Mode = ResizeMode.Max
             }));
 
