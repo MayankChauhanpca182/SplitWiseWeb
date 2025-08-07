@@ -163,8 +163,7 @@ public class GroupService : IGroupService
         }
 
         // Check noticeboard
-        if (!(string.IsNullOrEmpty(oldGroup.NoticeBoard) && string.IsNullOrEmpty(newGroup.NoticeBoard))
-            || (string.IsNullOrEmpty(oldGroup.NoticeBoard) && !string.IsNullOrEmpty(newGroup.NoticeBoard))
+        if ((string.IsNullOrEmpty(oldGroup.NoticeBoard) && !string.IsNullOrEmpty(newGroup.NoticeBoard))
             || (!string.IsNullOrEmpty(oldGroup.NoticeBoard) && string.IsNullOrEmpty(newGroup.NoticeBoard))
             || (!string.IsNullOrEmpty(oldGroup.NoticeBoard) && !string.IsNullOrEmpty(newGroup.NoticeBoard) && oldGroup.NoticeBoard != newGroup.NoticeBoard.Trim()))
         {
