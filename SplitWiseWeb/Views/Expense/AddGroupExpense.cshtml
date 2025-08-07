@@ -494,7 +494,7 @@
         // Checkbox change
         $(document).on("change", ".userCkb", function () {
             let isChecked = $(this).prop("checked");
-            let userObj = $(this).data("user")
+            let userObj = $(this).data("user");
             if (isChecked) {
                 addMember(userObj);
             }
@@ -780,7 +780,6 @@
                     if (!response.statusCode) {
                         addGroupPill(group);
                         addMembers(response);
-                        initializeTooltips();
                     }
                 },
                 error: function () {
@@ -806,9 +805,9 @@
             $("#friendsDropdown").empty();
             $.each(groupmembers, function (index, member) {
                 let memberLi = `<li class="dropdownLi" title="${member.name}">
-                                                <input class="userCkb form-check-input m-0" type="checkbox" id="userCkb-${member.id}"
+                                                <input class="userCkb form-check-input m-0" type="checkbox" id="userCkb-${member.userId}"
                                                     data-user='${JSON.stringify(member)}' checked>
-                                                <label for="userCkb-${member.id}" class="d-flex align-items-center gap-2">
+                                                <label for="userCkb-${member.userId}" class="d-flex align-items-center gap-2">
                                                     <img src="${baseUrl}${member.profileImagePath?.replace("~/", "") ?? "images/Default_pfp.png"}" alt=""
                                                         class="img-25px rounded-circle border border-dark-subtle object-fit-cover">
                                                     <span class="name">${member.name}</span>

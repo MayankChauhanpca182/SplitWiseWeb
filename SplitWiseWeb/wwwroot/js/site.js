@@ -223,7 +223,7 @@ function checkMasterCheckbox() {
 }
 
 // Dropdown toggle by div
-$(document).on("click", ".memberPillDiv, .groupPillDiv", function(){
+$(document).on("click", ".memberPillDiv, .groupPillDiv", function () {
   $(this).siblings(".dropdown-toggle").click();
   checkMasterCheckbox();
 });
