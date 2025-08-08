@@ -50,7 +50,7 @@ public class AuthController : Controller
             return View(loginVM);
         }
 
-        ResponseVM response = await _authService.ValidateUser(loginVM.Email, loginVM.Password);
+        ResponseVM response = await _authService.ValidateUser(loginVM.Email, loginVM.Password, loginVM.IsRememberMe);
         if (!response.Success)
         {
             TempData["errorMessage"] = response.Message;
@@ -71,7 +71,7 @@ public class AuthController : Controller
         };
 
         // Fetch user
-        User? user = await _userService.GetByEmailAddress(loginVM.Email);
+        User user = await _userService.GetByEmailAddress(loginVM.Email);
 
         Response.Cookies.Append("JwtToken", response.Token, options);
         Response.Cookies.Append("UserName", $"{user.FirstName} {user.LastName}", options);

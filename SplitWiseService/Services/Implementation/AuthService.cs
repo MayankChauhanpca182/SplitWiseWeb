@@ -77,7 +77,7 @@ public class AuthService : IAuthService
 
     
 
-    public async Task<ResponseVM> ValidateUser(string email, string password)
+    public async Task<ResponseVM> ValidateUser(string email, string password, bool IsRememberMe)
     {
         User? user = await _userRepository.Get(u => u.EmailAddress.ToLower() == email.ToLower() && u.DeactivatedAt == null && u.DeletedAt == null);
         ResponseVM response = new ResponseVM();
@@ -95,7 +95,7 @@ public class AuthService : IAuthService
         else if (PasswordHelper.Verify(password, user.PasswordHash))
         {
             response.Success = true;
-            response.Token = _jwtService.GenerateToken(user);
+            response.Token = _jwtService.GenerateToken(user, IsRememberMe);
         }
         else
         {

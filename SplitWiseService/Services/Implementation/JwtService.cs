@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using SplitWiseRepository.Constants;
 using SplitWiseRepository.Models;
 using SplitWiseService.Services.Interface;
 
@@ -18,7 +19,7 @@ public class JwtService : IJwtService
     }
 
     // Generate JWT token 
-    public string GenerateToken(User user)
+    public string GenerateToken(User user, bool IsRememberMe)
     {
         SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
         SigningCredentials credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -33,7 +34,7 @@ public class JwtService : IJwtService
           issuer: _config["Jwt:Issuer"],
           audience: _config["Jwt:Audience"],
           claims: authClaims,
-          expires: DateTime.UtcNow.AddHours(5), // Token expiration time
+          expires: DateTime.Now.AddHours(IsRememberMe ? DefaultValues.CookiesMaxExpiryHours : DefaultValues.CookiesMinExpiryHours),
           signingCredentials: credentials
           );
 
