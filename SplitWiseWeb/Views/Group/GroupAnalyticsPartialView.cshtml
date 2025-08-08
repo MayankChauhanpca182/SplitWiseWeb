@@ -16,9 +16,11 @@
     {
         <div class="chartContainer">
             <canvas class="pieChartCanvas" id="category-expense-chart"></canvas>
+            <div class="legendContainer"></div>
         </div>
         <div class="chartContainer">
             <canvas class="pieChartCanvas" id="member-expense-chart"></canvas>
+            <div class="legendContainer"></div>
         </div>
     }
 </div>
@@ -26,128 +28,14 @@
 
 <script>
     function generateChart() {
-        const total = @Model.TotalExpense;
-
-        // Category vs expense chart
-        const categoryExpenseChartData = {
-            labels: @Html.Raw(Json.Serialize(categoryList)),
-            datasets: [{
-                data: @Html.Raw(Json.Serialize(categoryExpenseList))
-            }]
-        };
-
-        const categoryExpenseChartConfig = {
-            type: 'pie',
-            data: categoryExpenseChartData,
-            options: {
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'Expense vs Category',
-                        font: {
-                            size: 18
-                        },
-                        padding: {
-                            top: 10,
-                            bottom: 20
-                        }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function (context) {
-                                let amount = context.raw;
-                                let percentage = ((amount / total) * 100).toFixed(1) + '%';
-                                return `${context.label}: ₹${amount} (${percentage})`;
-                            }
-                        }
-                    },
-                    datalabels: {
-                        display: true,
-                        align: "center",
-                        color: '#000',
-                        formatter: function (value, context) {
-                            const category = context.chart.data.labels[context.dataIndex];
-                            let percentage = ((value / total) * 100).toFixed(1) + '%';
-                            return `${category}\n${percentage}\n₹${value}`;
-                        },
-                        font: {
-                            weight: 'bold',
-                            size: 12
-                        }
-                    },
-                    legend: {
-                        display: true,
-                        position: 'bottom',
-                        labels: {
-                            padding: 15
-                        }
-                    }
-                }
-            }
-        };
-
-        // Member vs expense chart
-        const memberExpenseChartData = {
-            labels: @Html.Raw(Json.Serialize(memberList)),
-            datasets: [{
-                data: @Html.Raw(Json.Serialize(memberExpenseList))
-            }]
-        };
-
-        const memberExpenseChartConfig = {
-            type: 'pie',
-            data: memberExpenseChartData,
-            options: {
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'Expense vs Member',
-                        font: {
-                            size: 18
-                        },
-                        padding: {
-                            top: 10,
-                            bottom: 20
-                        }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function (context) {
-                                let amount = context.raw;
-                                let percentage = ((amount / total) * 100).toFixed(1) + '%';
-                                return `${context.label}: ₹${amount} (${percentage})`;
-                            }
-                        }
-                    },
-                    datalabels: {
-                        display: true,
-                        align: "center",
-                        color: '#000',
-                        formatter: function (value, context) {
-                            const member = context.chart.data.labels[context.dataIndex];
-                            let percentage = ((value / total) * 100).toFixed(1) + '%';
-                            return `${member}\n${percentage}\n₹${value}`;
-                        },
-                        font: {
-                            weight: 'bold',
-                            size: 12
-                        }
-                    },
-                    legend: {
-                        display: true,
-                        position: 'bottom',
-                        labels: {
-                            padding: 15
-                        }
-                    }
-                }
-            }
-        };
-
         setTimeout(function () {
             Chart.register(ChartDataLabels);
-            new Chart(document.getElementById('category-expense-chart'), categoryExpenseChartConfig);
-            new Chart(document.getElementById('member-expense-chart'), memberExpenseChartConfig);
+
+            // Category vs expense chart
+            generatePieChart("category-expense-chart", "Expense vs Category", @Html.Raw(Json.Serialize(categoryList)), @Html.Raw(Json.Serialize(categoryExpenseList)), @Model.TotalExpense);
+
+            // Member vs expense chart
+            generatePieChart("member-expense-chart", "Expense vs Member", @Html.Raw(Json.Serialize(memberList)), @Html.Raw(Json.Serialize(memberExpenseList)), @Model.TotalExpense);
         }, 500);
     }
 </script>
