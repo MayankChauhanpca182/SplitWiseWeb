@@ -14,13 +14,19 @@
 <div class="d-flex justify-content-evenly">
     @if (Model.TotalExpense > 0)
     {
-        <div class="chartContainer">
-            <canvas class="pieChartCanvas" id="category-expense-chart"></canvas>
-            <div class="legendContainer"></div>
+        <div class="chartContainerOuter">
+            <p class="chartHeading">Expense vs Category</p>
+            <div class="chartContainer">
+                <canvas class="pieChartCanvas" id="category-expense-chart"></canvas>
+                <div class="legendContainer"></div>
+            </div>
         </div>
-        <div class="chartContainer">
-            <canvas class="pieChartCanvas" id="group-type-expense-chart"></canvas>
-            <div class="legendContainer"></div>
+        <div class="chartContainerOuter">
+            <p class="chartHeading">Expense vs Group Type</p>
+            <div class="chartContainer">
+                <canvas class="pieChartCanvas" id="group-type-expense-chart"></canvas>
+                <div class="legendContainer"></div>
+            </div>
         </div>
     }
 </div>
@@ -35,7 +41,7 @@
             generatePieChart("category-expense-chart", "Expense vs Category", @Html.Raw(Json.Serialize(categoryList)), @Html.Raw(Json.Serialize(categoryExpenseList)), @Model.TotalExpense);
 
             // Group type vs expense chart
-            generatePieChart("group-type-expense-chart", "Expense vs Group type", @Html.Raw(Json.Serialize(groupTypeList)), @Html.Raw(Json.Serialize(groupTypeExpenseList)), @Model.TotalExpense);
+            generatePieChart("group-type-expense-chart", "Expense vs Group Type", @Html.Raw(Json.Serialize(groupTypeList)), @Html.Raw(Json.Serialize(groupTypeExpenseList)), @Model.TotalExpense);
         }, 500);
     }
 </script>

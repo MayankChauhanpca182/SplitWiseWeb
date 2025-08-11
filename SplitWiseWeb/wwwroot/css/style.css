@@ -860,9 +860,22 @@ footer.footer {
     overflow-y: auto;
 }
 
+.chartContainerOuter{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.chartHeading{
+    font-size: larger;
+    font-weight: 600;
+    color: var(--bs-dark-text-emphasis) !important;
+}
+
 .chartContainer {
     display: flex;
     align-items: center;
+    gap: 10px;
 }
 
 .pieChartCanvas {
@@ -871,7 +884,9 @@ footer.footer {
 }
 
 .legendContainer{
-    margin-top: 20px;
+    max-height: 350px;
+    overflow-y: auto;
+    scrollbar-width: thin;
 }
 
 .legend-item {

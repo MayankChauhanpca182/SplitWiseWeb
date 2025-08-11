@@ -14,13 +14,19 @@
 <div class="d-flex justify-content-evenly">
     @if (Model.TotalExpense > 0)
     {
-        <div class="chartContainer">
-            <canvas class="pieChartCanvas" id="category-expense-chart"></canvas>
-            <div class="legendContainer"></div>
+        <div class="chartContainerOuter">
+            <p class="chartHeading">Expense vs Category</p>
+            <div class="chartContainer">
+                <canvas class="pieChartCanvas" id="category-expense-chart"></canvas>
+                <div class="legendContainer"></div>
+            </div>
         </div>
-        <div class="chartContainer">
-            <canvas class="pieChartCanvas" id="member-expense-chart"></canvas>
-            <div class="legendContainer"></div>
+        <div class="chartContainerOuter">
+            <p class="chartHeading">Expense vs Member</p>
+            <div class="chartContainer">
+                <canvas class="pieChartCanvas" id="member-expense-chart"></canvas>
+                <div class="legendContainer"></div>
+            </div>
         </div>
     }
 </div>

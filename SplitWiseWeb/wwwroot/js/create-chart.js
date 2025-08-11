@@ -30,7 +30,7 @@ function generatePieChart(canvasId, name, labels, data, total) {
             responsive: false,
             plugins: {
                 title: {
-                    display: true,
+                    display: false,
                     text: name,
                     font: {
                         size: 18
