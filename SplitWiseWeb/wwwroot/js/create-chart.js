@@ -10,8 +10,8 @@ function generatePieChart(canvasId, name, labels, data, total) {
     // Generate dynamic colors
     const colors = labels.map((_, i) => {
         const hue = (i * 360 / labels.length + 20) % 360;
-        const saturation = 60 + Math.floor(Math.random() * 10); // 60-70%
-        const lightness = 50 + Math.floor(Math.random() * 10);  // 50-60%
+        const saturation = 60 + Math.floor(Math.random() * 10);
+        const lightness = 50 + Math.floor(Math.random() * 10);
         return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
     });
 
@@ -49,7 +49,7 @@ function generatePieChart(canvasId, name, labels, data, total) {
                             const value = context.raw;
                             const label = context.label || '';
                             let percentage = ((value / total) * 100).toFixed(1);
-                            return `${label}: ₹${value.toFixed(2)} (${percentage}%)`;
+                            return `₹${value.toFixed(2)} (${percentage}%)`;
                         },
                     },
                 },

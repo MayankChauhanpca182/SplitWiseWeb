@@ -862,13 +862,16 @@ footer.footer {
 
 .chartContainer {
     display: flex;
-    flex-direction: column;
     align-items: center;
 }
 
 .pieChartCanvas {
     height: 350px;
     width: 350px;
+}
+
+.legendContainer{
+    margin-top: 20px;
 }
 
 .legend-item {
